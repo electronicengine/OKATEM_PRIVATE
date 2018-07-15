@@ -32,6 +32,7 @@ SFP_DATA sfp_data;
 std::string lora_data;
 int gps_char_pos;
 
+//hello
 
 LoraWan lora;
 BananaPi bpi;
