@@ -8,7 +8,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
-#include <globals.h>
+#include <math.h>
 
 // Text properties which is printed on debug
 #define TEXT_FONT cv::FONT_HERSHEY_COMPLEX_SMALL
@@ -24,13 +24,21 @@
 #define FAIL -1
 #define SUCCESS 0
 
+#define LASER_POINTER_NUMBER 4
+
 class LaserTracker
 {
 private:
         cv::Mat detectRed(cv::Mat &Frame);
-        cv::Vec3f detectCircle(cv::Mat &Frame);
+        std::vector<cv::Vec3f> detectCircle(cv::Mat &Frame);
         cv::VideoCapture *mVideoCapture;
-        int pointCircle(cv::Mat &dst, cv::Vec3f &coords);
+
+        cv::Mat gmFrame;
+        cv::Mat gmScalarFrame;
+
+        int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
+        int orderpoints(std::vector<cv::Point>& Points);
+        int calculatePerspective(std::vector<cv::Point>& Points);
 public:
         LaserTracker(const std::string VideoLocation);
         LaserTracker(int Camera);

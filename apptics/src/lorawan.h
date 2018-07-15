@@ -6,6 +6,14 @@
 #include <iostream>
 #include "serialcom.h"
 #include "bananapi.h"
+#include "sfpmonitor.h"
+#include <time.h>
+#include <random>
+#include <mutex>
+
+
+#define TRANSMISSION_SIZE 64
+#define TRANSMISSION_TIMEOUT 10
 
 struct Lora_Environment_Info
 {
@@ -27,27 +35,44 @@ public:
         receive_error
     };
 
+
     LoraWan();
     LoraWan(std::string Power);
     LoraWan(std::string Power, std::string Freqency);
 
     Lora_Status scanArea();
+    Lora_Status sendBeacon();
+    Lora_Status init();
 
+    void setLoraData(SFP_DATA& SfpData, SPI_RX_FORMAT& StmData);
+    void listen();
 
 private:
 
+
+    time_t gmLastBeacon = 0;
+    time_t gmNow = 0;
+
+    SFP_DATA gmLoraSfp;
+    SPI_RX_FORMAT gmLoraStm;
+
     std::string gmBaundRate;
     std::string gmFrequency;
+
     int gmPower;
     int gmTimeout;
+
     SerialCom gmSerial;
 
-    Lora_Status init();
+    std::mutex gmMutex;
+
+    void callBack(std::string& CommingData);
+    void collectData(std::string& Data);
+    void listenChannel();
+    void resetChannel();
 
 
 
-    Lora_Status sendBeacon();
-    Lora_Status listenChannel();
 
 
 

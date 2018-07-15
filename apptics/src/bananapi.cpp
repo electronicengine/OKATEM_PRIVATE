@@ -3,8 +3,6 @@
 
 BananaPi::BananaPi()
 {
-//    gmBPIControlData = new SPI_TX_FORMAT;
-//    gmStmEnvironmentData = new SPI_RX_FORMAT;
 
     std::thread communication(&BananaPi::communicationThread, this);
     communication.detach();
@@ -12,8 +10,7 @@ BananaPi::BananaPi()
 
 BananaPi::~BananaPi()
 {
-//    delete gmBPIControlData;
-//    delete gmStmEnvironmentData;
+
 }
 
 BananaPi::Bpi_Status BananaPi::setControlData(const SPI_TX_FORMAT &Data)
@@ -23,17 +20,22 @@ BananaPi::Bpi_Status BananaPi::setControlData(const SPI_TX_FORMAT &Data)
     gmMutex.unlock();
 }
 
-BananaPi::Bpi_Status BananaPi::getStmEnvironment(SPI_RX_FORMAT Data)
+SPI_RX_FORMAT BananaPi::getStmEnvironment()
 {
+    SPI_RX_FORMAT Data;
+
     gmMutex.lock();
-    gmStmEnvironmentData = Data;
+    Data = gmStmEnvironmentData;
     gmMutex.unlock();
+
+    return Data;
 }
 
 void BananaPi::communicationThread()
 {
 
     unsigned char transmitted_data[SPI_TRANSFER_SIZE];
+
 
     while(true)
     {
@@ -44,11 +46,6 @@ void BananaPi::communicationThread()
         gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
         gmStmEnvironmentData = (unsigned char *)transmitted_data;
 
-//        printAll("Gps Data:  ", std::string((char *)gmStmEnvironmentData->gps_data));
-//        printAll("Temperature: ", (int)gmStmEnvironmentData->temperature);
-//        printAll("Altitude: ", (int)gmStmEnvironmentData->altitude);
-//        printAll("Pressure: ", (int)gmStmEnvironmentData->pressure);
-//        printAll("Wheather: ", (int)gmStmEnvironmentData->wheather_condition);
 
         gmMutex.unlock();
 

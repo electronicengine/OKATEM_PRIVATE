@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <vector>
 #include <mutex>
+#include <cstdlib>
 
 
 static std::mutex printMutex;
@@ -63,15 +64,27 @@ std::string convertToHex(const T& Container)
 }
 
 template<typename T>
-std::string convertHexToAscii(const T& Container)
+std::string convertHexToAscii(const T& Data)
 {
 
-    std::string ascii_str;
 
-    if(std::is_same<T, std::vector<unsigned char>>::value)
+
+    std::vector<unsigned char> ascii_chars;
+
+    if (std::is_same<T, std::string>::value)
     {
-        ascii_str = std::string(Container.begin(), Container.end());
+
+        for( unsigned i = 0, uchr ; i < (Data.length() / 2) - 1; i ++ )
+        {
+            sscanf( Data.c_str() + i*2, "%02x", &uchr ); // conversion
+
+            ascii_chars.push_back(uchr);
+
+          }
+
+        return std::string(ascii_chars.begin(), ascii_chars.end()) ;
     }
+
 
 }
 

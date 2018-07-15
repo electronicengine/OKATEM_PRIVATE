@@ -10,14 +10,14 @@ SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Contain
    int read_size = 0;
    int rx_data;
 
+   time_t begining = time(NULL);
+   time_t last = 0;
+   clock_t last_data_comming = 0;
+   clock_t now = 0;
+
    if (gmFileDescriptor != -1)
    {
 
-       if(Timeout != 0)
-       {
-           std::thread timeoutOps(&SerialCom::setTimeout, this, Timeout);
-           timeoutOps.detach();
-       }
 
        if(Size == 0)
            Size = 999999;
@@ -27,18 +27,44 @@ SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Contain
        do
        {
 
-           read_size = read(gmFileDescriptor, &rx_data, sizeof(unsigned char));
+           last = time(NULL);
+
+
+           if(( last - begining >= (Timeout + std::rand() % 10) )&& Timeout != 0)
+               return Serial_Status::time_out;
+
+          read_size = read(gmFileDescriptor, &rx_data, sizeof(unsigned char));
+
+          now = clock();
+
+          if(now - last_data_comming >= TIMEOUT*1000 && last_data_comming != 0)
+          {
+              gmTimeOutFlag = 0;
+              gmSetTime = 0;
+              Size = data_index;
+              return Serial_Status::succesfully_read;
+          }
+
+
            if (read_size > 0)
            {
+
+//               printf("%c", rx_data);
 
                Container.push_back(rx_data);
                data_index += read_size;
 
+               last_data_comming = clock();
+
            }
+
+
 
            if(gmTimeOutFlag == 1)
            {
+
                gmTimeOutFlag = 0;
+               gmSetTime = 0;
                Size = data_index;
                return Serial_Status::time_out;
 

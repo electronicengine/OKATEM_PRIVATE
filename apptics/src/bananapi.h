@@ -51,7 +51,8 @@ struct SPI_RX_FORMAT
 {
 
     GPS_DATA gps_data;
-    SENSOR_DATA sensor_data;
+    SENSOR_DATA *sensor_data;
+    std::string gps_string;
     double degrees;
     double minutes;
 
@@ -60,48 +61,73 @@ struct SPI_RX_FORMAT
 
     SPI_RX_FORMAT& operator = (unsigned char *TransferData)
     {
-        std::string gps_string(&TransferData[0], &TransferData[99]);
+//        gps_string = std::string(&TransferData[0], &TransferData[99]);
         int i = 0;
         int pos;
 
-//        std::string gps_string = "$GPRMC,053740.000,A,2503.6319,N,12136.0099,E,2.69,79.65,100106,,,A*53";
+        std::string gps_string = "$GPRMC,053740.000,A,2503.6319,N,12136.0099,E,2.69,79.65,100106,,,A*53";
         std::string delimiter = ",";
         std::string token[20];
 
-        while ((pos = gps_string.find(delimiter)) != std::string::npos)
+
+        try
         {
 
-            token[i] = gps_string.substr(0, pos);
-            gps_string.erase(0, pos + delimiter.length());
-            i++;
+            while ((pos = gps_string.find(delimiter)) != std::string::npos)
+            {
+
+                token[i] = gps_string.substr(0, pos);
+                gps_string.erase(0, pos + delimiter.length());
+                i++;
+
+            }
+
+            i=0;
+
+            if(!token[1].empty())
+                gps_data.utc_time = (double)std::atof(token[1].c_str());
+
+            if(!token[2].empty())
+                gps_data.status = (unsigned char)*token[2].c_str();
+
+            if(!token[3].empty())
+            {
+                degrees = (double)std::atof(token[3].substr(0, 2).c_str());
+                minutes = (double)std::atof(token[3].substr(2, 7).c_str());
+                gps_data.latitude =  degrees + (minutes / 60);
+            }
+
+            if(!token[4].empty())
+                gps_data.ns_indicator = (unsigned char)*token[4].c_str();
+
+            if(!token[5].empty())
+            {
+                degrees = (double)std::atof(token[5].substr(0, 3).c_str());
+                minutes = (double)std::atof(token[5].substr(3, 7).c_str());
+                gps_data.longnitude = degrees + (minutes / 60);
+            }
+
+            if(!token[6].empty())
+                gps_data.we_indicator = (unsigned char)*token[6].c_str();
+
+            if(!token[7].empty())
+                gps_data.speed_over_ground = (double)std::atof(token[7].c_str());
+
+            if(!token[8].empty())
+                gps_data.course_over_ground =(double)std::atof(token[8].c_str());
+
+            if(!token[9].empty())
+                gps_data.date = token[9];
 
         }
+        catch(std::exception ex)
+        {
+            printAll(ex.what());
+        }
 
-        i=0;
 
-        gps_data.utc_time = (double)std::atof(token[1].c_str());
+        sensor_data = reinterpret_cast<SENSOR_DATA *>(&TransferData[100]);
 
-        gps_data.status = (unsigned char)*token[2].c_str();
-
-        degrees = (double)std::atof(token[3].substr(0, 1).c_str());
-        minutes = (double)std::atof(token[3].substr(2, 6).c_str());
-        gps_data.latitude =  degrees + (minutes / 60);
-
-        gps_data.ns_indicator = (unsigned char)*token[4].c_str();
-
-        degrees = (double)std::atof(token[5].substr(0, 2).c_str());
-        minutes = (double)std::atof(token[5].substr(3, 7).c_str());
-        gps_data.longnitude = degrees + (minutes / 60);
-
-        gps_data.we_indicator = (unsigned char)*token[6].c_str();
-
-        gps_data.speed_over_ground = (double)std::atof(token[7].c_str());
-
-        gps_data.course_over_ground =(double)std::atof(token[8].c_str());
-
-        gps_data.date = token[9];
-
-//        sensor_data = (SENSOR_DATA) &TransferData[100];
 
         return *this;
     }
@@ -151,7 +177,7 @@ public:
     BananaPi();
     ~BananaPi();
     Bpi_Status setControlData(const SPI_TX_FORMAT& Data);
-    Bpi_Status getStmEnvironment(SPI_RX_FORMAT Data);
+    SPI_RX_FORMAT getStmEnvironment();
 
 
 private:

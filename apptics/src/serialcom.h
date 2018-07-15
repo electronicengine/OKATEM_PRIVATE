@@ -21,6 +21,7 @@
 
 #include "globals.h"
 
+#define TIMEOUT 50
 
 class SerialCom
 {
@@ -104,6 +105,7 @@ private:
     std::mutex gmMutex;
     int gmFileDescriptor;
     volatile short int gmTimeOutFlag = 0;
+    volatile short int gmSetTime = 0;
 
     Serial_Status Init();
     void setTimeout(int TimeOut);

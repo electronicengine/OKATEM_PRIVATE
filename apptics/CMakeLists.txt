@@ -6,22 +6,22 @@ set(INCLUDE_PATH
 
 include_directories(${INCLUDE_PATH}
 #    /usr/local/include
-     /root/Downloads/opencv-3.4.0/build_arm/
-     /usr/arm-linux-gnueabi/include
+#     /root/Downloads/opencv-3.4.0/build/
+     /usr/arm-linux-gnueabihf/include
     )
 
 
 project(apptics)
 
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabihf-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabihf-g++)
 
 #set(CMAKE_C_COMPILER /usr/bin/gcc)
 #set(CMAKE_CXX_COMPILER /usr/bin/g++)
 
 
-set(CMAKE_C_FLAGS "-std=c++14")
-Set(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_C_FLAGS "-std=c++17")
+Set(CMAKE_CXX_FLAGS "-std=c++17")
 
 
 #find_library(/usr/lib/x86_64-linux-gnu
@@ -36,7 +36,7 @@ link_directories(
 #    /usr/local/lib/
 #    /usr/lib/
 #    /usr/lib/x86_64-linux-gnu
-    /usr/arm-linux-gnueabi/lib
+    /usr/arm-linux-gnueabihf/lib
     )
 
 link_libraries(
@@ -67,6 +67,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/lorawan.cpp
     ${INCLUDE_PATH}/spicom.cpp
     ${INCLUDE_PATH}/bananapi.cpp
+    ${INCLUDE_PATH}/sfpmonitor.cpp
     )
 
 #target_link_libraries( ${PROJECT_NAME}
@@ -91,7 +92,7 @@ add_executable(${PROJECT_NAME}
 #    )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  #COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.17:/home/pi
-  #COMMAND sudo sshpass -p "bananapi" scp -r /root/qt-workspace/apptics pi@10.100.93.17:/home/pi
+  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
+  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
   COMMENT "Creating directory: "
 )
