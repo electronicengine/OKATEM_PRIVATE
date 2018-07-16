@@ -29,7 +29,7 @@ struct SFP_DATA
     float tx_bias;
     float tx_power;
     float rx_power;
-    bool status;
+    int status;
 
 };
 

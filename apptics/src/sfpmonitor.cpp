@@ -135,9 +135,9 @@ int SfpMonitor::readValues()
     gmSfpData.rx_power = convertNumber((uint8_t *)&gmBuffer[104], 10000, false);
 
     if(gmSfpData.rx_power * 1000 > 2)
-        gmSfpData.status = true;
+        gmSfpData.status = 1;
     else
-        gmSfpData.status = false;
+        gmSfpData.status = 2;
 
     return 0;
 }

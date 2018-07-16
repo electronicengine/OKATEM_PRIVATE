@@ -46,7 +46,8 @@ public:
     Lora_Status sendBeacon();
     Lora_Status init();
 
-    void setLoraData(SFP_DATA& SfpData, SPI_RX_FORMAT& StmData);
+    void setLoraData(const SFP_DATA& SfpData, const SPI_RX_FORMAT& StmData);
+    void getLoraData(SFP_DATA& SfpData, SPI_RX_FORMAT& StmData);
     void listen();
 
 private:
@@ -57,6 +58,9 @@ private:
 
     SFP_DATA gmLoraSfp;
     SPI_RX_FORMAT gmLoraStm;
+
+    SFP_DATA gmRecievedLoraSfp;
+    SPI_RX_FORMAT gmRecievedLoraStm;
 
     std::string gmBaundRate;
     std::string gmFrequency;
