@@ -4,12 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "serialcom.h"
-#include "controller.h"
-#include "sfpmonitor.h"
 #include <time.h>
 #include <random>
 #include <mutex>
+
+#include "serialcom.h"
+#include "controller.h"
+#include "sfpmonitor.h"
+
 
 
 #define TRANSMISSION_SIZE 64

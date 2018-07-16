@@ -1,4 +1,5 @@
 #include "lasertracker.h"
+
 #include <thread>
 #include <pthread.h>
 

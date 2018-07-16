@@ -14,9 +14,9 @@
 #include <sstream>
 #include <iomanip>
 #include <time.h>
-#include "globals.h"
 #include <cmath>
 
+#include "globals.h"
 #include "spicom.h"
 
 #define SPI_TRANSFER_SIZE 120

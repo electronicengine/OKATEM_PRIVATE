@@ -1,16 +1,18 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
+#include <string>
+#include <string.h>
+#include <time.h>
+
 #include "lasertracker.h"
 #include "globals.h"
-#include <sstream>
 #include "lorawan.h"
 #include "spicom.h"
 #include "controller.h"
 #include "sfpmonitor.h"
-#include <string>
-#include <string.h>
-#include <time.h>
+
 
 
 SPI_RX_FORMAT stm_data;
