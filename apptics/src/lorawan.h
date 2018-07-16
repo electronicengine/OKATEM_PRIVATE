@@ -70,6 +70,7 @@ private:
     void collectData(std::string& Data);
     void listenChannel();
     void resetChannel();
+    std::string prepareData();
 
 
 

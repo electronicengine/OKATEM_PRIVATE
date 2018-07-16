@@ -15,9 +15,6 @@
 
 SPI_RX_FORMAT stm_data;
 SFP_DATA sfp_data;
-std::string lora_data;
-int gps_char_pos;
-
 
 LoraWan lora;
 Controller controller;
@@ -55,6 +52,10 @@ int main(int argc, char* argv[])
                  " - Altitude: ", (int)stm_data.sensor_data->altitude, " - Pressure: ", (int)stm_data.sensor_data->pressure,
                  " - Compass: ", (int)stm_data.sensor_data->compass_degree, " - Wheather: ", (int)stm_data.sensor_data->wheather_condition,
                  " - SFP Status: ", (sfp_data.status == 1) ? "Connected" : "Disconnected");
+        printAll("\n\n\n");
+
+        printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
+        printAll("Tracker Edge Rate: ", tracker.getEdgeRate());
         printAll("\n\n\n");
 
         sleep(1);

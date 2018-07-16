@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <mutex>
 
 // Text properties which is printed on debug
 #define TEXT_FONT cv::FONT_HERSHEY_COMPLEX_SMALL
@@ -26,9 +27,19 @@
 
 #define LASER_POINTER_NUMBER 4
 
+
+struct PERSPECTIVE_RATE
+{
+  float diagonal_rate;    // left/right
+  float edge_rate;        // upper/bottom
+};
+
+
 class LaserTracker
 {
 private:
+
+        std::mutex gmMutex;
         cv::Mat detectRed(cv::Mat &Frame);
         std::vector<cv::Vec3f> detectCircle(cv::Mat &Frame);
         cv::VideoCapture *mVideoCapture;
@@ -40,11 +51,17 @@ private:
         int orderpoints(std::vector<cv::Point>& Points);
         int calculatePerspective(std::vector<cv::Point>& Points);
 public:
+
+        PERSPECTIVE_RATE gmPerspective;
+
         LaserTracker(const std::string VideoLocation);
         LaserTracker(int Camera);
         ~LaserTracker();
         int startTracking();
         int runTracking();
+        float getDiagonalRate();  // left/right
+        float getEdgeRate();      //upper/bottom
+
 };
 
 #endif // LASERTRACKER_H

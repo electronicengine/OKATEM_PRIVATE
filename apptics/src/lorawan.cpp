@@ -75,28 +75,8 @@ LoraWan::Lora_Status LoraWan::init()
 LoraWan::Lora_Status LoraWan::sendBeacon()
 {
 
+    std::string Data =prepareData();
 
-    std::string Data;
-    int gps_char_pos;
-
-    gmMutex.lock();
-
-    Data = std::string(gmLoraStm.gps_string);
-    gps_char_pos = Data.find_first_of("*");
-    Data = Data.substr(0, gps_char_pos);
-
-    Data += " - Sensor Temp:" + std::to_string(gmLoraStm.sensor_data->temperature);
-    Data += " - Sensor altitude: " + std::to_string(gmLoraStm.sensor_data->altitude);
-    Data += " - Sensor pressure: " + std::to_string(gmLoraStm.sensor_data->pressure);
-    Data += " - Sensor wheather: " + std::to_string(gmLoraStm.sensor_data->wheather_condition);
-    Data += " - Sensor compass: " + std::to_string(gmLoraStm.sensor_data->compass_degree);
-    Data += " - Sfp Status: ";
-    Data += (gmLoraSfp.status == 1) ? "Connected" : "Disconnected";
-
-    gmMutex.unlock();
-
-
-    Data = convertToHex(Data);
 
     int return_size;
     int size = Data.length();
@@ -228,6 +208,35 @@ void LoraWan::resetChannel()
     sendBeacon();
 
     listen();
+
+}
+
+std::string LoraWan::prepareData()
+{
+
+    std::string Data;
+    int gps_char_pos;
+
+    gmMutex.lock();
+
+    Data = std::string(gmLoraStm.gps_string);
+    gps_char_pos = Data.find_first_of("*");
+    Data = Data.substr(0, gps_char_pos);
+
+    Data += " - Sensor Temp:" + std::to_string(gmLoraStm.sensor_data->temperature);
+    Data += " - Sensor altitude: " + std::to_string(gmLoraStm.sensor_data->altitude);
+    Data += " - Sensor pressure: " + std::to_string(gmLoraStm.sensor_data->pressure);
+    Data += " - Sensor wheather: " + std::to_string(gmLoraStm.sensor_data->wheather_condition);
+    Data += " - Sensor compass: " + std::to_string(gmLoraStm.sensor_data->compass_degree);
+    Data += " - Sfp Status: ";
+    Data += (gmLoraSfp.status == 1) ? "Connected" : "Disconnected";
+
+    gmMutex.unlock();
+
+
+    Data = convertToHex(Data);
+
+    return Data;
 
 }
 

@@ -46,6 +46,31 @@ int LaserTracker::runTracking()
     return 0;
 }
 
+float LaserTracker::getDiagonalRate()
+{
+    float diagonal_rate;
+
+    gmMutex.lock();
+    diagonal_rate = gmPerspective.diagonal_rate;
+    gmMutex.unlock();
+
+    return diagonal_rate;
+
+}
+
+float LaserTracker::getEdgeRate()
+{
+
+    float edge_rate;
+
+    gmMutex.lock();
+    edge_rate = gmPerspective.edge_rate;
+    gmMutex.unlock();
+
+    return edge_rate;
+
+}
+
 
 
 int LaserTracker::startTracking()
@@ -149,7 +174,10 @@ int LaserTracker::calculatePerspective(std::vector<cv::Point> &Points)
 //    std::cout << "Diagonal Rate - " << left_diagonal / right_diagonal <<  std::endl;
 //    std::cout << "Edge Rate - " << upper_edge / bottom_edge <<  std::endl;
 
-
+    gmMutex.lock();
+    gmPerspective.diagonal_rate = left_diagonal / right_diagonal;
+    gmPerspective.edge_rate = upper_edge / bottom_edge;
+    gmMutex.unlock();
 
     last_left_diagonal = left_diagonal;
     last_right_diagonal = right_diagonal;
@@ -180,8 +208,8 @@ cv::Mat LaserTracker::detectRed(cv::Mat &Frame)
     // Threshold the HSV image, keep only the red pixels
     cv::inRange(frame_hsv, cv::Scalar(0, 0, 254), cv::Scalar(0, 0, 255), frame_processed);
 
-      cv::imshow("frame1", frame_hsv);
-      cv::waitKey(1);
+//      cv::imshow("frame1", frame_hsv);
+//      cv::waitKey(1);
 
     cv::GaussianBlur(frame_processed, frame_processed, cv::Size(9, 9), 2, 2);
 
@@ -201,7 +229,15 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
 
     // Loop over all detected circles and outline them on the original image
      if( circles.size() == 0 )
+     {
+
+         gmMutex.lock();
+         gmPerspective.diagonal_rate = 0;
+         gmPerspective.edge_rate = 0;
+         gmMutex.unlock();
+
          return circles;
+     }
      else
          return circles;
 
@@ -244,11 +280,18 @@ int LaserTracker::drawFSOFace(const std::vector<cv::Vec3f>& Circles)
 
         cv::fillConvexPoly(gmScalarFrame, points.data(), 4, cv::Scalar(116, 100, 100), cv::LINE_AA, 0);
 
-        cv::imshow("red_scaler_frame", gmScalarFrame);
-        cv::imshow("frame", gmFrame);
+//        cv::imshow("red_scaler_frame", gmScalarFrame);
+//        cv::imshow("frame", gmFrame);
 
         points.clear();
 
+    }
+    else
+    {
+        gmMutex.lock();
+        gmPerspective.diagonal_rate = 2;
+        gmPerspective.edge_rate = 2;
+        gmMutex.unlock();
     }
 
 }
