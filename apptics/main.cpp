@@ -24,7 +24,7 @@ Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
 
-
+// yeni olan
 
 int main(int argc, char* argv[])
 {
