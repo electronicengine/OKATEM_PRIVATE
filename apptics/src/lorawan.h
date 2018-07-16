@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include "serialcom.h"
-#include "bananapi.h"
+#include "controller.h"
 #include "sfpmonitor.h"
 #include <time.h>
 #include <random>

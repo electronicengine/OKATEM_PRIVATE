@@ -66,7 +66,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/serialcom.cpp
     ${INCLUDE_PATH}/lorawan.cpp
     ${INCLUDE_PATH}/spicom.cpp
-    ${INCLUDE_PATH}/bananapi.cpp
+    ${INCLUDE_PATH}/controller.cpp
     ${INCLUDE_PATH}/sfpmonitor.cpp
     )
 

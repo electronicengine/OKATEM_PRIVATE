@@ -302,6 +302,8 @@ void LoraWan::callBack(std::string& CommingData)
     printAll(CommingData);
     printAll("\n\n\n");
 
+    usleep(1000000);
+
     sendBeacon();
 
 

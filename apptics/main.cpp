@@ -6,25 +6,11 @@
 #include <sstream>
 #include "lorawan.h"
 #include "spicom.h"
-#include "bananapi.h"
+#include "controller.h"
 #include "sfpmonitor.h"
 #include <string>
 #include <string.h>
 #include <time.h>
-
-
-struct LORA_DATA
-{
-    int sensor_temperature;
-    int sensor_altitude;
-    int sensor_pressure;
-    int sensor_wheather_condition;
-    int sensor_compass_degree;
-    bool sfp_status;
-
-}LoraData;
-
-void loraCallBackFunction(std::string CommingData);
 
 
 SPI_RX_FORMAT stm_data;
@@ -32,22 +18,22 @@ SFP_DATA sfp_data;
 std::string lora_data;
 int gps_char_pos;
 
-//hello
 
 LoraWan lora;
-BananaPi bpi;
+Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
+
 
 
 int main(int argc, char* argv[])
 {
 
 
-//    tracker.runTracking();
+    tracker.runTracking();
     sleep(1);
 
-    stm_data = bpi.getStmEnvironment();
+    stm_data = controller.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
 
     lora.setLoraData(sfp_data, stm_data);
@@ -63,10 +49,8 @@ int main(int argc, char* argv[])
     while(1)
     {
 
-        stm_data = bpi.getStmEnvironment();
+        stm_data = controller.getStmEnvironment();
         sfp_data = sfp_monitor.getValues();
-
-
 
         lora.setLoraData(sfp_data, stm_data);
 
@@ -79,7 +63,7 @@ int main(int argc, char* argv[])
                  " - SFP Status: ", (sfp_data.status == 1) ? "Connected" : "Disconnected");
         printAll("\n\n\n");
 
-        sleep(4);
+        sleep(1);
 
     }
 
