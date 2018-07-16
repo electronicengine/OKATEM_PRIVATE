@@ -24,14 +24,12 @@ Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
 
-// yeni olan
+
 
 int main(int argc, char* argv[])
 {
 
-
     tracker.runTracking();
-    sleep(1);
 
     stm_data = controller.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
@@ -40,11 +38,7 @@ int main(int argc, char* argv[])
 
     lora.sendBeacon();
 
-    sleep(1);
-
     lora.listen();
-
-    sleep(3);
 
     while(1)
     {

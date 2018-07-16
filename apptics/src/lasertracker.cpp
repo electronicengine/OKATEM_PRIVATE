@@ -69,7 +69,7 @@ int LaserTracker::startTracking()
         drawFSOFace(red_circles);
 
         //show the frame
-//        cv::imshow("frame", frame);
+//        cv::imshow("frame", gmFrame);
 
         cv::waitKey(1); // needed
 
@@ -185,9 +185,6 @@ cv::Mat LaserTracker::detectRed(cv::Mat &Frame)
 
     cv::GaussianBlur(frame_processed, frame_processed, cv::Size(9, 9), 2, 2);
 
-    cv::waitKey(1);
-
-
     return frame_processed;
 }
 
@@ -204,15 +201,10 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
 
     // Loop over all detected circles and outline them on the original image
      if( circles.size() == 0 )
-     {
-        // printf("Circle can not Find\n");
          return circles;
-     }
      else
-     {
-//         std::cout << "x= " << circles[0][0] << " y= " << circles[0][1] << "angle: " << circles[0][3] << std::endl;
          return circles;
-     }
+
 }
 
 
