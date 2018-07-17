@@ -1,0 +1,2651 @@
+ARM GAS  /tmp/ccakUOEo.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"gps.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	gpsData,416,4
+  18              		.comm	rx_data,1,1
+  19              		.global	gprmc_status
+  20              		.section	.data.gprmc_status,"aw",%progbits
+  21              		.align	1
+  24              	gprmc_status:
+  25 0000 0200     		.short	2
+  26              		.global	gprmc_enable
+  27              		.section	.data.gprmc_enable,"aw",%progbits
+  28              		.align	1
+  31              	gprmc_enable:
+  32 0000 0200     		.short	2
+  33              		.global	gpgga_status
+  34              		.section	.data.gpgga_status,"aw",%progbits
+  35              		.align	1
+  38              	gpgga_status:
+  39 0000 0200     		.short	2
+  40              		.global	gpgga_enable
+  41              		.section	.data.gpgga_enable,"aw",%progbits
+  42              		.align	1
+  45              	gpgga_enable:
+  46 0000 0200     		.short	2
+  47              		.global	gpgsa_status
+  48              		.section	.data.gpgsa_status,"aw",%progbits
+  49              		.align	1
+  52              	gpgsa_status:
+  53 0000 0200     		.short	2
+  54              		.global	gpgsa_enable
+  55              		.section	.data.gpgsa_enable,"aw",%progbits
+  56              		.align	1
+  59              	gpgsa_enable:
+  60 0000 0200     		.short	2
+  61              		.global	gpgll_status
+  62              		.section	.data.gpgll_status,"aw",%progbits
+  63              		.align	1
+  66              	gpgll_status:
+  67 0000 0200     		.short	2
+  68              		.global	gpgll_enable
+  69              		.section	.data.gpgll_enable,"aw",%progbits
+  70              		.align	1
+  73              	gpgll_enable:
+ARM GAS  /tmp/ccakUOEo.s 			page 2
+
+
+  74 0000 0200     		.short	2
+  75              		.section	.text.getGPGLL,"ax",%progbits
+  76              		.align	1
+  77              		.global	getGPGLL
+  78              		.syntax unified
+  79              		.thumb
+  80              		.thumb_func
+  81              		.fpu fpv4-sp-d16
+  83              	getGPGLL:
+  84              	.LFB141:
+  85              		.file 1 "Src/gps.c"
+   1:Src/gps.c     **** 
+   2:Src/gps.c     **** #include "gps.h"
+   3:Src/gps.c     **** #include "usart.h"
+   4:Src/gps.c     **** #include "gpio.h"
+   5:Src/gps.c     **** #include "main.h"
+   6:Src/gps.c     **** #include "FreeRTOS.h"
+   7:Src/gps.c     **** 
+   8:Src/gps.c     **** char rx_data;
+   9:Src/gps.c     **** 
+  10:Src/gps.c     **** short int gprmc_status = GPS_BUSY;
+  11:Src/gps.c     **** short int gprmc_enable = GPS_BUSY;
+  12:Src/gps.c     **** 
+  13:Src/gps.c     **** short int gpgga_status = GPS_BUSY;
+  14:Src/gps.c     **** short int gpgga_enable = GPS_BUSY;
+  15:Src/gps.c     **** 
+  16:Src/gps.c     **** short int gpgsa_status = GPS_BUSY;
+  17:Src/gps.c     **** short int gpgsa_enable = GPS_BUSY;
+  18:Src/gps.c     **** 
+  19:Src/gps.c     **** short int gpgll_status = GPS_BUSY;
+  20:Src/gps.c     **** short int gpgll_enable = GPS_BUSY;
+  21:Src/gps.c     **** 
+  22:Src/gps.c     **** 
+  23:Src/gps.c     **** void getGPGLL()
+  24:Src/gps.c     **** {
+  86              		.loc 1 24 0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 16
+  89              		@ frame_needed = 1, uses_anonymous_args = 0
+  90              		@ link register save eliminated.
+  91 0000 80B4     		push	{r7}
+  92              	.LCFI0:
+  93              		.cfi_def_cfa_offset 4
+  94              		.cfi_offset 7, -4
+  95 0002 85B0     		sub	sp, sp, #20
+  96              	.LCFI1:
+  97              		.cfi_def_cfa_offset 24
+  98 0004 00AF     		add	r7, sp, #0
+  99              	.LCFI2:
+ 100              		.cfi_def_cfa_register 7
+  25:Src/gps.c     **** 
+  26:Src/gps.c     ****     static const unsigned char gpgll_header[6] = {'$', 'G', 'P', 'G', 'L', 'L'};
+  27:Src/gps.c     ****     static unsigned char gpgll_buffer[100];
+  28:Src/gps.c     ****     static int gpgll_index = 0;
+  29:Src/gps.c     **** 
+  30:Src/gps.c     ****     gpgll_status = GPS_BUSY;
+ 101              		.loc 1 30 0
+ARM GAS  /tmp/ccakUOEo.s 			page 3
+
+
+ 102 0006 774B     		ldr	r3, .L32
+ 103 0008 0222     		movs	r2, #2
+ 104 000a 1A80     		strh	r2, [r3]	@ movhi
+  31:Src/gps.c     **** 
+  32:Src/gps.c     ****     switch(gpgll_index)
+ 105              		.loc 1 32 0
+ 106 000c 764B     		ldr	r3, .L32+4
+ 107 000e 1B68     		ldr	r3, [r3]
+ 108 0010 052B     		cmp	r3, #5
+ 109 0012 7FD8     		bhi	.L2
+ 110 0014 01A2     		adr	r2, .L4
+ 111 0016 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 112 001a 00BF     		.p2align 2
+ 113              	.L4:
+ 114 001c 35000000 		.word	.L3+1
+ 115 0020 5B000000 		.word	.L5+1
+ 116 0024 81000000 		.word	.L6+1
+ 117 0028 A7000000 		.word	.L7+1
+ 118 002c CD000000 		.word	.L8+1
+ 119 0030 F1000000 		.word	.L9+1
+ 120              		.p2align 1
+ 121              	.L3:
+  33:Src/gps.c     ****     {
+  34:Src/gps.c     **** 
+  35:Src/gps.c     ****     case 0:
+  36:Src/gps.c     ****             if(rx_data == gpgll_header[0])
+ 122              		.loc 1 36 0
+ 123 0034 6D4B     		ldr	r3, .L32+8
+ 124 0036 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 125 0038 6D4B     		ldr	r3, .L32+12
+ 126 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 127 003c 9A42     		cmp	r2, r3
+ 128 003e 40F0BD80 		bne	.L25
+  37:Src/gps.c     ****             {
+  38:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 129              		.loc 1 38 0
+ 130 0042 694B     		ldr	r3, .L32+4
+ 131 0044 1B68     		ldr	r3, [r3]
+ 132 0046 6A4A     		ldr	r2, .L32+12
+ 133 0048 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 134 004a 6A4A     		ldr	r2, .L32+16
+ 135 004c D154     		strb	r1, [r2, r3]
+  39:Src/gps.c     ****                 gpgll_index++;
+ 136              		.loc 1 39 0
+ 137 004e 664B     		ldr	r3, .L32+4
+ 138 0050 1B68     		ldr	r3, [r3]
+ 139 0052 0133     		adds	r3, r3, #1
+ 140 0054 644A     		ldr	r2, .L32+4
+ 141 0056 1360     		str	r3, [r2]
+  40:Src/gps.c     ****             }
+  41:Src/gps.c     **** 
+  42:Src/gps.c     ****             break;
+ 142              		.loc 1 42 0
+ 143 0058 B0E0     		b	.L25
+ 144              	.L5:
+  43:Src/gps.c     **** 
+  44:Src/gps.c     ****         case 1:
+ARM GAS  /tmp/ccakUOEo.s 			page 4
+
+
+  45:Src/gps.c     ****             if(rx_data == gpgll_header[1])
+ 145              		.loc 1 45 0
+ 146 005a 644B     		ldr	r3, .L32+8
+ 147 005c 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 148 005e 644B     		ldr	r3, .L32+12
+ 149 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 150 0062 9A42     		cmp	r2, r3
+ 151 0064 40F0AC80 		bne	.L26
+  46:Src/gps.c     ****             {
+  47:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 152              		.loc 1 47 0
+ 153 0068 5F4B     		ldr	r3, .L32+4
+ 154 006a 1B68     		ldr	r3, [r3]
+ 155 006c 604A     		ldr	r2, .L32+12
+ 156 006e 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 157 0070 604A     		ldr	r2, .L32+16
+ 158 0072 D154     		strb	r1, [r2, r3]
+  48:Src/gps.c     ****                 gpgll_index++;
+ 159              		.loc 1 48 0
+ 160 0074 5C4B     		ldr	r3, .L32+4
+ 161 0076 1B68     		ldr	r3, [r3]
+ 162 0078 0133     		adds	r3, r3, #1
+ 163 007a 5B4A     		ldr	r2, .L32+4
+ 164 007c 1360     		str	r3, [r2]
+  49:Src/gps.c     ****             }
+  50:Src/gps.c     **** 
+  51:Src/gps.c     ****             break;
+ 165              		.loc 1 51 0
+ 166 007e 9FE0     		b	.L26
+ 167              	.L6:
+  52:Src/gps.c     ****         case 2:
+  53:Src/gps.c     ****             if(rx_data == gpgll_header[2])
+ 168              		.loc 1 53 0
+ 169 0080 5A4B     		ldr	r3, .L32+8
+ 170 0082 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 171 0084 5A4B     		ldr	r3, .L32+12
+ 172 0086 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 173 0088 9A42     		cmp	r2, r3
+ 174 008a 40F09B80 		bne	.L27
+  54:Src/gps.c     ****             {
+  55:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 175              		.loc 1 55 0
+ 176 008e 564B     		ldr	r3, .L32+4
+ 177 0090 1B68     		ldr	r3, [r3]
+ 178 0092 574A     		ldr	r2, .L32+12
+ 179 0094 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 180 0096 574A     		ldr	r2, .L32+16
+ 181 0098 D154     		strb	r1, [r2, r3]
+  56:Src/gps.c     ****                 gpgll_index++;
+ 182              		.loc 1 56 0
+ 183 009a 534B     		ldr	r3, .L32+4
+ 184 009c 1B68     		ldr	r3, [r3]
+ 185 009e 0133     		adds	r3, r3, #1
+ 186 00a0 514A     		ldr	r2, .L32+4
+ 187 00a2 1360     		str	r3, [r2]
+  57:Src/gps.c     ****             }
+  58:Src/gps.c     **** 
+ARM GAS  /tmp/ccakUOEo.s 			page 5
+
+
+  59:Src/gps.c     ****             break;
+ 188              		.loc 1 59 0
+ 189 00a4 8EE0     		b	.L27
+ 190              	.L7:
+  60:Src/gps.c     ****         case 3:
+  61:Src/gps.c     ****             if(rx_data == gpgll_header[3])
+ 191              		.loc 1 61 0
+ 192 00a6 514B     		ldr	r3, .L32+8
+ 193 00a8 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 194 00aa 514B     		ldr	r3, .L32+12
+ 195 00ac 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 196 00ae 9A42     		cmp	r2, r3
+ 197 00b0 40F08A80 		bne	.L28
+  62:Src/gps.c     ****             {
+  63:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 198              		.loc 1 63 0
+ 199 00b4 4C4B     		ldr	r3, .L32+4
+ 200 00b6 1B68     		ldr	r3, [r3]
+ 201 00b8 4D4A     		ldr	r2, .L32+12
+ 202 00ba 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 203 00bc 4D4A     		ldr	r2, .L32+16
+ 204 00be D154     		strb	r1, [r2, r3]
+  64:Src/gps.c     ****                 gpgll_index++;
+ 205              		.loc 1 64 0
+ 206 00c0 494B     		ldr	r3, .L32+4
+ 207 00c2 1B68     		ldr	r3, [r3]
+ 208 00c4 0133     		adds	r3, r3, #1
+ 209 00c6 484A     		ldr	r2, .L32+4
+ 210 00c8 1360     		str	r3, [r2]
+  65:Src/gps.c     ****             }
+  66:Src/gps.c     **** 
+  67:Src/gps.c     ****             break;
+ 211              		.loc 1 67 0
+ 212 00ca 7DE0     		b	.L28
+ 213              	.L8:
+  68:Src/gps.c     ****         case 4:
+  69:Src/gps.c     ****             if(rx_data == gpgll_header[4])
+ 214              		.loc 1 69 0
+ 215 00cc 474B     		ldr	r3, .L32+8
+ 216 00ce 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+ 217 00d0 474B     		ldr	r3, .L32+12
+ 218 00d2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 219 00d4 9A42     		cmp	r2, r3
+ 220 00d6 79D1     		bne	.L29
+  70:Src/gps.c     ****             {
+  71:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 221              		.loc 1 71 0
+ 222 00d8 434B     		ldr	r3, .L32+4
+ 223 00da 1B68     		ldr	r3, [r3]
+ 224 00dc 444A     		ldr	r2, .L32+12
+ 225 00de 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 226 00e0 444A     		ldr	r2, .L32+16
+ 227 00e2 D154     		strb	r1, [r2, r3]
+  72:Src/gps.c     ****                 gpgll_index++;
+ 228              		.loc 1 72 0
+ 229 00e4 404B     		ldr	r3, .L32+4
+ 230 00e6 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/ccakUOEo.s 			page 6
+
+
+ 231 00e8 0133     		adds	r3, r3, #1
+ 232 00ea 3F4A     		ldr	r2, .L32+4
+ 233 00ec 1360     		str	r3, [r2]
+  73:Src/gps.c     ****             }
+  74:Src/gps.c     **** 
+  75:Src/gps.c     ****             break;
+ 234              		.loc 1 75 0
+ 235 00ee 6DE0     		b	.L29
+ 236              	.L9:
+  76:Src/gps.c     ****         case 5:
+  77:Src/gps.c     ****             if(rx_data == gpgll_header[5])
+ 237              		.loc 1 77 0
+ 238 00f0 3E4B     		ldr	r3, .L32+8
+ 239 00f2 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 240 00f4 3E4B     		ldr	r3, .L32+12
+ 241 00f6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 242 00f8 9A42     		cmp	r2, r3
+ 243 00fa 69D1     		bne	.L30
+  78:Src/gps.c     ****             {
+  79:Src/gps.c     ****                 gpgll_buffer[gpgll_index] = rx_data;
+ 244              		.loc 1 79 0
+ 245 00fc 3A4B     		ldr	r3, .L32+4
+ 246 00fe 1B68     		ldr	r3, [r3]
+ 247 0100 3B4A     		ldr	r2, .L32+12
+ 248 0102 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 249 0104 3B4A     		ldr	r2, .L32+16
+ 250 0106 D154     		strb	r1, [r2, r3]
+  80:Src/gps.c     ****                 gpgll_index++;
+ 251              		.loc 1 80 0
+ 252 0108 374B     		ldr	r3, .L32+4
+ 253 010a 1B68     		ldr	r3, [r3]
+ 254 010c 0133     		adds	r3, r3, #1
+ 255 010e 364A     		ldr	r2, .L32+4
+ 256 0110 1360     		str	r3, [r2]
+  81:Src/gps.c     ****             }
+  82:Src/gps.c     **** 
+  83:Src/gps.c     ****             break;
+ 257              		.loc 1 83 0
+ 258 0112 5DE0     		b	.L30
+ 259              	.L2:
+  84:Src/gps.c     ****         default:
+  85:Src/gps.c     **** 
+  86:Src/gps.c     **** 
+  87:Src/gps.c     ****             if(gpgll_index >= 6 && gpgll_index <= 70)
+ 260              		.loc 1 87 0
+ 261 0114 344B     		ldr	r3, .L32+4
+ 262 0116 1B68     		ldr	r3, [r3]
+ 263 0118 052B     		cmp	r3, #5
+ 264 011a 5BDD     		ble	.L31
+ 265              		.loc 1 87 0 is_stmt 0 discriminator 1
+ 266 011c 324B     		ldr	r3, .L32+4
+ 267 011e 1B68     		ldr	r3, [r3]
+ 268 0120 462B     		cmp	r3, #70
+ 269 0122 57DC     		bgt	.L31
+  88:Src/gps.c     ****             {
+  89:Src/gps.c     ****                 if(rx_data == '\n')
+ 270              		.loc 1 89 0 is_stmt 1
+ARM GAS  /tmp/ccakUOEo.s 			page 7
+
+
+ 271 0124 324B     		ldr	r3, .L32+12
+ 272 0126 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 273 0128 0A2B     		cmp	r3, #10
+ 274 012a 3BD1     		bne	.L18
+ 275              	.LBB2:
+  90:Src/gps.c     ****                 {
+  91:Src/gps.c     **** 
+  92:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 276              		.loc 1 92 0
+ 277 012c 0023     		movs	r3, #0
+ 278 012e FB60     		str	r3, [r7, #12]
+ 279 0130 08E0     		b	.L19
+ 280              	.L20:
+  93:Src/gps.c     ****                      gpsData.gpgll_body[i] = 0;
+ 281              		.loc 1 93 0 discriminator 3
+ 282 0132 314A     		ldr	r2, .L32+20
+ 283 0134 FB68     		ldr	r3, [r7, #12]
+ 284 0136 1344     		add	r3, r3, r2
+ 285 0138 6833     		adds	r3, r3, #104
+ 286 013a 0022     		movs	r2, #0
+ 287 013c 1A70     		strb	r2, [r3]
+  92:Src/gps.c     ****                      gpsData.gpgll_body[i] = 0;
+ 288              		.loc 1 92 0 discriminator 3
+ 289 013e FB68     		ldr	r3, [r7, #12]
+ 290 0140 0133     		adds	r3, r3, #1
+ 291 0142 FB60     		str	r3, [r7, #12]
+ 292              	.L19:
+  92:Src/gps.c     ****                      gpsData.gpgll_body[i] = 0;
+ 293              		.loc 1 92 0 is_stmt 0 discriminator 1
+ 294 0144 FB68     		ldr	r3, [r7, #12]
+ 295 0146 632B     		cmp	r3, #99
+ 296 0148 F3DD     		ble	.L20
+ 297              	.LBE2:
+ 298              	.LBB3:
+  94:Src/gps.c     **** 
+  95:Src/gps.c     ****                     for(int i=0; i<gpgll_index; i++)
+ 299              		.loc 1 95 0 is_stmt 1
+ 300 014a 0023     		movs	r3, #0
+ 301 014c BB60     		str	r3, [r7, #8]
+ 302 014e 0CE0     		b	.L21
+ 303              	.L22:
+  96:Src/gps.c     ****                      gpsData.gpgll_body[i] = gpgll_buffer[i];
+ 304              		.loc 1 96 0 discriminator 3
+ 305 0150 284A     		ldr	r2, .L32+16
+ 306 0152 BB68     		ldr	r3, [r7, #8]
+ 307 0154 1344     		add	r3, r3, r2
+ 308 0156 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 309 0158 274A     		ldr	r2, .L32+20
+ 310 015a BB68     		ldr	r3, [r7, #8]
+ 311 015c 1344     		add	r3, r3, r2
+ 312 015e 6833     		adds	r3, r3, #104
+ 313 0160 0A46     		mov	r2, r1
+ 314 0162 1A70     		strb	r2, [r3]
+  95:Src/gps.c     ****                      gpsData.gpgll_body[i] = gpgll_buffer[i];
+ 315              		.loc 1 95 0 discriminator 3
+ 316 0164 BB68     		ldr	r3, [r7, #8]
+ 317 0166 0133     		adds	r3, r3, #1
+ARM GAS  /tmp/ccakUOEo.s 			page 8
+
+
+ 318 0168 BB60     		str	r3, [r7, #8]
+ 319              	.L21:
+  95:Src/gps.c     ****                      gpsData.gpgll_body[i] = gpgll_buffer[i];
+ 320              		.loc 1 95 0 is_stmt 0 discriminator 1
+ 321 016a 1F4B     		ldr	r3, .L32+4
+ 322 016c 1B68     		ldr	r3, [r3]
+ 323 016e BA68     		ldr	r2, [r7, #8]
+ 324 0170 9A42     		cmp	r2, r3
+ 325 0172 EDDB     		blt	.L22
+ 326              	.LBE3:
+ 327              	.LBB4:
+  97:Src/gps.c     **** 
+  98:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 328              		.loc 1 98 0 is_stmt 1
+ 329 0174 0023     		movs	r3, #0
+ 330 0176 7B60     		str	r3, [r7, #4]
+ 331 0178 07E0     		b	.L23
+ 332              	.L24:
+  99:Src/gps.c     ****                      gpgll_buffer[i] = 0;
+ 333              		.loc 1 99 0 discriminator 3
+ 334 017a 1E4A     		ldr	r2, .L32+16
+ 335 017c 7B68     		ldr	r3, [r7, #4]
+ 336 017e 1344     		add	r3, r3, r2
+ 337 0180 0022     		movs	r2, #0
+ 338 0182 1A70     		strb	r2, [r3]
+  98:Src/gps.c     ****                      gpgll_buffer[i] = 0;
+ 339              		.loc 1 98 0 discriminator 3
+ 340 0184 7B68     		ldr	r3, [r7, #4]
+ 341 0186 0133     		adds	r3, r3, #1
+ 342 0188 7B60     		str	r3, [r7, #4]
+ 343              	.L23:
+  98:Src/gps.c     ****                      gpgll_buffer[i] = 0;
+ 344              		.loc 1 98 0 is_stmt 0 discriminator 1
+ 345 018a 7B68     		ldr	r3, [r7, #4]
+ 346 018c 632B     		cmp	r3, #99
+ 347 018e F4DD     		ble	.L24
+ 348              	.LBE4:
+ 100:Src/gps.c     **** 
+ 101:Src/gps.c     ****                     gpgll_index = 0;
+ 349              		.loc 1 101 0 is_stmt 1
+ 350 0190 154B     		ldr	r3, .L32+4
+ 351 0192 0022     		movs	r2, #0
+ 352 0194 1A60     		str	r2, [r3]
+ 102:Src/gps.c     ****                     gpgll_status = GPS_READY;
+ 353              		.loc 1 102 0
+ 354 0196 134B     		ldr	r3, .L32
+ 355 0198 0122     		movs	r2, #1
+ 356 019a 1A80     		strh	r2, [r3]	@ movhi
+ 103:Src/gps.c     ****                     gpgll_enable = GPS_READY;
+ 357              		.loc 1 103 0
+ 358 019c 174B     		ldr	r3, .L32+24
+ 359 019e 0122     		movs	r2, #1
+ 360 01a0 1A80     		strh	r2, [r3]	@ movhi
+ 104:Src/gps.c     **** 
+ 105:Src/gps.c     ****                 }
+ 106:Src/gps.c     ****                 else
+ 107:Src/gps.c     ****                 {
+ARM GAS  /tmp/ccakUOEo.s 			page 9
+
+
+ 108:Src/gps.c     ****                     gpgll_buffer[gpgll_index] = rx_data;
+ 109:Src/gps.c     ****                     gpgll_index ++;
+ 110:Src/gps.c     ****                 }
+ 111:Src/gps.c     ****             }
+ 112:Src/gps.c     ****             break;
+ 361              		.loc 1 112 0
+ 362 01a2 17E0     		b	.L31
+ 363              	.L18:
+ 108:Src/gps.c     ****                     gpgll_index ++;
+ 364              		.loc 1 108 0
+ 365 01a4 104B     		ldr	r3, .L32+4
+ 366 01a6 1B68     		ldr	r3, [r3]
+ 367 01a8 114A     		ldr	r2, .L32+12
+ 368 01aa 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 369 01ac 114A     		ldr	r2, .L32+16
+ 370 01ae D154     		strb	r1, [r2, r3]
+ 109:Src/gps.c     ****                 }
+ 371              		.loc 1 109 0
+ 372 01b0 0D4B     		ldr	r3, .L32+4
+ 373 01b2 1B68     		ldr	r3, [r3]
+ 374 01b4 0133     		adds	r3, r3, #1
+ 375 01b6 0C4A     		ldr	r2, .L32+4
+ 376 01b8 1360     		str	r3, [r2]
+ 377              		.loc 1 112 0
+ 378 01ba 0BE0     		b	.L31
+ 379              	.L25:
+  42:Src/gps.c     **** 
+ 380              		.loc 1 42 0
+ 381 01bc 00BF     		nop
+ 382 01be 0AE0     		b	.L11
+ 383              	.L26:
+  51:Src/gps.c     ****         case 2:
+ 384              		.loc 1 51 0
+ 385 01c0 00BF     		nop
+ 386 01c2 08E0     		b	.L11
+ 387              	.L27:
+  59:Src/gps.c     ****         case 3:
+ 388              		.loc 1 59 0
+ 389 01c4 00BF     		nop
+ 390 01c6 06E0     		b	.L11
+ 391              	.L28:
+  67:Src/gps.c     ****         case 4:
+ 392              		.loc 1 67 0
+ 393 01c8 00BF     		nop
+ 394 01ca 04E0     		b	.L11
+ 395              	.L29:
+  75:Src/gps.c     ****         case 5:
+ 396              		.loc 1 75 0
+ 397 01cc 00BF     		nop
+ 398 01ce 02E0     		b	.L11
+ 399              	.L30:
+  83:Src/gps.c     ****         default:
+ 400              		.loc 1 83 0
+ 401 01d0 00BF     		nop
+ 402 01d2 00E0     		b	.L11
+ 403              	.L31:
+ 404              		.loc 1 112 0
+ARM GAS  /tmp/ccakUOEo.s 			page 10
+
+
+ 405 01d4 00BF     		nop
+ 406              	.L11:
+ 113:Src/gps.c     ****     }
+ 114:Src/gps.c     **** }
+ 407              		.loc 1 114 0
+ 408 01d6 00BF     		nop
+ 409 01d8 1437     		adds	r7, r7, #20
+ 410              	.LCFI3:
+ 411              		.cfi_def_cfa_offset 4
+ 412 01da BD46     		mov	sp, r7
+ 413              	.LCFI4:
+ 414              		.cfi_def_cfa_register 13
+ 415              		@ sp needed
+ 416 01dc 5DF8047B 		ldr	r7, [sp], #4
+ 417              	.LCFI5:
+ 418              		.cfi_restore 7
+ 419              		.cfi_def_cfa_offset 0
+ 420 01e0 7047     		bx	lr
+ 421              	.L33:
+ 422 01e2 00BF     		.align	2
+ 423              	.L32:
+ 424 01e4 00000000 		.word	gpgll_status
+ 425 01e8 00000000 		.word	gpgll_index.9678
+ 426 01ec 00000000 		.word	gpgll_header.9676
+ 427 01f0 00000000 		.word	rx_data
+ 428 01f4 00000000 		.word	gpgll_buffer.9677
+ 429 01f8 00000000 		.word	gpsData
+ 430 01fc 00000000 		.word	gpgll_enable
+ 431              		.cfi_endproc
+ 432              	.LFE141:
+ 434              		.section	.text.getGPGSA,"ax",%progbits
+ 435              		.align	1
+ 436              		.global	getGPGSA
+ 437              		.syntax unified
+ 438              		.thumb
+ 439              		.thumb_func
+ 440              		.fpu fpv4-sp-d16
+ 442              	getGPGSA:
+ 443              	.LFB142:
+ 115:Src/gps.c     **** 
+ 116:Src/gps.c     **** 
+ 117:Src/gps.c     **** void getGPGSA()
+ 118:Src/gps.c     **** {
+ 444              		.loc 1 118 0
+ 445              		.cfi_startproc
+ 446              		@ args = 0, pretend = 0, frame = 16
+ 447              		@ frame_needed = 1, uses_anonymous_args = 0
+ 448              		@ link register save eliminated.
+ 449 0000 80B4     		push	{r7}
+ 450              	.LCFI6:
+ 451              		.cfi_def_cfa_offset 4
+ 452              		.cfi_offset 7, -4
+ 453 0002 85B0     		sub	sp, sp, #20
+ 454              	.LCFI7:
+ 455              		.cfi_def_cfa_offset 24
+ 456 0004 00AF     		add	r7, sp, #0
+ 457              	.LCFI8:
+ARM GAS  /tmp/ccakUOEo.s 			page 11
+
+
+ 458              		.cfi_def_cfa_register 7
+ 119:Src/gps.c     ****     static const unsigned char gpgsa_header[6] = {'$', 'G', 'P', 'G', 'S', 'A'};
+ 120:Src/gps.c     ****     static volatile unsigned char gpgsa_buffer[100];
+ 121:Src/gps.c     ****     static int gpgsa_index = 0;
+ 122:Src/gps.c     **** 
+ 123:Src/gps.c     ****     gpgsa_status = GPS_BUSY;
+ 459              		.loc 1 123 0
+ 460 0006 7A4B     		ldr	r3, .L65
+ 461 0008 0222     		movs	r2, #2
+ 462 000a 1A80     		strh	r2, [r3]	@ movhi
+ 124:Src/gps.c     **** 
+ 125:Src/gps.c     ****     switch(gpgsa_index)
+ 463              		.loc 1 125 0
+ 464 000c 794B     		ldr	r3, .L65+4
+ 465 000e 1B68     		ldr	r3, [r3]
+ 466 0010 052B     		cmp	r3, #5
+ 467 0012 7FD8     		bhi	.L35
+ 468 0014 01A2     		adr	r2, .L37
+ 469 0016 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 470 001a 00BF     		.p2align 2
+ 471              	.L37:
+ 472 001c 35000000 		.word	.L36+1
+ 473 0020 5B000000 		.word	.L38+1
+ 474 0024 81000000 		.word	.L39+1
+ 475 0028 A7000000 		.word	.L40+1
+ 476 002c CD000000 		.word	.L41+1
+ 477 0030 F1000000 		.word	.L42+1
+ 478              		.p2align 1
+ 479              	.L36:
+ 126:Src/gps.c     ****     {
+ 127:Src/gps.c     **** 
+ 128:Src/gps.c     ****         case 0:
+ 129:Src/gps.c     **** 
+ 130:Src/gps.c     ****             if(rx_data == gpgsa_header[0])
+ 480              		.loc 1 130 0
+ 481 0034 704B     		ldr	r3, .L65+8
+ 482 0036 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 483 0038 704B     		ldr	r3, .L65+12
+ 484 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 485 003c 9A42     		cmp	r2, r3
+ 486 003e 40F0C380 		bne	.L58
+ 131:Src/gps.c     ****             {
+ 132:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 487              		.loc 1 132 0
+ 488 0042 6C4B     		ldr	r3, .L65+4
+ 489 0044 1B68     		ldr	r3, [r3]
+ 490 0046 6D4A     		ldr	r2, .L65+12
+ 491 0048 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 492 004a 6D4A     		ldr	r2, .L65+16
+ 493 004c D154     		strb	r1, [r2, r3]
+ 133:Src/gps.c     ****                 gpgsa_index++;
+ 494              		.loc 1 133 0
+ 495 004e 694B     		ldr	r3, .L65+4
+ 496 0050 1B68     		ldr	r3, [r3]
+ 497 0052 0133     		adds	r3, r3, #1
+ 498 0054 674A     		ldr	r2, .L65+4
+ 499 0056 1360     		str	r3, [r2]
+ARM GAS  /tmp/ccakUOEo.s 			page 12
+
+
+ 134:Src/gps.c     ****             }
+ 135:Src/gps.c     **** 
+ 136:Src/gps.c     ****             break;
+ 500              		.loc 1 136 0
+ 501 0058 B6E0     		b	.L58
+ 502              	.L38:
+ 137:Src/gps.c     **** 
+ 138:Src/gps.c     ****         case 1:
+ 139:Src/gps.c     **** 
+ 140:Src/gps.c     ****             if(rx_data == gpgsa_header[1])
+ 503              		.loc 1 140 0
+ 504 005a 674B     		ldr	r3, .L65+8
+ 505 005c 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 506 005e 674B     		ldr	r3, .L65+12
+ 507 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 508 0062 9A42     		cmp	r2, r3
+ 509 0064 40F0B280 		bne	.L59
+ 141:Src/gps.c     ****             {
+ 142:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 510              		.loc 1 142 0
+ 511 0068 624B     		ldr	r3, .L65+4
+ 512 006a 1B68     		ldr	r3, [r3]
+ 513 006c 634A     		ldr	r2, .L65+12
+ 514 006e 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 515 0070 634A     		ldr	r2, .L65+16
+ 516 0072 D154     		strb	r1, [r2, r3]
+ 143:Src/gps.c     ****                 gpgsa_index++;
+ 517              		.loc 1 143 0
+ 518 0074 5F4B     		ldr	r3, .L65+4
+ 519 0076 1B68     		ldr	r3, [r3]
+ 520 0078 0133     		adds	r3, r3, #1
+ 521 007a 5E4A     		ldr	r2, .L65+4
+ 522 007c 1360     		str	r3, [r2]
+ 144:Src/gps.c     ****             }
+ 145:Src/gps.c     **** 
+ 146:Src/gps.c     ****             break;
+ 523              		.loc 1 146 0
+ 524 007e A5E0     		b	.L59
+ 525              	.L39:
+ 147:Src/gps.c     ****         case 2:
+ 148:Src/gps.c     **** 
+ 149:Src/gps.c     ****             if(rx_data == gpgsa_header[2])
+ 526              		.loc 1 149 0
+ 527 0080 5D4B     		ldr	r3, .L65+8
+ 528 0082 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 529 0084 5D4B     		ldr	r3, .L65+12
+ 530 0086 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 531 0088 9A42     		cmp	r2, r3
+ 532 008a 40F0A180 		bne	.L60
+ 150:Src/gps.c     ****             {
+ 151:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 533              		.loc 1 151 0
+ 534 008e 594B     		ldr	r3, .L65+4
+ 535 0090 1B68     		ldr	r3, [r3]
+ 536 0092 5A4A     		ldr	r2, .L65+12
+ 537 0094 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 538 0096 5A4A     		ldr	r2, .L65+16
+ARM GAS  /tmp/ccakUOEo.s 			page 13
+
+
+ 539 0098 D154     		strb	r1, [r2, r3]
+ 152:Src/gps.c     ****                 gpgsa_index++;
+ 540              		.loc 1 152 0
+ 541 009a 564B     		ldr	r3, .L65+4
+ 542 009c 1B68     		ldr	r3, [r3]
+ 543 009e 0133     		adds	r3, r3, #1
+ 544 00a0 544A     		ldr	r2, .L65+4
+ 545 00a2 1360     		str	r3, [r2]
+ 153:Src/gps.c     ****             }
+ 154:Src/gps.c     **** 
+ 155:Src/gps.c     ****             break;
+ 546              		.loc 1 155 0
+ 547 00a4 94E0     		b	.L60
+ 548              	.L40:
+ 156:Src/gps.c     ****         case 3:
+ 157:Src/gps.c     **** 
+ 158:Src/gps.c     ****             if(rx_data == gpgsa_header[3])
+ 549              		.loc 1 158 0
+ 550 00a6 544B     		ldr	r3, .L65+8
+ 551 00a8 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 552 00aa 544B     		ldr	r3, .L65+12
+ 553 00ac 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 554 00ae 9A42     		cmp	r2, r3
+ 555 00b0 40F09080 		bne	.L61
+ 159:Src/gps.c     ****             {
+ 160:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 556              		.loc 1 160 0
+ 557 00b4 4F4B     		ldr	r3, .L65+4
+ 558 00b6 1B68     		ldr	r3, [r3]
+ 559 00b8 504A     		ldr	r2, .L65+12
+ 560 00ba 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 561 00bc 504A     		ldr	r2, .L65+16
+ 562 00be D154     		strb	r1, [r2, r3]
+ 161:Src/gps.c     ****                 gpgsa_index++;
+ 563              		.loc 1 161 0
+ 564 00c0 4C4B     		ldr	r3, .L65+4
+ 565 00c2 1B68     		ldr	r3, [r3]
+ 566 00c4 0133     		adds	r3, r3, #1
+ 567 00c6 4B4A     		ldr	r2, .L65+4
+ 568 00c8 1360     		str	r3, [r2]
+ 162:Src/gps.c     ****             }
+ 163:Src/gps.c     **** 
+ 164:Src/gps.c     ****             break;
+ 569              		.loc 1 164 0
+ 570 00ca 83E0     		b	.L61
+ 571              	.L41:
+ 165:Src/gps.c     ****         case 4:
+ 166:Src/gps.c     **** 
+ 167:Src/gps.c     ****             if(rx_data == gpgsa_header[4])
+ 572              		.loc 1 167 0
+ 573 00cc 4A4B     		ldr	r3, .L65+8
+ 574 00ce 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+ 575 00d0 4A4B     		ldr	r3, .L65+12
+ 576 00d2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 577 00d4 9A42     		cmp	r2, r3
+ 578 00d6 7FD1     		bne	.L62
+ 168:Src/gps.c     ****             {
+ARM GAS  /tmp/ccakUOEo.s 			page 14
+
+
+ 169:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 579              		.loc 1 169 0
+ 580 00d8 464B     		ldr	r3, .L65+4
+ 581 00da 1B68     		ldr	r3, [r3]
+ 582 00dc 474A     		ldr	r2, .L65+12
+ 583 00de 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 584 00e0 474A     		ldr	r2, .L65+16
+ 585 00e2 D154     		strb	r1, [r2, r3]
+ 170:Src/gps.c     ****                 gpgsa_index++;
+ 586              		.loc 1 170 0
+ 587 00e4 434B     		ldr	r3, .L65+4
+ 588 00e6 1B68     		ldr	r3, [r3]
+ 589 00e8 0133     		adds	r3, r3, #1
+ 590 00ea 424A     		ldr	r2, .L65+4
+ 591 00ec 1360     		str	r3, [r2]
+ 171:Src/gps.c     ****             }
+ 172:Src/gps.c     **** 
+ 173:Src/gps.c     ****             break;
+ 592              		.loc 1 173 0
+ 593 00ee 73E0     		b	.L62
+ 594              	.L42:
+ 174:Src/gps.c     ****         case 5:
+ 175:Src/gps.c     **** 
+ 176:Src/gps.c     ****             if(rx_data == gpgsa_header[5])
+ 595              		.loc 1 176 0
+ 596 00f0 414B     		ldr	r3, .L65+8
+ 597 00f2 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 598 00f4 414B     		ldr	r3, .L65+12
+ 599 00f6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 600 00f8 9A42     		cmp	r2, r3
+ 601 00fa 6FD1     		bne	.L63
+ 177:Src/gps.c     ****             {
+ 178:Src/gps.c     ****                 gpgsa_buffer[gpgsa_index] = rx_data;
+ 602              		.loc 1 178 0
+ 603 00fc 3D4B     		ldr	r3, .L65+4
+ 604 00fe 1B68     		ldr	r3, [r3]
+ 605 0100 3E4A     		ldr	r2, .L65+12
+ 606 0102 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 607 0104 3E4A     		ldr	r2, .L65+16
+ 608 0106 D154     		strb	r1, [r2, r3]
+ 179:Src/gps.c     ****                 gpgsa_index++;
+ 609              		.loc 1 179 0
+ 610 0108 3A4B     		ldr	r3, .L65+4
+ 611 010a 1B68     		ldr	r3, [r3]
+ 612 010c 0133     		adds	r3, r3, #1
+ 613 010e 394A     		ldr	r2, .L65+4
+ 614 0110 1360     		str	r3, [r2]
+ 180:Src/gps.c     ****             }
+ 181:Src/gps.c     **** 
+ 182:Src/gps.c     ****             break;
+ 615              		.loc 1 182 0
+ 616 0112 63E0     		b	.L63
+ 617              	.L35:
+ 183:Src/gps.c     ****         default:
+ 184:Src/gps.c     **** 
+ 185:Src/gps.c     ****             if(gpgsa_index >= 6 && gpgsa_index <= 70)
+ 618              		.loc 1 185 0
+ARM GAS  /tmp/ccakUOEo.s 			page 15
+
+
+ 619 0114 374B     		ldr	r3, .L65+4
+ 620 0116 1B68     		ldr	r3, [r3]
+ 621 0118 052B     		cmp	r3, #5
+ 622 011a 61DD     		ble	.L64
+ 623              		.loc 1 185 0 is_stmt 0 discriminator 1
+ 624 011c 354B     		ldr	r3, .L65+4
+ 625 011e 1B68     		ldr	r3, [r3]
+ 626 0120 462B     		cmp	r3, #70
+ 627 0122 5DDC     		bgt	.L64
+ 186:Src/gps.c     ****             {
+ 187:Src/gps.c     ****                 if(rx_data == '\n')
+ 628              		.loc 1 187 0 is_stmt 1
+ 629 0124 354B     		ldr	r3, .L65+12
+ 630 0126 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 631 0128 0A2B     		cmp	r3, #10
+ 632 012a 41D1     		bne	.L51
+ 633              	.LBB5:
+ 188:Src/gps.c     ****                 {
+ 189:Src/gps.c     **** 
+ 190:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 634              		.loc 1 190 0
+ 635 012c 0023     		movs	r3, #0
+ 636 012e FB60     		str	r3, [r7, #12]
+ 637 0130 08E0     		b	.L52
+ 638              	.L53:
+ 191:Src/gps.c     ****                      gpsData.gpgsa_body[i] = 0;
+ 639              		.loc 1 191 0 discriminator 3
+ 640 0132 344A     		ldr	r2, .L65+20
+ 641 0134 FB68     		ldr	r3, [r7, #12]
+ 642 0136 1344     		add	r3, r3, r2
+ 643 0138 D033     		adds	r3, r3, #208
+ 644 013a 0022     		movs	r2, #0
+ 645 013c 1A70     		strb	r2, [r3]
+ 190:Src/gps.c     ****                      gpsData.gpgsa_body[i] = 0;
+ 646              		.loc 1 190 0 discriminator 3
+ 647 013e FB68     		ldr	r3, [r7, #12]
+ 648 0140 0133     		adds	r3, r3, #1
+ 649 0142 FB60     		str	r3, [r7, #12]
+ 650              	.L52:
+ 190:Src/gps.c     ****                      gpsData.gpgsa_body[i] = 0;
+ 651              		.loc 1 190 0 is_stmt 0 discriminator 1
+ 652 0144 FB68     		ldr	r3, [r7, #12]
+ 653 0146 632B     		cmp	r3, #99
+ 654 0148 F3DD     		ble	.L53
+ 655              	.LBE5:
+ 656              	.LBB6:
+ 192:Src/gps.c     **** 
+ 193:Src/gps.c     ****                     for(int i=0; i<gpgsa_index; i++)
+ 657              		.loc 1 193 0 is_stmt 1
+ 658 014a 0023     		movs	r3, #0
+ 659 014c BB60     		str	r3, [r7, #8]
+ 660 014e 0DE0     		b	.L54
+ 661              	.L55:
+ 194:Src/gps.c     ****                      gpsData.gpgsa_body[i] = gpgsa_buffer[i];
+ 662              		.loc 1 194 0 discriminator 3
+ 663 0150 2B4A     		ldr	r2, .L65+16
+ 664 0152 BB68     		ldr	r3, [r7, #8]
+ARM GAS  /tmp/ccakUOEo.s 			page 16
+
+
+ 665 0154 1344     		add	r3, r3, r2
+ 666 0156 1B78     		ldrb	r3, [r3]
+ 667 0158 D9B2     		uxtb	r1, r3
+ 668 015a 2A4A     		ldr	r2, .L65+20
+ 669 015c BB68     		ldr	r3, [r7, #8]
+ 670 015e 1344     		add	r3, r3, r2
+ 671 0160 D033     		adds	r3, r3, #208
+ 672 0162 0A46     		mov	r2, r1
+ 673 0164 1A70     		strb	r2, [r3]
+ 193:Src/gps.c     ****                      gpsData.gpgsa_body[i] = gpgsa_buffer[i];
+ 674              		.loc 1 193 0 discriminator 3
+ 675 0166 BB68     		ldr	r3, [r7, #8]
+ 676 0168 0133     		adds	r3, r3, #1
+ 677 016a BB60     		str	r3, [r7, #8]
+ 678              	.L54:
+ 193:Src/gps.c     ****                      gpsData.gpgsa_body[i] = gpgsa_buffer[i];
+ 679              		.loc 1 193 0 is_stmt 0 discriminator 1
+ 680 016c 214B     		ldr	r3, .L65+4
+ 681 016e 1B68     		ldr	r3, [r3]
+ 682 0170 BA68     		ldr	r2, [r7, #8]
+ 683 0172 9A42     		cmp	r2, r3
+ 684 0174 ECDB     		blt	.L55
+ 685              	.LBE6:
+ 686              	.LBB7:
+ 195:Src/gps.c     **** 
+ 196:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 687              		.loc 1 196 0 is_stmt 1
+ 688 0176 0023     		movs	r3, #0
+ 689 0178 7B60     		str	r3, [r7, #4]
+ 690 017a 07E0     		b	.L56
+ 691              	.L57:
+ 197:Src/gps.c     ****                      gpgsa_buffer[i] = 0;
+ 692              		.loc 1 197 0 discriminator 3
+ 693 017c 204A     		ldr	r2, .L65+16
+ 694 017e 7B68     		ldr	r3, [r7, #4]
+ 695 0180 1344     		add	r3, r3, r2
+ 696 0182 0022     		movs	r2, #0
+ 697 0184 1A70     		strb	r2, [r3]
+ 196:Src/gps.c     ****                      gpgsa_buffer[i] = 0;
+ 698              		.loc 1 196 0 discriminator 3
+ 699 0186 7B68     		ldr	r3, [r7, #4]
+ 700 0188 0133     		adds	r3, r3, #1
+ 701 018a 7B60     		str	r3, [r7, #4]
+ 702              	.L56:
+ 196:Src/gps.c     ****                      gpgsa_buffer[i] = 0;
+ 703              		.loc 1 196 0 is_stmt 0 discriminator 1
+ 704 018c 7B68     		ldr	r3, [r7, #4]
+ 705 018e 632B     		cmp	r3, #99
+ 706 0190 F4DD     		ble	.L57
+ 707              	.LBE7:
+ 198:Src/gps.c     **** 
+ 199:Src/gps.c     ****                     gpsData.gpgsa_size = gpgsa_index;
+ 708              		.loc 1 199 0 is_stmt 1
+ 709 0192 184B     		ldr	r3, .L65+4
+ 710 0194 1B68     		ldr	r3, [r3]
+ 711 0196 1B4A     		ldr	r2, .L65+20
+ 712 0198 C2F83431 		str	r3, [r2, #308]
+ARM GAS  /tmp/ccakUOEo.s 			page 17
+
+
+ 200:Src/gps.c     **** 
+ 201:Src/gps.c     ****                     gpgsa_index = 0;
+ 713              		.loc 1 201 0
+ 714 019c 154B     		ldr	r3, .L65+4
+ 715 019e 0022     		movs	r2, #0
+ 716 01a0 1A60     		str	r2, [r3]
+ 202:Src/gps.c     ****                     gpgsa_status = GPS_READY;
+ 717              		.loc 1 202 0
+ 718 01a2 134B     		ldr	r3, .L65
+ 719 01a4 0122     		movs	r2, #1
+ 720 01a6 1A80     		strh	r2, [r3]	@ movhi
+ 203:Src/gps.c     ****                     gpgsa_enable = GPS_READY;
+ 721              		.loc 1 203 0
+ 722 01a8 174B     		ldr	r3, .L65+24
+ 723 01aa 0122     		movs	r2, #1
+ 724 01ac 1A80     		strh	r2, [r3]	@ movhi
+ 204:Src/gps.c     **** 
+ 205:Src/gps.c     ****                 }else
+ 206:Src/gps.c     ****                 {
+ 207:Src/gps.c     ****                     gpgsa_buffer[gpgsa_index] = rx_data;
+ 208:Src/gps.c     ****                     gpgsa_index ++;
+ 209:Src/gps.c     ****                 }
+ 210:Src/gps.c     ****             }
+ 211:Src/gps.c     **** 
+ 212:Src/gps.c     ****             break;
+ 725              		.loc 1 212 0
+ 726 01ae 17E0     		b	.L64
+ 727              	.L51:
+ 207:Src/gps.c     ****                     gpgsa_index ++;
+ 728              		.loc 1 207 0
+ 729 01b0 104B     		ldr	r3, .L65+4
+ 730 01b2 1B68     		ldr	r3, [r3]
+ 731 01b4 114A     		ldr	r2, .L65+12
+ 732 01b6 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 733 01b8 114A     		ldr	r2, .L65+16
+ 734 01ba D154     		strb	r1, [r2, r3]
+ 208:Src/gps.c     ****                 }
+ 735              		.loc 1 208 0
+ 736 01bc 0D4B     		ldr	r3, .L65+4
+ 737 01be 1B68     		ldr	r3, [r3]
+ 738 01c0 0133     		adds	r3, r3, #1
+ 739 01c2 0C4A     		ldr	r2, .L65+4
+ 740 01c4 1360     		str	r3, [r2]
+ 741              		.loc 1 212 0
+ 742 01c6 0BE0     		b	.L64
+ 743              	.L58:
+ 136:Src/gps.c     **** 
+ 744              		.loc 1 136 0
+ 745 01c8 00BF     		nop
+ 746 01ca 0AE0     		b	.L44
+ 747              	.L59:
+ 146:Src/gps.c     ****         case 2:
+ 748              		.loc 1 146 0
+ 749 01cc 00BF     		nop
+ 750 01ce 08E0     		b	.L44
+ 751              	.L60:
+ 155:Src/gps.c     ****         case 3:
+ARM GAS  /tmp/ccakUOEo.s 			page 18
+
+
+ 752              		.loc 1 155 0
+ 753 01d0 00BF     		nop
+ 754 01d2 06E0     		b	.L44
+ 755              	.L61:
+ 164:Src/gps.c     ****         case 4:
+ 756              		.loc 1 164 0
+ 757 01d4 00BF     		nop
+ 758 01d6 04E0     		b	.L44
+ 759              	.L62:
+ 173:Src/gps.c     ****         case 5:
+ 760              		.loc 1 173 0
+ 761 01d8 00BF     		nop
+ 762 01da 02E0     		b	.L44
+ 763              	.L63:
+ 182:Src/gps.c     ****         default:
+ 764              		.loc 1 182 0
+ 765 01dc 00BF     		nop
+ 766 01de 00E0     		b	.L44
+ 767              	.L64:
+ 768              		.loc 1 212 0
+ 769 01e0 00BF     		nop
+ 770              	.L44:
+ 213:Src/gps.c     ****     }
+ 214:Src/gps.c     **** 
+ 215:Src/gps.c     **** }
+ 771              		.loc 1 215 0
+ 772 01e2 00BF     		nop
+ 773 01e4 1437     		adds	r7, r7, #20
+ 774              	.LCFI9:
+ 775              		.cfi_def_cfa_offset 4
+ 776 01e6 BD46     		mov	sp, r7
+ 777              	.LCFI10:
+ 778              		.cfi_def_cfa_register 13
+ 779              		@ sp needed
+ 780 01e8 5DF8047B 		ldr	r7, [sp], #4
+ 781              	.LCFI11:
+ 782              		.cfi_restore 7
+ 783              		.cfi_def_cfa_offset 0
+ 784 01ec 7047     		bx	lr
+ 785              	.L66:
+ 786 01ee 00BF     		.align	2
+ 787              	.L65:
+ 788 01f0 00000000 		.word	gpgsa_status
+ 789 01f4 00000000 		.word	gpgsa_index.9703
+ 790 01f8 00000000 		.word	gpgsa_header.9701
+ 791 01fc 00000000 		.word	rx_data
+ 792 0200 00000000 		.word	gpgsa_buffer.9702
+ 793 0204 00000000 		.word	gpsData
+ 794 0208 00000000 		.word	gpgsa_enable
+ 795              		.cfi_endproc
+ 796              	.LFE142:
+ 798              		.section	.text.getGPGGA,"ax",%progbits
+ 799              		.align	1
+ 800              		.global	getGPGGA
+ 801              		.syntax unified
+ 802              		.thumb
+ 803              		.thumb_func
+ARM GAS  /tmp/ccakUOEo.s 			page 19
+
+
+ 804              		.fpu fpv4-sp-d16
+ 806              	getGPGGA:
+ 807              	.LFB143:
+ 216:Src/gps.c     **** 
+ 217:Src/gps.c     **** 
+ 218:Src/gps.c     **** 
+ 219:Src/gps.c     **** void getGPGGA()
+ 220:Src/gps.c     **** {
+ 808              		.loc 1 220 0
+ 809              		.cfi_startproc
+ 810              		@ args = 0, pretend = 0, frame = 16
+ 811              		@ frame_needed = 1, uses_anonymous_args = 0
+ 812              		@ link register save eliminated.
+ 813 0000 80B4     		push	{r7}
+ 814              	.LCFI12:
+ 815              		.cfi_def_cfa_offset 4
+ 816              		.cfi_offset 7, -4
+ 817 0002 85B0     		sub	sp, sp, #20
+ 818              	.LCFI13:
+ 819              		.cfi_def_cfa_offset 24
+ 820 0004 00AF     		add	r7, sp, #0
+ 821              	.LCFI14:
+ 822              		.cfi_def_cfa_register 7
+ 221:Src/gps.c     ****     static const unsigned char gpgga_header[6] = {'$', 'G', 'P', 'G', 'G', 'A'};
+ 222:Src/gps.c     ****     static volatile unsigned char gpgga_buffer[100];
+ 223:Src/gps.c     ****     static int gpgga_index = 0;
+ 224:Src/gps.c     **** 
+ 225:Src/gps.c     ****     gpgga_status = GPS_BUSY;
+ 823              		.loc 1 225 0
+ 824 0006 784B     		ldr	r3, .L98
+ 825 0008 0222     		movs	r2, #2
+ 826 000a 1A80     		strh	r2, [r3]	@ movhi
+ 226:Src/gps.c     **** 
+ 227:Src/gps.c     ****     switch(gpgga_index)
+ 827              		.loc 1 227 0
+ 828 000c 774B     		ldr	r3, .L98+4
+ 829 000e 1B68     		ldr	r3, [r3]
+ 830 0010 052B     		cmp	r3, #5
+ 831 0012 7FD8     		bhi	.L68
+ 832 0014 01A2     		adr	r2, .L70
+ 833 0016 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 834 001a 00BF     		.p2align 2
+ 835              	.L70:
+ 836 001c 35000000 		.word	.L69+1
+ 837 0020 5B000000 		.word	.L71+1
+ 838 0024 81000000 		.word	.L72+1
+ 839 0028 A7000000 		.word	.L73+1
+ 840 002c CD000000 		.word	.L74+1
+ 841 0030 F1000000 		.word	.L75+1
+ 842              		.p2align 1
+ 843              	.L69:
+ 228:Src/gps.c     ****     {
+ 229:Src/gps.c     **** 
+ 230:Src/gps.c     ****         case 0:
+ 231:Src/gps.c     **** 
+ 232:Src/gps.c     ****             if(rx_data == gpgga_header[0])
+ 844              		.loc 1 232 0
+ARM GAS  /tmp/ccakUOEo.s 			page 20
+
+
+ 845 0034 6E4B     		ldr	r3, .L98+8
+ 846 0036 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 847 0038 6E4B     		ldr	r3, .L98+12
+ 848 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 849 003c 9A42     		cmp	r2, r3
+ 850 003e 40F0C080 		bne	.L91
+ 233:Src/gps.c     ****             {
+ 234:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 851              		.loc 1 234 0
+ 852 0042 6A4B     		ldr	r3, .L98+4
+ 853 0044 1B68     		ldr	r3, [r3]
+ 854 0046 6B4A     		ldr	r2, .L98+12
+ 855 0048 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 856 004a 6B4A     		ldr	r2, .L98+16
+ 857 004c D154     		strb	r1, [r2, r3]
+ 235:Src/gps.c     ****                 gpgga_index++;
+ 858              		.loc 1 235 0
+ 859 004e 674B     		ldr	r3, .L98+4
+ 860 0050 1B68     		ldr	r3, [r3]
+ 861 0052 0133     		adds	r3, r3, #1
+ 862 0054 654A     		ldr	r2, .L98+4
+ 863 0056 1360     		str	r3, [r2]
+ 236:Src/gps.c     ****             }
+ 237:Src/gps.c     **** 
+ 238:Src/gps.c     ****             break;
+ 864              		.loc 1 238 0
+ 865 0058 B3E0     		b	.L91
+ 866              	.L71:
+ 239:Src/gps.c     **** 
+ 240:Src/gps.c     ****         case 1:
+ 241:Src/gps.c     **** 
+ 242:Src/gps.c     ****             if(rx_data == gpgga_header[1])
+ 867              		.loc 1 242 0
+ 868 005a 654B     		ldr	r3, .L98+8
+ 869 005c 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 870 005e 654B     		ldr	r3, .L98+12
+ 871 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 872 0062 9A42     		cmp	r2, r3
+ 873 0064 40F0AF80 		bne	.L92
+ 243:Src/gps.c     ****             {
+ 244:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 874              		.loc 1 244 0
+ 875 0068 604B     		ldr	r3, .L98+4
+ 876 006a 1B68     		ldr	r3, [r3]
+ 877 006c 614A     		ldr	r2, .L98+12
+ 878 006e 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 879 0070 614A     		ldr	r2, .L98+16
+ 880 0072 D154     		strb	r1, [r2, r3]
+ 245:Src/gps.c     ****                 gpgga_index++;
+ 881              		.loc 1 245 0
+ 882 0074 5D4B     		ldr	r3, .L98+4
+ 883 0076 1B68     		ldr	r3, [r3]
+ 884 0078 0133     		adds	r3, r3, #1
+ 885 007a 5C4A     		ldr	r2, .L98+4
+ 886 007c 1360     		str	r3, [r2]
+ 246:Src/gps.c     ****             }
+ 247:Src/gps.c     **** 
+ARM GAS  /tmp/ccakUOEo.s 			page 21
+
+
+ 248:Src/gps.c     ****             break;
+ 887              		.loc 1 248 0
+ 888 007e A2E0     		b	.L92
+ 889              	.L72:
+ 249:Src/gps.c     ****         case 2:
+ 250:Src/gps.c     **** 
+ 251:Src/gps.c     ****             if(rx_data == gpgga_header[2])
+ 890              		.loc 1 251 0
+ 891 0080 5B4B     		ldr	r3, .L98+8
+ 892 0082 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 893 0084 5B4B     		ldr	r3, .L98+12
+ 894 0086 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 895 0088 9A42     		cmp	r2, r3
+ 896 008a 40F09E80 		bne	.L93
+ 252:Src/gps.c     ****             {
+ 253:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 897              		.loc 1 253 0
+ 898 008e 574B     		ldr	r3, .L98+4
+ 899 0090 1B68     		ldr	r3, [r3]
+ 900 0092 584A     		ldr	r2, .L98+12
+ 901 0094 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 902 0096 584A     		ldr	r2, .L98+16
+ 903 0098 D154     		strb	r1, [r2, r3]
+ 254:Src/gps.c     ****                 gpgga_index++;
+ 904              		.loc 1 254 0
+ 905 009a 544B     		ldr	r3, .L98+4
+ 906 009c 1B68     		ldr	r3, [r3]
+ 907 009e 0133     		adds	r3, r3, #1
+ 908 00a0 524A     		ldr	r2, .L98+4
+ 909 00a2 1360     		str	r3, [r2]
+ 255:Src/gps.c     ****             }
+ 256:Src/gps.c     **** 
+ 257:Src/gps.c     ****             break;
+ 910              		.loc 1 257 0
+ 911 00a4 91E0     		b	.L93
+ 912              	.L73:
+ 258:Src/gps.c     ****         case 3:
+ 259:Src/gps.c     **** 
+ 260:Src/gps.c     ****             if(rx_data == gpgga_header[3])
+ 913              		.loc 1 260 0
+ 914 00a6 524B     		ldr	r3, .L98+8
+ 915 00a8 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 916 00aa 524B     		ldr	r3, .L98+12
+ 917 00ac 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 918 00ae 9A42     		cmp	r2, r3
+ 919 00b0 40F08D80 		bne	.L94
+ 261:Src/gps.c     ****             {
+ 262:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 920              		.loc 1 262 0
+ 921 00b4 4D4B     		ldr	r3, .L98+4
+ 922 00b6 1B68     		ldr	r3, [r3]
+ 923 00b8 4E4A     		ldr	r2, .L98+12
+ 924 00ba 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 925 00bc 4E4A     		ldr	r2, .L98+16
+ 926 00be D154     		strb	r1, [r2, r3]
+ 263:Src/gps.c     ****                 gpgga_index++;
+ 927              		.loc 1 263 0
+ARM GAS  /tmp/ccakUOEo.s 			page 22
+
+
+ 928 00c0 4A4B     		ldr	r3, .L98+4
+ 929 00c2 1B68     		ldr	r3, [r3]
+ 930 00c4 0133     		adds	r3, r3, #1
+ 931 00c6 494A     		ldr	r2, .L98+4
+ 932 00c8 1360     		str	r3, [r2]
+ 264:Src/gps.c     ****             }
+ 265:Src/gps.c     **** 
+ 266:Src/gps.c     ****             break;
+ 933              		.loc 1 266 0
+ 934 00ca 80E0     		b	.L94
+ 935              	.L74:
+ 267:Src/gps.c     ****         case 4:
+ 268:Src/gps.c     **** 
+ 269:Src/gps.c     ****             if(rx_data == gpgga_header[4])
+ 936              		.loc 1 269 0
+ 937 00cc 484B     		ldr	r3, .L98+8
+ 938 00ce 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+ 939 00d0 484B     		ldr	r3, .L98+12
+ 940 00d2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 941 00d4 9A42     		cmp	r2, r3
+ 942 00d6 7CD1     		bne	.L95
+ 270:Src/gps.c     ****             {
+ 271:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 943              		.loc 1 271 0
+ 944 00d8 444B     		ldr	r3, .L98+4
+ 945 00da 1B68     		ldr	r3, [r3]
+ 946 00dc 454A     		ldr	r2, .L98+12
+ 947 00de 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 948 00e0 454A     		ldr	r2, .L98+16
+ 949 00e2 D154     		strb	r1, [r2, r3]
+ 272:Src/gps.c     ****                 gpgga_index++;
+ 950              		.loc 1 272 0
+ 951 00e4 414B     		ldr	r3, .L98+4
+ 952 00e6 1B68     		ldr	r3, [r3]
+ 953 00e8 0133     		adds	r3, r3, #1
+ 954 00ea 404A     		ldr	r2, .L98+4
+ 955 00ec 1360     		str	r3, [r2]
+ 273:Src/gps.c     ****             }
+ 274:Src/gps.c     **** 
+ 275:Src/gps.c     ****             break;
+ 956              		.loc 1 275 0
+ 957 00ee 70E0     		b	.L95
+ 958              	.L75:
+ 276:Src/gps.c     ****         case 5:
+ 277:Src/gps.c     **** 
+ 278:Src/gps.c     ****             if(rx_data == gpgga_header[5])
+ 959              		.loc 1 278 0
+ 960 00f0 3F4B     		ldr	r3, .L98+8
+ 961 00f2 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 962 00f4 3F4B     		ldr	r3, .L98+12
+ 963 00f6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 964 00f8 9A42     		cmp	r2, r3
+ 965 00fa 6CD1     		bne	.L96
+ 279:Src/gps.c     ****             {
+ 280:Src/gps.c     ****                 gpgga_buffer[gpgga_index] = rx_data;
+ 966              		.loc 1 280 0
+ 967 00fc 3B4B     		ldr	r3, .L98+4
+ARM GAS  /tmp/ccakUOEo.s 			page 23
+
+
+ 968 00fe 1B68     		ldr	r3, [r3]
+ 969 0100 3C4A     		ldr	r2, .L98+12
+ 970 0102 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 971 0104 3C4A     		ldr	r2, .L98+16
+ 972 0106 D154     		strb	r1, [r2, r3]
+ 281:Src/gps.c     ****                 gpgga_index++;
+ 973              		.loc 1 281 0
+ 974 0108 384B     		ldr	r3, .L98+4
+ 975 010a 1B68     		ldr	r3, [r3]
+ 976 010c 0133     		adds	r3, r3, #1
+ 977 010e 374A     		ldr	r2, .L98+4
+ 978 0110 1360     		str	r3, [r2]
+ 282:Src/gps.c     ****             }
+ 283:Src/gps.c     **** 
+ 284:Src/gps.c     ****             break;
+ 979              		.loc 1 284 0
+ 980 0112 60E0     		b	.L96
+ 981              	.L68:
+ 285:Src/gps.c     ****         default:
+ 286:Src/gps.c     **** 
+ 287:Src/gps.c     ****             if(gpgga_index >= 6 && gpgga_index <= 70)
+ 982              		.loc 1 287 0
+ 983 0114 354B     		ldr	r3, .L98+4
+ 984 0116 1B68     		ldr	r3, [r3]
+ 985 0118 052B     		cmp	r3, #5
+ 986 011a 5EDD     		ble	.L97
+ 987              		.loc 1 287 0 is_stmt 0 discriminator 1
+ 988 011c 334B     		ldr	r3, .L98+4
+ 989 011e 1B68     		ldr	r3, [r3]
+ 990 0120 462B     		cmp	r3, #70
+ 991 0122 5ADC     		bgt	.L97
+ 288:Src/gps.c     ****             {
+ 289:Src/gps.c     ****                 if(rx_data == '\n')
+ 992              		.loc 1 289 0 is_stmt 1
+ 993 0124 334B     		ldr	r3, .L98+12
+ 994 0126 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 995 0128 0A2B     		cmp	r3, #10
+ 996 012a 3ED1     		bne	.L84
+ 997              	.LBB8:
+ 290:Src/gps.c     ****                 {
+ 291:Src/gps.c     **** 
+ 292:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 998              		.loc 1 292 0
+ 999 012c 0023     		movs	r3, #0
+ 1000 012e FB60     		str	r3, [r7, #12]
+ 1001 0130 07E0     		b	.L85
+ 1002              	.L86:
+ 293:Src/gps.c     ****                      gpsData.gpgga_body[i] = 0;
+ 1003              		.loc 1 293 0 discriminator 3
+ 1004 0132 324A     		ldr	r2, .L98+20
+ 1005 0134 FB68     		ldr	r3, [r7, #12]
+ 1006 0136 1344     		add	r3, r3, r2
+ 1007 0138 0022     		movs	r2, #0
+ 1008 013a 1A70     		strb	r2, [r3]
+ 292:Src/gps.c     ****                      gpsData.gpgga_body[i] = 0;
+ 1009              		.loc 1 292 0 discriminator 3
+ 1010 013c FB68     		ldr	r3, [r7, #12]
+ARM GAS  /tmp/ccakUOEo.s 			page 24
+
+
+ 1011 013e 0133     		adds	r3, r3, #1
+ 1012 0140 FB60     		str	r3, [r7, #12]
+ 1013              	.L85:
+ 292:Src/gps.c     ****                      gpsData.gpgga_body[i] = 0;
+ 1014              		.loc 1 292 0 is_stmt 0 discriminator 1
+ 1015 0142 FB68     		ldr	r3, [r7, #12]
+ 1016 0144 632B     		cmp	r3, #99
+ 1017 0146 F4DD     		ble	.L86
+ 1018              	.LBE8:
+ 1019              	.LBB9:
+ 294:Src/gps.c     **** 
+ 295:Src/gps.c     ****                     for(int i=0; i<gpgga_index; i++)
+ 1020              		.loc 1 295 0 is_stmt 1
+ 1021 0148 0023     		movs	r3, #0
+ 1022 014a BB60     		str	r3, [r7, #8]
+ 1023 014c 0CE0     		b	.L87
+ 1024              	.L88:
+ 296:Src/gps.c     ****                      gpsData.gpgga_body[i] = gpgga_buffer[i];
+ 1025              		.loc 1 296 0 discriminator 3
+ 1026 014e 2A4A     		ldr	r2, .L98+16
+ 1027 0150 BB68     		ldr	r3, [r7, #8]
+ 1028 0152 1344     		add	r3, r3, r2
+ 1029 0154 1B78     		ldrb	r3, [r3]
+ 1030 0156 D9B2     		uxtb	r1, r3
+ 1031 0158 284A     		ldr	r2, .L98+20
+ 1032 015a BB68     		ldr	r3, [r7, #8]
+ 1033 015c 1344     		add	r3, r3, r2
+ 1034 015e 0A46     		mov	r2, r1
+ 1035 0160 1A70     		strb	r2, [r3]
+ 295:Src/gps.c     ****                      gpsData.gpgga_body[i] = gpgga_buffer[i];
+ 1036              		.loc 1 295 0 discriminator 3
+ 1037 0162 BB68     		ldr	r3, [r7, #8]
+ 1038 0164 0133     		adds	r3, r3, #1
+ 1039 0166 BB60     		str	r3, [r7, #8]
+ 1040              	.L87:
+ 295:Src/gps.c     ****                      gpsData.gpgga_body[i] = gpgga_buffer[i];
+ 1041              		.loc 1 295 0 is_stmt 0 discriminator 1
+ 1042 0168 204B     		ldr	r3, .L98+4
+ 1043 016a 1B68     		ldr	r3, [r3]
+ 1044 016c BA68     		ldr	r2, [r7, #8]
+ 1045 016e 9A42     		cmp	r2, r3
+ 1046 0170 EDDB     		blt	.L88
+ 1047              	.LBE9:
+ 1048              	.LBB10:
+ 297:Src/gps.c     **** 
+ 298:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 1049              		.loc 1 298 0 is_stmt 1
+ 1050 0172 0023     		movs	r3, #0
+ 1051 0174 7B60     		str	r3, [r7, #4]
+ 1052 0176 07E0     		b	.L89
+ 1053              	.L90:
+ 299:Src/gps.c     ****                      gpgga_buffer[i] = 0;
+ 1054              		.loc 1 299 0 discriminator 3
+ 1055 0178 1F4A     		ldr	r2, .L98+16
+ 1056 017a 7B68     		ldr	r3, [r7, #4]
+ 1057 017c 1344     		add	r3, r3, r2
+ 1058 017e 0022     		movs	r2, #0
+ARM GAS  /tmp/ccakUOEo.s 			page 25
+
+
+ 1059 0180 1A70     		strb	r2, [r3]
+ 298:Src/gps.c     ****                      gpgga_buffer[i] = 0;
+ 1060              		.loc 1 298 0 discriminator 3
+ 1061 0182 7B68     		ldr	r3, [r7, #4]
+ 1062 0184 0133     		adds	r3, r3, #1
+ 1063 0186 7B60     		str	r3, [r7, #4]
+ 1064              	.L89:
+ 298:Src/gps.c     ****                      gpgga_buffer[i] = 0;
+ 1065              		.loc 1 298 0 is_stmt 0 discriminator 1
+ 1066 0188 7B68     		ldr	r3, [r7, #4]
+ 1067 018a 632B     		cmp	r3, #99
+ 1068 018c F4DD     		ble	.L90
+ 1069              	.LBE10:
+ 300:Src/gps.c     **** 
+ 301:Src/gps.c     ****                     gpsData.gpgga_size = gpgga_index;
+ 1070              		.loc 1 301 0 is_stmt 1
+ 1071 018e 174B     		ldr	r3, .L98+4
+ 1072 0190 1B68     		ldr	r3, [r3]
+ 1073 0192 1A4A     		ldr	r2, .L98+20
+ 1074 0194 5366     		str	r3, [r2, #100]
+ 302:Src/gps.c     **** 
+ 303:Src/gps.c     ****                     gpgga_index = 0;
+ 1075              		.loc 1 303 0
+ 1076 0196 154B     		ldr	r3, .L98+4
+ 1077 0198 0022     		movs	r2, #0
+ 1078 019a 1A60     		str	r2, [r3]
+ 304:Src/gps.c     ****                     gpgga_status = GPS_READY;
+ 1079              		.loc 1 304 0
+ 1080 019c 124B     		ldr	r3, .L98
+ 1081 019e 0122     		movs	r2, #1
+ 1082 01a0 1A80     		strh	r2, [r3]	@ movhi
+ 305:Src/gps.c     ****                     gpgga_enable = GPS_READY;
+ 1083              		.loc 1 305 0
+ 1084 01a2 174B     		ldr	r3, .L98+24
+ 1085 01a4 0122     		movs	r2, #1
+ 1086 01a6 1A80     		strh	r2, [r3]	@ movhi
+ 306:Src/gps.c     **** 
+ 307:Src/gps.c     ****                 }else
+ 308:Src/gps.c     ****                 {
+ 309:Src/gps.c     ****                     gpgga_buffer[gpgga_index] = rx_data;
+ 310:Src/gps.c     ****                     gpgga_index ++;
+ 311:Src/gps.c     ****                 }
+ 312:Src/gps.c     ****             }
+ 313:Src/gps.c     **** 
+ 314:Src/gps.c     ****             break;
+ 1087              		.loc 1 314 0
+ 1088 01a8 17E0     		b	.L97
+ 1089              	.L84:
+ 309:Src/gps.c     ****                     gpgga_index ++;
+ 1090              		.loc 1 309 0
+ 1091 01aa 104B     		ldr	r3, .L98+4
+ 1092 01ac 1B68     		ldr	r3, [r3]
+ 1093 01ae 114A     		ldr	r2, .L98+12
+ 1094 01b0 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1095 01b2 114A     		ldr	r2, .L98+16
+ 1096 01b4 D154     		strb	r1, [r2, r3]
+ 310:Src/gps.c     ****                 }
+ARM GAS  /tmp/ccakUOEo.s 			page 26
+
+
+ 1097              		.loc 1 310 0
+ 1098 01b6 0D4B     		ldr	r3, .L98+4
+ 1099 01b8 1B68     		ldr	r3, [r3]
+ 1100 01ba 0133     		adds	r3, r3, #1
+ 1101 01bc 0B4A     		ldr	r2, .L98+4
+ 1102 01be 1360     		str	r3, [r2]
+ 1103              		.loc 1 314 0
+ 1104 01c0 0BE0     		b	.L97
+ 1105              	.L91:
+ 238:Src/gps.c     **** 
+ 1106              		.loc 1 238 0
+ 1107 01c2 00BF     		nop
+ 1108 01c4 0AE0     		b	.L77
+ 1109              	.L92:
+ 248:Src/gps.c     ****         case 2:
+ 1110              		.loc 1 248 0
+ 1111 01c6 00BF     		nop
+ 1112 01c8 08E0     		b	.L77
+ 1113              	.L93:
+ 257:Src/gps.c     ****         case 3:
+ 1114              		.loc 1 257 0
+ 1115 01ca 00BF     		nop
+ 1116 01cc 06E0     		b	.L77
+ 1117              	.L94:
+ 266:Src/gps.c     ****         case 4:
+ 1118              		.loc 1 266 0
+ 1119 01ce 00BF     		nop
+ 1120 01d0 04E0     		b	.L77
+ 1121              	.L95:
+ 275:Src/gps.c     ****         case 5:
+ 1122              		.loc 1 275 0
+ 1123 01d2 00BF     		nop
+ 1124 01d4 02E0     		b	.L77
+ 1125              	.L96:
+ 284:Src/gps.c     ****         default:
+ 1126              		.loc 1 284 0
+ 1127 01d6 00BF     		nop
+ 1128 01d8 00E0     		b	.L77
+ 1129              	.L97:
+ 1130              		.loc 1 314 0
+ 1131 01da 00BF     		nop
+ 1132              	.L77:
+ 315:Src/gps.c     ****     }
+ 316:Src/gps.c     **** 
+ 317:Src/gps.c     **** }
+ 1133              		.loc 1 317 0
+ 1134 01dc 00BF     		nop
+ 1135 01de 1437     		adds	r7, r7, #20
+ 1136              	.LCFI15:
+ 1137              		.cfi_def_cfa_offset 4
+ 1138 01e0 BD46     		mov	sp, r7
+ 1139              	.LCFI16:
+ 1140              		.cfi_def_cfa_register 13
+ 1141              		@ sp needed
+ 1142 01e2 5DF8047B 		ldr	r7, [sp], #4
+ 1143              	.LCFI17:
+ 1144              		.cfi_restore 7
+ARM GAS  /tmp/ccakUOEo.s 			page 27
+
+
+ 1145              		.cfi_def_cfa_offset 0
+ 1146 01e6 7047     		bx	lr
+ 1147              	.L99:
+ 1148              		.align	2
+ 1149              	.L98:
+ 1150 01e8 00000000 		.word	gpgga_status
+ 1151 01ec 00000000 		.word	gpgga_index.9728
+ 1152 01f0 00000000 		.word	gpgga_header.9726
+ 1153 01f4 00000000 		.word	rx_data
+ 1154 01f8 00000000 		.word	gpgga_buffer.9727
+ 1155 01fc 00000000 		.word	gpsData
+ 1156 0200 00000000 		.word	gpgga_enable
+ 1157              		.cfi_endproc
+ 1158              	.LFE143:
+ 1160              		.section	.text.getGPRMC,"ax",%progbits
+ 1161              		.align	1
+ 1162              		.global	getGPRMC
+ 1163              		.syntax unified
+ 1164              		.thumb
+ 1165              		.thumb_func
+ 1166              		.fpu fpv4-sp-d16
+ 1168              	getGPRMC:
+ 1169              	.LFB144:
+ 318:Src/gps.c     **** 
+ 319:Src/gps.c     **** 
+ 320:Src/gps.c     **** 
+ 321:Src/gps.c     **** void getGPRMC()
+ 322:Src/gps.c     **** {
+ 1170              		.loc 1 322 0
+ 1171              		.cfi_startproc
+ 1172              		@ args = 0, pretend = 0, frame = 16
+ 1173              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1174              		@ link register save eliminated.
+ 1175 0000 80B4     		push	{r7}
+ 1176              	.LCFI18:
+ 1177              		.cfi_def_cfa_offset 4
+ 1178              		.cfi_offset 7, -4
+ 1179 0002 85B0     		sub	sp, sp, #20
+ 1180              	.LCFI19:
+ 1181              		.cfi_def_cfa_offset 24
+ 1182 0004 00AF     		add	r7, sp, #0
+ 1183              	.LCFI20:
+ 1184              		.cfi_def_cfa_register 7
+ 323:Src/gps.c     **** 
+ 324:Src/gps.c     ****     static const unsigned char gprmc_header[6] = {'$', 'G', 'P', 'R', 'M', 'C'};
+ 325:Src/gps.c     ****     static unsigned char gprmc_buffer[100];
+ 326:Src/gps.c     ****     static int gprmc_index = 0;
+ 327:Src/gps.c     **** 
+ 328:Src/gps.c     ****     gprmc_status = GPS_BUSY;
+ 1185              		.loc 1 328 0
+ 1186 0006 7F4B     		ldr	r3, .L132
+ 1187 0008 0222     		movs	r2, #2
+ 1188 000a 1A80     		strh	r2, [r3]	@ movhi
+ 329:Src/gps.c     **** 
+ 330:Src/gps.c     ****     switch(gprmc_index)
+ 1189              		.loc 1 330 0
+ 1190 000c 7E4B     		ldr	r3, .L132+4
+ARM GAS  /tmp/ccakUOEo.s 			page 28
+
+
+ 1191 000e 1B68     		ldr	r3, [r3]
+ 1192 0010 052B     		cmp	r3, #5
+ 1193 0012 00F28080 		bhi	.L101
+ 1194 0016 01A2     		adr	r2, .L103
+ 1195 0018 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 1196              		.p2align 2
+ 1197              	.L103:
+ 1198 001c 35000000 		.word	.L102+1
+ 1199 0020 5B000000 		.word	.L104+1
+ 1200 0024 81000000 		.word	.L105+1
+ 1201 0028 A7000000 		.word	.L106+1
+ 1202 002c CD000000 		.word	.L107+1
+ 1203 0030 F3000000 		.word	.L108+1
+ 1204              		.p2align 1
+ 1205              	.L102:
+ 331:Src/gps.c     ****     {
+ 332:Src/gps.c     **** 
+ 333:Src/gps.c     ****         case 0:
+ 334:Src/gps.c     ****             if(rx_data == gprmc_header[0])
+ 1206              		.loc 1 334 0
+ 1207 0034 754B     		ldr	r3, .L132+8
+ 1208 0036 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 1209 0038 754B     		ldr	r3, .L132+12
+ 1210 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1211 003c 9A42     		cmp	r2, r3
+ 1212 003e 40F0D080 		bne	.L126
+ 335:Src/gps.c     ****             {
+ 336:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1213              		.loc 1 336 0
+ 1214 0042 714B     		ldr	r3, .L132+4
+ 1215 0044 1B68     		ldr	r3, [r3]
+ 1216 0046 724A     		ldr	r2, .L132+12
+ 1217 0048 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1218 004a 724A     		ldr	r2, .L132+16
+ 1219 004c D154     		strb	r1, [r2, r3]
+ 337:Src/gps.c     ****                 gprmc_index++;
+ 1220              		.loc 1 337 0
+ 1221 004e 6E4B     		ldr	r3, .L132+4
+ 1222 0050 1B68     		ldr	r3, [r3]
+ 1223 0052 0133     		adds	r3, r3, #1
+ 1224 0054 6C4A     		ldr	r2, .L132+4
+ 1225 0056 1360     		str	r3, [r2]
+ 338:Src/gps.c     ****             }
+ 339:Src/gps.c     **** 
+ 340:Src/gps.c     ****             break;
+ 1226              		.loc 1 340 0
+ 1227 0058 C3E0     		b	.L126
+ 1228              	.L104:
+ 341:Src/gps.c     **** 
+ 342:Src/gps.c     ****         case 1:
+ 343:Src/gps.c     ****             if(rx_data == gprmc_header[1])
+ 1229              		.loc 1 343 0
+ 1230 005a 6C4B     		ldr	r3, .L132+8
+ 1231 005c 5A78     		ldrb	r2, [r3, #1]	@ zero_extendqisi2
+ 1232 005e 6C4B     		ldr	r3, .L132+12
+ 1233 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1234 0062 9A42     		cmp	r2, r3
+ARM GAS  /tmp/ccakUOEo.s 			page 29
+
+
+ 1235 0064 40F0BF80 		bne	.L127
+ 344:Src/gps.c     ****             {
+ 345:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1236              		.loc 1 345 0
+ 1237 0068 674B     		ldr	r3, .L132+4
+ 1238 006a 1B68     		ldr	r3, [r3]
+ 1239 006c 684A     		ldr	r2, .L132+12
+ 1240 006e 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1241 0070 684A     		ldr	r2, .L132+16
+ 1242 0072 D154     		strb	r1, [r2, r3]
+ 346:Src/gps.c     ****                 gprmc_index++;
+ 1243              		.loc 1 346 0
+ 1244 0074 644B     		ldr	r3, .L132+4
+ 1245 0076 1B68     		ldr	r3, [r3]
+ 1246 0078 0133     		adds	r3, r3, #1
+ 1247 007a 634A     		ldr	r2, .L132+4
+ 1248 007c 1360     		str	r3, [r2]
+ 347:Src/gps.c     ****             }
+ 348:Src/gps.c     **** 
+ 349:Src/gps.c     ****             break;
+ 1249              		.loc 1 349 0
+ 1250 007e B2E0     		b	.L127
+ 1251              	.L105:
+ 350:Src/gps.c     ****         case 2:
+ 351:Src/gps.c     ****             if(rx_data == gprmc_header[2])
+ 1252              		.loc 1 351 0
+ 1253 0080 624B     		ldr	r3, .L132+8
+ 1254 0082 9A78     		ldrb	r2, [r3, #2]	@ zero_extendqisi2
+ 1255 0084 624B     		ldr	r3, .L132+12
+ 1256 0086 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1257 0088 9A42     		cmp	r2, r3
+ 1258 008a 40F0AE80 		bne	.L128
+ 352:Src/gps.c     ****             {
+ 353:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1259              		.loc 1 353 0
+ 1260 008e 5E4B     		ldr	r3, .L132+4
+ 1261 0090 1B68     		ldr	r3, [r3]
+ 1262 0092 5F4A     		ldr	r2, .L132+12
+ 1263 0094 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1264 0096 5F4A     		ldr	r2, .L132+16
+ 1265 0098 D154     		strb	r1, [r2, r3]
+ 354:Src/gps.c     ****                 gprmc_index++;
+ 1266              		.loc 1 354 0
+ 1267 009a 5B4B     		ldr	r3, .L132+4
+ 1268 009c 1B68     		ldr	r3, [r3]
+ 1269 009e 0133     		adds	r3, r3, #1
+ 1270 00a0 594A     		ldr	r2, .L132+4
+ 1271 00a2 1360     		str	r3, [r2]
+ 355:Src/gps.c     ****             }
+ 356:Src/gps.c     **** 
+ 357:Src/gps.c     ****             break;
+ 1272              		.loc 1 357 0
+ 1273 00a4 A1E0     		b	.L128
+ 1274              	.L106:
+ 358:Src/gps.c     ****         case 3:
+ 359:Src/gps.c     ****             if(rx_data == gprmc_header[3])
+ 1275              		.loc 1 359 0
+ARM GAS  /tmp/ccakUOEo.s 			page 30
+
+
+ 1276 00a6 594B     		ldr	r3, .L132+8
+ 1277 00a8 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 1278 00aa 594B     		ldr	r3, .L132+12
+ 1279 00ac 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1280 00ae 9A42     		cmp	r2, r3
+ 1281 00b0 40F09D80 		bne	.L129
+ 360:Src/gps.c     ****             {
+ 361:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1282              		.loc 1 361 0
+ 1283 00b4 544B     		ldr	r3, .L132+4
+ 1284 00b6 1B68     		ldr	r3, [r3]
+ 1285 00b8 554A     		ldr	r2, .L132+12
+ 1286 00ba 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1287 00bc 554A     		ldr	r2, .L132+16
+ 1288 00be D154     		strb	r1, [r2, r3]
+ 362:Src/gps.c     ****                 gprmc_index++;
+ 1289              		.loc 1 362 0
+ 1290 00c0 514B     		ldr	r3, .L132+4
+ 1291 00c2 1B68     		ldr	r3, [r3]
+ 1292 00c4 0133     		adds	r3, r3, #1
+ 1293 00c6 504A     		ldr	r2, .L132+4
+ 1294 00c8 1360     		str	r3, [r2]
+ 363:Src/gps.c     ****             }
+ 364:Src/gps.c     **** 
+ 365:Src/gps.c     ****             break;
+ 1295              		.loc 1 365 0
+ 1296 00ca 90E0     		b	.L129
+ 1297              	.L107:
+ 366:Src/gps.c     ****         case 4:
+ 367:Src/gps.c     ****             if(rx_data == gprmc_header[4])
+ 1298              		.loc 1 367 0
+ 1299 00cc 4F4B     		ldr	r3, .L132+8
+ 1300 00ce 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+ 1301 00d0 4F4B     		ldr	r3, .L132+12
+ 1302 00d2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1303 00d4 9A42     		cmp	r2, r3
+ 1304 00d6 40F08C80 		bne	.L130
+ 368:Src/gps.c     ****             {
+ 369:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1305              		.loc 1 369 0
+ 1306 00da 4B4B     		ldr	r3, .L132+4
+ 1307 00dc 1B68     		ldr	r3, [r3]
+ 1308 00de 4C4A     		ldr	r2, .L132+12
+ 1309 00e0 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1310 00e2 4C4A     		ldr	r2, .L132+16
+ 1311 00e4 D154     		strb	r1, [r2, r3]
+ 370:Src/gps.c     ****                 gprmc_index++;
+ 1312              		.loc 1 370 0
+ 1313 00e6 484B     		ldr	r3, .L132+4
+ 1314 00e8 1B68     		ldr	r3, [r3]
+ 1315 00ea 0133     		adds	r3, r3, #1
+ 1316 00ec 464A     		ldr	r2, .L132+4
+ 1317 00ee 1360     		str	r3, [r2]
+ 371:Src/gps.c     ****             }
+ 372:Src/gps.c     **** 
+ 373:Src/gps.c     ****             break;
+ 1318              		.loc 1 373 0
+ARM GAS  /tmp/ccakUOEo.s 			page 31
+
+
+ 1319 00f0 7FE0     		b	.L130
+ 1320              	.L108:
+ 374:Src/gps.c     ****         case 5:
+ 375:Src/gps.c     ****             if(rx_data == gprmc_header[5])
+ 1321              		.loc 1 375 0
+ 1322 00f2 464B     		ldr	r3, .L132+8
+ 1323 00f4 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 1324 00f6 464B     		ldr	r3, .L132+12
+ 1325 00f8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1326 00fa 9A42     		cmp	r2, r3
+ 1327 00fc 7BD1     		bne	.L131
+ 376:Src/gps.c     ****             {
+ 377:Src/gps.c     ****                 gprmc_buffer[gprmc_index] = rx_data;
+ 1328              		.loc 1 377 0
+ 1329 00fe 424B     		ldr	r3, .L132+4
+ 1330 0100 1B68     		ldr	r3, [r3]
+ 1331 0102 434A     		ldr	r2, .L132+12
+ 1332 0104 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1333 0106 434A     		ldr	r2, .L132+16
+ 1334 0108 D154     		strb	r1, [r2, r3]
+ 378:Src/gps.c     ****                 gprmc_index++;
+ 1335              		.loc 1 378 0
+ 1336 010a 3F4B     		ldr	r3, .L132+4
+ 1337 010c 1B68     		ldr	r3, [r3]
+ 1338 010e 0133     		adds	r3, r3, #1
+ 1339 0110 3D4A     		ldr	r2, .L132+4
+ 1340 0112 1360     		str	r3, [r2]
+ 379:Src/gps.c     ****             }
+ 380:Src/gps.c     **** 
+ 381:Src/gps.c     ****             break;
+ 1341              		.loc 1 381 0
+ 1342 0114 6FE0     		b	.L131
+ 1343              	.L101:
+ 382:Src/gps.c     **** 
+ 383:Src/gps.c     ****         default:
+ 384:Src/gps.c     **** 
+ 385:Src/gps.c     ****             if(gprmc_index >= 6 && gprmc_index <= 70)
+ 1344              		.loc 1 385 0
+ 1345 0116 3C4B     		ldr	r3, .L132+4
+ 1346 0118 1B68     		ldr	r3, [r3]
+ 1347 011a 052B     		cmp	r3, #5
+ 1348 011c 56DD     		ble	.L116
+ 1349              		.loc 1 385 0 is_stmt 0 discriminator 1
+ 1350 011e 3A4B     		ldr	r3, .L132+4
+ 1351 0120 1B68     		ldr	r3, [r3]
+ 1352 0122 462B     		cmp	r3, #70
+ 1353 0124 52DC     		bgt	.L116
+ 386:Src/gps.c     ****             {
+ 387:Src/gps.c     ****                 if(rx_data == '\n')
+ 1354              		.loc 1 387 0 is_stmt 1
+ 1355 0126 3A4B     		ldr	r3, .L132+12
+ 1356 0128 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1357 012a 0A2B     		cmp	r3, #10
+ 1358 012c 42D1     		bne	.L117
+ 1359              	.LBB11:
+ 388:Src/gps.c     ****                 {
+ 389:Src/gps.c     **** 
+ARM GAS  /tmp/ccakUOEo.s 			page 32
+
+
+ 390:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 1360              		.loc 1 390 0
+ 1361 012e 0023     		movs	r3, #0
+ 1362 0130 FB60     		str	r3, [r7, #12]
+ 1363 0132 09E0     		b	.L118
+ 1364              	.L119:
+ 391:Src/gps.c     ****                      gpsData.gprmc_body[i] = 0;
+ 1365              		.loc 1 391 0 discriminator 3
+ 1366 0134 384A     		ldr	r2, .L132+20
+ 1367 0136 FB68     		ldr	r3, [r7, #12]
+ 1368 0138 1344     		add	r3, r3, r2
+ 1369 013a 03F59C73 		add	r3, r3, #312
+ 1370 013e 0022     		movs	r2, #0
+ 1371 0140 1A70     		strb	r2, [r3]
+ 390:Src/gps.c     ****                      gpsData.gprmc_body[i] = 0;
+ 1372              		.loc 1 390 0 discriminator 3
+ 1373 0142 FB68     		ldr	r3, [r7, #12]
+ 1374 0144 0133     		adds	r3, r3, #1
+ 1375 0146 FB60     		str	r3, [r7, #12]
+ 1376              	.L118:
+ 390:Src/gps.c     ****                      gpsData.gprmc_body[i] = 0;
+ 1377              		.loc 1 390 0 is_stmt 0 discriminator 1
+ 1378 0148 FB68     		ldr	r3, [r7, #12]
+ 1379 014a 632B     		cmp	r3, #99
+ 1380 014c F2DD     		ble	.L119
+ 1381              	.LBE11:
+ 1382              	.LBB12:
+ 392:Src/gps.c     **** 
+ 393:Src/gps.c     ****                     for(int i=0; i<gprmc_index; i++)
+ 1383              		.loc 1 393 0 is_stmt 1
+ 1384 014e 0023     		movs	r3, #0
+ 1385 0150 BB60     		str	r3, [r7, #8]
+ 1386 0152 0DE0     		b	.L120
+ 1387              	.L121:
+ 394:Src/gps.c     ****                      gpsData.gprmc_body[i] = gprmc_buffer[i];
+ 1388              		.loc 1 394 0 discriminator 3
+ 1389 0154 2F4A     		ldr	r2, .L132+16
+ 1390 0156 BB68     		ldr	r3, [r7, #8]
+ 1391 0158 1344     		add	r3, r3, r2
+ 1392 015a 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+ 1393 015c 2E4A     		ldr	r2, .L132+20
+ 1394 015e BB68     		ldr	r3, [r7, #8]
+ 1395 0160 1344     		add	r3, r3, r2
+ 1396 0162 03F59C73 		add	r3, r3, #312
+ 1397 0166 0A46     		mov	r2, r1
+ 1398 0168 1A70     		strb	r2, [r3]
+ 393:Src/gps.c     ****                      gpsData.gprmc_body[i] = gprmc_buffer[i];
+ 1399              		.loc 1 393 0 discriminator 3
+ 1400 016a BB68     		ldr	r3, [r7, #8]
+ 1401 016c 0133     		adds	r3, r3, #1
+ 1402 016e BB60     		str	r3, [r7, #8]
+ 1403              	.L120:
+ 393:Src/gps.c     ****                      gpsData.gprmc_body[i] = gprmc_buffer[i];
+ 1404              		.loc 1 393 0 is_stmt 0 discriminator 1
+ 1405 0170 254B     		ldr	r3, .L132+4
+ 1406 0172 1B68     		ldr	r3, [r3]
+ 1407 0174 BA68     		ldr	r2, [r7, #8]
+ARM GAS  /tmp/ccakUOEo.s 			page 33
+
+
+ 1408 0176 9A42     		cmp	r2, r3
+ 1409 0178 ECDB     		blt	.L121
+ 1410              	.LBE12:
+ 1411              	.LBB13:
+ 395:Src/gps.c     **** 
+ 396:Src/gps.c     ****                     for(int i=0; i<100; i++)
+ 1412              		.loc 1 396 0 is_stmt 1
+ 1413 017a 0023     		movs	r3, #0
+ 1414 017c 7B60     		str	r3, [r7, #4]
+ 1415 017e 07E0     		b	.L122
+ 1416              	.L123:
+ 397:Src/gps.c     ****                      gprmc_buffer[i] = 0;
+ 1417              		.loc 1 397 0 discriminator 3
+ 1418 0180 244A     		ldr	r2, .L132+16
+ 1419 0182 7B68     		ldr	r3, [r7, #4]
+ 1420 0184 1344     		add	r3, r3, r2
+ 1421 0186 0022     		movs	r2, #0
+ 1422 0188 1A70     		strb	r2, [r3]
+ 396:Src/gps.c     ****                      gprmc_buffer[i] = 0;
+ 1423              		.loc 1 396 0 discriminator 3
+ 1424 018a 7B68     		ldr	r3, [r7, #4]
+ 1425 018c 0133     		adds	r3, r3, #1
+ 1426 018e 7B60     		str	r3, [r7, #4]
+ 1427              	.L122:
+ 396:Src/gps.c     ****                      gprmc_buffer[i] = 0;
+ 1428              		.loc 1 396 0 is_stmt 0 discriminator 1
+ 1429 0190 7B68     		ldr	r3, [r7, #4]
+ 1430 0192 632B     		cmp	r3, #99
+ 1431 0194 F4DD     		ble	.L123
+ 1432              	.LBE13:
+ 398:Src/gps.c     **** 
+ 399:Src/gps.c     **** 
+ 400:Src/gps.c     ****                     gpsData.gprmc_size = gprmc_index;
+ 1433              		.loc 1 400 0 is_stmt 1
+ 1434 0196 1C4B     		ldr	r3, .L132+4
+ 1435 0198 1B68     		ldr	r3, [r3]
+ 1436 019a 1F4A     		ldr	r2, .L132+20
+ 1437 019c C2F89C31 		str	r3, [r2, #412]
+ 401:Src/gps.c     ****                     gprmc_index = 0;
+ 1438              		.loc 1 401 0
+ 1439 01a0 194B     		ldr	r3, .L132+4
+ 1440 01a2 0022     		movs	r2, #0
+ 1441 01a4 1A60     		str	r2, [r3]
+ 402:Src/gps.c     ****                     gprmc_status = GPS_READY;
+ 1442              		.loc 1 402 0
+ 1443 01a6 174B     		ldr	r3, .L132
+ 1444 01a8 0122     		movs	r2, #1
+ 1445 01aa 1A80     		strh	r2, [r3]	@ movhi
+ 403:Src/gps.c     ****                     gprmc_enable = GPS_READY;
+ 1446              		.loc 1 403 0
+ 1447 01ac 1B4B     		ldr	r3, .L132+24
+ 1448 01ae 0122     		movs	r2, #1
+ 1449 01b0 1A80     		strh	r2, [r3]	@ movhi
+ 387:Src/gps.c     ****                 {
+ 1450              		.loc 1 387 0
+ 1451 01b2 15E0     		b	.L125
+ 1452              	.L117:
+ARM GAS  /tmp/ccakUOEo.s 			page 34
+
+
+ 404:Src/gps.c     **** 
+ 405:Src/gps.c     ****                 }
+ 406:Src/gps.c     ****                 else
+ 407:Src/gps.c     ****                 {
+ 408:Src/gps.c     ****                     gprmc_buffer[gprmc_index] = rx_data;
+ 1453              		.loc 1 408 0
+ 1454 01b4 144B     		ldr	r3, .L132+4
+ 1455 01b6 1B68     		ldr	r3, [r3]
+ 1456 01b8 154A     		ldr	r2, .L132+12
+ 1457 01ba 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1458 01bc 154A     		ldr	r2, .L132+16
+ 1459 01be D154     		strb	r1, [r2, r3]
+ 409:Src/gps.c     ****                     gprmc_index ++;
+ 1460              		.loc 1 409 0
+ 1461 01c0 114B     		ldr	r3, .L132+4
+ 1462 01c2 1B68     		ldr	r3, [r3]
+ 1463 01c4 0133     		adds	r3, r3, #1
+ 1464 01c6 104A     		ldr	r2, .L132+4
+ 1465 01c8 1360     		str	r3, [r2]
+ 387:Src/gps.c     ****                 {
+ 1466              		.loc 1 387 0
+ 1467 01ca 09E0     		b	.L125
+ 1468              	.L116:
+ 410:Src/gps.c     ****                 }
+ 411:Src/gps.c     **** 
+ 412:Src/gps.c     ****             }
+ 413:Src/gps.c     ****             else
+ 414:Src/gps.c     ****             {
+ 415:Src/gps.c     ****                 gprmc_index = 0;
+ 1469              		.loc 1 415 0
+ 1470 01cc 0E4B     		ldr	r3, .L132+4
+ 1471 01ce 0022     		movs	r2, #0
+ 1472 01d0 1A60     		str	r2, [r3]
+ 416:Src/gps.c     ****                 gprmc_status = GPS_READY;
+ 1473              		.loc 1 416 0
+ 1474 01d2 0C4B     		ldr	r3, .L132
+ 1475 01d4 0122     		movs	r2, #1
+ 1476 01d6 1A80     		strh	r2, [r3]	@ movhi
+ 417:Src/gps.c     ****                 gprmc_enable = GPS_READY;
+ 1477              		.loc 1 417 0
+ 1478 01d8 104B     		ldr	r3, .L132+24
+ 1479 01da 0122     		movs	r2, #1
+ 1480 01dc 1A80     		strh	r2, [r3]	@ movhi
+ 418:Src/gps.c     ****             }
+ 419:Src/gps.c     **** 
+ 420:Src/gps.c     ****             break;
+ 1481              		.loc 1 420 0
+ 1482 01de 0BE0     		b	.L110
+ 1483              	.L125:
+ 1484              		.loc 1 420 0 is_stmt 0 discriminator 1
+ 1485 01e0 0AE0     		b	.L110
+ 1486              	.L126:
+ 340:Src/gps.c     **** 
+ 1487              		.loc 1 340 0 is_stmt 1
+ 1488 01e2 00BF     		nop
+ 1489 01e4 08E0     		b	.L110
+ 1490              	.L127:
+ARM GAS  /tmp/ccakUOEo.s 			page 35
+
+
+ 349:Src/gps.c     ****         case 2:
+ 1491              		.loc 1 349 0
+ 1492 01e6 00BF     		nop
+ 1493 01e8 06E0     		b	.L110
+ 1494              	.L128:
+ 357:Src/gps.c     ****         case 3:
+ 1495              		.loc 1 357 0
+ 1496 01ea 00BF     		nop
+ 1497 01ec 04E0     		b	.L110
+ 1498              	.L129:
+ 365:Src/gps.c     ****         case 4:
+ 1499              		.loc 1 365 0
+ 1500 01ee 00BF     		nop
+ 1501 01f0 02E0     		b	.L110
+ 1502              	.L130:
+ 373:Src/gps.c     ****         case 5:
+ 1503              		.loc 1 373 0
+ 1504 01f2 00BF     		nop
+ 1505 01f4 00E0     		b	.L110
+ 1506              	.L131:
+ 381:Src/gps.c     **** 
+ 1507              		.loc 1 381 0
+ 1508 01f6 00BF     		nop
+ 1509              	.L110:
+ 421:Src/gps.c     ****     }
+ 422:Src/gps.c     **** }
+ 1510              		.loc 1 422 0
+ 1511 01f8 00BF     		nop
+ 1512 01fa 1437     		adds	r7, r7, #20
+ 1513              	.LCFI21:
+ 1514              		.cfi_def_cfa_offset 4
+ 1515 01fc BD46     		mov	sp, r7
+ 1516              	.LCFI22:
+ 1517              		.cfi_def_cfa_register 13
+ 1518              		@ sp needed
+ 1519 01fe 5DF8047B 		ldr	r7, [sp], #4
+ 1520              	.LCFI23:
+ 1521              		.cfi_restore 7
+ 1522              		.cfi_def_cfa_offset 0
+ 1523 0202 7047     		bx	lr
+ 1524              	.L133:
+ 1525              		.align	2
+ 1526              	.L132:
+ 1527 0204 00000000 		.word	gprmc_status
+ 1528 0208 00000000 		.word	gprmc_index.9753
+ 1529 020c 00000000 		.word	gprmc_header.9751
+ 1530 0210 00000000 		.word	rx_data
+ 1531 0214 00000000 		.word	gprmc_buffer.9752
+ 1532 0218 00000000 		.word	gpsData
+ 1533 021c 00000000 		.word	gprmc_enable
+ 1534              		.cfi_endproc
+ 1535              	.LFE144:
+ 1537              		.section	.rodata
+ 1538              		.align	2
+ 1539              	.LC0:
+ 1540 0000 4750535F 		.ascii	"GPS_Initializing...\015\012\000"
+ 1540      496E6974 
+ARM GAS  /tmp/ccakUOEo.s 			page 36
+
+
+ 1540      69616C69 
+ 1540      7A696E67 
+ 1540      2E2E2E0D 
+ 1541              		.section	.text.gpsInit,"ax",%progbits
+ 1542              		.align	1
+ 1543              		.global	gpsInit
+ 1544              		.syntax unified
+ 1545              		.thumb
+ 1546              		.thumb_func
+ 1547              		.fpu fpv4-sp-d16
+ 1549              	gpsInit:
+ 1550              	.LFB145:
+ 423:Src/gps.c     **** 
+ 424:Src/gps.c     **** 
+ 425:Src/gps.c     **** 
+ 426:Src/gps.c     **** void gpsInit()
+ 427:Src/gps.c     **** {
+ 1551              		.loc 1 427 0
+ 1552              		.cfi_startproc
+ 1553              		@ args = 0, pretend = 0, frame = 8
+ 1554              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1555 0000 80B5     		push	{r7, lr}
+ 1556              	.LCFI24:
+ 1557              		.cfi_def_cfa_offset 8
+ 1558              		.cfi_offset 7, -8
+ 1559              		.cfi_offset 14, -4
+ 1560 0002 82B0     		sub	sp, sp, #8
+ 1561              	.LCFI25:
+ 1562              		.cfi_def_cfa_offset 16
+ 1563 0004 00AF     		add	r7, sp, #0
+ 1564              	.LCFI26:
+ 1565              		.cfi_def_cfa_register 7
+ 1566              	.L135:
+ 1567              	.LBB14:
+ 428:Src/gps.c     **** 
+ 429:Src/gps.c     ****     GPIO_PinState gps_state;
+ 430:Src/gps.c     **** 
+ 431:Src/gps.c     **** 
+ 432:Src/gps.c     **** 
+ 433:Src/gps.c     ****     do
+ 434:Src/gps.c     ****     {
+ 435:Src/gps.c     **** 
+ 436:Src/gps.c     ****         HAL_GPIO_WritePin(GPS_ONOFF_GPIO_Port, GPS_ONOFF_Pin, GPIO_PIN_SET);
+ 1568              		.loc 1 436 0 discriminator 1
+ 1569 0006 0122     		movs	r2, #1
+ 1570 0008 0421     		movs	r1, #4
+ 1571 000a 1A48     		ldr	r0, .L136
+ 1572 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 437:Src/gps.c     **** 
+ 438:Src/gps.c     ****         osDelay(100);
+ 1573              		.loc 1 438 0 discriminator 1
+ 1574 0010 6420     		movs	r0, #100
+ 1575 0012 FFF7FEFF 		bl	osDelay
+ 439:Src/gps.c     ****         HAL_GPIO_WritePin(GPS_ONOFF_GPIO_Port, GPS_ONOFF_Pin, GPIO_PIN_RESET);
+ 1576              		.loc 1 439 0 discriminator 1
+ 1577 0016 0022     		movs	r2, #0
+ 1578 0018 0421     		movs	r1, #4
+ARM GAS  /tmp/ccakUOEo.s 			page 37
+
+
+ 1579 001a 1648     		ldr	r0, .L136
+ 1580 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 440:Src/gps.c     ****         osDelay(100);
+ 1581              		.loc 1 440 0 discriminator 1
+ 1582 0020 6420     		movs	r0, #100
+ 1583 0022 FFF7FEFF 		bl	osDelay
+ 441:Src/gps.c     ****         HAL_GPIO_WritePin(GPS_ONOFF_GPIO_Port, GPS_ONOFF_Pin, GPIO_PIN_SET);
+ 1584              		.loc 1 441 0 discriminator 1
+ 1585 0026 0122     		movs	r2, #1
+ 1586 0028 0421     		movs	r1, #4
+ 1587 002a 1248     		ldr	r0, .L136
+ 1588 002c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 442:Src/gps.c     ****         osDelay(100);
+ 1589              		.loc 1 442 0 discriminator 1
+ 1590 0030 6420     		movs	r0, #100
+ 1591 0032 FFF7FEFF 		bl	osDelay
+ 443:Src/gps.c     ****         HAL_GPIO_WritePin(GPS_ONOFF_GPIO_Port, GPS_ONOFF_Pin, GPIO_PIN_RESET);
+ 1592              		.loc 1 443 0 discriminator 1
+ 1593 0036 0022     		movs	r2, #0
+ 1594 0038 0421     		movs	r1, #4
+ 1595 003a 0E48     		ldr	r0, .L136
+ 1596 003c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 444:Src/gps.c     **** 
+ 445:Src/gps.c     ****         osDelay(2000);
+ 1597              		.loc 1 445 0 discriminator 1
+ 1598 0040 4FF4FA60 		mov	r0, #2000
+ 1599 0044 FFF7FEFF 		bl	osDelay
+ 446:Src/gps.c     **** 
+ 447:Src/gps.c     ****         gps_state = HAL_GPIO_ReadPin(GPS_RPFWRUP_GPIO_Port, GPS_RPFWRUP_Pin);
+ 1600              		.loc 1 447 0 discriminator 1
+ 1601 0048 0821     		movs	r1, #8
+ 1602 004a 0A48     		ldr	r0, .L136
+ 1603 004c FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 1604 0050 0346     		mov	r3, r0
+ 1605 0052 FB71     		strb	r3, [r7, #7]
+ 448:Src/gps.c     **** 
+ 449:Src/gps.c     ****         mprintf("GPS_Initializing...\r\n");
+ 1606              		.loc 1 449 0 discriminator 1
+ 1607 0054 0848     		ldr	r0, .L136+4
+ 1608 0056 FFF7FEFF 		bl	mprintf
+ 1609              	.LBE14:
+ 450:Src/gps.c     **** 
+ 451:Src/gps.c     ****     }while(gps_state == 0);
+ 1610              		.loc 1 451 0 discriminator 1
+ 1611 005a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1612 005c 002B     		cmp	r3, #0
+ 1613 005e D2D0     		beq	.L135
+ 452:Src/gps.c     **** 
+ 453:Src/gps.c     ****      HAL_UART_Receive_IT(&huart4, (uint8_t *)&rx_data, 1);
+ 1614              		.loc 1 453 0
+ 1615 0060 0122     		movs	r2, #1
+ 1616 0062 0649     		ldr	r1, .L136+8
+ 1617 0064 0648     		ldr	r0, .L136+12
+ 1618 0066 FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 454:Src/gps.c     **** }
+ 1619              		.loc 1 454 0
+ 1620 006a 00BF     		nop
+ARM GAS  /tmp/ccakUOEo.s 			page 38
+
+
+ 1621 006c 0837     		adds	r7, r7, #8
+ 1622              	.LCFI27:
+ 1623              		.cfi_def_cfa_offset 8
+ 1624 006e BD46     		mov	sp, r7
+ 1625              	.LCFI28:
+ 1626              		.cfi_def_cfa_register 13
+ 1627              		@ sp needed
+ 1628 0070 80BD     		pop	{r7, pc}
+ 1629              	.L137:
+ 1630 0072 00BF     		.align	2
+ 1631              	.L136:
+ 1632 0074 000C0240 		.word	1073875968
+ 1633 0078 00000000 		.word	.LC0
+ 1634 007c 00000000 		.word	rx_data
+ 1635 0080 00000000 		.word	huart4
+ 1636              		.cfi_endproc
+ 1637              	.LFE145:
+ 1639              		.section	.text.receiveGpsData,"ax",%progbits
+ 1640              		.align	1
+ 1641              		.global	receiveGpsData
+ 1642              		.syntax unified
+ 1643              		.thumb
+ 1644              		.thumb_func
+ 1645              		.fpu fpv4-sp-d16
+ 1647              	receiveGpsData:
+ 1648              	.LFB146:
+ 455:Src/gps.c     **** 
+ 456:Src/gps.c     **** 
+ 457:Src/gps.c     **** void receiveGpsData()
+ 458:Src/gps.c     **** {
+ 1649              		.loc 1 458 0
+ 1650              		.cfi_startproc
+ 1651              		@ args = 0, pretend = 0, frame = 0
+ 1652              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1653 0000 80B5     		push	{r7, lr}
+ 1654              	.LCFI29:
+ 1655              		.cfi_def_cfa_offset 8
+ 1656              		.cfi_offset 7, -8
+ 1657              		.cfi_offset 14, -4
+ 1658 0002 00AF     		add	r7, sp, #0
+ 1659              	.LCFI30:
+ 1660              		.cfi_def_cfa_register 7
+ 459:Src/gps.c     **** 
+ 460:Src/gps.c     ****       if(gprmc_enable != GPS_READY)
+ 1661              		.loc 1 460 0
+ 1662 0004 084B     		ldr	r3, .L140
+ 1663 0006 B3F90030 		ldrsh	r3, [r3]
+ 1664 000a 012B     		cmp	r3, #1
+ 1665 000c 01D0     		beq	.L139
+ 461:Src/gps.c     ****         getGPRMC();
+ 1666              		.loc 1 461 0
+ 1667 000e FFF7FEFF 		bl	getGPRMC
+ 1668              	.L139:
+ 462:Src/gps.c     **** 
+ 463:Src/gps.c     **** //      if(gpgga_enable != GPS_READY)
+ 464:Src/gps.c     **** //        getGPGGA();
+ 465:Src/gps.c     **** 
+ARM GAS  /tmp/ccakUOEo.s 			page 39
+
+
+ 466:Src/gps.c     **** //      if(gpgsa_enable != GPS_READY)
+ 467:Src/gps.c     **** //        getGPGSA();
+ 468:Src/gps.c     **** 
+ 469:Src/gps.c     **** //      if(gpgll_enable != GPS_READY)
+ 470:Src/gps.c     **** //        getGPGLL();
+ 471:Src/gps.c     **** 
+ 472:Src/gps.c     ****       rx_data=0;
+ 1669              		.loc 1 472 0
+ 1670 0012 064B     		ldr	r3, .L140+4
+ 1671 0014 0022     		movs	r2, #0
+ 1672 0016 1A70     		strb	r2, [r3]
+ 473:Src/gps.c     **** 
+ 474:Src/gps.c     **** 
+ 475:Src/gps.c     ****       HAL_UART_Receive_IT(&huart4, (uint8_t *)&rx_data, 1);
+ 1673              		.loc 1 475 0
+ 1674 0018 0122     		movs	r2, #1
+ 1675 001a 0449     		ldr	r1, .L140+4
+ 1676 001c 0448     		ldr	r0, .L140+8
+ 1677 001e FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 476:Src/gps.c     **** 
+ 477:Src/gps.c     **** 
+ 478:Src/gps.c     **** }
+ 1678              		.loc 1 478 0
+ 1679 0022 00BF     		nop
+ 1680 0024 80BD     		pop	{r7, pc}
+ 1681              	.L141:
+ 1682 0026 00BF     		.align	2
+ 1683              	.L140:
+ 1684 0028 00000000 		.word	gprmc_enable
+ 1685 002c 00000000 		.word	rx_data
+ 1686 0030 00000000 		.word	huart4
+ 1687              		.cfi_endproc
+ 1688              	.LFE146:
+ 1690              		.section	.text.enableGps,"ax",%progbits
+ 1691              		.align	1
+ 1692              		.global	enableGps
+ 1693              		.syntax unified
+ 1694              		.thumb
+ 1695              		.thumb_func
+ 1696              		.fpu fpv4-sp-d16
+ 1698              	enableGps:
+ 1699              	.LFB147:
+ 479:Src/gps.c     **** 
+ 480:Src/gps.c     **** 
+ 481:Src/gps.c     **** void enableGps()
+ 482:Src/gps.c     **** {
+ 1700              		.loc 1 482 0
+ 1701              		.cfi_startproc
+ 1702              		@ args = 0, pretend = 0, frame = 0
+ 1703              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1704              		@ link register save eliminated.
+ 1705 0000 80B4     		push	{r7}
+ 1706              	.LCFI31:
+ 1707              		.cfi_def_cfa_offset 4
+ 1708              		.cfi_offset 7, -4
+ 1709 0002 00AF     		add	r7, sp, #0
+ 1710              	.LCFI32:
+ARM GAS  /tmp/ccakUOEo.s 			page 40
+
+
+ 1711              		.cfi_def_cfa_register 7
+ 483:Src/gps.c     **** 
+ 484:Src/gps.c     ****     gprmc_enable = GPS_BUSY;
+ 1712              		.loc 1 484 0
+ 1713 0004 084B     		ldr	r3, .L143
+ 1714 0006 0222     		movs	r2, #2
+ 1715 0008 1A80     		strh	r2, [r3]	@ movhi
+ 485:Src/gps.c     ****     gpgga_enable = GPS_BUSY;
+ 1716              		.loc 1 485 0
+ 1717 000a 084B     		ldr	r3, .L143+4
+ 1718 000c 0222     		movs	r2, #2
+ 1719 000e 1A80     		strh	r2, [r3]	@ movhi
+ 486:Src/gps.c     ****     gpgsa_enable = GPS_BUSY;
+ 1720              		.loc 1 486 0
+ 1721 0010 074B     		ldr	r3, .L143+8
+ 1722 0012 0222     		movs	r2, #2
+ 1723 0014 1A80     		strh	r2, [r3]	@ movhi
+ 487:Src/gps.c     ****     gpgll_enable = GPS_BUSY;
+ 1724              		.loc 1 487 0
+ 1725 0016 074B     		ldr	r3, .L143+12
+ 1726 0018 0222     		movs	r2, #2
+ 1727 001a 1A80     		strh	r2, [r3]	@ movhi
+ 488:Src/gps.c     **** 
+ 489:Src/gps.c     **** //    HAL_UART_Receive_IT(&huart4, (uint8_t *)&rx_data, 1);
+ 490:Src/gps.c     **** 
+ 491:Src/gps.c     **** }
+ 1728              		.loc 1 491 0
+ 1729 001c 00BF     		nop
+ 1730 001e BD46     		mov	sp, r7
+ 1731              	.LCFI33:
+ 1732              		.cfi_def_cfa_register 13
+ 1733              		@ sp needed
+ 1734 0020 5DF8047B 		ldr	r7, [sp], #4
+ 1735              	.LCFI34:
+ 1736              		.cfi_restore 7
+ 1737              		.cfi_def_cfa_offset 0
+ 1738 0024 7047     		bx	lr
+ 1739              	.L144:
+ 1740 0026 00BF     		.align	2
+ 1741              	.L143:
+ 1742 0028 00000000 		.word	gprmc_enable
+ 1743 002c 00000000 		.word	gpgga_enable
+ 1744 0030 00000000 		.word	gpgsa_enable
+ 1745 0034 00000000 		.word	gpgll_enable
+ 1746              		.cfi_endproc
+ 1747              	.LFE147:
+ 1749              		.section	.text.checkGpsData,"ax",%progbits
+ 1750              		.align	1
+ 1751              		.global	checkGpsData
+ 1752              		.syntax unified
+ 1753              		.thumb
+ 1754              		.thumb_func
+ 1755              		.fpu fpv4-sp-d16
+ 1757              	checkGpsData:
+ 1758              	.LFB148:
+ 492:Src/gps.c     **** 
+ 493:Src/gps.c     **** int checkGpsData()
+ARM GAS  /tmp/ccakUOEo.s 			page 41
+
+
+ 494:Src/gps.c     **** {
+ 1759              		.loc 1 494 0
+ 1760              		.cfi_startproc
+ 1761              		@ args = 0, pretend = 0, frame = 0
+ 1762              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1763              		@ link register save eliminated.
+ 1764 0000 80B4     		push	{r7}
+ 1765              	.LCFI35:
+ 1766              		.cfi_def_cfa_offset 4
+ 1767              		.cfi_offset 7, -4
+ 1768 0002 00AF     		add	r7, sp, #0
+ 1769              	.LCFI36:
+ 1770              		.cfi_def_cfa_register 7
+ 495:Src/gps.c     **** //    if(gprmc_status == GPS_READY && gpgga_status == GPS_READY
+ 496:Src/gps.c     **** //            && gpgsa_status == GPS_READY && gpgll_status == GPS_READY)
+ 497:Src/gps.c     ****     if(gprmc_status == GPS_READY)
+ 1771              		.loc 1 497 0
+ 1772 0004 064B     		ldr	r3, .L148
+ 1773 0006 B3F90030 		ldrsh	r3, [r3]
+ 1774 000a 012B     		cmp	r3, #1
+ 1775 000c 01D1     		bne	.L146
+ 498:Src/gps.c     ****         return GPS_READY;
+ 1776              		.loc 1 498 0
+ 1777 000e 0123     		movs	r3, #1
+ 1778 0010 00E0     		b	.L147
+ 1779              	.L146:
+ 499:Src/gps.c     ****     else
+ 500:Src/gps.c     ****         return GPS_BUSY;
+ 1780              		.loc 1 500 0
+ 1781 0012 0223     		movs	r3, #2
+ 1782              	.L147:
+ 501:Src/gps.c     **** }
+ 1783              		.loc 1 501 0
+ 1784 0014 1846     		mov	r0, r3
+ 1785 0016 BD46     		mov	sp, r7
+ 1786              	.LCFI37:
+ 1787              		.cfi_def_cfa_register 13
+ 1788              		@ sp needed
+ 1789 0018 5DF8047B 		ldr	r7, [sp], #4
+ 1790              	.LCFI38:
+ 1791              		.cfi_restore 7
+ 1792              		.cfi_def_cfa_offset 0
+ 1793 001c 7047     		bx	lr
+ 1794              	.L149:
+ 1795 001e 00BF     		.align	2
+ 1796              	.L148:
+ 1797 0020 00000000 		.word	gprmc_status
+ 1798              		.cfi_endproc
+ 1799              	.LFE148:
+ 1801              		.section	.bss.gpgll_index.9678,"aw",%nobits
+ 1802              		.align	2
+ 1805              	gpgll_index.9678:
+ 1806 0000 00000000 		.space	4
+ 1807              		.section	.rodata.gpgll_header.9676,"a",%progbits
+ 1808              		.align	2
+ 1811              	gpgll_header.9676:
+ 1812 0000 24       		.byte	36
+ARM GAS  /tmp/ccakUOEo.s 			page 42
+
+
+ 1813 0001 47       		.byte	71
+ 1814 0002 50       		.byte	80
+ 1815 0003 47       		.byte	71
+ 1816 0004 4C       		.byte	76
+ 1817 0005 4C       		.byte	76
+ 1818              		.section	.bss.gpgll_buffer.9677,"aw",%nobits
+ 1819              		.align	2
+ 1822              	gpgll_buffer.9677:
+ 1823 0000 00000000 		.space	100
+ 1823      00000000 
+ 1823      00000000 
+ 1823      00000000 
+ 1823      00000000 
+ 1824              		.section	.bss.gpgsa_index.9703,"aw",%nobits
+ 1825              		.align	2
+ 1828              	gpgsa_index.9703:
+ 1829 0000 00000000 		.space	4
+ 1830              		.section	.rodata.gpgsa_header.9701,"a",%progbits
+ 1831              		.align	2
+ 1834              	gpgsa_header.9701:
+ 1835 0000 24       		.byte	36
+ 1836 0001 47       		.byte	71
+ 1837 0002 50       		.byte	80
+ 1838 0003 47       		.byte	71
+ 1839 0004 53       		.byte	83
+ 1840 0005 41       		.byte	65
+ 1841              		.section	.bss.gpgsa_buffer.9702,"aw",%nobits
+ 1842              		.align	2
+ 1845              	gpgsa_buffer.9702:
+ 1846 0000 00000000 		.space	100
+ 1846      00000000 
+ 1846      00000000 
+ 1846      00000000 
+ 1846      00000000 
+ 1847              		.section	.bss.gpgga_index.9728,"aw",%nobits
+ 1848              		.align	2
+ 1851              	gpgga_index.9728:
+ 1852 0000 00000000 		.space	4
+ 1853              		.section	.rodata.gpgga_header.9726,"a",%progbits
+ 1854              		.align	2
+ 1857              	gpgga_header.9726:
+ 1858 0000 24       		.byte	36
+ 1859 0001 47       		.byte	71
+ 1860 0002 50       		.byte	80
+ 1861 0003 47       		.byte	71
+ 1862 0004 47       		.byte	71
+ 1863 0005 41       		.byte	65
+ 1864              		.section	.bss.gpgga_buffer.9727,"aw",%nobits
+ 1865              		.align	2
+ 1868              	gpgga_buffer.9727:
+ 1869 0000 00000000 		.space	100
+ 1869      00000000 
+ 1869      00000000 
+ 1869      00000000 
+ 1869      00000000 
+ 1870              		.section	.bss.gprmc_index.9753,"aw",%nobits
+ 1871              		.align	2
+ARM GAS  /tmp/ccakUOEo.s 			page 43
+
+
+ 1874              	gprmc_index.9753:
+ 1875 0000 00000000 		.space	4
+ 1876              		.section	.rodata.gprmc_header.9751,"a",%progbits
+ 1877              		.align	2
+ 1880              	gprmc_header.9751:
+ 1881 0000 24       		.byte	36
+ 1882 0001 47       		.byte	71
+ 1883 0002 50       		.byte	80
+ 1884 0003 52       		.byte	82
+ 1885 0004 4D       		.byte	77
+ 1886 0005 43       		.byte	67
+ 1887              		.section	.bss.gprmc_buffer.9752,"aw",%nobits
+ 1888              		.align	2
+ 1891              	gprmc_buffer.9752:
+ 1892 0000 00000000 		.space	100
+ 1892      00000000 
+ 1892      00000000 
+ 1892      00000000 
+ 1892      00000000 
+ 1893              		.text
+ 1894              	.Letext0:
+ 1895              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 1896              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 1897              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 1898              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1899              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 1900              		.file 7 "/usr/include/newlib/sys/lock.h"
+ 1901              		.file 8 "/usr/include/newlib/sys/_types.h"
+ 1902              		.file 9 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 1903              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 1904              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1905              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 1906              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 1907              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 1908              		.file 15 "Inc/gps.h"
+ 1909              		.file 16 "Inc/usart.h"
+ARM GAS  /tmp/ccakUOEo.s 			page 44
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 gps.c
+                            *COM*:00000000000001a0 gpsData
+                            *COM*:0000000000000001 rx_data
+     /tmp/ccakUOEo.s:24     .data.gprmc_status:0000000000000000 gprmc_status
+     /tmp/ccakUOEo.s:21     .data.gprmc_status:0000000000000000 $d
+     /tmp/ccakUOEo.s:31     .data.gprmc_enable:0000000000000000 gprmc_enable
+     /tmp/ccakUOEo.s:28     .data.gprmc_enable:0000000000000000 $d
+     /tmp/ccakUOEo.s:38     .data.gpgga_status:0000000000000000 gpgga_status
+     /tmp/ccakUOEo.s:35     .data.gpgga_status:0000000000000000 $d
+     /tmp/ccakUOEo.s:45     .data.gpgga_enable:0000000000000000 gpgga_enable
+     /tmp/ccakUOEo.s:42     .data.gpgga_enable:0000000000000000 $d
+     /tmp/ccakUOEo.s:52     .data.gpgsa_status:0000000000000000 gpgsa_status
+     /tmp/ccakUOEo.s:49     .data.gpgsa_status:0000000000000000 $d
+     /tmp/ccakUOEo.s:59     .data.gpgsa_enable:0000000000000000 gpgsa_enable
+     /tmp/ccakUOEo.s:56     .data.gpgsa_enable:0000000000000000 $d
+     /tmp/ccakUOEo.s:66     .data.gpgll_status:0000000000000000 gpgll_status
+     /tmp/ccakUOEo.s:63     .data.gpgll_status:0000000000000000 $d
+     /tmp/ccakUOEo.s:73     .data.gpgll_enable:0000000000000000 gpgll_enable
+     /tmp/ccakUOEo.s:70     .data.gpgll_enable:0000000000000000 $d
+     /tmp/ccakUOEo.s:76     .text.getGPGLL:0000000000000000 $t
+     /tmp/ccakUOEo.s:83     .text.getGPGLL:0000000000000000 getGPGLL
+     /tmp/ccakUOEo.s:114    .text.getGPGLL:000000000000001c $d
+     /tmp/ccakUOEo.s:120    .text.getGPGLL:0000000000000034 $t
+     /tmp/ccakUOEo.s:424    .text.getGPGLL:00000000000001e4 $d
+     /tmp/ccakUOEo.s:1805   .bss.gpgll_index.9678:0000000000000000 gpgll_index.9678
+     /tmp/ccakUOEo.s:1811   .rodata.gpgll_header.9676:0000000000000000 gpgll_header.9676
+     /tmp/ccakUOEo.s:1822   .bss.gpgll_buffer.9677:0000000000000000 gpgll_buffer.9677
+     /tmp/ccakUOEo.s:435    .text.getGPGSA:0000000000000000 $t
+     /tmp/ccakUOEo.s:442    .text.getGPGSA:0000000000000000 getGPGSA
+     /tmp/ccakUOEo.s:472    .text.getGPGSA:000000000000001c $d
+     /tmp/ccakUOEo.s:478    .text.getGPGSA:0000000000000034 $t
+     /tmp/ccakUOEo.s:788    .text.getGPGSA:00000000000001f0 $d
+     /tmp/ccakUOEo.s:1828   .bss.gpgsa_index.9703:0000000000000000 gpgsa_index.9703
+     /tmp/ccakUOEo.s:1834   .rodata.gpgsa_header.9701:0000000000000000 gpgsa_header.9701
+     /tmp/ccakUOEo.s:1845   .bss.gpgsa_buffer.9702:0000000000000000 gpgsa_buffer.9702
+     /tmp/ccakUOEo.s:799    .text.getGPGGA:0000000000000000 $t
+     /tmp/ccakUOEo.s:806    .text.getGPGGA:0000000000000000 getGPGGA
+     /tmp/ccakUOEo.s:836    .text.getGPGGA:000000000000001c $d
+     /tmp/ccakUOEo.s:842    .text.getGPGGA:0000000000000034 $t
+     /tmp/ccakUOEo.s:1150   .text.getGPGGA:00000000000001e8 $d
+     /tmp/ccakUOEo.s:1851   .bss.gpgga_index.9728:0000000000000000 gpgga_index.9728
+     /tmp/ccakUOEo.s:1857   .rodata.gpgga_header.9726:0000000000000000 gpgga_header.9726
+     /tmp/ccakUOEo.s:1868   .bss.gpgga_buffer.9727:0000000000000000 gpgga_buffer.9727
+     /tmp/ccakUOEo.s:1161   .text.getGPRMC:0000000000000000 $t
+     /tmp/ccakUOEo.s:1168   .text.getGPRMC:0000000000000000 getGPRMC
+     /tmp/ccakUOEo.s:1198   .text.getGPRMC:000000000000001c $d
+     /tmp/ccakUOEo.s:1204   .text.getGPRMC:0000000000000034 $t
+     /tmp/ccakUOEo.s:1527   .text.getGPRMC:0000000000000204 $d
+     /tmp/ccakUOEo.s:1874   .bss.gprmc_index.9753:0000000000000000 gprmc_index.9753
+     /tmp/ccakUOEo.s:1880   .rodata.gprmc_header.9751:0000000000000000 gprmc_header.9751
+     /tmp/ccakUOEo.s:1891   .bss.gprmc_buffer.9752:0000000000000000 gprmc_buffer.9752
+     /tmp/ccakUOEo.s:1538   .rodata:0000000000000000 $d
+     /tmp/ccakUOEo.s:1542   .text.gpsInit:0000000000000000 $t
+     /tmp/ccakUOEo.s:1549   .text.gpsInit:0000000000000000 gpsInit
+     /tmp/ccakUOEo.s:1632   .text.gpsInit:0000000000000074 $d
+     /tmp/ccakUOEo.s:1640   .text.receiveGpsData:0000000000000000 $t
+ARM GAS  /tmp/ccakUOEo.s 			page 45
+
+
+     /tmp/ccakUOEo.s:1647   .text.receiveGpsData:0000000000000000 receiveGpsData
+     /tmp/ccakUOEo.s:1684   .text.receiveGpsData:0000000000000028 $d
+     /tmp/ccakUOEo.s:1691   .text.enableGps:0000000000000000 $t
+     /tmp/ccakUOEo.s:1698   .text.enableGps:0000000000000000 enableGps
+     /tmp/ccakUOEo.s:1742   .text.enableGps:0000000000000028 $d
+     /tmp/ccakUOEo.s:1750   .text.checkGpsData:0000000000000000 $t
+     /tmp/ccakUOEo.s:1757   .text.checkGpsData:0000000000000000 checkGpsData
+     /tmp/ccakUOEo.s:1797   .text.checkGpsData:0000000000000020 $d
+     /tmp/ccakUOEo.s:1802   .bss.gpgll_index.9678:0000000000000000 $d
+     /tmp/ccakUOEo.s:1808   .rodata.gpgll_header.9676:0000000000000000 $d
+     /tmp/ccakUOEo.s:1819   .bss.gpgll_buffer.9677:0000000000000000 $d
+     /tmp/ccakUOEo.s:1825   .bss.gpgsa_index.9703:0000000000000000 $d
+     /tmp/ccakUOEo.s:1831   .rodata.gpgsa_header.9701:0000000000000000 $d
+     /tmp/ccakUOEo.s:1842   .bss.gpgsa_buffer.9702:0000000000000000 $d
+     /tmp/ccakUOEo.s:1848   .bss.gpgga_index.9728:0000000000000000 $d
+     /tmp/ccakUOEo.s:1854   .rodata.gpgga_header.9726:0000000000000000 $d
+     /tmp/ccakUOEo.s:1865   .bss.gpgga_buffer.9727:0000000000000000 $d
+     /tmp/ccakUOEo.s:1871   .bss.gprmc_index.9753:0000000000000000 $d
+     /tmp/ccakUOEo.s:1877   .rodata.gprmc_header.9751:0000000000000000 $d
+     /tmp/ccakUOEo.s:1888   .bss.gprmc_buffer.9752:0000000000000000 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+osDelay
+HAL_GPIO_ReadPin
+mprintf
+HAL_UART_Receive_IT
+huart4
