@@ -21,6 +21,10 @@
 
 #define SPI_TRANSFER_SIZE 120
 
+
+#define FORWARD 1
+#define BACKWARD 2
+
 struct SENSOR_DATA
 {
     uint32_t temperature;
@@ -77,7 +81,7 @@ struct GPS_DATA
         try
         {
 
-            while ((pos = gps_string.find(delimiter)) != std::string::npos)
+            while((pos = gps_string.find(delimiter)) != std::string::npos)
             {
 
                 token[i] = gps_string.substr(0, pos);
@@ -161,7 +165,7 @@ struct SPI_RX_FORMAT
 struct SPI_TX_FORMAT
 {
 
-    uint8_t garbage1[45];
+    uint8_t garbage1[47];
     uint32_t x_position;
     uint32_t y_position;
     uint32_t z_position;
@@ -182,7 +186,114 @@ struct SPI_TX_FORMAT
 
     uint16_t checksum;
 
-    uint8_t garbage2[46];
+    uint8_t garbage2[48];
+
+
+
+    operator unsigned char *()
+    {
+
+        unsigned char *Data = new unsigned char[SPI_TRANSFER_SIZE];
+
+        for(int i=0; i<47; i++)
+        {
+            garbage1[i] = 0x20;
+            Data[i] = garbage1[i];
+        }
+
+
+        Data[48] = x_position & 0x000000ff;
+        Data[49] = x_position & 0x0000ff00;
+        Data[50] = x_position & 0x00ff0000;
+        Data[51] = x_position & 0xff000000;
+
+        Data[52] = y_position & 0x000000ff;
+        Data[53] = y_position & 0x0000ff00;
+        Data[54] = y_position & 0x00ff0000;
+        Data[55] = y_position & 0xff000000;
+
+        Data[56] = z_position & 0x000000ff;
+        Data[57] = z_position & 0x0000ff00;
+        Data[58] = z_position & 0x00ff0000;
+        Data[59] = z_position & 0xff000000;
+
+        Data[60] = step_motor1_direction;
+        Data[61] = step_motor2_direction;
+        Data[62] = step_motor3_direction;
+        Data[63] = step_motor4_direction;
+        Data[64] = servo_motor1_direction;
+        Data[65] = servo_motor2_direction;
+
+        Data[66] = step_motor1_degree;
+        Data[67] = step_motor2_degree;
+        Data[68] = step_motor3_degree;
+        Data[69] = step_motor4_degree;
+        Data[70] = servo_motor1_degree;
+        Data[71] = servo_motor2_degree;
+
+        Data[72] = checksum;
+
+        for(int i=73; i<120; i++)
+        {
+            garbage2[i - 73] = 0x20;
+            Data[i] = garbage2[i];
+        }
+
+        return Data;
+
+    }
+
+    SPI_TX_FORMAT& operator =(unsigned char* Data)
+    {
+        for(int i=0; i<47; i++)
+            garbage1[i] = Data[i];
+
+        x_position = (Data[48]) | (Data[48] << 8) | (Data[50] << 16) | (Data[51] << 24);
+        y_position = (Data[52]) | (Data[53] << 8) | (Data[54] << 16) | (Data[55] << 24);
+        z_position = (Data[56]) | (Data[57] << 8) | (Data[58] << 16) | (Data[59] << 24);
+
+        step_motor1_direction = Data[60];
+        step_motor2_direction = Data[61];
+        step_motor3_direction = Data[62];
+        step_motor4_direction = Data[63];
+        servo_motor1_direction = Data[64];
+        servo_motor2_direction = Data[65];
+
+        step_motor1_degree = Data[66];
+        step_motor2_degree = Data[67];
+        step_motor3_degree = Data[68];
+        step_motor4_degree = Data[69];
+        servo_motor1_degree = Data[70];
+        servo_motor2_degree = Data[71];
+
+        checksum = Data[72];
+
+        for(int i=73; i<120; i++)
+            garbage2[i - 73] = Data[i];
+
+
+        return *this;
+
+
+    }
+
+    void clear()
+    {
+        step_motor1_direction = 0;
+        step_motor2_direction = 0;
+        step_motor3_direction = 0;
+        step_motor4_direction = 0;
+
+        step_motor1_degree = 0;
+        step_motor2_degree = 0;
+        step_motor3_degree = 0;
+        step_motor4_degree = 0;
+
+        servo_motor1_degree = 0;
+        servo_motor1_degree = 0;
+
+        checksum = 0;
+    }
 
 };
 
@@ -199,6 +310,15 @@ public:
 
     Controller();
     ~Controller();
+
+    Bpi_Status zoomInCamera();
+    Bpi_Status zoomOutCamera();
+
+    Bpi_Status driveMotorLeft();
+    Bpi_Status driveMotorRight();
+    Bpi_Status driveMotorDown();
+    Bpi_Status driveMotorUp();
+
     Bpi_Status setControlData(const SPI_TX_FORMAT& Data);
     SPI_RX_FORMAT getStmEnvironment();
 

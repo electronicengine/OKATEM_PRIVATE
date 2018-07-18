@@ -40,6 +40,9 @@ link_directories(
     )
 
 link_libraries(
+
+    ncurses
+
     pthread
     opencv_calib3d
     opencv_core
@@ -68,6 +71,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/spicom.cpp
     ${INCLUDE_PATH}/controller.cpp
     ${INCLUDE_PATH}/sfpmonitor.cpp
+    ${INCLUDE_PATH}/udpsocket.cpp
     )
 
 #target_link_libraries( ${PROJECT_NAME}

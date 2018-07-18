@@ -5,6 +5,9 @@
 #include <string>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+
+//#include <ncurses.h>
 
 #include "lasertracker.h"
 #include "globals.h"
@@ -12,11 +15,13 @@
 #include "spicom.h"
 #include "controller.h"
 #include "sfpmonitor.h"
-
+#include "udpsocket.h"
 
 
 SPI_RX_FORMAT stm_data;
 SPI_RX_FORMAT lora_stm_data;
+
+SPI_TX_FORMAT control_data;
 
 SFP_DATA sfp_data;
 SFP_DATA lora_sfp_data;
@@ -25,10 +30,14 @@ LoraWan lora;
 Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
+UdpSocket udp_socket;
+
+void safeLog();
 
 
 int main(int argc, char* argv[])
 {
+
 
     tracker.runTracking();
 
@@ -44,6 +53,7 @@ int main(int argc, char* argv[])
     while(1)
     {
 
+
         stm_data = controller.getStmEnvironment();
         sfp_data = sfp_monitor.getValues();
 
@@ -51,35 +61,48 @@ int main(int argc, char* argv[])
 
         lora.getLoraData(lora_sfp_data, lora_stm_data);
 
+        controller.driveMotorUp();
+        controller.driveMotorLeft();
 
-        printAll("Environment Data: ");
+        control_data = udp_socket.getSocketData();
 
-        std::cout << "Gps Data:  " <<  stm_data.gps_string << std::endl;
-        printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
-                 " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
-                 " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-                 " - SFP Status: ",sfp_data.status);
-        printAll("\n\n\n");
-
-        printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
-        printAll("Tracker Edge Rate: ", tracker.getEdgeRate());
-        printAll("\n\n\n");
-
-        printAll("Lora Data: ");
-        printAll("temperature: ", (int)lora_stm_data.sensor_data.temperature,
-        " - altitude: ", (int)lora_stm_data.sensor_data.altitude,
-        " - pressure: ", (int)lora_stm_data.sensor_data.pressure,
-        " - wheather_condition: ", (int)lora_stm_data.sensor_data.wheather_condition,
-        " - compass_degree: ", (int)lora_stm_data.sensor_data.compass_degree,
-        " - Sfp status: ", lora_sfp_data.status);
-
-        printAll("\n\n\n");
-
-        sleep(1);
+        controller.setControlData(control_data);
 
     }
 
     return 0;
+
+}
+
+
+void safeLog()
+{
+
+    printAll("Environment Data: ");
+
+    std::cout << "Gps Data:  " <<  stm_data.gps_string << std::endl;
+    printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
+             " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
+             " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
+             " - SFP Status: ",sfp_data.status);
+    printAll("\n\n\n");
+
+    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
+    printAll("Tracker Edge Rate: ", tracker.getEdgeRate());
+    printAll("\n\n\n");
+
+    printAll("Lora Data: ");
+    printAll("Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+    " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
+    " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
+    " - Wheather_condition: ", (int)lora_stm_data.sensor_data.wheather_condition,
+    " - Compass_degree: ", (int)lora_stm_data.sensor_data.compass_degree,
+    " - Sfp status: ", lora_sfp_data.status);
+
+
+
+    printAll("\n\n\n");
+
 
 }
 

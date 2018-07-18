@@ -13,12 +13,12 @@ void motorInit()
     HAL_TIM_Base_Start_IT(&htim2);
 }
 
-void  motor1Drive()
+void  motor1Drive(int Direction)
 {
     static volatile int phase = 1;
 
-//        if(motor2.direction == FORWARD && motor2.degree >= 0)
-//        {
+        if(Direction == FORWARD)
+        {
 
 //            motor2.degree--;
 
@@ -69,7 +69,7 @@ void  motor1Drive()
               }
 
 
-//        }
+        }
 
 
 //    if(motor1.degree <= 0)
@@ -289,17 +289,17 @@ void motor4Drive()
 void driveMotor()
 {
 
-    if(motor1.direction == FORWARD || motor1.direction == BACKWARD)
-       motor1Drive();
+//    if(motor1.direction == FORWARD || motor1.direction == BACKWARD)
+//       motor1Drive();
 
-    if(motor2.direction == FORWARD || motor2.direction == BACKWARD)
-       motor2Drive();
+//    if(motor2.direction == FORWARD || motor2.direction == BACKWARD)
+//       motor2Drive();
 
-    if(motor3.direction == FORWARD || motor3.direction == BACKWARD)
-       motor3Drive();
+//    if(motor3.direction == FORWARD || motor3.direction == BACKWARD)
+//       motor3Drive();
 
-    if(motor4.direction == FORWARD || motor4.direction == BACKWARD)
-       motor4Drive();
+//    if(motor4.direction == FORWARD || motor4.direction == BACKWARD)
+//       motor4Drive();
 
 
 }

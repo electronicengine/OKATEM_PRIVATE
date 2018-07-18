@@ -15,7 +15,7 @@
 #define MOTOR4 4
 
 #define FORWARD 1
-#define BACKWARD -1
+#define BACKWARD 2
 #define STOP 0
 
  struct Step_Motor {
@@ -29,7 +29,7 @@ void motorInit();
 
 void driveMotor();
 
-void motor1Drive();
+void motor1Drive(int Direction);
 void motor2Drive();
 void motor3Drive();
 void motor4Drive();

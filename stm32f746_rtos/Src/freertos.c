@@ -64,6 +64,8 @@
 osThreadId gpsThreadHandle;
 osThreadId sensorThreadHandle;
 osThreadId spiComThreadHandle;
+osThreadId logThreadHandle;
+
 
 osMutexId spiMutexHandle;
 osMutexId uartMutexHandle;
@@ -74,7 +76,7 @@ osSemaphoreId uartSemaphoreHandle;
 
 struct SPI_RX_FORMAT
 {
-    uint8_t garbage1[45];
+    uint8_t garbage1[47];
     uint32_t x_position;
     uint32_t y_position;
     uint32_t z_position;
@@ -95,9 +97,9 @@ struct SPI_RX_FORMAT
 
     uint16_t checksum;
 
-    uint8_t garbage2[46];
+    uint8_t garbage2[48];
 
-}spi_rx_data;
+}spi_rx_data, rx_data;
 
 volatile struct SPI_TX_FORMAT
 {
@@ -113,17 +115,18 @@ volatile struct SPI_TX_FORMAT
 
     uint16_t checksum;
 
-}spi_tx_data,  data;
+}spi_tx_data,  tx_data;
 
 
-uint8_t rx[sizeof(spi_rx_data)];
-uint8_t tx[sizeof(spi_tx_data)];
+//uint8_t rx[sizeof(spi_rx_data)];
+//uint8_t tx[sizeof(spi_tx_data)];
 
 
 
 void gpsOps(void const * argument);
 void sensorOps(void const * argument);
 void spiComOps(void const * argument);
+void loggingOps(void const * argument);
 
 void MX_FREERTOS_Init(void);
 void mprintf(const char *fmt, ...);
@@ -186,6 +189,9 @@ void MX_FREERTOS_Init(void)
   osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 512);
   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
 
+//  osThreadDef(loggingThread, loggingOps, osPriorityNormal, 0, 512);
+//  logThreadHandle = osThreadCreate(osThread(loggingThread), NULL);
+
 }
 
 
@@ -222,6 +228,21 @@ void SPI1_IRQHandler(void)
 
 }
 
+void loggingOps(void const * argument)
+{
+
+    mprintf("logingOps\r\n");
+
+    while(1)
+    {
+        mprintf("logingOps\r\n");
+        osDelay(1000);
+    }
+}
+
+
+
+
 void gpsOps(void const * argument)
 {
 
@@ -253,7 +274,7 @@ void gpsOps(void const * argument)
 
 
 
-           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+//           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 
            enableGps();
 
@@ -288,7 +309,7 @@ void sensorOps(void const * argument)
 
   sensorInit();
 
-    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
   int ret;
 
@@ -341,11 +362,8 @@ void spiComOps(void const * argument)
 
     mprintf("spiOps\r\n");
 
-    mprintf("sizeof spi_tx: %d\r\n", sizeof(spi_tx_data));
-    mprintf("sizeof spi_rx: %d\r\n", sizeof(spi_rx_data));
 
-    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&spi_tx_data, (uint8_t *)rx,  sizeof(spi_tx_data));
-
+    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&spi_tx_data, (uint8_t *)&spi_rx_data,  sizeof(spi_tx_data));
 
 
   while(1)
@@ -365,27 +383,42 @@ void spiComOps(void const * argument)
 
          xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
 
-          data = spi_tx_data;
+          tx_data = spi_tx_data;
 
          xSemaphoreGive(spiMutexHandle);
 
-        HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&data, (uint8_t *)rx,  sizeof(spi_tx_data));
 
+
+
+        HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&tx_data, (uint8_t *)&spi_rx_data,  sizeof(spi_tx_data));
+
+
+
+        if(spi_rx_data.step_motor1_direction == FORWARD)
+        {
+            motor1Drive(FORWARD);
+
+            spi_rx_data.step_motor1_direction = 0;
+            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+
+        }
       }
       else
       {
-          count ++;
+//          count ++;
 
 
-          if(count >= 3)
-          {
-//            motor1Drive();
-//            motor2Drive();
-//            motor3Drive();
-//            motor4Drive();
+//          if(count >= 3)
+//          {
 
-            count = 0;
-          }
+//              motor1Drive();
+////            motor2Drive();
+////            motor3Drive();
+////            motor4Drive();
+
+//            count = 0;
+
+//          }
       }
 
 
