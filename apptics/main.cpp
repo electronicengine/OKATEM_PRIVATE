@@ -42,8 +42,6 @@ void safeLog();
 int main(int argc, char* argv[])
 {
 
-
-    int a;
     tracker.runTracking();
 
     stm_data = controller.getStmEnvironment();
