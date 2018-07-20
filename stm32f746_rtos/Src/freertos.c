@@ -355,9 +355,8 @@ void sensorOps(void const * argument)
 void spiComOps(void const * argument)
 {
 
-    long token;
     int count = 0;
-    int step = 0;
+    int speed = 1;
 
     HAL_SPI_StateTypeDef status;
 
@@ -397,10 +396,12 @@ void spiComOps(void const * argument)
         if(spi_rx_data.step_motor1_direction == FORWARD)
         {
             motor1.direction = FORWARD;
+            speed = spi_rx_data.step_motor1_speed;
         }
         else if(spi_rx_data.step_motor1_direction == BACKWARD)
         {
             motor1.direction = BACKWARD;
+            speed = spi_rx_data.step_motor1_speed;
         }
         else
         {
@@ -410,10 +411,12 @@ void spiComOps(void const * argument)
         if(spi_rx_data.step_motor2_direction == FORWARD)
         {
             motor2.direction = FORWARD;
+            speed = spi_rx_data.step_motor2_speed;
         }
         else if(spi_rx_data.step_motor2_direction == BACKWARD)
         {
             motor2.direction = BACKWARD;
+            speed = spi_rx_data.step_motor2_speed;
         }
         else
         {
@@ -428,7 +431,7 @@ void spiComOps(void const * argument)
           count ++;
 
 
-          if(count >= 3)
+          if(count >= 2 + speed)
           {
 
 

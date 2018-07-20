@@ -219,17 +219,24 @@ std::string LoraWan::prepareData()
 
     gmMutex.lock();
 
-    Data = std::string(gmLoraStm.gps_string);
-    gps_char_pos = Data.find_first_of("*");
-    Data = Data.substr(0, gps_char_pos);
+    try
+    {
+        Data = std::string(gmLoraStm.gps_string);
+        gps_char_pos = Data.find_first_of("*");
+        Data = Data.substr(0, gps_char_pos);
 
-    Data += " - Sensor Temp:" + std::to_string(gmLoraStm.sensor_data.temperature);
-    Data += " - Sensor altitude: " + std::to_string(gmLoraStm.sensor_data.altitude);
-    Data += " - Sensor pressure: " + std::to_string(gmLoraStm.sensor_data.pressure);
-    Data += " - Sensor wheather: " + std::to_string(gmLoraStm.sensor_data.wheather_condition);
-    Data += " - Sensor compass: " + std::to_string(gmLoraStm.sensor_data.compass_degree);
-    Data += " - Sfp Status: " + std::to_string(gmLoraSfp.status);
-    Data += " - end";
+        Data += " - Sensor Temp:" + std::to_string(gmLoraStm.sensor_data.temperature);
+        Data += " - Sensor altitude: " + std::to_string(gmLoraStm.sensor_data.altitude);
+        Data += " - Sensor pressure: " + std::to_string(gmLoraStm.sensor_data.pressure);
+        Data += " - Sensor wheather: " + std::to_string(gmLoraStm.sensor_data.wheather_condition);
+        Data += " - Sensor compass: " + std::to_string(gmLoraStm.sensor_data.compass_degree);
+        Data += " - Sfp Status: " + std::to_string(gmLoraSfp.status);
+        Data += " - end";
+    }
+    catch(std::exception ex)
+    {
+        printAll(ex.what());
+    }
 
 
     gmMutex.unlock();
@@ -257,25 +264,34 @@ void LoraWan::collectData(std::string &Data)
 
     std::istringstream stream(Data);
 
-    std::getline(stream, substring, '/');
-
-    seperator_pos = substring.find_first_of('|');
-
-    substring = substring.substr(seperator_pos + 1, substring.length());
-    sequence_num = std::stoi(substring);
-
-    std::getline(stream, substring, '|');
-    total_sequence = std::stoi(substring);
-
-    std::getline(stream, substring, '|');
-    substring = substring.substr(1, substring.length());
-    total_string += substring;
-
-    if(total_sequence == sequence_num)
+    try
     {
-        callBack(total_string);
-        total_string.clear();
+        std::getline(stream, substring, '/');
+
+        seperator_pos = substring.find_first_of('|');
+
+        substring = substring.substr(seperator_pos + 1, substring.length());
+        sequence_num = std::stoi(substring);
+
+        std::getline(stream, substring, '|');
+        total_sequence = std::stoi(substring);
+
+        std::getline(stream, substring, '|');
+        substring = substring.substr(1, substring.length());
+        total_string += substring;
+
+        if(total_sequence == sequence_num)
+        {
+            callBack(total_string);
+            total_string.clear();
+        }
     }
+    catch(std::exception ex)
+    {
+        printAll(ex.what());
+    }
+
+
 
 }
 
@@ -325,37 +341,42 @@ void LoraWan::callBack(std::string& CommingData)
     std::string delimiter = "-";
     std::string token[20];
 
-
-    while ((pos = CommingData.find(delimiter)) != std::string::npos)
+    try
     {
+        while ((pos = CommingData.find(delimiter)) != std::string::npos)
+        {
 
-        token[i] = CommingData.substr(0, pos);
-        CommingData.erase(0, pos + delimiter.length());
-        i++;
+            if(i < 20)
+            {
+                token[i] = CommingData.substr(0, pos);
+                CommingData.erase(0, pos + delimiter.length());
+                i++;
+            }
+            else
+                break;
+
+        }
+
+
+        gmMutex.lock();
+
+        gmRecievedLoraStm.gps_string = token[0];
+        gmRecievedLoraStm.sensor_data.temperature = (uint32_t) std::stoi(token[1].substr(token[1].find(":") + 1, token[1].length()));
+        gmRecievedLoraStm.sensor_data.altitude = (uint32_t) std::stoi(token[2].substr( token[2].find(":") + 1, token[2].length()));
+        gmRecievedLoraStm.sensor_data.pressure = (uint32_t) std::stoi(token[3].substr( token[3].find(":") + 1, token[3].length()));
+        gmRecievedLoraStm.sensor_data.wheather_condition = (uint8_t) std::stoi(token[4].substr( token[4].find(":") + 1, token[4].length()));
+        gmRecievedLoraStm.sensor_data.compass_degree = (uint32_t) std::stoi(token[5].substr(token[5].find(":") + 1, token[5].length()));
+        gmRecievedLoraSfp.status = (int)std::stoi(token[6].substr( token[6].find(":") + 1, token[6].length()));
+
+
+
+    }
+    catch(std::exception ex)
+    {
+        printAll(ex.what());
     }
 
 
-    gmMutex.lock();
-
-    gmRecievedLoraStm.gps_string = token[0];
-    gmRecievedLoraStm.sensor_data.temperature = (uint32_t) std::stoi(token[1].substr(token[1].find(":") + 1, token[1].length()));
-    gmRecievedLoraStm.sensor_data.altitude = (uint32_t) std::stoi(token[2].substr( token[2].find(":") + 1, token[2].length()));
-    gmRecievedLoraStm.sensor_data.pressure = (uint32_t) std::stoi(token[3].substr( token[3].find(":") + 1, token[3].length()));
-    gmRecievedLoraStm.sensor_data.wheather_condition = (uint8_t) std::stoi(token[4].substr( token[4].find(":") + 1, token[4].length()));
-    gmRecievedLoraStm.sensor_data.compass_degree = (uint32_t) std::stoi(token[5].substr(token[5].find(":") + 1, token[5].length()));
-    gmRecievedLoraSfp.status = (int)std::stoi(token[6].substr( token[6].find(":") + 1, token[6].length()));
-
-
-
-//    printAll("Lora Data: ");
-//    printAll("temperature: ", (int)gmRecievedLoraStm.sensor_data.temperature,
-//    " - altitude: ", (int)gmRecievedLoraStm.sensor_data.altitude,
-//    " - pressure: ", (int)gmRecievedLoraStm.sensor_data.pressure,
-//    " - wheather_condition: ", (int)gmRecievedLoraStm.sensor_data.wheather_condition,
-//    " - compass_degree: ", (int)gmRecievedLoraStm.sensor_data.compass_degree,
-//    " - Sfp status: ", gmRecievedLoraSfp.status);
-
-//    printAll("\n\n\n");
 
 
     gmMutex.unlock();

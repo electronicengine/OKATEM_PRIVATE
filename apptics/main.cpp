@@ -81,7 +81,6 @@ int main(int argc, char* argv[])
         }
 
 
-
     }
 
     return 0;
@@ -94,7 +93,7 @@ void safeLog()
 
     printAll("Environment Data: ");
 
-    std::cout << "Gps Data:  " <<  stm_data.gps_string << std::endl;
+    std::cout << "Gps:  " <<  stm_data.gps_string << std::endl;
     printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
              " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
              " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
@@ -106,13 +105,13 @@ void safeLog()
     printAll("\n\n\n");
 
     printAll("Lora Data: ");
+    std::cout << "Gps:  " <<  lora_stm_data.gps_string << std::endl;
     printAll("Temperature: ", (int)lora_stm_data.sensor_data.temperature,
     " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
     " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
-    " - Wheather_condition: ", (int)lora_stm_data.sensor_data.wheather_condition,
-    " - Compass_degree: ", (int)lora_stm_data.sensor_data.compass_degree,
+    " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
+    " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
     " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
-
 
 
     printAll("\n\n\n");
