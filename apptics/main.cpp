@@ -56,7 +56,6 @@ int main(int argc, char* argv[])
     while(1)
     {
 
-
         stm_data = controller.getStmEnvironment();
         sfp_data = sfp_monitor.getValues();
 
@@ -73,13 +72,13 @@ int main(int argc, char* argv[])
         }
 
 
-//        now = clock();
+        now = clock();
 
-//        if(now - last > 5000000)
-//        {
-//            safeLog();
-//            last = now;
-//        }
+        if(now - last > 5000000)
+        {
+            safeLog();
+            last = now;
+        }
 
 
 
@@ -99,7 +98,7 @@ void safeLog()
     printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
              " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
              " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconected");
+             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
     printAll("\n\n\n");
 
     printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
@@ -112,7 +111,7 @@ void safeLog()
     " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
     " - Wheather_condition: ", (int)lora_stm_data.sensor_data.wheather_condition,
     " - Compass_degree: ", (int)lora_stm_data.sensor_data.compass_degree,
-    " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconected");
+    " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 
 
 

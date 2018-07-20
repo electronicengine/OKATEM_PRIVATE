@@ -232,7 +232,6 @@ std::string LoraWan::prepareData()
     Data += " - end";
 
 
-
     gmMutex.unlock();
 
 

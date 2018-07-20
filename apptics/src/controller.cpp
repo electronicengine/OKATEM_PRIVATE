@@ -113,8 +113,6 @@ void Controller::communicationThread()
 {
 
     unsigned char *transmitted_data;
-//    std::vector<unsigned char> x_data;
-
 
     while(true)
     {
@@ -130,7 +128,6 @@ void Controller::communicationThread()
 
             gmStmEnvironmentData = (unsigned char *)transmitted_data;
             delete []transmitted_data;
-//            x_data.clear();
             gmBPIControlData.clear();
 
 

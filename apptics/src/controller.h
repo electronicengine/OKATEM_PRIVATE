@@ -89,6 +89,8 @@ struct GPS_DATA
                     gps_string.erase(0, pos + delimiter.length());
                     i++;
                 }
+                else
+                    break;
 
 
             }

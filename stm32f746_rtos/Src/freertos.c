@@ -88,10 +88,10 @@ struct SPI_RX_FORMAT
     uint8_t servo_motor1_direction;
     uint8_t servo_motor2_direction;
 
-    uint8_t step_motor1_degree;
-    uint8_t step_motor2_degree;
-    uint8_t step_motor3_degree;
-    uint8_t step_motor4_degree;
+    uint8_t step_motor1_speed;
+    uint8_t step_motor2_speed;
+    uint8_t step_motor3_speed;
+    uint8_t step_motor4_speed;
     uint8_t servo_motor1_degree;
     uint8_t servo_motor2_degree;
 
