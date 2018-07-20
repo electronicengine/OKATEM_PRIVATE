@@ -1,5 +1,8 @@
 #include "udpsocket.h"
 
+
+
+
 UdpSocket::UdpSocket()
 {
     openPort();
@@ -11,8 +14,15 @@ SPI_TX_FORMAT UdpSocket::getSocketData()
 
     gmMutex.lock();
 
-    Data = gmData;
-    gmData.clear();
+    if(gmDataReady == 1)
+    {
+        Data = gmData;
+        gmDataReady = 0;
+    }
+    else
+    {
+        Data = FAIL;
+    }
 
     gmMutex.unlock();
 
@@ -42,6 +52,8 @@ void UdpSocket::openPort()
 
     printAll("Socket has port number #%d\n", ntohs(name.sin_port));
 
+    std::thread listening_port(&UdpSocket::recieveData, this);
+    listening_port.detach();
 
 
 }
@@ -54,6 +66,23 @@ void UdpSocket::closePort()
 void UdpSocket::sendData()
 {
 
+    struct sockaddr_in serv;
+
+    unsigned char data[DATA_SIZE];
+
+    data[0] = 12;
+    data[1] = 13;
+    data[2] = 14;
+
+    serv.sin_family = AF_INET;
+    serv.sin_port = htons(24000);
+//    serv.sin_addr.s_addr = inet_addr("10.100.93.14");
+
+    socklen_t m = sizeof(serv);
+
+    sendto(gmSocket, data, DATA_SIZE, 0, (struct sockaddr *)&serv, m);
+
+
 }
 
 void UdpSocket::recieveData()
@@ -62,26 +91,26 @@ void UdpSocket::recieveData()
     int ret;
     int package_size;
 
-    unsigned char *ethernet_data;
+    unsigned char ethernet_data[DATA_SIZE];
 
+    printAll("socket recieve");
 
-        while(true)
+    while(true)
+    {
+
+        package_size = read(gmSocket, ethernet_data, DATA_SIZE);
+        if(package_size == DATA_SIZE)
         {
 
-            package_size = read(gmSocket, ethernet_data, DATA_SIZE);
-            if(package_size == DATA_SIZE)
-            {
+            gmMutex.lock();
 
-                gmMutex.lock();
+            gmData = ethernet_data;
+            gmDataReady = 1;
 
-                gmData = ethernet_data;
-
-                gmMutex.unlock();
-
-                delete []ethernet_data;
-
-            }
+            gmMutex.unlock();
 
         }
+
+    }
 
 }

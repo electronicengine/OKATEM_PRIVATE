@@ -18,6 +18,10 @@
 #include "udpsocket.h"
 
 
+
+clock_t now = 0;
+clock_t last = 0;
+
 SPI_RX_FORMAT stm_data;
 SPI_RX_FORMAT lora_stm_data;
 
@@ -39,6 +43,7 @@ int main(int argc, char* argv[])
 {
 
 
+    int a;
     tracker.runTracking();
 
     stm_data = controller.getStmEnvironment();
@@ -61,12 +66,24 @@ int main(int argc, char* argv[])
 
         lora.getLoraData(lora_sfp_data, lora_stm_data);
 
-        controller.driveMotorUp();
-        controller.driveMotorLeft();
-
         control_data = udp_socket.getSocketData();
 
-        controller.setControlData(control_data);
+        if(control_data != FAIL )
+        {
+            controller.setControlData(control_data);
+            control_data.clear();
+        }
+
+
+        now = clock();
+
+        if(now - last > 5000000)
+        {
+            safeLog();
+            last = now;
+        }
+
+
 
     }
 
@@ -84,7 +101,7 @@ void safeLog()
     printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
              " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
              " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-             " - SFP Status: ",sfp_data.status);
+             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconected");
     printAll("\n\n\n");
 
     printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
@@ -97,7 +114,7 @@ void safeLog()
     " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
     " - Wheather_condition: ", (int)lora_stm_data.sensor_data.wheather_condition,
     " - Compass_degree: ", (int)lora_stm_data.sensor_data.compass_degree,
-    " - Sfp status: ", lora_sfp_data.status);
+    " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconected");
 
 
 

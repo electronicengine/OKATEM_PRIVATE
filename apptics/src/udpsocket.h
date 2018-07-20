@@ -31,9 +31,19 @@ class UdpSocket
 {
 
 public:
+
+
+    enum class UdpSocket_Status
+    {
+        time_out,
+        error,
+        ok
+    }Status;
+
+
     UdpSocket();
 
-
+    volatile int gmDataReady = 0;
     SPI_TX_FORMAT getSocketData();
 
 
@@ -42,6 +52,7 @@ public:
 private:
 
     int gmSocket;
+
 
     std::mutex gmMutex;
     SPI_TX_FORMAT gmData;

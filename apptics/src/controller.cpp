@@ -13,7 +13,7 @@ Controller::~Controller()
 
 }
 
-Controller::Bpi_Status Controller::zoomInCamera()
+Controller::Controller_Status Controller::zoomInCamera()
 {
 
     gmMutex.lock();
@@ -21,12 +21,12 @@ Controller::Bpi_Status Controller::zoomInCamera()
     gmBPIControlData.servo_motor1_direction = FORWARD;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 
 }
 
 
-Controller::Bpi_Status Controller::zoomOutCamera()
+Controller::Controller_Status Controller::zoomOutCamera()
 {
 
     gmMutex.lock();
@@ -34,10 +34,10 @@ Controller::Bpi_Status Controller::zoomOutCamera()
     gmBPIControlData.servo_motor1_direction = BACKWARD;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
-Controller::Bpi_Status Controller::driveMotorLeft()
+Controller::Controller_Status Controller::driveMotorLeft()
 {
 
     gmMutex.lock();
@@ -45,12 +45,12 @@ Controller::Bpi_Status Controller::driveMotorLeft()
     gmBPIControlData.step_motor2_degree = 36;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
 
 
-Controller::Bpi_Status Controller::driveMotorRight()
+Controller::Controller_Status Controller::driveMotorRight()
 {
 
     gmMutex.lock();
@@ -58,45 +58,48 @@ Controller::Bpi_Status Controller::driveMotorRight()
     gmBPIControlData.step_motor2_degree = 87;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
 
 
 
-Controller::Bpi_Status Controller::driveMotorUp()
+Controller::Controller_Status Controller::driveMotorUp()
 {
     gmMutex.lock();
     gmBPIControlData.step_motor1_direction = FORWARD;
     gmBPIControlData.step_motor1_degree = 45;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
 
-Controller::Bpi_Status Controller::driveMotorDown()
+Controller::Controller_Status Controller::driveMotorDown()
 {
     gmMutex.lock();
     gmBPIControlData.step_motor1_direction = BACKWARD;
     gmBPIControlData.step_motor1_degree = 5;
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
 
 
-
-
-
-Controller::Bpi_Status Controller::setControlData(const SPI_TX_FORMAT &Data)
+Controller::Controller_Status Controller::setControlData(SPI_TX_FORMAT Data)
 {
     gmMutex.lock();
-    gmBPIControlData = Data;
+
+    if(gmDataReady == 1)
+    {
+        gmBPIControlData = Data;
+        gmDataReady = 0;
+    }
+
     gmMutex.unlock();
 
-    return Bpi_Status::ok;
+    return Controller_Status::ok;
 }
 
 SPI_RX_FORMAT Controller::getStmEnvironment()
@@ -119,16 +122,21 @@ void Controller::communicationThread()
     while(true)
     {
 
+
+
         gmMutex.lock();
-
-        transmitted_data = gmBPIControlData;
-        gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
-        gmStmEnvironmentData = (unsigned char *)transmitted_data;
-
-
+        transmitted_data = (unsigned char *)gmBPIControlData;
+        gmBPIControlData.clear();
         gmMutex.unlock();
 
+        gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
+
+        gmMutex.lock();
+        gmStmEnvironmentData = (unsigned char *)transmitted_data;
         delete []transmitted_data;
+        gmDataReady = 1;
+        gmMutex.unlock();
+
 
         usleep(100000);
 

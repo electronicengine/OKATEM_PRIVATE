@@ -30,7 +30,7 @@ void motorInit();
 void driveMotor();
 
 void motor1Drive(int Direction);
-void motor2Drive();
+void motor2Drive(int Direction);
 void motor3Drive();
 void motor4Drive();
 

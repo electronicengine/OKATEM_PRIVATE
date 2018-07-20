@@ -274,7 +274,7 @@ void gpsOps(void const * argument)
 
 
 
-//           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 
            enableGps();
 
@@ -357,6 +357,7 @@ void spiComOps(void const * argument)
 
     long token;
     int count = 0;
+    int step = 0;
 
     HAL_SPI_StateTypeDef status;
 
@@ -393,34 +394,71 @@ void spiComOps(void const * argument)
         HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&tx_data, (uint8_t *)&spi_rx_data,  sizeof(spi_tx_data));
 
 
-
         if(spi_rx_data.step_motor1_direction == FORWARD)
         {
-            motor1Drive(FORWARD);
-
-            spi_rx_data.step_motor1_direction = 0;
-            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-
+            motor1.direction = FORWARD;
         }
+        else if(spi_rx_data.step_motor1_direction == BACKWARD)
+        {
+            motor1.direction = BACKWARD;
+        }
+        else
+        {
+            motor1.direction = STOP;
+        }
+
+        if(spi_rx_data.step_motor2_direction == FORWARD)
+        {
+            motor2.direction = FORWARD;
+        }
+        else if(spi_rx_data.step_motor2_direction == BACKWARD)
+        {
+            motor2.direction = BACKWARD;
+        }
+        else
+        {
+            motor2.direction = STOP;
+        }
+
+
+
       }
       else
       {
-//          count ++;
+          count ++;
 
 
-//          if(count >= 3)
-//          {
+          if(count >= 3)
+          {
 
-//              motor1Drive();
-////            motor2Drive();
-////            motor3Drive();
-////            motor4Drive();
 
-//            count = 0;
+            if(motor1.direction == FORWARD)
+            {
+              motor1Drive(FORWARD);
+            }
 
-//          }
+            if(motor1.direction == BACKWARD)
+            {
+              motor1Drive(BACKWARD);
+            }
+
+            if(motor2.direction == FORWARD)
+            {
+              motor2Drive(FORWARD);
+            }
+
+            if(motor2.direction == BACKWARD)
+            {
+              motor2Drive(BACKWARD);
+            }
+
+
+//            motor2Drive(FORWARD);
+
+            count = 0;
+
+          }
       }
-
 
   }
 

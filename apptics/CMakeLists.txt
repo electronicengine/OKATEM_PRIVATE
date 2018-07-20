@@ -23,6 +23,13 @@ set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabihf-g++)
 set(CMAKE_C_FLAGS "-std=c++17")
 Set(CMAKE_CXX_FLAGS "-std=c++17")
 
+set(CMAKE_C_FLAGS "--gen-debug")
+Set(CMAKE_CXX_FLAGS "--gen-debug")
+
+set(CMAKE_C_FLAGS "-g")
+Set(CMAKE_CXX_FLAGS "-g")
+
+
 
 #find_library(/usr/lib/x86_64-linux-gnu
 #    /usr/local/lib/
@@ -96,7 +103,7 @@ add_executable(${PROJECT_NAME}
 #    )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
-  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
+  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.17:/home/pi
+#  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
   COMMENT "Creating directory: "
 )

@@ -11,6 +11,7 @@
 #include <math.h>
 #include <mutex>
 
+
 // Text properties which is printed on debug
 #define TEXT_FONT cv::FONT_HERSHEY_COMPLEX_SMALL
 #define TEXT_SCALE 2
@@ -22,8 +23,6 @@
 #define FRAME_WIDTH 320
 #define FRAME_HEIGHT 240
 
-#define FAIL -1
-#define SUCCESS 0
 
 #define LASER_POINTER_NUMBER 4
 

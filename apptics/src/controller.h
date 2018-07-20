@@ -189,6 +189,16 @@ struct SPI_TX_FORMAT
     uint8_t garbage2[48];
 
 
+    SPI_TX_FORMAT& operator = (int value)
+    {
+        checksum = value;
+        return *this;
+    }
+
+    operator int()
+    {
+        return checksum;
+    }
 
     operator unsigned char *()
     {
@@ -301,29 +311,33 @@ class Controller
 {
 public:
 
-    enum class Bpi_Status
+    enum class Controller_Status
     {
         time_out,
         error,
         ok
+
     }Status;
 
     Controller();
     ~Controller();
 
-    Bpi_Status zoomInCamera();
-    Bpi_Status zoomOutCamera();
+    Controller_Status zoomInCamera();
+    Controller_Status zoomOutCamera();
 
-    Bpi_Status driveMotorLeft();
-    Bpi_Status driveMotorRight();
-    Bpi_Status driveMotorDown();
-    Bpi_Status driveMotorUp();
+    Controller_Status driveMotorLeft();
+    Controller_Status driveMotorRight();
+    Controller_Status driveMotorDown();
+    Controller_Status driveMotorUp();
 
-    Bpi_Status setControlData(const SPI_TX_FORMAT& Data);
+    Controller_Status setControlData(SPI_TX_FORMAT Data);
+
     SPI_RX_FORMAT getStmEnvironment();
 
 
 private:
+
+    volatile int gmDataReady = 0;
 
     SPI_RX_FORMAT gmStmEnvironmentData;
     SPI_TX_FORMAT gmBPIControlData;

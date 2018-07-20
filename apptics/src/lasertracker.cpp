@@ -3,6 +3,7 @@
 #include <thread>
 #include <pthread.h>
 
+#include "globals.h"
 
 
 LaserTracker::LaserTracker(const std::string VideoLocation)

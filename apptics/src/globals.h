@@ -9,6 +9,8 @@
 #include <mutex>
 #include <cstdlib>
 
+#define SUCCESS 1
+#define FAIL 2
 
 static std::mutex printMutex;
 

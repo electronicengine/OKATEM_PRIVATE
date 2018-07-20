@@ -17,59 +17,113 @@ void  motor1Drive(int Direction)
 {
     static volatile int phase = 1;
 
-        if(Direction == FORWARD)
-        {
+    if(Direction == FORWARD)
+    {
 
 //            motor2.degree--;
 
-              if(phase  == 1)
-              {
+          if(phase  == 1)
+          {
 
 
-                  HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+              HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
 
-                  HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
-                  phase ++;
+              HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+              phase ++;
 
-              }
-              else if(phase  == 2)
-              {
+          }
+          else if(phase  == 2)
+          {
 
-                  HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+              HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
 
-                  HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
-                  phase ++;
+              HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+              phase ++;
 
-              }
-              else if(phase  == 3)
-              {
+          }
+          else if(phase  == 3)
+          {
 
-                  HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+              HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
 
-                  HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
-                  phase ++;
+              HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+              phase ++;
 
-              }
-              else if(phase  == 4)
-              {
+          }
+          else if(phase  == 4)
+          {
 
-                  HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+              HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
 
-                  HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
-                  phase  = 1;
+              HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+              phase  = 1;
 
-              }
+          }
 
+
+    }
+
+    if(Direction == BACKWARD)
+    {
+        if(phase  == 1)
+        {
+
+            HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+
+
+            phase ++;
 
         }
+        else if(phase  == 2)
+        {
+
+            HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+
+
+            phase ++;
+
+        }
+        else if(phase  == 3)
+        {
+
+            HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+
+            phase ++;
+
+        }
+        else if(phase  == 4)
+        {
+
+            HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+            phase  = 1;
+
+        }
+
+    }
 
 
 //    if(motor1.degree <= 0)
@@ -80,71 +134,118 @@ void  motor1Drive(int Direction)
 //    }
 }
 
-void motor2Drive()
+void motor2Drive(int Direction)
 {
 
     static volatile int phase = 1;
 
-//        if(motor2.direction == FORWARD && motor2.degree >= 0)
-//        {
+    if(Direction == FORWARD)
+    {
 
 //            motor2.degree--;
 
-              if(phase  == 1)
-              {
-
-                  HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
-
-                  HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
-                  phase ++;
-
-              }
-              else if(phase  == 2)
-              {
-
-                  HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
-
-                  HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
-                  phase ++;
-
-              }
-              else if(phase  == 3)
-              {
-
-                  HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
-
-                  HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
-                  phase ++;
-
-              }
-              else if(phase  == 4)
-              {
-
-                  HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
-
-                  HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
-                  HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
-                  phase  = 1;
-
-              }
+          if(phase  == 1)
+          {
 
 
-//        }
+              HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+
+              HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+              phase ++;
+
+          }
+          else if(phase  == 2)
+          {
+
+              HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+
+              HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+              phase ++;
+
+          }
+          else if(phase  == 3)
+          {
+
+              HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+
+              HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+              phase ++;
+
+          }
+          else if(phase  == 4)
+          {
+
+              HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+
+              HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+              phase  = 1;
+
+          }
 
 
-//    if(motor1.degree <= 0)
-//    {
-//        motor1.direction = STOP;
-//        motor1.degree = 0;
+    }
 
-//    }
+    if(Direction == BACKWARD)
+    {
+        if(phase  == 1)
+        {
+
+            HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+
+
+            phase ++;
+
+        }
+        else if(phase  == 2)
+        {
+
+            HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+
+
+            phase ++;
+
+        }
+        else if(phase  == 3)
+        {
+
+            HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+
+            phase ++;
+
+        }
+        else if(phase  == 4)
+        {
+
+            HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+
+            HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+            phase  = 1;
+
+        }
+
+    }
 
 }
 
