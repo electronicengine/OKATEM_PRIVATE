@@ -63,7 +63,7 @@ struct GPS_DATA
     std::string date;
 
 
-    GPS_DATA& operator =(const std::string& GpsString)
+    GPS_DATA& operator =(std::string GpsString)
     {
 
         int i = 0;
@@ -80,13 +80,16 @@ struct GPS_DATA
 
         try
         {
-
             while((pos = gps_string.find(delimiter)) != std::string::npos)
             {
 
-                token[i] = gps_string.substr(0, pos);
-                gps_string.erase(0, pos + delimiter.length());
-                i++;
+                if(i<20)
+                {
+                    token[i] = gps_string.substr(0, pos);
+                    gps_string.erase(0, pos + delimiter.length());
+                    i++;
+                }
+
 
             }
 
@@ -150,11 +153,19 @@ struct SPI_RX_FORMAT
 
     SPI_RX_FORMAT& operator = (unsigned char *TransferData)
     {
-        gps_string = std::string(&TransferData[0], &TransferData[99]);
+        try
+        {
+            gps_string = std::string(&TransferData[0], &TransferData[99]);
 
-        gps_data = gps_string;
+            gps_data = gps_string;
 
-        sensor_data = &TransferData[100];
+            sensor_data = &TransferData[100];
+        }
+        catch(std::exception ex)
+        {
+            printAll(ex.what());
+        }
+
 
         return *this;
     }
@@ -177,10 +188,10 @@ struct SPI_TX_FORMAT
     uint8_t servo_motor1_direction;
     uint8_t servo_motor2_direction;
 
-    uint8_t step_motor1_degree;
-    uint8_t step_motor2_degree;
-    uint8_t step_motor3_degree;
-    uint8_t step_motor4_degree;
+    uint8_t step_motor1_speed;
+    uint8_t step_motor2_speed;
+    uint8_t step_motor3_speed;
+    uint8_t step_motor4_speed;
     uint8_t servo_motor1_degree;
     uint8_t servo_motor2_degree;
 
@@ -234,10 +245,10 @@ struct SPI_TX_FORMAT
         Data[64] = servo_motor1_direction;
         Data[65] = servo_motor2_direction;
 
-        Data[66] = step_motor1_degree;
-        Data[67] = step_motor2_degree;
-        Data[68] = step_motor3_degree;
-        Data[69] = step_motor4_degree;
+        Data[66] = step_motor1_speed;
+        Data[67] = step_motor2_speed;
+        Data[68] = step_motor3_speed;
+        Data[69] = step_motor4_speed;
         Data[70] = servo_motor1_degree;
         Data[71] = servo_motor2_degree;
 
@@ -269,10 +280,10 @@ struct SPI_TX_FORMAT
         servo_motor1_direction = Data[64];
         servo_motor2_direction = Data[65];
 
-        step_motor1_degree = Data[66];
-        step_motor2_degree = Data[67];
-        step_motor3_degree = Data[68];
-        step_motor4_degree = Data[69];
+        step_motor1_speed = Data[66];
+        step_motor2_speed = Data[67];
+        step_motor3_speed = Data[68];
+        step_motor4_speed = Data[69];
         servo_motor1_degree = Data[70];
         servo_motor2_degree = Data[71];
 
@@ -294,10 +305,10 @@ struct SPI_TX_FORMAT
         step_motor3_direction = 0;
         step_motor4_direction = 0;
 
-        step_motor1_degree = 0;
-        step_motor2_degree = 0;
-        step_motor3_degree = 0;
-        step_motor4_degree = 0;
+        step_motor1_speed = 0;
+        step_motor2_speed = 0;
+        step_motor3_speed = 0;
+        step_motor4_speed = 0;
 
         servo_motor1_degree = 0;
         servo_motor1_degree = 0;

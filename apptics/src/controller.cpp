@@ -17,7 +17,7 @@ Controller::Controller_Status Controller::zoomInCamera()
 {
 
     gmMutex.lock();
-    gmBPIControlData.servo_motor1_degree = 120;
+    gmBPIControlData.servo_motor1_degree= 120;
     gmBPIControlData.servo_motor1_direction = FORWARD;
     gmMutex.unlock();
 
@@ -42,7 +42,7 @@ Controller::Controller_Status Controller::driveMotorLeft()
 
     gmMutex.lock();
     gmBPIControlData.step_motor2_direction = FORWARD;
-    gmBPIControlData.step_motor2_degree = 36;
+    gmBPIControlData.step_motor2_speed = 36;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -55,7 +55,7 @@ Controller::Controller_Status Controller::driveMotorRight()
 
     gmMutex.lock();
     gmBPIControlData.step_motor2_direction = BACKWARD;
-    gmBPIControlData.step_motor2_degree = 87;
+    gmBPIControlData.step_motor2_speed = 87;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -68,7 +68,7 @@ Controller::Controller_Status Controller::driveMotorUp()
 {
     gmMutex.lock();
     gmBPIControlData.step_motor1_direction = FORWARD;
-    gmBPIControlData.step_motor1_degree = 45;
+    gmBPIControlData.step_motor1_speed = 45;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -79,7 +79,7 @@ Controller::Controller_Status Controller::driveMotorDown()
 {
     gmMutex.lock();
     gmBPIControlData.step_motor1_direction = BACKWARD;
-    gmBPIControlData.step_motor1_degree = 5;
+    gmBPIControlData.step_motor1_speed = 5;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -91,11 +91,7 @@ Controller::Controller_Status Controller::setControlData(SPI_TX_FORMAT Data)
 {
     gmMutex.lock();
 
-    if(gmDataReady == 1)
-    {
-        gmBPIControlData = Data;
-        gmDataReady = 0;
-    }
+    gmBPIControlData = Data;
 
     gmMutex.unlock();
 
@@ -117,24 +113,34 @@ void Controller::communicationThread()
 {
 
     unsigned char *transmitted_data;
+//    std::vector<unsigned char> x_data;
 
 
     while(true)
     {
 
 
+        try
+        {
+            gmMutex.lock();
 
-        gmMutex.lock();
-        transmitted_data = (unsigned char *)gmBPIControlData;
-        gmBPIControlData.clear();
-        gmMutex.unlock();
+            transmitted_data = (unsigned char *)gmBPIControlData;
 
-        gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
+            gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
 
-        gmMutex.lock();
-        gmStmEnvironmentData = (unsigned char *)transmitted_data;
-        delete []transmitted_data;
-        gmDataReady = 1;
+            gmStmEnvironmentData = (unsigned char *)transmitted_data;
+            delete []transmitted_data;
+//            x_data.clear();
+            gmBPIControlData.clear();
+
+
+        }
+        catch(std::exception ex)
+        {
+            printAll(ex.what());
+        }
+
+
         gmMutex.unlock();
 
 

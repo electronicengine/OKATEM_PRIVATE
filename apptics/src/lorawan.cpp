@@ -193,7 +193,7 @@ void LoraWan::listenChannel()
     }
 
     resetChannel();
-    printAll("\nLora Timeout\n");
+//    printAll("\nLora Timeout\n");
 
 }
 

@@ -75,13 +75,13 @@ int main(int argc, char* argv[])
         }
 
 
-        now = clock();
+//        now = clock();
 
-        if(now - last > 5000000)
-        {
-            safeLog();
-            last = now;
-        }
+//        if(now - last > 5000000)
+//        {
+//            safeLog();
+//            last = now;
+//        }
 
 
 
