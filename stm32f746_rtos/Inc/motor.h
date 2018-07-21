@@ -20,7 +20,7 @@
 
  struct Step_Motor {
    volatile int direction;
-   volatile int degree;
+   volatile int speed;
  }motor1, motor2, motor3, motor4;
 
 

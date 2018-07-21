@@ -64,7 +64,7 @@
 osThreadId gpsThreadHandle;
 osThreadId sensorThreadHandle;
 osThreadId spiComThreadHandle;
-osThreadId logThreadHandle;
+osThreadId motorThreadHandle;
 
 
 osMutexId spiMutexHandle;
@@ -118,15 +118,11 @@ volatile struct SPI_TX_FORMAT
 }spi_tx_data,  tx_data;
 
 
-//uint8_t rx[sizeof(spi_rx_data)];
-//uint8_t tx[sizeof(spi_tx_data)];
-
-
 
 void gpsOps(void const * argument);
 void sensorOps(void const * argument);
 void spiComOps(void const * argument);
-void loggingOps(void const * argument);
+void motorOps(void const * argument);
 
 void MX_FREERTOS_Init(void);
 void mprintf(const char *fmt, ...);
@@ -189,8 +185,8 @@ void MX_FREERTOS_Init(void)
   osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 512);
   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
 
-//  osThreadDef(loggingThread, loggingOps, osPriorityNormal, 0, 512);
-//  logThreadHandle = osThreadCreate(osThread(loggingThread), NULL);
+  osThreadDef(motorThread, motorOps, osPriorityNormal, 0, 512);
+  motorThreadHandle = osThreadCreate(osThread(motorThread), NULL);
 
 }
 
@@ -213,32 +209,13 @@ void UART4_IRQHandler(void)
 void SPI1_IRQHandler(void)
 {
 
-
-  long lSwitchRequired;
-
-
   HAL_SPI_IRQHandler(&hspi1);
 
   xSemaphoreGiveFromISR(spiSemaphoreHandle, NULL);
 
-//  if(lSwitchRequired)
-//      portYIELD_FROM_ISR(lSwitchRequired);
-
-//  HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&spi_tx_data, (uint8_t *)rx, sizeof(spi_tx_data));
-
 }
 
-void loggingOps(void const * argument)
-{
 
-    mprintf("logingOps\r\n");
-
-    while(1)
-    {
-        mprintf("logingOps\r\n");
-        osDelay(1000);
-    }
-}
 
 
 
@@ -396,12 +373,12 @@ void spiComOps(void const * argument)
         if(spi_rx_data.step_motor1_direction == FORWARD)
         {
             motor1.direction = FORWARD;
-            speed = spi_rx_data.step_motor1_speed;
+            motor1.speed = spi_rx_data.step_motor1_speed;
         }
         else if(spi_rx_data.step_motor1_direction == BACKWARD)
         {
             motor1.direction = BACKWARD;
-            speed = spi_rx_data.step_motor1_speed;
+            motor1.speed = spi_rx_data.step_motor1_speed;
         }
         else
         {
@@ -411,12 +388,12 @@ void spiComOps(void const * argument)
         if(spi_rx_data.step_motor2_direction == FORWARD)
         {
             motor2.direction = FORWARD;
-            speed = spi_rx_data.step_motor2_speed;
+            motor1.speed = spi_rx_data.step_motor2_speed;
         }
         else if(spi_rx_data.step_motor2_direction == BACKWARD)
         {
             motor2.direction = BACKWARD;
-            speed = spi_rx_data.step_motor2_speed;
+            motor1.speed = spi_rx_data.step_motor2_speed;
         }
         else
         {
@@ -426,43 +403,48 @@ void spiComOps(void const * argument)
 
 
       }
-      else
-      {
-          count ++;
 
-
-          if(count >= 2 + speed)
-          {
-
-
-            if(motor1.direction == FORWARD)
-            {
-              motor1Drive(FORWARD);
-            }
-
-            if(motor1.direction == BACKWARD)
-            {
-              motor1Drive(BACKWARD);
-            }
-
-            if(motor2.direction == FORWARD)
-            {
-              motor2Drive(FORWARD);
-            }
-
-            if(motor2.direction == BACKWARD)
-            {
-              motor2Drive(BACKWARD);
-            }
-
-
-//            motor2Drive(FORWARD);
-
-            count = 0;
-
-          }
-      }
 
   }
+
+}
+
+void motorOps(void const * argument)
+{
+
+    int count;
+    int speed = 1;
+
+    mprintf("motorOps\r\n");
+
+    while(1)
+    {
+
+
+
+      if(motor1.direction == FORWARD)
+      {
+        motor1Drive(FORWARD);
+      }
+
+      if(motor1.direction == BACKWARD)
+      {
+        motor1Drive(BACKWARD);
+      }
+
+      if(motor2.direction == FORWARD)
+      {
+        motor2Drive(FORWARD);
+      }
+
+      if(motor2.direction == BACKWARD)
+      {
+        motor2Drive(BACKWARD);
+      }
+
+            osDelay(2 + motor1.speed);
+
+
+    }
 
 }
