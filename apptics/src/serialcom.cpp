@@ -131,7 +131,7 @@ SerialCom::Serial_Status SerialCom::Init()
     if (gmFileDescriptor == -1)
     {
             //ERROR - CAN'T OPEN SERIAL PORT
-            printAll("Serial Port file can not opened\n");
+            printAll("Serial Port file can not opened");
             return Serial_Status::cannot_open;
     }
 
@@ -193,7 +193,7 @@ SerialCom::Serial_Status SerialCom::Init()
             options.c_cflag |= B4000000;
     else
     {
-            printAll("Serial Port Baundrate is wrongly\n");
+            printAll("Serial Port Baundrate is wrongly");
             Close();
             return Serial_Status::cannot_open;
     }
@@ -214,9 +214,9 @@ SerialCom::SerialCom() : gmBaundRate("B57600"), gmPort("/dev/ttyS2")
 {
     Status = Init();
     if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened\n");
+        printAll("Serial Port Succesfully Opened");
     else
-        printAll("Serial Port Can Not Opened\n");
+        printAll("Serial Port Can Not Opened");
 
 }
 
@@ -224,18 +224,18 @@ SerialCom::SerialCom(const std::string& BaundRate) : gmBaundRate(BaundRate), gmP
 {
     Status = Init();
     if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened\n");
+        printAll("Serial Port Succesfully Opened");
     else
-        printAll("Serial Port Can Not Opened\n");
+        printAll("Serial Port Can Not Opened");
 }
 
 SerialCom::SerialCom(const std::string& BaundRate, const std::string& Port) : gmBaundRate(BaundRate), gmPort(Port)
 {
     Status = Init();
     if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened\n");
+        printAll("Serial Port Succesfully Opened");
     else
-        printAll("Serial Port Can Not Opened\n");
+        printAll("Serial Port Can Not Opened");
 }
 
 

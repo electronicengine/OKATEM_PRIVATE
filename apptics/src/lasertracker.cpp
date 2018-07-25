@@ -13,7 +13,7 @@ LaserTracker::LaserTracker(const std::string VideoLocation)
 
     mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
     if (!mVideoCapture->isOpened())
-           printf("LaserTracker init is Failed\n");
+           printAll("LaserTracker Camera can not opened");
 
 }
 
@@ -26,7 +26,7 @@ LaserTracker::LaserTracker(int Camera)
 
     mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
     if (!mVideoCapture->isOpened())
-        printf("LaserTracker init is Failed\n");
+        printAll("LaserTracker init is Failed");
 
 }
 
@@ -83,6 +83,9 @@ int LaserTracker::startTracking()
 
     std::vector<cv::Vec3f> red_circles;
 
+
+    printAll("LaserTracker is starting...");
+
     while(true)
     {
 
@@ -102,7 +105,7 @@ int LaserTracker::startTracking()
 
     }
 
-    printf("The Source Connection has been faild.");
+    printAll("Laser Tracker Source Connection has been faild.");
     return FAIL;
 
 }
@@ -171,10 +174,6 @@ int LaserTracker::calculatePerspective(std::vector<cv::Point> &Points)
         last_right_diagonal = (last_right_diagonal + right_diagonal) / 2;
     if(last_bottom_edge != 0)
         last_bottom_edge = (last_bottom_edge + bottom_edge) / 2;
-
-
-//    std::cout << "Diagonal Rate - " << left_diagonal / right_diagonal <<  std::endl;
-//    std::cout << "Edge Rate - " << upper_edge / bottom_edge <<  std::endl;
 
     gmMutex.lock();
     gmPerspective.diagonal_rate = left_diagonal / right_diagonal;

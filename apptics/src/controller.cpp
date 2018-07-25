@@ -63,7 +63,6 @@ Controller::Controller_Status Controller::driveMotorRight()
 
 
 
-
 Controller::Controller_Status Controller::driveMotorUp()
 {
     gmMutex.lock();
@@ -114,6 +113,8 @@ void Controller::communicationThread()
 
     unsigned char *transmitted_data;
 
+    printAll("Stm Spi Communication Thread Starting...");
+
     while(true)
     {
 
@@ -134,7 +135,7 @@ void Controller::communicationThread()
         }
         catch(std::exception ex)
         {
-            printAll(ex.what());
+            printAll("Stm-Spi Communication Exception: ",ex.what());
         }
 
 

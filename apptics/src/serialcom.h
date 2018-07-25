@@ -86,7 +86,7 @@ public:
         }
         else
         {
-            printAll("Serial_Status::cannot_write\n");
+            printAll("Serial_Status::cannot_write");
             return Serial_Status::cannot_write;
 
         }

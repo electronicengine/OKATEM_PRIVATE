@@ -2,16 +2,16 @@
 
 LoraWan::Lora_Status LoraWan::init()
 {
+
+    printAll("Lora Inıtializing... ");
+
     std::vector<unsigned char> lora_return;
     int return_size;
-
-
 
 
         gmSerial.writeData("sys reset\r\n");
         gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
-//        printAll(std::string(lora_return.begin(), lora_return.end()));
         lora_return.clear();
         usleep(1);
 
@@ -24,13 +24,13 @@ LoraWan::Lora_Status LoraWan::init()
 
     }while( std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
 
-//    printAll("Lora radio set pwr 14 : ", std::string(lora_return.begin(), lora_return.end()));
+    printAll("Lora radio set pwr 14 : ok");
     lora_return.clear();
 
     gmSerial.writeData("mac pause\r\n");
     gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
-//    printAll("Lora mac pause :", std::string(lora_return.begin(), lora_return.end()));
+    printAll("Lora mac pause :", std::string(lora_return.begin(), lora_return.end()));
     lora_return.clear();
 
     do
@@ -40,7 +40,7 @@ LoraWan::Lora_Status LoraWan::init()
         usleep(TRANSMISSION_TIMEOUT);
     }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
 
-//    printAll("Lora radio set wdt 0: ", std::string(lora_return.begin(), lora_return.end()));
+    printAll("Lora radio set wdt 0: ok");
     lora_return.clear();
 
     do
@@ -51,7 +51,7 @@ LoraWan::Lora_Status LoraWan::init()
 
     }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
 
-//    printAll("Lora radio set freq ", gmFrequency, " : ", std::string(lora_return.begin(), lora_return.end()));
+    printAll("Lora radio set freq ", gmFrequency, " : ok");
     lora_return.clear();
 
     do
@@ -62,7 +62,7 @@ LoraWan::Lora_Status LoraWan::init()
         usleep(TRANSMISSION_TIMEOUT);
     }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
 
-//    printAll("Lora radio set mod fsk ", std::string(lora_return.begin(), lora_return.end()));
+    printAll("Lora radio set mod fsk ok");
     lora_return.clear();
 
 
@@ -75,7 +75,7 @@ LoraWan::Lora_Status LoraWan::init()
 LoraWan::Lora_Status LoraWan::sendBeacon()
 {
 
-    std::string Data =prepareData();
+    std::string Data = prepareData();
 
 
     int return_size;
@@ -93,6 +93,8 @@ LoraWan::Lora_Status LoraWan::sendBeacon()
 //    std::cout << "Size: " << size << std::endl;
 //    std::cout << "sequence " << sequence << std::endl;
 
+
+    printAll("Lora sending beacon ");
 
     for(int i=0; i<sequence; i++)
     {
@@ -114,14 +116,12 @@ LoraWan::Lora_Status LoraWan::sendBeacon()
 
             do{
 
-//                printAll(partial_data);
+                printAll("Lora Partial Data", partial_data);
 
                 gmSerial.writeData(partial_data);
 
                 lora_return.clear();
                 gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-
-//                std::cout << "tx: " << std::string(lora_return.begin(), lora_return.end()) << std::endl;
 
             }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\nradio_tx_ok\r\n");
 
@@ -144,6 +144,8 @@ void LoraWan::listenChannel()
 
     bool timeout = 0;
 
+    printAll("Lora Listining Channel...");
+
     while(1)
     {
         do
@@ -156,8 +158,7 @@ void LoraWan::listenChannel()
                 gmSerial.writeData("radio rx 0\r\n");
                 status = gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
-//              printAll(std::string(lora_return.begin(), lora_return.end()));
-//              std::cout << "rx : " << std::string(lora_return.begin(), lora_return.end()) << std::endl;
+                printAll("Lora Incomming Data: ", std::string(lora_return.begin(), lora_return.end()));
 
             }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n" &&
                    std::string(lora_return.begin(), lora_return.end()) != "busy\r\n");
@@ -186,14 +187,15 @@ void LoraWan::listenChannel()
         }
         catch( std::exception& exception )
         {
-            printAll(exception.what());
+            printAll("Lora converting exception: ", exception.what());
             break;
         }
 
     }
 
     resetChannel();
-//    printAll("\nLora Timeout\n");
+
+    printAll("Lora Timeout!");
 
 }
 
@@ -202,6 +204,9 @@ void LoraWan::listenChannel()
 void LoraWan::resetChannel()
 {
     std::string beacon = "hello";
+
+
+    printAll("Lora Restarting...!");
 
     init();
 
@@ -223,19 +228,29 @@ std::string LoraWan::prepareData()
     {
         Data = std::string(gmLoraStm.gps_string);
         gps_char_pos = Data.find_first_of("*");
-        Data = Data.substr(0, gps_char_pos);
+        Data = Data.substr(0, gps_char_pos + 3);
+        Data += "-" + std::to_string(gmLoraStm.gps_data.latitude);
+        Data += "-" + std::string((const char *)&gmLoraStm.gps_data.ns_indicator);
+        Data += "-" + std::to_string(gmLoraStm.gps_data.longnitude);
+        Data += "-" + std::string((const char *)&gmLoraStm.gps_data.we_indicator);
+        Data += "-" + std::to_string(gmLoraStm.sensor_data.temperature);
+        Data += "-" + std::to_string(gmLoraStm.sensor_data.altitude);
+        Data += "-" + std::to_string(gmLoraStm.sensor_data.pressure);
+        Data += "-" + std::to_string(gmLoraStm.sensor_data.wheather_condition);
+        Data += "-" + std::to_string(gmLoraStm.sensor_data.compass_degree);
 
-        Data += " - Sensor Temp:" + std::to_string(gmLoraStm.sensor_data.temperature);
-        Data += " - Sensor altitude: " + std::to_string(gmLoraStm.sensor_data.altitude);
-        Data += " - Sensor pressure: " + std::to_string(gmLoraStm.sensor_data.pressure);
-        Data += " - Sensor wheather: " + std::to_string(gmLoraStm.sensor_data.wheather_condition);
-        Data += " - Sensor compass: " + std::to_string(gmLoraStm.sensor_data.compass_degree);
-        Data += " - Sfp Status: " + std::to_string(gmLoraSfp.status);
-        Data += " - end";
+        Data += "-" + std::to_string(gmLoraSfp.status);
+        Data += "-" + std::to_string(gmLoraSfp.temperature);
+        Data += "-" + std::to_string(gmLoraSfp.vcc);
+        Data += "-" + std::to_string(gmLoraSfp.tx_bias);
+        Data += "-" + std::to_string(gmLoraSfp.tx_power);
+        Data += "-" + std::to_string(gmLoraSfp.rx_power);
+
+        Data += "-end";
     }
     catch(std::exception ex)
     {
-        printAll(ex.what());
+        printAll("Lora PrepareData exception: ",ex.what());
     }
 
 
@@ -288,7 +303,7 @@ void LoraWan::collectData(std::string &Data)
     }
     catch(std::exception ex)
     {
-        printAll(ex.what());
+        printAll("Lora Data Collect Exception: ", ex.what());
     }
 
 
@@ -361,19 +376,34 @@ void LoraWan::callBack(std::string& CommingData)
         gmMutex.lock();
 
         gmRecievedLoraStm.gps_string = token[0];
-        gmRecievedLoraStm.sensor_data.temperature = (uint32_t) std::stoi(token[1].substr(token[1].find(":") + 1, token[1].length()));
-        gmRecievedLoraStm.sensor_data.altitude = (uint32_t) std::stoi(token[2].substr( token[2].find(":") + 1, token[2].length()));
-        gmRecievedLoraStm.sensor_data.pressure = (uint32_t) std::stoi(token[3].substr( token[3].find(":") + 1, token[3].length()));
-        gmRecievedLoraStm.sensor_data.wheather_condition = (uint8_t) std::stoi(token[4].substr( token[4].find(":") + 1, token[4].length()));
-        gmRecievedLoraStm.sensor_data.compass_degree = (uint32_t) std::stoi(token[5].substr(token[5].find(":") + 1, token[5].length()));
-        gmRecievedLoraSfp.status = (int)std::stoi(token[6].substr( token[6].find(":") + 1, token[6].length()));
+
+        try{
+            gmRecievedLoraStm.gps_data.latitude = std::stod(token[1]);
+            gmRecievedLoraStm.gps_data.ns_indicator = (unsigned char)*token[2].c_str();
+            gmRecievedLoraStm.gps_data.longnitude = std::stod(token[3]);
+            gmRecievedLoraStm.gps_data.we_indicator = (unsigned char)*token[4].c_str();
+        }catch(std::exception ex)
+        { printAll("Lora incoming gps_data exception: ", ex.what());}
+
+        gmRecievedLoraStm.sensor_data.temperature = (uint32_t) std::stoi(token[5]);
+        gmRecievedLoraStm.sensor_data.altitude = (uint32_t) std::stoi(token[6]);
+        gmRecievedLoraStm.sensor_data.pressure = (uint32_t) std::stoi(token[7]);
+        gmRecievedLoraStm.sensor_data.wheather_condition = (uint8_t) std::stoi(token[8]);
+        gmRecievedLoraStm.sensor_data.compass_degree = (uint32_t) std::stoi(token[9]);
+
+        gmRecievedLoraSfp.status = (int)std::stoi(token[10]);
+        gmRecievedLoraSfp.temperature = (int)std::stoi(token[11]);
+        gmRecievedLoraSfp.vcc = (int)std::stoi(token[12]);
+        gmRecievedLoraSfp.tx_bias = (int)std::stoi(token[13]);
+        gmRecievedLoraSfp.tx_power = (int)std::stoi(token[14]);
+        gmRecievedLoraSfp.rx_power = (int)std::stoi(token[15]);
 
 
 
     }
     catch(std::exception ex)
     {
-        printAll(ex.what());
+        printAll("Lora CallBack Exception: ",ex.what());
     }
 
 
@@ -389,7 +419,6 @@ void LoraWan::callBack(std::string& CommingData)
 
 
 }
-
 
 
 LoraWan::LoraWan() : gmBaundRate("B57600"), gmFrequency("433100000")

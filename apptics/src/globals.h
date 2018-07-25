@@ -8,12 +8,18 @@
 #include <vector>
 #include <mutex>
 #include <cstdlib>
+#include <fstream>
 
 #define SUCCESS 1
 #define FAIL 2
 
+#define MAX_LOG_LINE 1000
+#define LOG_FILE "/var/www/html/log.txt"
+
 static std::mutex printMutex;
 
+void removeLine(char* sourcefile, int line);
+int countLine(char* sourcefile);
 
 template< typename T >
 inline std::string serializer(const T& t)
@@ -31,6 +37,21 @@ inline std::string serializer(const T& head, Args ... args)
     return serializer( head ) + serializer( args... );
 }
 
+
+template< typename T>
+const T currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
+
  template<typename... TAIL>
 void printAll(const TAIL&... tail)
 {
@@ -41,7 +62,46 @@ void printAll(const TAIL&... tail)
     std::cout << package << std::endl;
 
 
+
+    int num_lines = 0;
+
+    std::ifstream logfile(LOG_FILE, std::ios_base::in);
+    std::ofstream tempfile("/var/www/html/temp.txt", std::ios_base::app);
+    std::string unused;
+    while ( std::getline(logfile, unused) )
+       ++num_lines;
+
+    logfile.close();
+
+    if(num_lines > MAX_LOG_LINE)
+    {
+        logfile.open(LOG_FILE, std::ios_base::app);
+        num_lines = 0;
+
+
+         while ( std::getline(logfile, unused) )
+         {
+             if(num_lines != 0)
+                tempfile << unused << std::endl;
+
+         }
+
+         logfile.close();
+         tempfile.close();
+
+         remove(LOG_FILE);
+         rename("/var/www/html/temp.txt", LOG_FILE);
+
+
+    }
+
+     std::ofstream file(LOG_FILE, std::ios_base::app);
+     file << package << std::endl;
+     file.close();
+
 }
+
+
 
 template<typename T>
 std::string convertToHex(const T& Container)

@@ -146,6 +146,8 @@ void SfpMonitor::runSfpMonitor()
 {
     int ret;
 
+    printAll("SfpMonitor is starting...");
+
     while(1)
     {
 

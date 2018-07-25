@@ -1,5 +1,5 @@
 #include "udpsocket.h"
-
+#include "globals.h"
 
 
 
@@ -37,7 +37,7 @@ void UdpSocket::openPort()
 
     gmSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (gmSocket < 0)   {
-    printAll("Opening datagram socket");
+    printAll("Opening UdpSocket...");
     }
 
     /* Bind our local address so that the client can send to us */
@@ -47,10 +47,14 @@ void UdpSocket::openPort()
     name.sin_port = htons(PORT);
 
     if (bind(gmSocket, (struct sockaddr *) &name, sizeof(name))) {
-    printAll("binding datagram socket");
+
+    }
+    else
+    {
+        printAll("UdpSocket can not bind...");
     }
 
-    printAll("Socket has port number #%d\n", ntohs(name.sin_port));
+    printAll("Socket has port number: ", ntohs(name.sin_port));
 
     std::thread listening_port(&UdpSocket::recieveData, this);
     listening_port.detach();
@@ -93,7 +97,7 @@ void UdpSocket::recieveData()
 
     unsigned char ethernet_data[DATA_SIZE];
 
-    printAll("socket recieve");
+    printAll("Listening UdpSocket...");
 
     while(true)
     {

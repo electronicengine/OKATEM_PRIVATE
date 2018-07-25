@@ -135,7 +135,7 @@ struct GPS_DATA
         }
         catch(std::exception ex)
         {
-            printAll("GPS_DATA asign: ",ex.what());
+            printAll("GPS_DATA asign Exception: ",ex.what());
         }
 
         return *this;
@@ -165,7 +165,7 @@ struct SPI_RX_FORMAT
         }
         catch(std::exception ex)
         {
-            printAll(ex.what());
+            printAll("SPI_TX_FORMAT exception: ", ex.what());
         }
 
 

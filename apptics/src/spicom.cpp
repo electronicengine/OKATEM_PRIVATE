@@ -124,7 +124,7 @@ SpiCom::Spi_Status SpiCom::init()
             }
         }
 
-        printAll("SpiPort Succesfully Opened\n");
+        printAll("SpiPort Succesfully Opened");
 
         return Spi_Status::succesfully_opened;
     }

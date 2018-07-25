@@ -279,9 +279,6 @@ void gpsOps(void const * argument)
 void sensorOps(void const * argument)
 {
 
-
-    int pwm=45;
-
   mprintf("sensorOps\r\n");
 
   sensorInit();
@@ -309,18 +306,6 @@ void sensorOps(void const * argument)
 
       xSemaphoreGive(spiMutexHandle);
 
-
-//      ret = getSfpTemperature();
-//          mprintf("%d\r\n", ret);
-
-//          osDelay(1000);
-
-//      __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, pwm);
-//      pwm++;
-//      osDelay(100);
-
-//      if(pwm == 153)
-//          pwm = 45;
 
 
 
@@ -412,10 +397,20 @@ void spiComOps(void const * argument)
 void motorOps(void const * argument)
 {
 
+    int pwm = 45;
     int count;
     int speed = 1;
 
     mprintf("motorOps\r\n");
+
+
+    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, pwm);
+    pwm++;
+    osDelay(100);
+
+    if(pwm == 153)
+      pwm = 45;
+
 
     while(1)
     {
@@ -442,7 +437,7 @@ void motorOps(void const * argument)
         motor2Drive(BACKWARD);
       }
 
-            osDelay(2 + motor1.speed);
+      osDelay(2 + motor1.speed);
 
 
     }
