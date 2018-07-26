@@ -18,8 +18,11 @@
 
 static std::mutex printMutex;
 
+
 void removeLine(char* sourcefile, int line);
 int countLine(char* sourcefile);
+
+
 
 template< typename T >
 inline std::string serializer(const T& t)
@@ -31,6 +34,8 @@ inline std::string serializer(const T& t)
 
 }
 
+
+
 template< typename T, typename ... Args >
 inline std::string serializer(const T& head, Args ... args)
 {
@@ -39,7 +44,9 @@ inline std::string serializer(const T& head, Args ... args)
 
 
 template< typename T>
-const T currentDateTime() {
+const T currentDateTime()
+{
+
     time_t     now = time(0);
     struct tm  tstruct;
     char       buf[80];
@@ -49,10 +56,76 @@ const T currentDateTime() {
     strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 
     return buf;
+
 }
 
 
- template<typename... TAIL>
+template <typename T = std::string>
+void writeLog(const T& Log)
+{
+
+    std::string log_data;
+
+
+    printMutex.lock();
+
+    log_data = Log;
+
+
+
+    int num_lines = 0;
+    int deleted_lines = 0;
+
+    std::ifstream logfile(LOG_FILE, std::ios_base::in);
+
+    std::string unused;
+    while ( std::getline(logfile, unused, '\n') )
+       ++num_lines;
+
+    logfile.close();
+
+    if(num_lines > MAX_LOG_LINE)
+    {
+
+        std::ofstream tempfile("/var/www/html/temp.txt", std::ios_base::app);
+
+        logfile.open(LOG_FILE, std::ios_base::app);
+
+        deleted_lines =  num_lines - MAX_LOG_LINE ;
+
+        num_lines = 0;
+
+
+         while ( std::getline(logfile, unused, '\n') )
+         {
+             if(num_lines > deleted_lines - 1)
+                tempfile << unused << std::endl;
+
+             num_lines ++;
+
+         }
+
+         logfile.close();
+         tempfile.close();
+
+        system("sudo rm /var/www/html/log.txt");
+        system("sudo mv /var/www/html/temp.txt /var/www/html/log.txt");
+
+    }
+
+    num_lines = 0;
+
+    std::ofstream file(LOG_FILE, std::ios_base::app);
+    file <<  currentDateTime<std::string>() << " : " << log_data << std::endl;
+    file.close();
+
+    printMutex.unlock();
+
+}
+
+
+
+template<typename... TAIL>
 void printAll(const TAIL&... tail)
 {
 
@@ -61,43 +134,10 @@ void printAll(const TAIL&... tail)
 
     std::cout << package << std::endl;
 
+    writeLog(package);
 
 
-    int num_lines = 0;
 
-    std::ifstream logfile(LOG_FILE, std::ios_base::in);
-    std::ofstream tempfile("/var/www/html/temp.txt", std::ios_base::app);
-    std::string unused;
-    while ( std::getline(logfile, unused) )
-       ++num_lines;
-
-    logfile.close();
-
-    if(num_lines > MAX_LOG_LINE)
-    {
-        logfile.open(LOG_FILE, std::ios_base::app);
-        num_lines = 0;
-
-
-         while ( std::getline(logfile, unused) )
-         {
-             if(num_lines != 0)
-                tempfile << unused << std::endl;
-
-         }
-
-         logfile.close();
-         tempfile.close();
-
-         remove(LOG_FILE);
-         rename("/var/www/html/temp.txt", LOG_FILE);
-
-
-    }
-
-     std::ofstream file(LOG_FILE, std::ios_base::app);
-     file << package << std::endl;
-     file.close();
 
 }
 
@@ -125,6 +165,8 @@ std::string convertToHex(const T& Container)
     return hex_string.str();
 
 }
+
+
 
 template<typename T>
 std::string convertHexToAscii(const T& Data)

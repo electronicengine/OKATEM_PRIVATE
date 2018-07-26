@@ -99,8 +99,8 @@ void writeJson()
 
     printAll("Environment Data: ");
 
-    std::cout << "Gps:  " <<  stm_data.gps_string << std::endl;
-    printAll("Temperature: ", (int)stm_data.sensor_data.temperature,
+    printAll("Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
+             " - Temperature: ", (int)stm_data.sensor_data.temperature,
              " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
              " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
              " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
@@ -111,8 +111,8 @@ void writeJson()
     printAll("\n\n\n");
 
     printAll("Lora Data: ");
-    std::cout << "Gps:  " <<  lora_stm_data.gps_string << std::endl;
-    printAll("Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+    printAll("Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+    " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
     " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
     " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
     " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
