@@ -97,21 +97,17 @@ int main(int argc, char* argv[])
 void writeJson()
 {
 
-    printAll("Environment Data: ");
-
-    printAll("Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
+    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
              " - Temperature: ", (int)stm_data.sensor_data.temperature,
              " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
              " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
              " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
     printAll("\n\n\n");
 
-    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate());
-    printAll("Tracker Edge Rate: ", tracker.getEdgeRate());
+    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
     printAll("\n\n\n");
 
-    printAll("Lora Data: ");
-    printAll("Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+    printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
     " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
     " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
     " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
