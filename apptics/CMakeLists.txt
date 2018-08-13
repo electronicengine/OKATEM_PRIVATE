@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/sfpmonitor.cpp
     ${INCLUDE_PATH}/udpsocket.cpp
     ${INCLUDE_PATH}/globals.cpp
+    ${INCLUDE_PATH}/queue.cpp
     )
 
 #target_link_libraries( ${PROJECT_NAME}
@@ -97,7 +98,7 @@ add_executable(${PROJECT_NAME}
 #    )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.48:/home/pi
-  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.49:/home/pi
+  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.34:/home/pi
+#  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.49:/home/pi
   COMMENT "Creating directory: "
 )

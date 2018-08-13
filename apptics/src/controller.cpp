@@ -8,17 +8,40 @@ Controller::Controller()
     communication.detach();
 }
 
+
+
 Controller::~Controller()
 {
 
 }
 
+Controller::Controller_Status Controller::isReady()
+{
+
+    if(gmIsTransmitted)
+    {
+        return Controller_Status::ok;
+    }
+    else
+    {
+        return Controller_Status::error;
+    }
+
+}
+
+
+
 Controller::Controller_Status Controller::zoomInCamera()
 {
 
+
+    gmControlData.servo_motor1_degree= 120;
+    gmControlData.servo_motor1_direction = FORWARD;
+
     gmMutex.lock();
-    gmBPIControlData.servo_motor1_degree= 120;
-    gmBPIControlData.servo_motor1_direction = FORWARD;
+
+    gmSpiTxData = gmControlData;
+
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -26,12 +49,15 @@ Controller::Controller_Status Controller::zoomInCamera()
 }
 
 
+
 Controller::Controller_Status Controller::zoomOutCamera()
 {
 
+    gmControlData.servo_motor1_degree = 120;
+    gmControlData.servo_motor1_direction = BACKWARD;
+
     gmMutex.lock();
-    gmBPIControlData.servo_motor1_degree = 120;
-    gmBPIControlData.servo_motor1_direction = BACKWARD;
+    gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -40,9 +66,11 @@ Controller::Controller_Status Controller::zoomOutCamera()
 Controller::Controller_Status Controller::driveMotorLeft()
 {
 
+    gmControlData.step_motor2_direction = FORWARD;
+    gmControlData.step_motor2_speed = 36;
+
     gmMutex.lock();
-    gmBPIControlData.step_motor2_direction = FORWARD;
-    gmBPIControlData.step_motor2_speed = 36;
+    gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -53,9 +81,11 @@ Controller::Controller_Status Controller::driveMotorLeft()
 Controller::Controller_Status Controller::driveMotorRight()
 {
 
+    gmControlData.step_motor2_direction = BACKWARD;
+    gmControlData.step_motor2_speed = 87;
+
     gmMutex.lock();
-    gmBPIControlData.step_motor2_direction = BACKWARD;
-    gmBPIControlData.step_motor2_speed = 87;
+    gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -65,9 +95,12 @@ Controller::Controller_Status Controller::driveMotorRight()
 
 Controller::Controller_Status Controller::driveMotorUp()
 {
+
+    gmControlData.step_motor1_direction = FORWARD;
+    gmControlData.step_motor1_speed = 45;
+
     gmMutex.lock();
-    gmBPIControlData.step_motor1_direction = FORWARD;
-    gmBPIControlData.step_motor1_speed = 45;
+    gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
     return Controller_Status::ok;
@@ -76,67 +109,112 @@ Controller::Controller_Status Controller::driveMotorUp()
 
 Controller::Controller_Status Controller::driveMotorDown()
 {
+
+
+    gmControlData.step_motor1_direction = BACKWARD;
+    gmControlData.step_motor1_speed = 5;
+
     gmMutex.lock();
-    gmBPIControlData.step_motor1_direction = BACKWARD;
-    gmBPIControlData.step_motor1_speed = 5;
+    gmSpiTxData = gmControlData;
+    gmMutex.unlock();
+
+    return Controller_Status::ok;
+
+}
+
+
+
+Controller::Controller_Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
+{
+    gmMutex.lock();
+
+    gmSpiTxData = Data;
+
     gmMutex.unlock();
 
     return Controller_Status::ok;
 }
 
-
-
-Controller::Controller_Status Controller::setControlData(SPI_TX_FORMAT Data)
+Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 {
-    gmMutex.lock();
 
-    gmBPIControlData = Data;
 
-    gmMutex.unlock();
+    if(gmIsTransmitted)
+    {
 
-    return Controller_Status::ok;
+        gmMutex.lock();
+
+        gmSpiTxData = Data;
+
+        std::cout << Data.current_sequence_number << "/" << Data.total_sequence_number << "\r" << std::endl;
+
+        gmIsTransmitted = false;
+
+        gmMutex.unlock();
+
+        return Controller_Status::ok;
+    }
+    else
+    {
+        return Controller_Status::error;
+    }
+
 }
 
-SPI_RX_FORMAT Controller::getStmEnvironment()
+ENVIRONMENT_DATA_FORMAT Controller::getStmEnvironment()
 {
-    SPI_RX_FORMAT Data;
 
     gmMutex.lock();
-    Data = gmStmEnvironmentData;
+
+    if(gmIsReceived)
+    {
+        gmIsReceived = false;
+        gmEnvironmentData = gmSpiRxData;
+    }
+
     gmMutex.unlock();
 
-    return Data;
+    return gmEnvironmentData;
 }
 
 void Controller::communicationThread()
 {
 
-    unsigned char *transmitted_data;
+
+    unsigned char *spi_transfer_data;
+
+    SpiCom::Spi_Status status;
+
 
     printAll("Stm Spi Communication Thread Starting...");
 
     while(true)
     {
 
-
-        try
-        {
-            gmMutex.lock();
-
-            transmitted_data = (unsigned char *)gmBPIControlData;
-
-            gmSpi.spiTransmiteReceive((unsigned char *)transmitted_data, SPI_TRANSFER_SIZE);
-
-            gmStmEnvironmentData = (unsigned char *)transmitted_data;
-            delete []transmitted_data;
-            gmBPIControlData.clear();
+        gmMutex.lock();
 
 
-        }
-        catch(std::exception ex)
-        {
-            printAll("Stm-Spi Communication Exception: ",ex.what());
-        }
+            spi_transfer_data = gmSpiTxData;
+
+            status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
+
+            if(status == SpiCom::Spi_Status::succesfully_writeread)
+            {
+                gmSpiRxData = spi_transfer_data;
+                gmSpiTxData.clear();
+                gmIsTransmitted = true;
+                gmIsReceived = true;
+            }
+            else
+            {
+
+                gmSpiRxData.clear();
+                gmSpiTxData.clear();
+                gmIsTransmitted = false;
+                gmIsReceived = false;
+
+            }
+
 
 
         gmMutex.unlock();

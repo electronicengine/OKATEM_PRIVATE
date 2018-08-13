@@ -320,7 +320,7 @@ void LoraWan::listen()
 
 
 
-void LoraWan::setLoraData(const SFP_DATA &SfpData, const SPI_RX_FORMAT &StmData)
+void LoraWan::setLoraData(const SFP_DATA &SfpData, const ENVIRONMENT_DATA_FORMAT &StmData)
 {
 
     gmMutex.lock();
@@ -332,7 +332,7 @@ void LoraWan::setLoraData(const SFP_DATA &SfpData, const SPI_RX_FORMAT &StmData)
 
 }
 
-void LoraWan::getLoraData(SFP_DATA &SfpData, SPI_RX_FORMAT &StmData)
+void LoraWan::getLoraData(SFP_DATA &SfpData, ENVIRONMENT_DATA_FORMAT &StmData)
 {
 
     gmMutex.lock();

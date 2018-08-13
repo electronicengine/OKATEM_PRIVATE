@@ -18,12 +18,15 @@
 #include <string.h>             // For memset
 #include <thread>
 #include <mutex>
+#include <vector>
 
-#include "globals.h"
 #include "controller.h"
+#include "queue.h"
 
 #define PORT 24000
-#define DATA_SIZE 120
+
+#define FORWARD 1
+#define BACKWARD 2
 
 
 
@@ -31,22 +34,18 @@ class UdpSocket
 {
 
 public:
-
-
-    enum class UdpSocket_Status
-    {
-        time_out,
-        error,
-        ok
-    }Status;
-
-
     UdpSocket();
 
-    volatile int gmDataReady = 0;
-    SPI_TX_FORMAT getSocketData();
 
 
+    CONTROL_DATA_FORMAT getSocketControlData();
+
+    UPDATE_FILE_FORMAT getSocketUpdateData();
+
+    volatile int gmIsRecieved = 0;
+
+
+    void sendData(SPI_TRANSFER_FORMAT Data, const std::string& IpAddress);
 
 
 private:
@@ -54,16 +53,19 @@ private:
     int gmSocket;
 
 
+    Queue<UPDATE_FILE_FORMAT> gmUpdateFileQueue;
+
     std::mutex gmMutex;
-    SPI_TX_FORMAT gmData;
+    SPI_TRANSFER_FORMAT gmData;
 
     void openPort();
     void closePort();
 
-    void sendData();
+
     void recieveData();
 
 
 };
+
 
 #endif // UDPSOCKET_H

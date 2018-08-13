@@ -19,15 +19,19 @@
 #include "controller.h"
 #include "sfpmonitor.h"
 #include "udpsocket.h"
+#include "queue.h"
 
 
 clock_t now = 0;
 clock_t last = 0;
 
-SPI_RX_FORMAT stm_data;
-SPI_RX_FORMAT lora_stm_data;
+bool is_busy = 0;
 
-SPI_TX_FORMAT control_data;
+ENVIRONMENT_DATA_FORMAT stm_data;
+ENVIRONMENT_DATA_FORMAT lora_stm_data;
+
+CONTROL_DATA_FORMAT control_data;
+UPDATE_FILE_FORMAT update_file;
 
 SFP_DATA sfp_data;
 SFP_DATA lora_sfp_data;
@@ -38,14 +42,18 @@ SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
 UdpSocket udp_socket;
 
+Queue<UPDATE_FILE_FORMAT> file_queue;
+
 void safeLog();
 void writeJson();
 
 std::vector<size_t> get_cpu_times();
 bool get_cpu_times(size_t &idle_time, size_t &total_time);
 
-int main(int argc, char* argv[])
+int main()
 {
+
+    Controller::Controller_Status controller_status = Controller::Controller_Status::ok;
 
     tracker.runTracking();
 
@@ -68,14 +76,22 @@ int main(int argc, char* argv[])
 
         lora.getLoraData(lora_sfp_data, lora_stm_data);
 
-        control_data = udp_socket.getSocketData();
+        control_data = udp_socket.getSocketControlData();
 
+        if(controller_status == Controller::Controller_Status::ok)
+            update_file = udp_socket.getSocketUpdateData();
 
-        if(control_data != FAIL )
+        if(control_data.is_transmitted == true)
         {
             controller.setControlData(control_data);
-            control_data.clear();
         }
+
+        if( update_file.is_available == true)
+        {
+           controller_status = controller.setUpdateData(update_file);
+        }
+
+        control_data.clear();
 
         now = clock();
 
@@ -84,7 +100,6 @@ int main(int argc, char* argv[])
             writeJson();
             last = now;
         }
-
 
     }
 
@@ -97,26 +112,26 @@ int main(int argc, char* argv[])
 void writeJson()
 {
 
-    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
-             " - Temperature: ", (int)stm_data.sensor_data.temperature,
-             " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
-             " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
-    printAll("\n\n\n");
+//    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
+//                 " - Temperature: ", (int)stm_data.sensor_data.temperature,
+//                 " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
+//                 " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
+//                 " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
+//        printAll("\n\n\n");
 
-    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
-    printAll("\n\n\n");
+//        printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
+//        printAll("\n\n\n");
 
-    printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
-    " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
-    " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
-    " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
-    " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
-    " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
-    " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
+//        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+//        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+//        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
+//        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
+//        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
+//        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
+//        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 
 
-    printAll("\n\n\n");
+//    printAll("\n\n\n");
 
 
     size_t previous_idle_time=0, previous_total_time=0;
@@ -259,21 +274,31 @@ void writeJson()
 
 }
 
-std::vector<size_t> get_cpu_times() {
+
+
+std::vector<size_t> get_cpu_times()
+{
+
     std::ifstream proc_stat("/proc/stat");
     proc_stat.ignore(5, ' '); // Skip the 'cpu' prefix.
     std::vector<size_t> times;
     for (size_t time; proc_stat >> time; times.push_back(time));
     return times;
+
 }
 
-bool get_cpu_times(size_t &idle_time, size_t &total_time) {
+
+
+bool get_cpu_times(size_t &idle_time, size_t &total_time)
+{
+
     const std::vector<size_t> cpu_times = get_cpu_times();
     if (cpu_times.size() < 4)
         return false;
     idle_time = cpu_times[3];
     total_time = std::accumulate(cpu_times.begin(), cpu_times.end(), 0);
     return true;
+
 }
 
 

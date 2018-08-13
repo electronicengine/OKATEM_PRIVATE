@@ -47,86 +47,15 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
-#include "gps.h"
-#include "sensor.h"
-#include "motor.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include "usart.h"
-#include "spi.h"
-#include "sfp.h"
-#include "tim.h"
+#include "freertos.h"
 
+#include "gpsops.c"
+#include "spiops.c"
+#include "sensorops.c"
+#include "motorops.c"
 
-osThreadId gpsThreadHandle;
-osThreadId sensorThreadHandle;
-osThreadId spiComThreadHandle;
-osThreadId motorThreadHandle;
+#include <stdlib.h>
 
-
-osMutexId spiMutexHandle;
-osMutexId uartMutexHandle;
-osMutexId memoryMutexHandle;
-
-osSemaphoreId spiSemaphoreHandle;
-osSemaphoreId uartSemaphoreHandle;
-
-struct SPI_RX_FORMAT
-{
-    uint8_t garbage1[47];
-    uint32_t x_position;
-    uint32_t y_position;
-    uint32_t z_position;
-
-    uint8_t step_motor1_direction;
-    uint8_t step_motor2_direction;
-    uint8_t step_motor3_direction;
-    uint8_t step_motor4_direction;
-    uint8_t servo_motor1_direction;
-    uint8_t servo_motor2_direction;
-
-    uint8_t step_motor1_speed;
-    uint8_t step_motor2_speed;
-    uint8_t step_motor3_speed;
-    uint8_t step_motor4_speed;
-    uint8_t servo_motor1_degree;
-    uint8_t servo_motor2_degree;
-
-    uint16_t checksum;
-
-    uint8_t garbage2[48];
-
-}spi_rx_data, rx_data;
-
-volatile struct SPI_TX_FORMAT
-{
-
-    unsigned char gps_data[100];
-
-    uint32_t temperature;
-    uint32_t compass_degree;
-    uint32_t pressure;
-    uint32_t altitude;
-
-    unsigned char wheather_condition;
-
-    uint16_t checksum;
-
-}spi_tx_data,  tx_data;
-
-
-
-void gpsOps(void const * argument);
-void sensorOps(void const * argument);
-void spiComOps(void const * argument);
-void motorOps(void const * argument);
-
-void MX_FREERTOS_Init(void);
-void mprintf(const char *fmt, ...);
-unsigned char rx_buf;
 
 
 void vprint(const char *fmt, va_list argp)
@@ -156,6 +85,7 @@ void mprintf(const char *fmt, ...) // custom printf() function
 
 void MX_FREERTOS_Init(void)
 {
+
 
   osMutexDef(spiMutex);
   spiMutexHandle = osMutexCreate(osMutex(spiMutex));
@@ -188,258 +118,19 @@ void MX_FREERTOS_Init(void)
   osThreadDef(motorThread, motorOps, osPriorityNormal, 0, 512);
   motorThreadHandle = osThreadCreate(osThread(motorThread), NULL);
 
-}
 
+  EnvironmentData = malloc(sizeof(ENVIRONMENT_DATA_FORMAT));
+  ControlData = malloc(sizeof(CONTROL_DATA_FORMAT));
+  UpdateFile = malloc(sizeof(UPDATE_FILE_FORMAT));
 
-void UART4_IRQHandler(void)
-{
+  SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
 
-    long lSwitchRequired;
-
-    HAL_UART_IRQHandler(&huart4);
-
-    xSemaphoreGiveFromISR(uartSemaphoreHandle, NULL);
-
-    if(lSwitchRequired)
-        portYIELD_FROM_ISR(lSwitchRequired);
+  SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
 
 
 }
 
-void SPI1_IRQHandler(void)
-{
 
-  HAL_SPI_IRQHandler(&hspi1);
 
-  xSemaphoreGiveFromISR(spiSemaphoreHandle, NULL);
 
-}
 
-
-
-
-
-
-void gpsOps(void const * argument)
-{
-
-    mprintf("gpsOps\r\n");
-
-    unsigned char rx_data;
-
-    gpsInit();
-
-  while(1)
-  {
-
-      if( xSemaphoreTake(uartSemaphoreHandle, 1000) == pdPASS)
-      {
-
-
-        if(checkGpsData() == GPS_READY)
-        {
-
-               xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
-
-
-               for(int i=0; i<100; i++)
-                   spi_tx_data.gps_data[i] = gpsData.gprmc_body[i];
-
-
-
-               xSemaphoreGive(spiMutexHandle);
-
-
-
-           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-
-           enableGps();
-
-        }
-
-
-          receiveGpsData();
-
-          HAL_UART_Receive_IT(&huart4, (uint8_t *)&rx_data, 1);
-
-
-      }
-      else
-      {
-
-          mprintf("gpsOps Crash \r\n");
-
-      }
-
-  }
-
-}
-
-/* sensorOps function */
-void sensorOps(void const * argument)
-{
-
-  mprintf("sensorOps\r\n");
-
-  sensorInit();
-
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-
-  int ret;
-
-//  calibrateCompass();
-
-  while(1)
-  {
-      readAllSensors();
-
-
-      xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
-
-      spi_tx_data.temperature = sensorValues.temperature;
-      spi_tx_data.pressure = sensorValues.pressure;
-      spi_tx_data.altitude = sensorValues.altitude;
-      spi_tx_data.wheather_condition = sensorValues.wheather_condition;
-      spi_tx_data.compass_degree = sensorValues.compass_degree;
-
-      spi_tx_data.checksum = 100;
-
-      xSemaphoreGive(spiMutexHandle);
-
-
-
-
-  }
-
-}
-
-/* spiComOps function */
-void spiComOps(void const * argument)
-{
-
-    int count = 0;
-    int speed = 1;
-
-    HAL_SPI_StateTypeDef status;
-
-    mprintf("spiOps\r\n");
-
-
-    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&spi_tx_data, (uint8_t *)&spi_rx_data,  sizeof(spi_tx_data));
-
-
-  while(1)
-  {
-
-      if( xSemaphoreTake(spiSemaphoreHandle, 1) == pdPASS)
-      {
-
-          status = HAL_SPI_GetState(&hspi1);
-          if(status == HAL_SPI_STATE_READY)
-          {
-
-
-
-
-          }
-
-         xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
-
-          tx_data = spi_tx_data;
-
-         xSemaphoreGive(spiMutexHandle);
-
-
-
-
-        HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)&tx_data, (uint8_t *)&spi_rx_data,  sizeof(spi_tx_data));
-
-
-        if(spi_rx_data.step_motor1_direction == FORWARD)
-        {
-            motor1.direction = FORWARD;
-            motor1.speed = spi_rx_data.step_motor1_speed;
-        }
-        else if(spi_rx_data.step_motor1_direction == BACKWARD)
-        {
-            motor1.direction = BACKWARD;
-            motor1.speed = spi_rx_data.step_motor1_speed;
-        }
-        else
-        {
-            motor1.direction = STOP;
-        }
-
-        if(spi_rx_data.step_motor2_direction == FORWARD)
-        {
-            motor2.direction = FORWARD;
-            motor1.speed = spi_rx_data.step_motor2_speed;
-        }
-        else if(spi_rx_data.step_motor2_direction == BACKWARD)
-        {
-            motor2.direction = BACKWARD;
-            motor1.speed = spi_rx_data.step_motor2_speed;
-        }
-        else
-        {
-            motor2.direction = STOP;
-        }
-
-
-
-      }
-
-
-  }
-
-}
-
-void motorOps(void const * argument)
-{
-
-    int pwm = 45;
-    int count;
-    int speed = 1;
-
-    mprintf("motorOps\r\n");
-
-
-    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, pwm);
-    pwm++;
-    osDelay(100);
-
-    if(pwm == 153)
-      pwm = 45;
-
-
-    while(1)
-    {
-
-
-
-      if(motor1.direction == FORWARD)
-      {
-        motor1Drive(FORWARD);
-      }
-
-      if(motor1.direction == BACKWARD)
-      {
-        motor1Drive(BACKWARD);
-      }
-
-      if(motor2.direction == FORWARD)
-      {
-        motor2Drive(FORWARD);
-      }
-
-      if(motor2.direction == BACKWARD)
-      {
-        motor2Drive(BACKWARD);
-      }
-
-      osDelay(2 + motor1.speed);
-
-
-    }
-
-}

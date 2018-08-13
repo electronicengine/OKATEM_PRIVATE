@@ -53,6 +53,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
 
 /* USER CODE BEGIN Includes */
 
@@ -110,6 +115,78 @@
 #define GPS_RESET_GPIO_Port GPIOD
 #define SP1_NSS_Pin GPIO_PIN_6
 #define SP1_NSS_GPIO_Port GPIOB
+
+#define SPI_ENTITY_SIZE 108
+#define SPI_TRANSFER_SIZE 120
+#define SPI_DATA_SIZE 116
+
+
+typedef struct
+{
+    uint32_t temperature;
+    uint32_t compass_degree;
+    uint32_t pressure;
+    uint32_t altitude;
+    uint8_t wheather_condition;
+
+}SENSOR_DATA;
+
+typedef struct
+{
+    uint16_t header;
+    unsigned char data[SPI_DATA_SIZE];
+    uint16_t checksum;
+
+}SPI_TRANSFER_FORMAT;
+
+
+
+typedef struct
+{
+
+    unsigned char gps_string[99];
+    SENSOR_DATA sensor_data;
+
+}ENVIRONMENT_DATA_FORMAT;
+
+typedef struct
+{
+    uint32_t total_sequence_number;
+    uint32_t current_sequence_number;
+
+    unsigned char data[108];
+
+
+}UPDATE_FILE_FORMAT;
+
+typedef struct
+{
+
+
+    uint8_t garbage1[46];
+    uint32_t x_position;
+    uint32_t y_position;
+    uint32_t z_position;
+
+    uint8_t step_motor1_direction;
+    uint8_t step_motor2_direction;
+    uint8_t step_motor3_direction;
+    uint8_t step_motor4_direction;
+    uint8_t servo_motor1_direction;
+    uint8_t servo_motor2_direction;
+
+    uint8_t step_motor1_speed;
+    uint8_t step_motor2_speed;
+    uint8_t step_motor3_speed;
+    uint8_t step_motor4_speed;
+    uint8_t servo_motor1_degree;
+    uint8_t servo_motor2_degree;
+
+    uint8_t garbage2[46];
+
+
+}CONTROL_DATA_FORMAT;
+
 
 /* ########################## Assert Selection ############################## */
 /**
