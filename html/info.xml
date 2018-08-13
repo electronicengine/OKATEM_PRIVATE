@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<info-body>
+
+	<connected>{{connected}}</connected>
+
+{% if connected %}
+
+	{% for val in values %}
+		<{{val[0]}}>{{val[1]|safe}}</{{val[0]}}>
+	{% endfor %}
+
+	<cpu>{{cpu}}</cpu>
+
+	<memory>{{memory}}</memory>
+
+	<log>{{log}}</log>
+
+{% endif %}
+
+</info-body>
