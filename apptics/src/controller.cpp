@@ -139,6 +139,11 @@ Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data
 {
 
 
+
+    static unsigned char *file_data = new unsigned char [SPI_ENTITY_SIZE * 405];
+
+
+
     if(gmIsTransmitted)
     {
 

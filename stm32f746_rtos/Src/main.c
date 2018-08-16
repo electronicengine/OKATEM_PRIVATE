@@ -58,51 +58,70 @@
 #include "gpio.h"
 #include <stdarg.h>
 #include <stdio.h>
-
+#include "freertos.h"
 
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
+#define APPLICATION_ADDRESS        0x08010000
 
+typedef void (*pFunction)(void);
 
 
 int main(void)
 {
+
+
+//    /* Reconfigure vector table offset register to match the application location */
+  SCB->VTOR = (unsigned long)APPLICATION_ADDRESS;
 
   HAL_Init();
 
 
   SystemClock_Config();
 
-
   MX_GPIO_Init();
-//  MX_ETH_Init();
-//  MX_I2C1_Init();
   MX_I2C2_Init();
-//  MX_I2C3_Init();
   MX_I2C4_Init();
-//  MX_RTC_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
-//  MX_TIM13_Init();
-//  MX_TIM14_Init();
   MX_UART4_Init();
-//  MX_UART7_Init();
-//  MX_UART8_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
 
-    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+
+
 
   MX_FREERTOS_Init();
 
   osKernelStart();
-  
+
+
+
+    mprintf(" Bootloader SCB->VTOR: %X\r\n", SCB->VTOR);
+
+//  pFunction appEntry;
+//  uint32_t appStack;
+
+//  appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
+//  appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
+
+//  __set_MSP(appStack);
+
+//  /* Start the application */
+//  appEntry();
+
+
+
+
+
+
 
   while (1)
   {
+        mprintf("SCB->VTOR: %X\r\n", SCB->VTOR);
 
-
+        HAL_Delay(1000);
 
   }
 

@@ -134,6 +134,9 @@ void UdpSocket::recieveData()
 
     unsigned char *ethernet_data = new unsigned char[SPI_TRANSFER_SIZE];
 
+    unsigned char *file_data = new unsigned char [SPI_ENTITY_SIZE * 405];
+
+
     while(true)
     {
 

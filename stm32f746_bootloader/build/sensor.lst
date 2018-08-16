@@ -1,0 +1,2254 @@
+ARM GAS  /tmp/ccKrEBio.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"sensor.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	sensorValues,20,4
+  18              		.global	SENSOR_TIMEOUT
+  19              		.section	.rodata.SENSOR_TIMEOUT,"a",%progbits
+  20              		.align	2
+  23              	SENSOR_TIMEOUT:
+  24 0000 E8030000 		.word	1000
+  25              		.global	WRITE_ADDRESS
+  26              		.section	.rodata.WRITE_ADDRESS,"a",%progbits
+  29              	WRITE_ADDRESS:
+  30 0000 20       		.byte	32
+  31              		.global	READ_ADDRESS
+  32              		.section	.rodata.READ_ADDRESS,"a",%progbits
+  35              	READ_ADDRESS:
+  36 0000 21       		.byte	33
+  37              		.global	WAKEUP_COMMAND
+  38              		.section	.rodata.WAKEUP_COMMAND,"a",%progbits
+  41              	WAKEUP_COMMAND:
+  42 0000 70       		.byte	112
+  43              		.global	WHEATHER_COMMAND
+  44              		.section	.rodata.WHEATHER_COMMAND,"a",%progbits
+  47              	WHEATHER_COMMAND:
+  48 0000 B3       		.byte	-77
+  49              		.global	COMPASS_CALIBRATION_COMMAND
+  50              		.section	.rodata.COMPASS_CALIBRATION_COMMAND,"a",%progbits
+  53              	COMPASS_CALIBRATION_COMMAND:
+  54 0000 E0       		.byte	-32
+  55              		.global	PRESS_WRITE_COMMAND
+  56              		.section	.rodata.PRESS_WRITE_COMMAND,"a",%progbits
+  59              	PRESS_WRITE_COMMAND:
+  60 0000 B0       		.byte	-80
+  61              		.global	TEMPERATURE_WRITE_COMMAND
+  62              		.section	.rodata.TEMPERATURE_WRITE_COMMAND,"a",%progbits
+  65              	TEMPERATURE_WRITE_COMMAND:
+  66 0000 80       		.byte	-128
+  67              		.global	ALTITUDE_WRITE_COMMAND
+  68              		.section	.rodata.ALTITUDE_WRITE_COMMAND,"a",%progbits
+  71              	ALTITUDE_WRITE_COMMAND:
+  72 0000 A0       		.byte	-96
+  73              		.global	COMPASS_WRITE_COMMAND
+  74              		.section	.rodata.COMPASS_WRITE_COMMAND,"a",%progbits
+  77              	COMPASS_WRITE_COMMAND:
+ARM GAS  /tmp/ccKrEBio.s 			page 2
+
+
+  78 0000 C0       		.byte	-64
+  79              		.global	pressure_ready
+  80              		.section	.data.pressure_ready,"aw",%progbits
+  83              	pressure_ready:
+  84 0000 FF       		.byte	-1
+  85              		.global	altitude_ready
+  86              		.section	.data.altitude_ready,"aw",%progbits
+  89              	altitude_ready:
+  90 0000 FF       		.byte	-1
+  91              		.global	wheather_ready
+  92              		.section	.data.wheather_ready,"aw",%progbits
+  95              	wheather_ready:
+  96 0000 FF       		.byte	-1
+  97              		.global	temperature_ready
+  98              		.section	.data.temperature_ready,"aw",%progbits
+ 101              	temperature_ready:
+ 102 0000 FF       		.byte	-1
+ 103              		.global	compass_ready
+ 104              		.section	.data.compass_ready,"aw",%progbits
+ 107              	compass_ready:
+ 108 0000 FF       		.byte	-1
+ 109              		.section	.text.sensorInit,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	sensorInit
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 115              		.fpu fpv4-sp-d16
+ 117              	sensorInit:
+ 118              	.LFB136:
+ 119              		.file 1 "Src/sensor.c"
+   1:Src/sensor.c  **** #include "sensor.h"
+   2:Src/sensor.c  **** #include "main.h"
+   3:Src/sensor.c  **** #include "i2c.h"
+   4:Src/sensor.c  **** 
+   5:Src/sensor.c  **** const int SENSOR_TIMEOUT = 1000;
+   6:Src/sensor.c  **** const unsigned char WRITE_ADDRESS = 0x20;
+   7:Src/sensor.c  **** const unsigned char READ_ADDRESS = 0x21;
+   8:Src/sensor.c  **** const unsigned char WAKEUP_COMMAND = 0x70;
+   9:Src/sensor.c  **** const unsigned char WHEATHER_COMMAND = 0xB3;
+  10:Src/sensor.c  **** const unsigned char COMPASS_CALIBRATION_COMMAND = 0xe0;
+  11:Src/sensor.c  **** const unsigned char PRESS_WRITE_COMMAND = 0xB0;
+  12:Src/sensor.c  **** const unsigned char TEMPERATURE_WRITE_COMMAND = 0x80;
+  13:Src/sensor.c  **** const unsigned char ALTITUDE_WRITE_COMMAND = 0xA0;
+  14:Src/sensor.c  **** const unsigned char COMPASS_WRITE_COMMAND = 0xC0;
+  15:Src/sensor.c  **** 
+  16:Src/sensor.c  **** 
+  17:Src/sensor.c  **** 
+  18:Src/sensor.c  **** 
+  19:Src/sensor.c  **** 
+  20:Src/sensor.c  **** volatile uint8_t pressure_ready = FAIL;
+  21:Src/sensor.c  **** volatile uint8_t altitude_ready = FAIL;
+  22:Src/sensor.c  **** volatile uint8_t wheather_ready = FAIL;
+  23:Src/sensor.c  **** volatile uint8_t temperature_ready = FAIL;
+  24:Src/sensor.c  **** volatile uint8_t compass_ready = FAIL;
+  25:Src/sensor.c  **** 
+  26:Src/sensor.c  **** void sensorInit()
+ARM GAS  /tmp/ccKrEBio.s 			page 3
+
+
+  27:Src/sensor.c  **** {
+ 120              		.loc 1 27 0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 1, uses_anonymous_args = 0
+ 124 0000 80B5     		push	{r7, lr}
+ 125              	.LCFI0:
+ 126              		.cfi_def_cfa_offset 8
+ 127              		.cfi_offset 7, -8
+ 128              		.cfi_offset 14, -4
+ 129 0002 00AF     		add	r7, sp, #0
+ 130              	.LCFI1:
+ 131              		.cfi_def_cfa_register 7
+  28:Src/sensor.c  ****     WakeUpSensor();
+ 132              		.loc 1 28 0
+ 133 0004 FFF7FEFF 		bl	WakeUpSensor
+  29:Src/sensor.c  **** }
+ 134              		.loc 1 29 0
+ 135 0008 00BF     		nop
+ 136 000a 80BD     		pop	{r7, pc}
+ 137              		.cfi_endproc
+ 138              	.LFE136:
+ 140              		.section	.text.readAllSensors,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	readAllSensors
+ 143              		.syntax unified
+ 144              		.thumb
+ 145              		.thumb_func
+ 146              		.fpu fpv4-sp-d16
+ 148              	readAllSensors:
+ 149              	.LFB137:
+  30:Src/sensor.c  **** 
+  31:Src/sensor.c  **** 
+  32:Src/sensor.c  **** void readAllSensors()
+  33:Src/sensor.c  **** {
+ 150              		.loc 1 33 0
+ 151              		.cfi_startproc
+ 152              		@ args = 0, pretend = 0, frame = 0
+ 153              		@ frame_needed = 1, uses_anonymous_args = 0
+ 154 0000 80B5     		push	{r7, lr}
+ 155              	.LCFI2:
+ 156              		.cfi_def_cfa_offset 8
+ 157              		.cfi_offset 7, -8
+ 158              		.cfi_offset 14, -4
+ 159 0002 00AF     		add	r7, sp, #0
+ 160              	.LCFI3:
+ 161              		.cfi_def_cfa_register 7
+  34:Src/sensor.c  **** 
+  35:Src/sensor.c  ****     sensorValues.pressure = readPressure();
+ 162              		.loc 1 35 0
+ 163 0004 FFF7FEFF 		bl	readPressure
+ 164 0008 0246     		mov	r2, r0
+ 165 000a 0C4B     		ldr	r3, .L3
+ 166 000c 1A60     		str	r2, [r3]
+  36:Src/sensor.c  **** 
+  37:Src/sensor.c  ****     sensorValues.altitude = readAltitude();
+ 167              		.loc 1 37 0
+ARM GAS  /tmp/ccKrEBio.s 			page 4
+
+
+ 168 000e FFF7FEFF 		bl	readAltitude
+ 169 0012 0246     		mov	r2, r0
+ 170 0014 094B     		ldr	r3, .L3
+ 171 0016 5A60     		str	r2, [r3, #4]
+  38:Src/sensor.c  **** 
+  39:Src/sensor.c  ****     sensorValues.wheather_condition = readWheather();
+ 172              		.loc 1 39 0
+ 173 0018 FFF7FEFF 		bl	readWheather
+ 174 001c 0346     		mov	r3, r0
+ 175 001e 1A46     		mov	r2, r3
+ 176 0020 064B     		ldr	r3, .L3
+ 177 0022 1A73     		strb	r2, [r3, #12]
+  40:Src/sensor.c  **** 
+  41:Src/sensor.c  ****     sensorValues.temperature = readTemperature();
+ 178              		.loc 1 41 0
+ 179 0024 FFF7FEFF 		bl	readTemperature
+ 180 0028 0246     		mov	r2, r0
+ 181 002a 044B     		ldr	r3, .L3
+ 182 002c 9A60     		str	r2, [r3, #8]
+  42:Src/sensor.c  **** 
+  43:Src/sensor.c  ****     sensorValues.compass_degree = readCompass();
+ 183              		.loc 1 43 0
+ 184 002e FFF7FEFF 		bl	readCompass
+ 185 0032 0246     		mov	r2, r0
+ 186 0034 014B     		ldr	r3, .L3
+ 187 0036 1A61     		str	r2, [r3, #16]
+  44:Src/sensor.c  **** 
+  45:Src/sensor.c  **** }
+ 188              		.loc 1 45 0
+ 189 0038 00BF     		nop
+ 190 003a 80BD     		pop	{r7, pc}
+ 191              	.L4:
+ 192              		.align	2
+ 193              	.L3:
+ 194 003c 00000000 		.word	sensorValues
+ 195              		.cfi_endproc
+ 196              	.LFE137:
+ 198              		.section	.rodata
+ 199              		.align	2
+ 200              	.LC0:
+ 201 0000 50524553 		.ascii	"PRESSURE READ:TIMOUT\000"
+ 201      53555245 
+ 201      20524541 
+ 201      443A5449 
+ 201      4D4F5554 
+ 202 0015 000000   		.align	2
+ 203              	.LC1:
+ 204 0018 50524553 		.ascii	"PRESSURE READ:BUSY\000"
+ 204      53555245 
+ 204      20524541 
+ 204      443A4255 
+ 204      535900
+ 205 002b 00       		.align	2
+ 206              	.LC2:
+ 207 002c 50524553 		.ascii	"PRESSURE READ:ERROR\000"
+ 207      53555245 
+ 207      20524541 
+ARM GAS  /tmp/ccKrEBio.s 			page 5
+
+
+ 207      443A4552 
+ 207      524F5200 
+ 208              		.align	2
+ 209              	.LC3:
+ 210 0040 50524553 		.ascii	"PRESSURE WRITE:FAIL\000"
+ 210      53555245 
+ 210      20575249 
+ 210      54453A46 
+ 210      41494C00 
+ 211              		.section	.text.readPressure,"ax",%progbits
+ 212              		.align	1
+ 213              		.global	readPressure
+ 214              		.syntax unified
+ 215              		.thumb
+ 216              		.thumb_func
+ 217              		.fpu fpv4-sp-d16
+ 219              	readPressure:
+ 220              	.LFB138:
+  46:Src/sensor.c  **** 
+  47:Src/sensor.c  **** long readPressure()
+  48:Src/sensor.c  **** {
+ 221              		.loc 1 48 0
+ 222              		.cfi_startproc
+ 223              		@ args = 0, pretend = 0, frame = 8
+ 224              		@ frame_needed = 1, uses_anonymous_args = 0
+ 225 0000 80B5     		push	{r7, lr}
+ 226              	.LCFI4:
+ 227              		.cfi_def_cfa_offset 8
+ 228              		.cfi_offset 7, -8
+ 229              		.cfi_offset 14, -4
+ 230 0002 84B0     		sub	sp, sp, #16
+ 231              	.LCFI5:
+ 232              		.cfi_def_cfa_offset 24
+ 233 0004 02AF     		add	r7, sp, #8
+ 234              	.LCFI6:
+ 235              		.cfi_def_cfa 7, 16
+  49:Src/sensor.c  **** 
+  50:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+  51:Src/sensor.c  **** 
+  52:Src/sensor.c  ****     unsigned char pressure_hex[3];
+  53:Src/sensor.c  ****     long pressure = 0;
+ 236              		.loc 1 53 0
+ 237 0006 0023     		movs	r3, #0
+ 238 0008 7B60     		str	r3, [r7, #4]
+  54:Src/sensor.c  **** 
+  55:Src/sensor.c  ****     pressure_ready = FAIL;
+ 239              		.loc 1 55 0
+ 240 000a 2C4B     		ldr	r3, .L14
+ 241 000c FF22     		movs	r2, #255
+ 242 000e 1A70     		strb	r2, [r3]
+ 243              	.L6:
+  56:Src/sensor.c  **** 
+  57:Src/sensor.c  ****     do{
+  58:Src/sensor.c  ****     i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&PRESS_WRITE_COMMA
+ 244              		.loc 1 58 0 discriminator 1
+ 245 0010 2023     		movs	r3, #32
+ 246 0012 99B2     		uxth	r1, r3
+ARM GAS  /tmp/ccKrEBio.s 			page 6
+
+
+ 247 0014 4FF47A73 		mov	r3, #1000
+ 248 0018 0093     		str	r3, [sp]
+ 249 001a 0123     		movs	r3, #1
+ 250 001c 284A     		ldr	r2, .L14+4
+ 251 001e 2948     		ldr	r0, .L14+8
+ 252 0020 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 253 0024 0346     		mov	r3, r0
+ 254 0026 FB70     		strb	r3, [r7, #3]
+  59:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 255              		.loc 1 59 0 discriminator 1
+ 256 0028 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 257 002a 002B     		cmp	r3, #0
+ 258 002c F0D1     		bne	.L6
+  60:Src/sensor.c  **** 
+  61:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 259              		.loc 1 61 0
+ 260 002e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 261 0030 002B     		cmp	r3, #0
+ 262 0032 36D1     		bne	.L7
+  62:Src/sensor.c  ****     {
+  63:Src/sensor.c  ****         HAL_Delay(200);
+ 263              		.loc 1 63 0
+ 264 0034 C820     		movs	r0, #200
+ 265 0036 FFF7FEFF 		bl	HAL_Delay
+  64:Src/sensor.c  **** 
+  65:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Receive(&hi2c1, READ_ADDRESS, &pressure_hex[0], 3, SENSOR_TIMEO
+ 266              		.loc 1 65 0
+ 267 003a 2123     		movs	r3, #33
+ 268 003c 99B2     		uxth	r1, r3
+ 269 003e 4FF47A73 		mov	r3, #1000
+ 270 0042 3A46     		mov	r2, r7
+ 271 0044 0093     		str	r3, [sp]
+ 272 0046 0323     		movs	r3, #3
+ 273 0048 1E48     		ldr	r0, .L14+8
+ 274 004a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 275 004e 0346     		mov	r3, r0
+ 276 0050 FB70     		strb	r3, [r7, #3]
+  66:Src/sensor.c  **** 
+  67:Src/sensor.c  ****         if(i2c_status == HAL_OK)
+ 277              		.loc 1 67 0
+ 278 0052 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 279 0054 002B     		cmp	r3, #0
+ 280 0056 0CD1     		bne	.L8
+  68:Src/sensor.c  ****         {
+  69:Src/sensor.c  ****             pressure = pressure_hex[0] << 16 |
+ 281              		.loc 1 69 0
+ 282 0058 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 283 005a 1A04     		lsls	r2, r3, #16
+  70:Src/sensor.c  ****                        pressure_hex[1] <<  8 |
+ 284              		.loc 1 70 0
+ 285 005c 7B78     		ldrb	r3, [r7, #1]	@ zero_extendqisi2
+ 286 005e 1B02     		lsls	r3, r3, #8
+  69:Src/sensor.c  ****                        pressure_hex[1] <<  8 |
+ 287              		.loc 1 69 0
+ 288 0060 1343     		orrs	r3, r3, r2
+  71:Src/sensor.c  ****                        pressure_hex[2];
+ 289              		.loc 1 71 0
+ARM GAS  /tmp/ccKrEBio.s 			page 7
+
+
+ 290 0062 BA78     		ldrb	r2, [r7, #2]	@ zero_extendqisi2
+  69:Src/sensor.c  ****                        pressure_hex[1] <<  8 |
+ 291              		.loc 1 69 0
+ 292 0064 1343     		orrs	r3, r3, r2
+ 293 0066 7B60     		str	r3, [r7, #4]
+  72:Src/sensor.c  **** 
+  73:Src/sensor.c  ****              pressure_ready = OK;
+ 294              		.loc 1 73 0
+ 295 0068 144B     		ldr	r3, .L14
+ 296 006a 0022     		movs	r2, #0
+ 297 006c 1A70     		strb	r2, [r3]
+  74:Src/sensor.c  **** 
+  75:Src/sensor.c  ****             return pressure;
+ 298              		.loc 1 75 0
+ 299 006e 7B68     		ldr	r3, [r7, #4]
+ 300 0070 1FE0     		b	.L13
+ 301              	.L8:
+  76:Src/sensor.c  ****         }
+  77:Src/sensor.c  ****         else
+  78:Src/sensor.c  ****         {
+  79:Src/sensor.c  **** 
+  80:Src/sensor.c  ****             if( i2c_status == HAL_TIMEOUT)
+ 302              		.loc 1 80 0
+ 303 0072 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 304 0074 032B     		cmp	r3, #3
+ 305 0076 02D1     		bne	.L10
+  81:Src/sensor.c  ****                 _Event_Handler("PRESSURE READ:TIMOUT");
+ 306              		.loc 1 81 0
+ 307 0078 1348     		ldr	r0, .L14+12
+ 308 007a FFF7FEFF 		bl	_Event_Handler
+ 309              	.L10:
+  82:Src/sensor.c  ****             if( i2c_status == HAL_BUSY)
+ 310              		.loc 1 82 0
+ 311 007e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 312 0080 022B     		cmp	r3, #2
+ 313 0082 02D1     		bne	.L11
+  83:Src/sensor.c  ****                 _Event_Handler("PRESSURE READ:BUSY");
+ 314              		.loc 1 83 0
+ 315 0084 1148     		ldr	r0, .L14+16
+ 316 0086 FFF7FEFF 		bl	_Event_Handler
+ 317              	.L11:
+  84:Src/sensor.c  ****             if( i2c_status == HAL_ERROR)
+ 318              		.loc 1 84 0
+ 319 008a FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 320 008c 012B     		cmp	r3, #1
+ 321 008e 02D1     		bne	.L12
+  85:Src/sensor.c  ****                 _Event_Handler("PRESSURE READ:ERROR");
+ 322              		.loc 1 85 0
+ 323 0090 0F48     		ldr	r0, .L14+20
+ 324 0092 FFF7FEFF 		bl	_Event_Handler
+ 325              	.L12:
+  86:Src/sensor.c  **** 
+  87:Src/sensor.c  ****             pressure_ready = FAIL;
+ 326              		.loc 1 87 0
+ 327 0096 094B     		ldr	r3, .L14
+ 328 0098 FF22     		movs	r2, #255
+ 329 009a 1A70     		strb	r2, [r3]
+ARM GAS  /tmp/ccKrEBio.s 			page 8
+
+
+  88:Src/sensor.c  ****             return FAIL;
+ 330              		.loc 1 88 0
+ 331 009c 4FF0FF33 		mov	r3, #-1
+ 332 00a0 07E0     		b	.L13
+ 333              	.L7:
+  89:Src/sensor.c  ****         }
+  90:Src/sensor.c  ****     }
+  91:Src/sensor.c  ****     else
+  92:Src/sensor.c  ****     {
+  93:Src/sensor.c  ****         _Event_Handler("PRESSURE WRITE:FAIL");
+ 334              		.loc 1 93 0
+ 335 00a2 0C48     		ldr	r0, .L14+24
+ 336 00a4 FFF7FEFF 		bl	_Event_Handler
+  94:Src/sensor.c  **** 
+  95:Src/sensor.c  ****           pressure_ready = FAIL;
+ 337              		.loc 1 95 0
+ 338 00a8 044B     		ldr	r3, .L14
+ 339 00aa FF22     		movs	r2, #255
+ 340 00ac 1A70     		strb	r2, [r3]
+  96:Src/sensor.c  ****         return FAIL;
+ 341              		.loc 1 96 0
+ 342 00ae 4FF0FF33 		mov	r3, #-1
+ 343              	.L13:
+  97:Src/sensor.c  ****     }
+  98:Src/sensor.c  **** }
+ 344              		.loc 1 98 0 discriminator 1
+ 345 00b2 1846     		mov	r0, r3
+ 346 00b4 0837     		adds	r7, r7, #8
+ 347              	.LCFI7:
+ 348              		.cfi_def_cfa_offset 8
+ 349 00b6 BD46     		mov	sp, r7
+ 350              	.LCFI8:
+ 351              		.cfi_def_cfa_register 13
+ 352              		@ sp needed
+ 353 00b8 80BD     		pop	{r7, pc}
+ 354              	.L15:
+ 355 00ba 00BF     		.align	2
+ 356              	.L14:
+ 357 00bc 00000000 		.word	pressure_ready
+ 358 00c0 00000000 		.word	PRESS_WRITE_COMMAND
+ 359 00c4 00000000 		.word	hi2c1
+ 360 00c8 00000000 		.word	.LC0
+ 361 00cc 18000000 		.word	.LC1
+ 362 00d0 2C000000 		.word	.LC2
+ 363 00d4 40000000 		.word	.LC3
+ 364              		.cfi_endproc
+ 365              	.LFE138:
+ 367              		.section	.text.checkPressure,"ax",%progbits
+ 368              		.align	1
+ 369              		.global	checkPressure
+ 370              		.syntax unified
+ 371              		.thumb
+ 372              		.thumb_func
+ 373              		.fpu fpv4-sp-d16
+ 375              	checkPressure:
+ 376              	.LFB139:
+  99:Src/sensor.c  **** 
+ARM GAS  /tmp/ccKrEBio.s 			page 9
+
+
+ 100:Src/sensor.c  **** uint8_t checkPressure()
+ 101:Src/sensor.c  **** {
+ 377              		.loc 1 101 0
+ 378              		.cfi_startproc
+ 379              		@ args = 0, pretend = 0, frame = 8
+ 380              		@ frame_needed = 1, uses_anonymous_args = 0
+ 381              		@ link register save eliminated.
+ 382 0000 80B4     		push	{r7}
+ 383              	.LCFI9:
+ 384              		.cfi_def_cfa_offset 4
+ 385              		.cfi_offset 7, -4
+ 386 0002 83B0     		sub	sp, sp, #12
+ 387              	.LCFI10:
+ 388              		.cfi_def_cfa_offset 16
+ 389 0004 00AF     		add	r7, sp, #0
+ 390              	.LCFI11:
+ 391              		.cfi_def_cfa_register 7
+ 102:Src/sensor.c  ****     uint8_t status = pressure_ready;
+ 392              		.loc 1 102 0
+ 393 0006 094B     		ldr	r3, .L19
+ 394 0008 1B78     		ldrb	r3, [r3]
+ 395 000a FB71     		strb	r3, [r7, #7]
+ 103:Src/sensor.c  **** 
+ 104:Src/sensor.c  ****     if(pressure_ready == OK)
+ 396              		.loc 1 104 0
+ 397 000c 074B     		ldr	r3, .L19
+ 398 000e 1B78     		ldrb	r3, [r3]
+ 399 0010 DBB2     		uxtb	r3, r3
+ 400 0012 002B     		cmp	r3, #0
+ 401 0014 02D1     		bne	.L17
+ 105:Src/sensor.c  ****         pressure_ready = FAIL;
+ 402              		.loc 1 105 0
+ 403 0016 054B     		ldr	r3, .L19
+ 404 0018 FF22     		movs	r2, #255
+ 405 001a 1A70     		strb	r2, [r3]
+ 406              	.L17:
+ 106:Src/sensor.c  **** 
+ 107:Src/sensor.c  ****     return status;
+ 407              		.loc 1 107 0
+ 408 001c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 108:Src/sensor.c  **** }
+ 409              		.loc 1 108 0
+ 410 001e 1846     		mov	r0, r3
+ 411 0020 0C37     		adds	r7, r7, #12
+ 412              	.LCFI12:
+ 413              		.cfi_def_cfa_offset 4
+ 414 0022 BD46     		mov	sp, r7
+ 415              	.LCFI13:
+ 416              		.cfi_def_cfa_register 13
+ 417              		@ sp needed
+ 418 0024 5DF8047B 		ldr	r7, [sp], #4
+ 419              	.LCFI14:
+ 420              		.cfi_restore 7
+ 421              		.cfi_def_cfa_offset 0
+ 422 0028 7047     		bx	lr
+ 423              	.L20:
+ 424 002a 00BF     		.align	2
+ARM GAS  /tmp/ccKrEBio.s 			page 10
+
+
+ 425              	.L19:
+ 426 002c 00000000 		.word	pressure_ready
+ 427              		.cfi_endproc
+ 428              	.LFE139:
+ 430              		.section	.rodata
+ 431              		.align	2
+ 432              	.LC4:
+ 433 0054 414C5449 		.ascii	"ALTITUDE READ:TIMOUT\000"
+ 433      54554445 
+ 433      20524541 
+ 433      443A5449 
+ 433      4D4F5554 
+ 434 0069 000000   		.align	2
+ 435              	.LC5:
+ 436 006c 414C5449 		.ascii	"ALTITUDE READ:BUSY\000"
+ 436      54554445 
+ 436      20524541 
+ 436      443A4255 
+ 436      535900
+ 437 007f 00       		.align	2
+ 438              	.LC6:
+ 439 0080 414C5449 		.ascii	"ALTITUDE READ:ERROR\000"
+ 439      54554445 
+ 439      20524541 
+ 439      443A4552 
+ 439      524F5200 
+ 440              		.align	2
+ 441              	.LC7:
+ 442 0094 414C5449 		.ascii	"ALTITUDE WRITE:FAIL\000"
+ 442      54554445 
+ 442      20575249 
+ 442      54453A46 
+ 442      41494C00 
+ 443              		.section	.text.readAltitude,"ax",%progbits
+ 444              		.align	1
+ 445              		.global	readAltitude
+ 446              		.syntax unified
+ 447              		.thumb
+ 448              		.thumb_func
+ 449              		.fpu fpv4-sp-d16
+ 451              	readAltitude:
+ 452              	.LFB140:
+ 109:Src/sensor.c  **** 
+ 110:Src/sensor.c  **** 
+ 111:Src/sensor.c  **** long readAltitude()
+ 112:Src/sensor.c  **** {
+ 453              		.loc 1 112 0
+ 454              		.cfi_startproc
+ 455              		@ args = 0, pretend = 0, frame = 8
+ 456              		@ frame_needed = 1, uses_anonymous_args = 0
+ 457 0000 80B5     		push	{r7, lr}
+ 458              	.LCFI15:
+ 459              		.cfi_def_cfa_offset 8
+ 460              		.cfi_offset 7, -8
+ 461              		.cfi_offset 14, -4
+ 462 0002 84B0     		sub	sp, sp, #16
+ 463              	.LCFI16:
+ARM GAS  /tmp/ccKrEBio.s 			page 11
+
+
+ 464              		.cfi_def_cfa_offset 24
+ 465 0004 02AF     		add	r7, sp, #8
+ 466              	.LCFI17:
+ 467              		.cfi_def_cfa 7, 16
+ 113:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 114:Src/sensor.c  **** 
+ 115:Src/sensor.c  ****     unsigned char altitude_hex[3];
+ 116:Src/sensor.c  ****     long altitude = 0;
+ 468              		.loc 1 116 0
+ 469 0006 0023     		movs	r3, #0
+ 470 0008 7B60     		str	r3, [r7, #4]
+ 117:Src/sensor.c  **** 
+ 118:Src/sensor.c  ****     altitude_ready = FAIL;
+ 471              		.loc 1 118 0
+ 472 000a 3A4B     		ldr	r3, .L32
+ 473 000c FF22     		movs	r2, #255
+ 474 000e 1A70     		strb	r2, [r3]
+ 475              	.L22:
+ 119:Src/sensor.c  **** 
+ 120:Src/sensor.c  ****     do{
+ 121:Src/sensor.c  ****          i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&ALTITUDE_WRI
+ 476              		.loc 1 121 0 discriminator 1
+ 477 0010 2023     		movs	r3, #32
+ 478 0012 99B2     		uxth	r1, r3
+ 479 0014 4FF47A73 		mov	r3, #1000
+ 480 0018 0093     		str	r3, [sp]
+ 481 001a 0123     		movs	r3, #1
+ 482 001c 364A     		ldr	r2, .L32+4
+ 483 001e 3748     		ldr	r0, .L32+8
+ 484 0020 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 485 0024 0346     		mov	r3, r0
+ 486 0026 FB70     		strb	r3, [r7, #3]
+ 122:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 487              		.loc 1 122 0 discriminator 1
+ 488 0028 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 489 002a 002B     		cmp	r3, #0
+ 490 002c F0D1     		bne	.L22
+ 123:Src/sensor.c  **** 
+ 124:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 491              		.loc 1 124 0
+ 492 002e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 493 0030 002B     		cmp	r3, #0
+ 494 0032 53D1     		bne	.L23
+ 125:Src/sensor.c  ****     {
+ 126:Src/sensor.c  ****         HAL_Delay(200);
+ 495              		.loc 1 126 0
+ 496 0034 C820     		movs	r0, #200
+ 497 0036 FFF7FEFF 		bl	HAL_Delay
+ 127:Src/sensor.c  **** 
+ 128:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Receive(&hi2c1, READ_ADDRESS, &altitude_hex[0], 3, SENSOR_TIMEO
+ 498              		.loc 1 128 0
+ 499 003a 2123     		movs	r3, #33
+ 500 003c 99B2     		uxth	r1, r3
+ 501 003e 4FF47A73 		mov	r3, #1000
+ 502 0042 3A46     		mov	r2, r7
+ 503 0044 0093     		str	r3, [sp]
+ 504 0046 0323     		movs	r3, #3
+ARM GAS  /tmp/ccKrEBio.s 			page 12
+
+
+ 505 0048 2C48     		ldr	r0, .L32+8
+ 506 004a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 507 004e 0346     		mov	r3, r0
+ 508 0050 FB70     		strb	r3, [r7, #3]
+ 129:Src/sensor.c  **** 
+ 130:Src/sensor.c  ****         if(i2c_status == HAL_OK)
+ 509              		.loc 1 130 0
+ 510 0052 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 511 0054 002B     		cmp	r3, #0
+ 512 0056 29D1     		bne	.L24
+ 131:Src/sensor.c  ****         {
+ 132:Src/sensor.c  ****             altitude = altitude_hex[0] << 16 |
+ 513              		.loc 1 132 0
+ 514 0058 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 515 005a 1A04     		lsls	r2, r3, #16
+ 133:Src/sensor.c  ****                        altitude_hex[1] <<  8 |
+ 516              		.loc 1 133 0
+ 517 005c 7B78     		ldrb	r3, [r7, #1]	@ zero_extendqisi2
+ 518 005e 1B02     		lsls	r3, r3, #8
+ 132:Src/sensor.c  ****                        altitude_hex[1] <<  8 |
+ 519              		.loc 1 132 0
+ 520 0060 1343     		orrs	r3, r3, r2
+ 134:Src/sensor.c  ****                        altitude_hex[2];
+ 521              		.loc 1 134 0
+ 522 0062 BA78     		ldrb	r2, [r7, #2]	@ zero_extendqisi2
+ 132:Src/sensor.c  ****                        altitude_hex[1] <<  8 |
+ 523              		.loc 1 132 0
+ 524 0064 1343     		orrs	r3, r3, r2
+ 525 0066 7B60     		str	r3, [r7, #4]
+ 135:Src/sensor.c  **** 
+ 136:Src/sensor.c  ****             if((1 << 23) & altitude) // negative altitude
+ 526              		.loc 1 136 0
+ 527 0068 7B68     		ldr	r3, [r7, #4]
+ 528 006a 03F40003 		and	r3, r3, #8388608
+ 529 006e 002B     		cmp	r3, #0
+ 530 0070 0FD0     		beq	.L25
+ 137:Src/sensor.c  ****             {
+ 138:Src/sensor.c  ****                 altitude = altitude - 0x800000;
+ 531              		.loc 1 138 0
+ 532 0072 7B68     		ldr	r3, [r7, #4]
+ 533 0074 A3F50003 		sub	r3, r3, #8388608
+ 534 0078 7B60     		str	r3, [r7, #4]
+ 139:Src/sensor.c  ****                 altitude = altitude / 10;
+ 535              		.loc 1 139 0
+ 536 007a 7B68     		ldr	r3, [r7, #4]
+ 537 007c 204A     		ldr	r2, .L32+12
+ 538 007e 82FB0312 		smull	r1, r2, r2, r3
+ 539 0082 9210     		asrs	r2, r2, #2
+ 540 0084 DB17     		asrs	r3, r3, #31
+ 541 0086 D31A     		subs	r3, r2, r3
+ 542 0088 7B60     		str	r3, [r7, #4]
+ 140:Src/sensor.c  ****                 altitude = altitude * -1;
+ 543              		.loc 1 140 0
+ 544 008a 7B68     		ldr	r3, [r7, #4]
+ 545 008c 5B42     		negs	r3, r3
+ 546 008e 7B60     		str	r3, [r7, #4]
+ 547 0090 07E0     		b	.L26
+ARM GAS  /tmp/ccKrEBio.s 			page 13
+
+
+ 548              	.L25:
+ 141:Src/sensor.c  ****             }
+ 142:Src/sensor.c  ****             else
+ 143:Src/sensor.c  ****             {
+ 144:Src/sensor.c  ****                 altitude = altitude / 10;
+ 549              		.loc 1 144 0
+ 550 0092 7B68     		ldr	r3, [r7, #4]
+ 551 0094 1A4A     		ldr	r2, .L32+12
+ 552 0096 82FB0312 		smull	r1, r2, r2, r3
+ 553 009a 9210     		asrs	r2, r2, #2
+ 554 009c DB17     		asrs	r3, r3, #31
+ 555 009e D31A     		subs	r3, r2, r3
+ 556 00a0 7B60     		str	r3, [r7, #4]
+ 557              	.L26:
+ 145:Src/sensor.c  ****             }
+ 146:Src/sensor.c  **** 
+ 147:Src/sensor.c  ****             altitude_ready = OK;
+ 558              		.loc 1 147 0
+ 559 00a2 144B     		ldr	r3, .L32
+ 560 00a4 0022     		movs	r2, #0
+ 561 00a6 1A70     		strb	r2, [r3]
+ 148:Src/sensor.c  ****             return altitude;
+ 562              		.loc 1 148 0
+ 563 00a8 7B68     		ldr	r3, [r7, #4]
+ 564 00aa 1FE0     		b	.L31
+ 565              	.L24:
+ 149:Src/sensor.c  ****         }
+ 150:Src/sensor.c  ****         else
+ 151:Src/sensor.c  ****         {
+ 152:Src/sensor.c  **** 
+ 153:Src/sensor.c  ****             if( i2c_status == HAL_TIMEOUT)
+ 566              		.loc 1 153 0
+ 567 00ac FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 568 00ae 032B     		cmp	r3, #3
+ 569 00b0 02D1     		bne	.L28
+ 154:Src/sensor.c  ****                 _Event_Handler("ALTITUDE READ:TIMOUT");
+ 570              		.loc 1 154 0
+ 571 00b2 1448     		ldr	r0, .L32+16
+ 572 00b4 FFF7FEFF 		bl	_Event_Handler
+ 573              	.L28:
+ 155:Src/sensor.c  ****             if( i2c_status == HAL_BUSY)
+ 574              		.loc 1 155 0
+ 575 00b8 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 576 00ba 022B     		cmp	r3, #2
+ 577 00bc 02D1     		bne	.L29
+ 156:Src/sensor.c  ****                 _Event_Handler("ALTITUDE READ:BUSY");
+ 578              		.loc 1 156 0
+ 579 00be 1248     		ldr	r0, .L32+20
+ 580 00c0 FFF7FEFF 		bl	_Event_Handler
+ 581              	.L29:
+ 157:Src/sensor.c  ****             if( i2c_status == HAL_ERROR)
+ 582              		.loc 1 157 0
+ 583 00c4 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 584 00c6 012B     		cmp	r3, #1
+ 585 00c8 02D1     		bne	.L30
+ 158:Src/sensor.c  ****                 _Event_Handler("ALTITUDE READ:ERROR");
+ 586              		.loc 1 158 0
+ARM GAS  /tmp/ccKrEBio.s 			page 14
+
+
+ 587 00ca 1048     		ldr	r0, .L32+24
+ 588 00cc FFF7FEFF 		bl	_Event_Handler
+ 589              	.L30:
+ 159:Src/sensor.c  **** 
+ 160:Src/sensor.c  ****             altitude_ready = FAIL;
+ 590              		.loc 1 160 0
+ 591 00d0 084B     		ldr	r3, .L32
+ 592 00d2 FF22     		movs	r2, #255
+ 593 00d4 1A70     		strb	r2, [r3]
+ 161:Src/sensor.c  ****             return FAIL;
+ 594              		.loc 1 161 0
+ 595 00d6 4FF0FF33 		mov	r3, #-1
+ 596 00da 07E0     		b	.L31
+ 597              	.L23:
+ 162:Src/sensor.c  ****         }
+ 163:Src/sensor.c  **** 
+ 164:Src/sensor.c  ****     }
+ 165:Src/sensor.c  ****     else
+ 166:Src/sensor.c  ****     {
+ 167:Src/sensor.c  ****         _Event_Handler("ALTITUDE WRITE:FAIL");
+ 598              		.loc 1 167 0
+ 599 00dc 0C48     		ldr	r0, .L32+28
+ 600 00de FFF7FEFF 		bl	_Event_Handler
+ 168:Src/sensor.c  ****         altitude_ready = FAIL;
+ 601              		.loc 1 168 0
+ 602 00e2 044B     		ldr	r3, .L32
+ 603 00e4 FF22     		movs	r2, #255
+ 604 00e6 1A70     		strb	r2, [r3]
+ 169:Src/sensor.c  ****         return FAIL;
+ 605              		.loc 1 169 0
+ 606 00e8 4FF0FF33 		mov	r3, #-1
+ 607              	.L31:
+ 170:Src/sensor.c  ****     }
+ 171:Src/sensor.c  **** 
+ 172:Src/sensor.c  **** }
+ 608              		.loc 1 172 0 discriminator 1
+ 609 00ec 1846     		mov	r0, r3
+ 610 00ee 0837     		adds	r7, r7, #8
+ 611              	.LCFI18:
+ 612              		.cfi_def_cfa_offset 8
+ 613 00f0 BD46     		mov	sp, r7
+ 614              	.LCFI19:
+ 615              		.cfi_def_cfa_register 13
+ 616              		@ sp needed
+ 617 00f2 80BD     		pop	{r7, pc}
+ 618              	.L33:
+ 619              		.align	2
+ 620              	.L32:
+ 621 00f4 00000000 		.word	altitude_ready
+ 622 00f8 00000000 		.word	ALTITUDE_WRITE_COMMAND
+ 623 00fc 00000000 		.word	hi2c1
+ 624 0100 67666666 		.word	1717986919
+ 625 0104 54000000 		.word	.LC4
+ 626 0108 6C000000 		.word	.LC5
+ 627 010c 80000000 		.word	.LC6
+ 628 0110 94000000 		.word	.LC7
+ 629              		.cfi_endproc
+ARM GAS  /tmp/ccKrEBio.s 			page 15
+
+
+ 630              	.LFE140:
+ 632              		.section	.text.checkAltitude,"ax",%progbits
+ 633              		.align	1
+ 634              		.global	checkAltitude
+ 635              		.syntax unified
+ 636              		.thumb
+ 637              		.thumb_func
+ 638              		.fpu fpv4-sp-d16
+ 640              	checkAltitude:
+ 641              	.LFB141:
+ 173:Src/sensor.c  **** 
+ 174:Src/sensor.c  **** 
+ 175:Src/sensor.c  **** uint8_t checkAltitude()
+ 176:Src/sensor.c  **** {
+ 642              		.loc 1 176 0
+ 643              		.cfi_startproc
+ 644              		@ args = 0, pretend = 0, frame = 8
+ 645              		@ frame_needed = 1, uses_anonymous_args = 0
+ 646              		@ link register save eliminated.
+ 647 0000 80B4     		push	{r7}
+ 648              	.LCFI20:
+ 649              		.cfi_def_cfa_offset 4
+ 650              		.cfi_offset 7, -4
+ 651 0002 83B0     		sub	sp, sp, #12
+ 652              	.LCFI21:
+ 653              		.cfi_def_cfa_offset 16
+ 654 0004 00AF     		add	r7, sp, #0
+ 655              	.LCFI22:
+ 656              		.cfi_def_cfa_register 7
+ 177:Src/sensor.c  ****     uint8_t status = altitude_ready;
+ 657              		.loc 1 177 0
+ 658 0006 094B     		ldr	r3, .L37
+ 659 0008 1B78     		ldrb	r3, [r3]
+ 660 000a FB71     		strb	r3, [r7, #7]
+ 178:Src/sensor.c  **** 
+ 179:Src/sensor.c  ****     if(altitude_ready == OK)
+ 661              		.loc 1 179 0
+ 662 000c 074B     		ldr	r3, .L37
+ 663 000e 1B78     		ldrb	r3, [r3]
+ 664 0010 DBB2     		uxtb	r3, r3
+ 665 0012 002B     		cmp	r3, #0
+ 666 0014 02D1     		bne	.L35
+ 180:Src/sensor.c  ****         altitude_ready = FAIL;
+ 667              		.loc 1 180 0
+ 668 0016 054B     		ldr	r3, .L37
+ 669 0018 FF22     		movs	r2, #255
+ 670 001a 1A70     		strb	r2, [r3]
+ 671              	.L35:
+ 181:Src/sensor.c  **** 
+ 182:Src/sensor.c  ****     return status;
+ 672              		.loc 1 182 0
+ 673 001c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 183:Src/sensor.c  **** }
+ 674              		.loc 1 183 0
+ 675 001e 1846     		mov	r0, r3
+ 676 0020 0C37     		adds	r7, r7, #12
+ 677              	.LCFI23:
+ARM GAS  /tmp/ccKrEBio.s 			page 16
+
+
+ 678              		.cfi_def_cfa_offset 4
+ 679 0022 BD46     		mov	sp, r7
+ 680              	.LCFI24:
+ 681              		.cfi_def_cfa_register 13
+ 682              		@ sp needed
+ 683 0024 5DF8047B 		ldr	r7, [sp], #4
+ 684              	.LCFI25:
+ 685              		.cfi_restore 7
+ 686              		.cfi_def_cfa_offset 0
+ 687 0028 7047     		bx	lr
+ 688              	.L38:
+ 689 002a 00BF     		.align	2
+ 690              	.L37:
+ 691 002c 00000000 		.word	altitude_ready
+ 692              		.cfi_endproc
+ 693              	.LFE141:
+ 695              		.section	.rodata
+ 696              		.align	2
+ 697              	.LC8:
+ 698 00a8 57484541 		.ascii	"WHEATHER READ:TIMOUT\000"
+ 698      54484552 
+ 698      20524541 
+ 698      443A5449 
+ 698      4D4F5554 
+ 699 00bd 000000   		.align	2
+ 700              	.LC9:
+ 701 00c0 57484541 		.ascii	"WHEATHER READ:BUSY\000"
+ 701      54484552 
+ 701      20524541 
+ 701      443A4255 
+ 701      535900
+ 702 00d3 00       		.align	2
+ 703              	.LC10:
+ 704 00d4 57484541 		.ascii	"WHEATHER READ:ERROR\000"
+ 704      54484552 
+ 704      20524541 
+ 704      443A4552 
+ 704      524F5200 
+ 705              		.align	2
+ 706              	.LC11:
+ 707 00e8 57484541 		.ascii	"WHEATHER WRITE:FAIL\000"
+ 707      54484552 
+ 707      20575249 
+ 707      54453A46 
+ 707      41494C00 
+ 708              		.section	.text.readWheather,"ax",%progbits
+ 709              		.align	1
+ 710              		.global	readWheather
+ 711              		.syntax unified
+ 712              		.thumb
+ 713              		.thumb_func
+ 714              		.fpu fpv4-sp-d16
+ 716              	readWheather:
+ 717              	.LFB142:
+ 184:Src/sensor.c  **** 
+ 185:Src/sensor.c  **** 
+ 186:Src/sensor.c  **** unsigned char readWheather()
+ARM GAS  /tmp/ccKrEBio.s 			page 17
+
+
+ 187:Src/sensor.c  **** {
+ 718              		.loc 1 187 0
+ 719              		.cfi_startproc
+ 720              		@ args = 0, pretend = 0, frame = 8
+ 721              		@ frame_needed = 1, uses_anonymous_args = 0
+ 722 0000 80B5     		push	{r7, lr}
+ 723              	.LCFI26:
+ 724              		.cfi_def_cfa_offset 8
+ 725              		.cfi_offset 7, -8
+ 726              		.cfi_offset 14, -4
+ 727 0002 84B0     		sub	sp, sp, #16
+ 728              	.LCFI27:
+ 729              		.cfi_def_cfa_offset 24
+ 730 0004 02AF     		add	r7, sp, #8
+ 731              	.LCFI28:
+ 732              		.cfi_def_cfa 7, 16
+ 188:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 189:Src/sensor.c  **** 
+ 190:Src/sensor.c  ****     unsigned char wheather_status = 0;
+ 733              		.loc 1 190 0
+ 734 0006 0023     		movs	r3, #0
+ 735 0008 BB71     		strb	r3, [r7, #6]
+ 191:Src/sensor.c  **** 
+ 192:Src/sensor.c  ****     wheather_ready = FAIL;
+ 736              		.loc 1 192 0
+ 737 000a 274B     		ldr	r3, .L48
+ 738 000c FF22     		movs	r2, #255
+ 739 000e 1A70     		strb	r2, [r3]
+ 740              	.L40:
+ 193:Src/sensor.c  **** 
+ 194:Src/sensor.c  ****     do{
+ 195:Src/sensor.c  ****     i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&WHEATHER_COMMAND,
+ 741              		.loc 1 195 0 discriminator 1
+ 742 0010 2023     		movs	r3, #32
+ 743 0012 99B2     		uxth	r1, r3
+ 744 0014 4FF47A73 		mov	r3, #1000
+ 745 0018 0093     		str	r3, [sp]
+ 746 001a 0123     		movs	r3, #1
+ 747 001c 234A     		ldr	r2, .L48+4
+ 748 001e 2448     		ldr	r0, .L48+8
+ 749 0020 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 750 0024 0346     		mov	r3, r0
+ 751 0026 FB71     		strb	r3, [r7, #7]
+ 196:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 752              		.loc 1 196 0 discriminator 1
+ 753 0028 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 754 002a 002B     		cmp	r3, #0
+ 755 002c F0D1     		bne	.L40
+ 197:Src/sensor.c  **** 
+ 198:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 756              		.loc 1 198 0
+ 757 002e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 758 0030 002B     		cmp	r3, #0
+ 759 0032 2DD1     		bne	.L41
+ 199:Src/sensor.c  ****     {
+ 200:Src/sensor.c  ****         HAL_Delay(200);
+ 760              		.loc 1 200 0
+ARM GAS  /tmp/ccKrEBio.s 			page 18
+
+
+ 761 0034 C820     		movs	r0, #200
+ 762 0036 FFF7FEFF 		bl	HAL_Delay
+ 201:Src/sensor.c  **** 
+ 202:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Receive(&hi2c1, READ_ADDRESS, &wheather_status, 1, SENSOR_TIMEO
+ 763              		.loc 1 202 0
+ 764 003a 2123     		movs	r3, #33
+ 765 003c 99B2     		uxth	r1, r3
+ 766 003e 4FF47A73 		mov	r3, #1000
+ 767 0042 BA1D     		adds	r2, r7, #6
+ 768 0044 0093     		str	r3, [sp]
+ 769 0046 0123     		movs	r3, #1
+ 770 0048 1948     		ldr	r0, .L48+8
+ 771 004a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 772 004e 0346     		mov	r3, r0
+ 773 0050 FB71     		strb	r3, [r7, #7]
+ 203:Src/sensor.c  **** 
+ 204:Src/sensor.c  ****         if(i2c_status == HAL_OK)
+ 774              		.loc 1 204 0
+ 775 0052 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 776 0054 002B     		cmp	r3, #0
+ 777 0056 04D1     		bne	.L42
+ 205:Src/sensor.c  ****         {
+ 206:Src/sensor.c  ****             wheather_ready = OK;
+ 778              		.loc 1 206 0
+ 779 0058 134B     		ldr	r3, .L48
+ 780 005a 0022     		movs	r2, #0
+ 781 005c 1A70     		strb	r2, [r3]
+ 207:Src/sensor.c  ****             return wheather_status;
+ 782              		.loc 1 207 0
+ 783 005e BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 784 0060 1DE0     		b	.L47
+ 785              	.L42:
+ 208:Src/sensor.c  ****         }
+ 209:Src/sensor.c  ****         else
+ 210:Src/sensor.c  ****         {
+ 211:Src/sensor.c  **** 
+ 212:Src/sensor.c  ****             if( i2c_status == HAL_TIMEOUT)
+ 786              		.loc 1 212 0
+ 787 0062 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 788 0064 032B     		cmp	r3, #3
+ 789 0066 02D1     		bne	.L44
+ 213:Src/sensor.c  ****                 _Event_Handler("WHEATHER READ:TIMOUT");
+ 790              		.loc 1 213 0
+ 791 0068 1248     		ldr	r0, .L48+12
+ 792 006a FFF7FEFF 		bl	_Event_Handler
+ 793              	.L44:
+ 214:Src/sensor.c  ****             if( i2c_status == HAL_BUSY)
+ 794              		.loc 1 214 0
+ 795 006e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 796 0070 022B     		cmp	r3, #2
+ 797 0072 02D1     		bne	.L45
+ 215:Src/sensor.c  ****                 _Event_Handler("WHEATHER READ:BUSY");
+ 798              		.loc 1 215 0
+ 799 0074 1048     		ldr	r0, .L48+16
+ 800 0076 FFF7FEFF 		bl	_Event_Handler
+ 801              	.L45:
+ 216:Src/sensor.c  ****             if( i2c_status == HAL_ERROR)
+ARM GAS  /tmp/ccKrEBio.s 			page 19
+
+
+ 802              		.loc 1 216 0
+ 803 007a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 804 007c 012B     		cmp	r3, #1
+ 805 007e 02D1     		bne	.L46
+ 217:Src/sensor.c  ****                 _Event_Handler("WHEATHER READ:ERROR");
+ 806              		.loc 1 217 0
+ 807 0080 0E48     		ldr	r0, .L48+20
+ 808 0082 FFF7FEFF 		bl	_Event_Handler
+ 809              	.L46:
+ 218:Src/sensor.c  **** 
+ 219:Src/sensor.c  ****             wheather_ready = FAIL;
+ 810              		.loc 1 219 0
+ 811 0086 084B     		ldr	r3, .L48
+ 812 0088 FF22     		movs	r2, #255
+ 813 008a 1A70     		strb	r2, [r3]
+ 220:Src/sensor.c  ****             return ERROR;
+ 814              		.loc 1 220 0
+ 815 008c 0023     		movs	r3, #0
+ 816 008e 06E0     		b	.L47
+ 817              	.L41:
+ 221:Src/sensor.c  ****         }
+ 222:Src/sensor.c  ****     }
+ 223:Src/sensor.c  ****     else
+ 224:Src/sensor.c  ****     {
+ 225:Src/sensor.c  ****         _Event_Handler("WHEATHER WRITE:FAIL");
+ 818              		.loc 1 225 0
+ 819 0090 0B48     		ldr	r0, .L48+24
+ 820 0092 FFF7FEFF 		bl	_Event_Handler
+ 226:Src/sensor.c  ****         wheather_ready = FAIL;
+ 821              		.loc 1 226 0
+ 822 0096 044B     		ldr	r3, .L48
+ 823 0098 FF22     		movs	r2, #255
+ 824 009a 1A70     		strb	r2, [r3]
+ 227:Src/sensor.c  ****         return ERROR;
+ 825              		.loc 1 227 0
+ 826 009c 0023     		movs	r3, #0
+ 827              	.L47:
+ 228:Src/sensor.c  ****     }
+ 229:Src/sensor.c  **** }
+ 828              		.loc 1 229 0 discriminator 1
+ 829 009e 1846     		mov	r0, r3
+ 830 00a0 0837     		adds	r7, r7, #8
+ 831              	.LCFI29:
+ 832              		.cfi_def_cfa_offset 8
+ 833 00a2 BD46     		mov	sp, r7
+ 834              	.LCFI30:
+ 835              		.cfi_def_cfa_register 13
+ 836              		@ sp needed
+ 837 00a4 80BD     		pop	{r7, pc}
+ 838              	.L49:
+ 839 00a6 00BF     		.align	2
+ 840              	.L48:
+ 841 00a8 00000000 		.word	wheather_ready
+ 842 00ac 00000000 		.word	WHEATHER_COMMAND
+ 843 00b0 00000000 		.word	hi2c1
+ 844 00b4 A8000000 		.word	.LC8
+ 845 00b8 C0000000 		.word	.LC9
+ARM GAS  /tmp/ccKrEBio.s 			page 20
+
+
+ 846 00bc D4000000 		.word	.LC10
+ 847 00c0 E8000000 		.word	.LC11
+ 848              		.cfi_endproc
+ 849              	.LFE142:
+ 851              		.section	.text.checkWheather,"ax",%progbits
+ 852              		.align	1
+ 853              		.global	checkWheather
+ 854              		.syntax unified
+ 855              		.thumb
+ 856              		.thumb_func
+ 857              		.fpu fpv4-sp-d16
+ 859              	checkWheather:
+ 860              	.LFB143:
+ 230:Src/sensor.c  **** 
+ 231:Src/sensor.c  **** 
+ 232:Src/sensor.c  **** uint8_t checkWheather()
+ 233:Src/sensor.c  **** {
+ 861              		.loc 1 233 0
+ 862              		.cfi_startproc
+ 863              		@ args = 0, pretend = 0, frame = 8
+ 864              		@ frame_needed = 1, uses_anonymous_args = 0
+ 865              		@ link register save eliminated.
+ 866 0000 80B4     		push	{r7}
+ 867              	.LCFI31:
+ 868              		.cfi_def_cfa_offset 4
+ 869              		.cfi_offset 7, -4
+ 870 0002 83B0     		sub	sp, sp, #12
+ 871              	.LCFI32:
+ 872              		.cfi_def_cfa_offset 16
+ 873 0004 00AF     		add	r7, sp, #0
+ 874              	.LCFI33:
+ 875              		.cfi_def_cfa_register 7
+ 234:Src/sensor.c  ****     uint8_t status = wheather_ready;
+ 876              		.loc 1 234 0
+ 877 0006 094B     		ldr	r3, .L53
+ 878 0008 1B78     		ldrb	r3, [r3]
+ 879 000a FB71     		strb	r3, [r7, #7]
+ 235:Src/sensor.c  **** 
+ 236:Src/sensor.c  ****     if(wheather_ready == OK)
+ 880              		.loc 1 236 0
+ 881 000c 074B     		ldr	r3, .L53
+ 882 000e 1B78     		ldrb	r3, [r3]
+ 883 0010 DBB2     		uxtb	r3, r3
+ 884 0012 002B     		cmp	r3, #0
+ 885 0014 02D1     		bne	.L51
+ 237:Src/sensor.c  ****         wheather_ready = FAIL;
+ 886              		.loc 1 237 0
+ 887 0016 054B     		ldr	r3, .L53
+ 888 0018 FF22     		movs	r2, #255
+ 889 001a 1A70     		strb	r2, [r3]
+ 890              	.L51:
+ 238:Src/sensor.c  **** 
+ 239:Src/sensor.c  ****     return status;
+ 891              		.loc 1 239 0
+ 892 001c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 240:Src/sensor.c  **** }
+ 893              		.loc 1 240 0
+ARM GAS  /tmp/ccKrEBio.s 			page 21
+
+
+ 894 001e 1846     		mov	r0, r3
+ 895 0020 0C37     		adds	r7, r7, #12
+ 896              	.LCFI34:
+ 897              		.cfi_def_cfa_offset 4
+ 898 0022 BD46     		mov	sp, r7
+ 899              	.LCFI35:
+ 900              		.cfi_def_cfa_register 13
+ 901              		@ sp needed
+ 902 0024 5DF8047B 		ldr	r7, [sp], #4
+ 903              	.LCFI36:
+ 904              		.cfi_restore 7
+ 905              		.cfi_def_cfa_offset 0
+ 906 0028 7047     		bx	lr
+ 907              	.L54:
+ 908 002a 00BF     		.align	2
+ 909              	.L53:
+ 910 002c 00000000 		.word	wheather_ready
+ 911              		.cfi_endproc
+ 912              	.LFE143:
+ 914              		.section	.rodata
+ 915              		.align	2
+ 916              	.LC12:
+ 917 00fc 54454D50 		.ascii	"TEMP READ:TIMOUT\000"
+ 917      20524541 
+ 917      443A5449 
+ 917      4D4F5554 
+ 917      00
+ 918 010d 000000   		.align	2
+ 919              	.LC13:
+ 920 0110 54454D50 		.ascii	"TEMP READ:BUSY\000"
+ 920      20524541 
+ 920      443A4255 
+ 920      535900
+ 921 011f 00       		.align	2
+ 922              	.LC14:
+ 923 0120 54454D50 		.ascii	"TEMP READ:ERROR\000"
+ 923      20524541 
+ 923      443A4552 
+ 923      524F5200 
+ 924              		.align	2
+ 925              	.LC15:
+ 926 0130 54454D50 		.ascii	"TEMP WRITE:FAIL\000"
+ 926      20575249 
+ 926      54453A46 
+ 926      41494C00 
+ 927              		.section	.text.readTemperature,"ax",%progbits
+ 928              		.align	1
+ 929              		.global	readTemperature
+ 930              		.syntax unified
+ 931              		.thumb
+ 932              		.thumb_func
+ 933              		.fpu fpv4-sp-d16
+ 935              	readTemperature:
+ 936              	.LFB144:
+ 241:Src/sensor.c  **** 
+ 242:Src/sensor.c  **** 
+ 243:Src/sensor.c  **** 
+ARM GAS  /tmp/ccKrEBio.s 			page 22
+
+
+ 244:Src/sensor.c  **** int readTemperature()
+ 245:Src/sensor.c  **** {
+ 937              		.loc 1 245 0
+ 938              		.cfi_startproc
+ 939              		@ args = 0, pretend = 0, frame = 8
+ 940              		@ frame_needed = 1, uses_anonymous_args = 0
+ 941 0000 80B5     		push	{r7, lr}
+ 942              	.LCFI37:
+ 943              		.cfi_def_cfa_offset 8
+ 944              		.cfi_offset 7, -8
+ 945              		.cfi_offset 14, -4
+ 946 0002 84B0     		sub	sp, sp, #16
+ 947              	.LCFI38:
+ 948              		.cfi_def_cfa_offset 24
+ 949 0004 02AF     		add	r7, sp, #8
+ 950              	.LCFI39:
+ 951              		.cfi_def_cfa 7, 16
+ 246:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 247:Src/sensor.c  **** 
+ 248:Src/sensor.c  ****     unsigned char temperature_hex[2];
+ 249:Src/sensor.c  ****     long temperature = 0;
+ 952              		.loc 1 249 0
+ 953 0006 0023     		movs	r3, #0
+ 954 0008 7B60     		str	r3, [r7, #4]
+ 250:Src/sensor.c  **** 
+ 251:Src/sensor.c  ****     temperature_ready = FAIL;
+ 955              		.loc 1 251 0
+ 956 000a 394B     		ldr	r3, .L66
+ 957 000c FF22     		movs	r2, #255
+ 958 000e 1A70     		strb	r2, [r3]
+ 959              	.L56:
+ 252:Src/sensor.c  **** 
+ 253:Src/sensor.c  ****     do{
+ 254:Src/sensor.c  ****     i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&TEMPERATURE_WRITE
+ 960              		.loc 1 254 0 discriminator 1
+ 961 0010 2023     		movs	r3, #32
+ 962 0012 99B2     		uxth	r1, r3
+ 963 0014 4FF47A73 		mov	r3, #1000
+ 964 0018 0093     		str	r3, [sp]
+ 965 001a 0123     		movs	r3, #1
+ 966 001c 354A     		ldr	r2, .L66+4
+ 967 001e 3648     		ldr	r0, .L66+8
+ 968 0020 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 969 0024 0346     		mov	r3, r0
+ 970 0026 FB70     		strb	r3, [r7, #3]
+ 255:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 971              		.loc 1 255 0 discriminator 1
+ 972 0028 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 973 002a 002B     		cmp	r3, #0
+ 974 002c F0D1     		bne	.L56
+ 256:Src/sensor.c  **** 
+ 257:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 975              		.loc 1 257 0
+ 976 002e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 977 0030 002B     		cmp	r3, #0
+ 978 0032 50D1     		bne	.L57
+ 258:Src/sensor.c  ****     {
+ARM GAS  /tmp/ccKrEBio.s 			page 23
+
+
+ 259:Src/sensor.c  ****         HAL_Delay(200);
+ 979              		.loc 1 259 0
+ 980 0034 C820     		movs	r0, #200
+ 981 0036 FFF7FEFF 		bl	HAL_Delay
+ 260:Src/sensor.c  **** 
+ 261:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Receive(&hi2c1, READ_ADDRESS, &temperature_hex[0], 2, SENSOR_TI
+ 982              		.loc 1 261 0
+ 983 003a 2123     		movs	r3, #33
+ 984 003c 99B2     		uxth	r1, r3
+ 985 003e 4FF47A73 		mov	r3, #1000
+ 986 0042 3A46     		mov	r2, r7
+ 987 0044 0093     		str	r3, [sp]
+ 988 0046 0223     		movs	r3, #2
+ 989 0048 2B48     		ldr	r0, .L66+8
+ 990 004a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 991 004e 0346     		mov	r3, r0
+ 992 0050 FB70     		strb	r3, [r7, #3]
+ 262:Src/sensor.c  **** 
+ 263:Src/sensor.c  ****         if(i2c_status == HAL_OK)
+ 993              		.loc 1 263 0
+ 994 0052 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 995 0054 002B     		cmp	r3, #0
+ 996 0056 26D1     		bne	.L58
+ 264:Src/sensor.c  ****         {
+ 265:Src/sensor.c  ****             temperature = temperature_hex[0] << 8 |
+ 997              		.loc 1 265 0
+ 998 0058 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 999 005a 1B02     		lsls	r3, r3, #8
+ 266:Src/sensor.c  ****                        temperature_hex[1];
+ 1000              		.loc 1 266 0
+ 1001 005c 7A78     		ldrb	r2, [r7, #1]	@ zero_extendqisi2
+ 265:Src/sensor.c  ****                        temperature_hex[1];
+ 1002              		.loc 1 265 0
+ 1003 005e 1343     		orrs	r3, r3, r2
+ 1004 0060 7B60     		str	r3, [r7, #4]
+ 267:Src/sensor.c  **** 
+ 268:Src/sensor.c  ****             if((1 << 15) & temperature) // negative temperature
+ 1005              		.loc 1 268 0
+ 1006 0062 7B68     		ldr	r3, [r7, #4]
+ 1007 0064 03F40043 		and	r3, r3, #32768
+ 1008 0068 002B     		cmp	r3, #0
+ 1009 006a 0FD0     		beq	.L59
+ 269:Src/sensor.c  ****             {
+ 270:Src/sensor.c  ****                 temperature = temperature - 0x8000;
+ 1010              		.loc 1 270 0
+ 1011 006c 7B68     		ldr	r3, [r7, #4]
+ 1012 006e A3F50043 		sub	r3, r3, #32768
+ 1013 0072 7B60     		str	r3, [r7, #4]
+ 271:Src/sensor.c  ****                 temperature = temperature / 10;
+ 1014              		.loc 1 271 0
+ 1015 0074 7B68     		ldr	r3, [r7, #4]
+ 1016 0076 214A     		ldr	r2, .L66+12
+ 1017 0078 82FB0312 		smull	r1, r2, r2, r3
+ 1018 007c 9210     		asrs	r2, r2, #2
+ 1019 007e DB17     		asrs	r3, r3, #31
+ 1020 0080 D31A     		subs	r3, r2, r3
+ 1021 0082 7B60     		str	r3, [r7, #4]
+ARM GAS  /tmp/ccKrEBio.s 			page 24
+
+
+ 272:Src/sensor.c  ****                 temperature = temperature * (-1);
+ 1022              		.loc 1 272 0
+ 1023 0084 7B68     		ldr	r3, [r7, #4]
+ 1024 0086 5B42     		negs	r3, r3
+ 1025 0088 7B60     		str	r3, [r7, #4]
+ 1026 008a 07E0     		b	.L60
+ 1027              	.L59:
+ 273:Src/sensor.c  ****             }
+ 274:Src/sensor.c  ****             else
+ 275:Src/sensor.c  ****             {
+ 276:Src/sensor.c  ****                 temperature = temperature / 10;
+ 1028              		.loc 1 276 0
+ 1029 008c 7B68     		ldr	r3, [r7, #4]
+ 1030 008e 1B4A     		ldr	r2, .L66+12
+ 1031 0090 82FB0312 		smull	r1, r2, r2, r3
+ 1032 0094 9210     		asrs	r2, r2, #2
+ 1033 0096 DB17     		asrs	r3, r3, #31
+ 1034 0098 D31A     		subs	r3, r2, r3
+ 1035 009a 7B60     		str	r3, [r7, #4]
+ 1036              	.L60:
+ 277:Src/sensor.c  ****             }
+ 278:Src/sensor.c  **** 
+ 279:Src/sensor.c  ****             temperature_ready = OK;
+ 1037              		.loc 1 279 0
+ 1038 009c 144B     		ldr	r3, .L66
+ 1039 009e 0022     		movs	r2, #0
+ 1040 00a0 1A70     		strb	r2, [r3]
+ 280:Src/sensor.c  ****             return temperature;
+ 1041              		.loc 1 280 0
+ 1042 00a2 7B68     		ldr	r3, [r7, #4]
+ 1043 00a4 1FE0     		b	.L65
+ 1044              	.L58:
+ 281:Src/sensor.c  ****         }
+ 282:Src/sensor.c  ****         else
+ 283:Src/sensor.c  ****         {
+ 284:Src/sensor.c  **** 
+ 285:Src/sensor.c  ****             if( i2c_status == HAL_TIMEOUT)
+ 1045              		.loc 1 285 0
+ 1046 00a6 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1047 00a8 032B     		cmp	r3, #3
+ 1048 00aa 02D1     		bne	.L62
+ 286:Src/sensor.c  ****                 _Event_Handler("TEMP READ:TIMOUT");
+ 1049              		.loc 1 286 0
+ 1050 00ac 1448     		ldr	r0, .L66+16
+ 1051 00ae FFF7FEFF 		bl	_Event_Handler
+ 1052              	.L62:
+ 287:Src/sensor.c  ****             if( i2c_status == HAL_BUSY)
+ 1053              		.loc 1 287 0
+ 1054 00b2 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1055 00b4 022B     		cmp	r3, #2
+ 1056 00b6 02D1     		bne	.L63
+ 288:Src/sensor.c  ****                 _Event_Handler("TEMP READ:BUSY");
+ 1057              		.loc 1 288 0
+ 1058 00b8 1248     		ldr	r0, .L66+20
+ 1059 00ba FFF7FEFF 		bl	_Event_Handler
+ 1060              	.L63:
+ 289:Src/sensor.c  ****             if( i2c_status == HAL_ERROR)
+ARM GAS  /tmp/ccKrEBio.s 			page 25
+
+
+ 1061              		.loc 1 289 0
+ 1062 00be FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1063 00c0 012B     		cmp	r3, #1
+ 1064 00c2 02D1     		bne	.L64
+ 290:Src/sensor.c  ****                 _Event_Handler("TEMP READ:ERROR");
+ 1065              		.loc 1 290 0
+ 1066 00c4 1048     		ldr	r0, .L66+24
+ 1067 00c6 FFF7FEFF 		bl	_Event_Handler
+ 1068              	.L64:
+ 291:Src/sensor.c  **** 
+ 292:Src/sensor.c  ****             temperature_ready = FAIL;
+ 1069              		.loc 1 292 0
+ 1070 00ca 094B     		ldr	r3, .L66
+ 1071 00cc FF22     		movs	r2, #255
+ 1072 00ce 1A70     		strb	r2, [r3]
+ 293:Src/sensor.c  ****             return FAIL;
+ 1073              		.loc 1 293 0
+ 1074 00d0 4FF0FF33 		mov	r3, #-1
+ 1075 00d4 07E0     		b	.L65
+ 1076              	.L57:
+ 294:Src/sensor.c  ****         }
+ 295:Src/sensor.c  **** 
+ 296:Src/sensor.c  ****     }
+ 297:Src/sensor.c  ****     else
+ 298:Src/sensor.c  ****     {
+ 299:Src/sensor.c  ****         _Event_Handler("TEMP WRITE:FAIL");
+ 1077              		.loc 1 299 0
+ 1078 00d6 0D48     		ldr	r0, .L66+28
+ 1079 00d8 FFF7FEFF 		bl	_Event_Handler
+ 300:Src/sensor.c  **** 
+ 301:Src/sensor.c  ****         temperature_ready = FAIL;
+ 1080              		.loc 1 301 0
+ 1081 00dc 044B     		ldr	r3, .L66
+ 1082 00de FF22     		movs	r2, #255
+ 1083 00e0 1A70     		strb	r2, [r3]
+ 302:Src/sensor.c  ****         return FAIL;
+ 1084              		.loc 1 302 0
+ 1085 00e2 4FF0FF33 		mov	r3, #-1
+ 1086              	.L65:
+ 303:Src/sensor.c  ****     }
+ 304:Src/sensor.c  **** }
+ 1087              		.loc 1 304 0 discriminator 1
+ 1088 00e6 1846     		mov	r0, r3
+ 1089 00e8 0837     		adds	r7, r7, #8
+ 1090              	.LCFI40:
+ 1091              		.cfi_def_cfa_offset 8
+ 1092 00ea BD46     		mov	sp, r7
+ 1093              	.LCFI41:
+ 1094              		.cfi_def_cfa_register 13
+ 1095              		@ sp needed
+ 1096 00ec 80BD     		pop	{r7, pc}
+ 1097              	.L67:
+ 1098 00ee 00BF     		.align	2
+ 1099              	.L66:
+ 1100 00f0 00000000 		.word	temperature_ready
+ 1101 00f4 00000000 		.word	TEMPERATURE_WRITE_COMMAND
+ 1102 00f8 00000000 		.word	hi2c1
+ARM GAS  /tmp/ccKrEBio.s 			page 26
+
+
+ 1103 00fc 67666666 		.word	1717986919
+ 1104 0100 FC000000 		.word	.LC12
+ 1105 0104 10010000 		.word	.LC13
+ 1106 0108 20010000 		.word	.LC14
+ 1107 010c 30010000 		.word	.LC15
+ 1108              		.cfi_endproc
+ 1109              	.LFE144:
+ 1111              		.section	.text.checkTemperature,"ax",%progbits
+ 1112              		.align	1
+ 1113              		.global	checkTemperature
+ 1114              		.syntax unified
+ 1115              		.thumb
+ 1116              		.thumb_func
+ 1117              		.fpu fpv4-sp-d16
+ 1119              	checkTemperature:
+ 1120              	.LFB145:
+ 305:Src/sensor.c  **** 
+ 306:Src/sensor.c  **** 
+ 307:Src/sensor.c  **** uint8_t checkTemperature()
+ 308:Src/sensor.c  **** {
+ 1121              		.loc 1 308 0
+ 1122              		.cfi_startproc
+ 1123              		@ args = 0, pretend = 0, frame = 8
+ 1124              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1125              		@ link register save eliminated.
+ 1126 0000 80B4     		push	{r7}
+ 1127              	.LCFI42:
+ 1128              		.cfi_def_cfa_offset 4
+ 1129              		.cfi_offset 7, -4
+ 1130 0002 83B0     		sub	sp, sp, #12
+ 1131              	.LCFI43:
+ 1132              		.cfi_def_cfa_offset 16
+ 1133 0004 00AF     		add	r7, sp, #0
+ 1134              	.LCFI44:
+ 1135              		.cfi_def_cfa_register 7
+ 309:Src/sensor.c  **** 
+ 310:Src/sensor.c  ****     uint8_t status = temperature_ready;
+ 1136              		.loc 1 310 0
+ 1137 0006 094B     		ldr	r3, .L71
+ 1138 0008 1B78     		ldrb	r3, [r3]
+ 1139 000a FB71     		strb	r3, [r7, #7]
+ 311:Src/sensor.c  **** 
+ 312:Src/sensor.c  ****     if(temperature_ready == OK)
+ 1140              		.loc 1 312 0
+ 1141 000c 074B     		ldr	r3, .L71
+ 1142 000e 1B78     		ldrb	r3, [r3]
+ 1143 0010 DBB2     		uxtb	r3, r3
+ 1144 0012 002B     		cmp	r3, #0
+ 1145 0014 02D1     		bne	.L69
+ 313:Src/sensor.c  ****         temperature_ready = FAIL;
+ 1146              		.loc 1 313 0
+ 1147 0016 054B     		ldr	r3, .L71
+ 1148 0018 FF22     		movs	r2, #255
+ 1149 001a 1A70     		strb	r2, [r3]
+ 1150              	.L69:
+ 314:Src/sensor.c  **** 
+ 315:Src/sensor.c  ****     return status;
+ARM GAS  /tmp/ccKrEBio.s 			page 27
+
+
+ 1151              		.loc 1 315 0
+ 1152 001c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 316:Src/sensor.c  **** }
+ 1153              		.loc 1 316 0
+ 1154 001e 1846     		mov	r0, r3
+ 1155 0020 0C37     		adds	r7, r7, #12
+ 1156              	.LCFI45:
+ 1157              		.cfi_def_cfa_offset 4
+ 1158 0022 BD46     		mov	sp, r7
+ 1159              	.LCFI46:
+ 1160              		.cfi_def_cfa_register 13
+ 1161              		@ sp needed
+ 1162 0024 5DF8047B 		ldr	r7, [sp], #4
+ 1163              	.LCFI47:
+ 1164              		.cfi_restore 7
+ 1165              		.cfi_def_cfa_offset 0
+ 1166 0028 7047     		bx	lr
+ 1167              	.L72:
+ 1168 002a 00BF     		.align	2
+ 1169              	.L71:
+ 1170 002c 00000000 		.word	temperature_ready
+ 1171              		.cfi_endproc
+ 1172              	.LFE145:
+ 1174              		.section	.text.readCompass,"ax",%progbits
+ 1175              		.align	1
+ 1176              		.global	readCompass
+ 1177              		.syntax unified
+ 1178              		.thumb
+ 1179              		.thumb_func
+ 1180              		.fpu fpv4-sp-d16
+ 1182              	readCompass:
+ 1183              	.LFB146:
+ 317:Src/sensor.c  **** 
+ 318:Src/sensor.c  **** 
+ 319:Src/sensor.c  **** 
+ 320:Src/sensor.c  **** long readCompass()
+ 321:Src/sensor.c  **** {
+ 1184              		.loc 1 321 0
+ 1185              		.cfi_startproc
+ 1186              		@ args = 0, pretend = 0, frame = 8
+ 1187              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1188 0000 80B5     		push	{r7, lr}
+ 1189              	.LCFI48:
+ 1190              		.cfi_def_cfa_offset 8
+ 1191              		.cfi_offset 7, -8
+ 1192              		.cfi_offset 14, -4
+ 1193 0002 84B0     		sub	sp, sp, #16
+ 1194              	.LCFI49:
+ 1195              		.cfi_def_cfa_offset 24
+ 1196 0004 02AF     		add	r7, sp, #8
+ 1197              	.LCFI50:
+ 1198              		.cfi_def_cfa 7, 16
+ 322:Src/sensor.c  **** 
+ 323:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 324:Src/sensor.c  **** 
+ 325:Src/sensor.c  ****     unsigned char compass_hex[2];
+ 326:Src/sensor.c  ****     long compass = 0;
+ARM GAS  /tmp/ccKrEBio.s 			page 28
+
+
+ 1199              		.loc 1 326 0
+ 1200 0006 0023     		movs	r3, #0
+ 1201 0008 7B60     		str	r3, [r7, #4]
+ 327:Src/sensor.c  **** 
+ 328:Src/sensor.c  ****     compass_ready = FAIL;
+ 1202              		.loc 1 328 0
+ 1203 000a 264B     		ldr	r3, .L82
+ 1204 000c FF22     		movs	r2, #255
+ 1205 000e 1A70     		strb	r2, [r3]
+ 1206              	.L74:
+ 329:Src/sensor.c  **** 
+ 330:Src/sensor.c  ****     do{
+ 331:Src/sensor.c  ****     i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&COMPASS_WRITE_COM
+ 1207              		.loc 1 331 0 discriminator 1
+ 1208 0010 2023     		movs	r3, #32
+ 1209 0012 99B2     		uxth	r1, r3
+ 1210 0014 4FF47A73 		mov	r3, #1000
+ 1211 0018 0093     		str	r3, [sp]
+ 1212 001a 0123     		movs	r3, #1
+ 1213 001c 224A     		ldr	r2, .L82+4
+ 1214 001e 2348     		ldr	r0, .L82+8
+ 1215 0020 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 1216 0024 0346     		mov	r3, r0
+ 1217 0026 FB70     		strb	r3, [r7, #3]
+ 332:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 1218              		.loc 1 332 0 discriminator 1
+ 1219 0028 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1220 002a 002B     		cmp	r3, #0
+ 1221 002c F0D1     		bne	.L74
+ 333:Src/sensor.c  **** 
+ 334:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 1222              		.loc 1 334 0
+ 1223 002e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1224 0030 002B     		cmp	r3, #0
+ 1225 0032 2DD1     		bne	.L75
+ 335:Src/sensor.c  ****     {
+ 336:Src/sensor.c  ****         HAL_Delay(200);
+ 1226              		.loc 1 336 0
+ 1227 0034 C820     		movs	r0, #200
+ 1228 0036 FFF7FEFF 		bl	HAL_Delay
+ 337:Src/sensor.c  **** 
+ 338:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Receive(&hi2c1, READ_ADDRESS, &compass_hex[0], 2, SENSOR_TIMEOU
+ 1229              		.loc 1 338 0
+ 1230 003a 2123     		movs	r3, #33
+ 1231 003c 99B2     		uxth	r1, r3
+ 1232 003e 4FF47A73 		mov	r3, #1000
+ 1233 0042 3A46     		mov	r2, r7
+ 1234 0044 0093     		str	r3, [sp]
+ 1235 0046 0223     		movs	r3, #2
+ 1236 0048 1848     		ldr	r0, .L82+8
+ 1237 004a FFF7FEFF 		bl	HAL_I2C_Master_Receive
+ 1238 004e 0346     		mov	r3, r0
+ 1239 0050 FB70     		strb	r3, [r7, #3]
+ 339:Src/sensor.c  **** 
+ 340:Src/sensor.c  ****         if(i2c_status == HAL_OK)
+ 1240              		.loc 1 340 0
+ 1241 0052 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ARM GAS  /tmp/ccKrEBio.s 			page 29
+
+
+ 1242 0054 002B     		cmp	r3, #0
+ 1243 0056 06D1     		bne	.L76
+ 341:Src/sensor.c  ****         {
+ 342:Src/sensor.c  ****             compass = compass_hex[0] << 8 |
+ 1244              		.loc 1 342 0
+ 1245 0058 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 1246 005a 1B02     		lsls	r3, r3, #8
+ 343:Src/sensor.c  ****                       compass_hex[1];
+ 1247              		.loc 1 343 0
+ 1248 005c 7A78     		ldrb	r2, [r7, #1]	@ zero_extendqisi2
+ 342:Src/sensor.c  ****                       compass_hex[1];
+ 1249              		.loc 1 342 0
+ 1250 005e 1343     		orrs	r3, r3, r2
+ 1251 0060 7B60     		str	r3, [r7, #4]
+ 344:Src/sensor.c  **** 
+ 345:Src/sensor.c  ****             return compass;
+ 1252              		.loc 1 345 0
+ 1253 0062 7B68     		ldr	r3, [r7, #4]
+ 1254 0064 19E0     		b	.L81
+ 1255              	.L76:
+ 346:Src/sensor.c  ****         }
+ 347:Src/sensor.c  ****         else
+ 348:Src/sensor.c  ****         {
+ 349:Src/sensor.c  **** 
+ 350:Src/sensor.c  ****             if( i2c_status == HAL_TIMEOUT)
+ 1256              		.loc 1 350 0
+ 1257 0066 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1258 0068 032B     		cmp	r3, #3
+ 1259 006a 02D1     		bne	.L78
+ 351:Src/sensor.c  ****                 _Event_Handler("TEMP READ:TIMOUT");
+ 1260              		.loc 1 351 0
+ 1261 006c 1048     		ldr	r0, .L82+12
+ 1262 006e FFF7FEFF 		bl	_Event_Handler
+ 1263              	.L78:
+ 352:Src/sensor.c  ****             if( i2c_status == HAL_BUSY)
+ 1264              		.loc 1 352 0
+ 1265 0072 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1266 0074 022B     		cmp	r3, #2
+ 1267 0076 02D1     		bne	.L79
+ 353:Src/sensor.c  ****                 _Event_Handler("TEMP READ:BUSY");
+ 1268              		.loc 1 353 0
+ 1269 0078 0E48     		ldr	r0, .L82+16
+ 1270 007a FFF7FEFF 		bl	_Event_Handler
+ 1271              	.L79:
+ 354:Src/sensor.c  ****             if( i2c_status == HAL_ERROR)
+ 1272              		.loc 1 354 0
+ 1273 007e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 1274 0080 012B     		cmp	r3, #1
+ 1275 0082 02D1     		bne	.L80
+ 355:Src/sensor.c  ****                 _Event_Handler("TEMP READ:ERROR");
+ 1276              		.loc 1 355 0
+ 1277 0084 0C48     		ldr	r0, .L82+20
+ 1278 0086 FFF7FEFF 		bl	_Event_Handler
+ 1279              	.L80:
+ 356:Src/sensor.c  **** 
+ 357:Src/sensor.c  ****             return FAIL;
+ 1280              		.loc 1 357 0
+ARM GAS  /tmp/ccKrEBio.s 			page 30
+
+
+ 1281 008a 4FF0FF33 		mov	r3, #-1
+ 1282 008e 04E0     		b	.L81
+ 1283              	.L75:
+ 358:Src/sensor.c  ****         }
+ 359:Src/sensor.c  ****     }
+ 360:Src/sensor.c  ****     else
+ 361:Src/sensor.c  ****     {
+ 362:Src/sensor.c  ****         _Event_Handler("TEMP WRITE:FAIL");
+ 1284              		.loc 1 362 0
+ 1285 0090 0A48     		ldr	r0, .L82+24
+ 1286 0092 FFF7FEFF 		bl	_Event_Handler
+ 363:Src/sensor.c  ****         return FAIL;
+ 1287              		.loc 1 363 0
+ 1288 0096 4FF0FF33 		mov	r3, #-1
+ 1289              	.L81:
+ 364:Src/sensor.c  ****     }
+ 365:Src/sensor.c  **** }
+ 1290              		.loc 1 365 0 discriminator 1
+ 1291 009a 1846     		mov	r0, r3
+ 1292 009c 0837     		adds	r7, r7, #8
+ 1293              	.LCFI51:
+ 1294              		.cfi_def_cfa_offset 8
+ 1295 009e BD46     		mov	sp, r7
+ 1296              	.LCFI52:
+ 1297              		.cfi_def_cfa_register 13
+ 1298              		@ sp needed
+ 1299 00a0 80BD     		pop	{r7, pc}
+ 1300              	.L83:
+ 1301 00a2 00BF     		.align	2
+ 1302              	.L82:
+ 1303 00a4 00000000 		.word	compass_ready
+ 1304 00a8 00000000 		.word	COMPASS_WRITE_COMMAND
+ 1305 00ac 00000000 		.word	hi2c1
+ 1306 00b0 FC000000 		.word	.LC12
+ 1307 00b4 10010000 		.word	.LC13
+ 1308 00b8 20010000 		.word	.LC14
+ 1309 00bc 30010000 		.word	.LC15
+ 1310              		.cfi_endproc
+ 1311              	.LFE146:
+ 1313              		.section	.text.checkCompass,"ax",%progbits
+ 1314              		.align	1
+ 1315              		.global	checkCompass
+ 1316              		.syntax unified
+ 1317              		.thumb
+ 1318              		.thumb_func
+ 1319              		.fpu fpv4-sp-d16
+ 1321              	checkCompass:
+ 1322              	.LFB147:
+ 366:Src/sensor.c  **** 
+ 367:Src/sensor.c  **** 
+ 368:Src/sensor.c  **** uint8_t checkCompass()
+ 369:Src/sensor.c  **** {
+ 1323              		.loc 1 369 0
+ 1324              		.cfi_startproc
+ 1325              		@ args = 0, pretend = 0, frame = 8
+ 1326              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1327              		@ link register save eliminated.
+ARM GAS  /tmp/ccKrEBio.s 			page 31
+
+
+ 1328 0000 80B4     		push	{r7}
+ 1329              	.LCFI53:
+ 1330              		.cfi_def_cfa_offset 4
+ 1331              		.cfi_offset 7, -4
+ 1332 0002 83B0     		sub	sp, sp, #12
+ 1333              	.LCFI54:
+ 1334              		.cfi_def_cfa_offset 16
+ 1335 0004 00AF     		add	r7, sp, #0
+ 1336              	.LCFI55:
+ 1337              		.cfi_def_cfa_register 7
+ 370:Src/sensor.c  ****     uint8_t status;
+ 371:Src/sensor.c  **** 
+ 372:Src/sensor.c  ****     if(compass_ready == OK)
+ 1338              		.loc 1 372 0
+ 1339 0006 074B     		ldr	r3, .L87
+ 1340 0008 1B78     		ldrb	r3, [r3]
+ 1341 000a DBB2     		uxtb	r3, r3
+ 1342 000c 002B     		cmp	r3, #0
+ 1343 000e 02D1     		bne	.L85
+ 373:Src/sensor.c  ****         compass_ready = FAIL;
+ 1344              		.loc 1 373 0
+ 1345 0010 044B     		ldr	r3, .L87
+ 1346 0012 FF22     		movs	r2, #255
+ 1347 0014 1A70     		strb	r2, [r3]
+ 1348              	.L85:
+ 374:Src/sensor.c  **** 
+ 375:Src/sensor.c  ****     return status;
+ 1349              		.loc 1 375 0
+ 1350 0016 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 376:Src/sensor.c  **** }
+ 1351              		.loc 1 376 0
+ 1352 0018 1846     		mov	r0, r3
+ 1353 001a 0C37     		adds	r7, r7, #12
+ 1354              	.LCFI56:
+ 1355              		.cfi_def_cfa_offset 4
+ 1356 001c BD46     		mov	sp, r7
+ 1357              	.LCFI57:
+ 1358              		.cfi_def_cfa_register 13
+ 1359              		@ sp needed
+ 1360 001e 5DF8047B 		ldr	r7, [sp], #4
+ 1361              	.LCFI58:
+ 1362              		.cfi_restore 7
+ 1363              		.cfi_def_cfa_offset 0
+ 1364 0022 7047     		bx	lr
+ 1365              	.L88:
+ 1366              		.align	2
+ 1367              	.L87:
+ 1368 0024 00000000 		.word	compass_ready
+ 1369              		.cfi_endproc
+ 1370              	.LFE147:
+ 1372              		.section	.text.SleepSensor,"ax",%progbits
+ 1373              		.align	1
+ 1374              		.global	SleepSensor
+ 1375              		.syntax unified
+ 1376              		.thumb
+ 1377              		.thumb_func
+ 1378              		.fpu fpv4-sp-d16
+ARM GAS  /tmp/ccKrEBio.s 			page 32
+
+
+ 1380              	SleepSensor:
+ 1381              	.LFB148:
+ 377:Src/sensor.c  **** 
+ 378:Src/sensor.c  **** 
+ 379:Src/sensor.c  **** int SleepSensor()
+ 380:Src/sensor.c  **** {
+ 1382              		.loc 1 380 0
+ 1383              		.cfi_startproc
+ 1384              		@ args = 0, pretend = 0, frame = 0
+ 1385              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1386              		@ link register save eliminated.
+ 1387 0000 80B4     		push	{r7}
+ 1388              	.LCFI59:
+ 1389              		.cfi_def_cfa_offset 4
+ 1390              		.cfi_offset 7, -4
+ 1391 0002 00AF     		add	r7, sp, #0
+ 1392              	.LCFI60:
+ 1393              		.cfi_def_cfa_register 7
+ 381:Src/sensor.c  ****     return 0;
+ 1394              		.loc 1 381 0
+ 1395 0004 0023     		movs	r3, #0
+ 382:Src/sensor.c  **** }
+ 1396              		.loc 1 382 0
+ 1397 0006 1846     		mov	r0, r3
+ 1398 0008 BD46     		mov	sp, r7
+ 1399              	.LCFI61:
+ 1400              		.cfi_def_cfa_register 13
+ 1401              		@ sp needed
+ 1402 000a 5DF8047B 		ldr	r7, [sp], #4
+ 1403              	.LCFI62:
+ 1404              		.cfi_restore 7
+ 1405              		.cfi_def_cfa_offset 0
+ 1406 000e 7047     		bx	lr
+ 1407              		.cfi_endproc
+ 1408              	.LFE148:
+ 1410              		.section	.rodata
+ 1411              		.align	2
+ 1412              	.LC16:
+ 1413 0140 57414B45 		.ascii	"WAKEUP Sensor:OK\000"
+ 1413      55502053 
+ 1413      656E736F 
+ 1413      723A4F4B 
+ 1413      00
+ 1414 0151 000000   		.align	2
+ 1415              	.LC17:
+ 1416 0154 57414B45 		.ascii	"WAKEUP Sensor:BUSY\000"
+ 1416      55502053 
+ 1416      656E736F 
+ 1416      723A4255 
+ 1416      535900
+ 1417 0167 00       		.align	2
+ 1418              	.LC18:
+ 1419 0168 57414B45 		.ascii	"WAKEUP Sensor:ERROR\000"
+ 1419      55502053 
+ 1419      656E736F 
+ 1419      723A4552 
+ 1419      524F5200 
+ARM GAS  /tmp/ccKrEBio.s 			page 33
+
+
+ 1420              		.align	2
+ 1421              	.LC19:
+ 1422 017c 57414B45 		.ascii	"WAKEUP Sensor:TIMEOUT\000"
+ 1422      55502053 
+ 1422      656E736F 
+ 1422      723A5449 
+ 1422      4D454F55 
+ 1423              		.section	.text.WakeUpSensor,"ax",%progbits
+ 1424              		.align	1
+ 1425              		.global	WakeUpSensor
+ 1426              		.syntax unified
+ 1427              		.thumb
+ 1428              		.thumb_func
+ 1429              		.fpu fpv4-sp-d16
+ 1431              	WakeUpSensor:
+ 1432              	.LFB149:
+ 383:Src/sensor.c  **** 
+ 384:Src/sensor.c  **** void WakeUpSensor()
+ 385:Src/sensor.c  **** {
+ 1433              		.loc 1 385 0
+ 1434              		.cfi_startproc
+ 1435              		@ args = 0, pretend = 0, frame = 8
+ 1436              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1437 0000 80B5     		push	{r7, lr}
+ 1438              	.LCFI63:
+ 1439              		.cfi_def_cfa_offset 8
+ 1440              		.cfi_offset 7, -8
+ 1441              		.cfi_offset 14, -4
+ 1442 0002 84B0     		sub	sp, sp, #16
+ 1443              	.LCFI64:
+ 1444              		.cfi_def_cfa_offset 24
+ 1445 0004 02AF     		add	r7, sp, #8
+ 1446              	.LCFI65:
+ 1447              		.cfi_def_cfa 7, 16
+ 386:Src/sensor.c  **** 
+ 387:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 388:Src/sensor.c  **** 
+ 389:Src/sensor.c  ****     i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char *)&WAKEUP_COMMAND, 1
+ 1448              		.loc 1 389 0
+ 1449 0006 2023     		movs	r3, #32
+ 1450 0008 99B2     		uxth	r1, r3
+ 1451 000a 4FF47A73 		mov	r3, #1000
+ 1452 000e 0093     		str	r3, [sp]
+ 1453 0010 0123     		movs	r3, #1
+ 1454 0012 144A     		ldr	r2, .L96
+ 1455 0014 1448     		ldr	r0, .L96+4
+ 1456 0016 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 1457 001a 0346     		mov	r3, r0
+ 1458 001c FB71     		strb	r3, [r7, #7]
+ 390:Src/sensor.c  ****     if(i2c_status == HAL_OK)
+ 1459              		.loc 1 390 0
+ 1460 001e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1461 0020 002B     		cmp	r3, #0
+ 1462 0022 03D1     		bne	.L92
+ 391:Src/sensor.c  ****         _Event_Handler("WAKEUP Sensor:OK");
+ 1463              		.loc 1 391 0
+ 1464 0024 1148     		ldr	r0, .L96+8
+ARM GAS  /tmp/ccKrEBio.s 			page 34
+
+
+ 1465 0026 FFF7FEFF 		bl	_Event_Handler
+ 1466 002a 13E0     		b	.L93
+ 1467              	.L92:
+ 392:Src/sensor.c  ****     else if(i2c_status == HAL_BUSY)
+ 1468              		.loc 1 392 0
+ 1469 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1470 002e 022B     		cmp	r3, #2
+ 1471 0030 03D1     		bne	.L94
+ 393:Src/sensor.c  ****         _Event_Handler("WAKEUP Sensor:BUSY");
+ 1472              		.loc 1 393 0
+ 1473 0032 0F48     		ldr	r0, .L96+12
+ 1474 0034 FFF7FEFF 		bl	_Event_Handler
+ 1475 0038 0CE0     		b	.L93
+ 1476              	.L94:
+ 394:Src/sensor.c  ****     else if(i2c_status == HAL_ERROR)
+ 1477              		.loc 1 394 0
+ 1478 003a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1479 003c 012B     		cmp	r3, #1
+ 1480 003e 03D1     		bne	.L95
+ 395:Src/sensor.c  ****         _Event_Handler("WAKEUP Sensor:ERROR");
+ 1481              		.loc 1 395 0
+ 1482 0040 0C48     		ldr	r0, .L96+16
+ 1483 0042 FFF7FEFF 		bl	_Event_Handler
+ 1484 0046 05E0     		b	.L93
+ 1485              	.L95:
+ 396:Src/sensor.c  ****     else if(i2c_status == HAL_TIMEOUT)
+ 1486              		.loc 1 396 0
+ 1487 0048 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1488 004a 032B     		cmp	r3, #3
+ 1489 004c 02D1     		bne	.L93
+ 397:Src/sensor.c  ****         _Event_Handler("WAKEUP Sensor:TIMEOUT");
+ 1490              		.loc 1 397 0
+ 1491 004e 0A48     		ldr	r0, .L96+20
+ 1492 0050 FFF7FEFF 		bl	_Event_Handler
+ 1493              	.L93:
+ 398:Src/sensor.c  **** 
+ 399:Src/sensor.c  ****     HAL_Delay(3000);
+ 1494              		.loc 1 399 0
+ 1495 0054 40F6B830 		movw	r0, #3000
+ 1496 0058 FFF7FEFF 		bl	HAL_Delay
+ 400:Src/sensor.c  **** 
+ 401:Src/sensor.c  **** }
+ 1497              		.loc 1 401 0
+ 1498 005c 00BF     		nop
+ 1499 005e 0837     		adds	r7, r7, #8
+ 1500              	.LCFI66:
+ 1501              		.cfi_def_cfa_offset 8
+ 1502 0060 BD46     		mov	sp, r7
+ 1503              	.LCFI67:
+ 1504              		.cfi_def_cfa_register 13
+ 1505              		@ sp needed
+ 1506 0062 80BD     		pop	{r7, pc}
+ 1507              	.L97:
+ 1508              		.align	2
+ 1509              	.L96:
+ 1510 0064 00000000 		.word	WAKEUP_COMMAND
+ 1511 0068 00000000 		.word	hi2c1
+ARM GAS  /tmp/ccKrEBio.s 			page 35
+
+
+ 1512 006c 40010000 		.word	.LC16
+ 1513 0070 54010000 		.word	.LC17
+ 1514 0074 68010000 		.word	.LC18
+ 1515 0078 7C010000 		.word	.LC19
+ 1516              		.cfi_endproc
+ 1517              	.LFE149:
+ 1519              		.section	.rodata
+ 1520 0192 0000     		.align	2
+ 1521              	.LC20:
+ 1522 0194 43414C49 		.ascii	"CALIB Sensor:Triying...\000"
+ 1522      42205365 
+ 1522      6E736F72 
+ 1522      3A547269 
+ 1522      79696E67 
+ 1523              		.align	2
+ 1524              	.LC21:
+ 1525 01ac 53656E73 		.ascii	"Sensor Calib:OK\000"
+ 1525      6F722043 
+ 1525      616C6962 
+ 1525      3A4F4B00 
+ 1526              		.section	.text.calibrateCompass,"ax",%progbits
+ 1527              		.align	1
+ 1528              		.global	calibrateCompass
+ 1529              		.syntax unified
+ 1530              		.thumb
+ 1531              		.thumb_func
+ 1532              		.fpu fpv4-sp-d16
+ 1534              	calibrateCompass:
+ 1535              	.LFB150:
+ 402:Src/sensor.c  **** 
+ 403:Src/sensor.c  **** void calibrateCompass()
+ 404:Src/sensor.c  **** {
+ 1536              		.loc 1 404 0
+ 1537              		.cfi_startproc
+ 1538              		@ args = 0, pretend = 0, frame = 8
+ 1539              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1540 0000 80B5     		push	{r7, lr}
+ 1541              	.LCFI68:
+ 1542              		.cfi_def_cfa_offset 8
+ 1543              		.cfi_offset 7, -8
+ 1544              		.cfi_offset 14, -4
+ 1545 0002 84B0     		sub	sp, sp, #16
+ 1546              	.LCFI69:
+ 1547              		.cfi_def_cfa_offset 24
+ 1548 0004 02AF     		add	r7, sp, #8
+ 1549              	.LCFI70:
+ 1550              		.cfi_def_cfa 7, 16
+ 1551              	.L99:
+ 405:Src/sensor.c  **** 
+ 406:Src/sensor.c  ****     HAL_StatusTypeDef i2c_status;
+ 407:Src/sensor.c  **** 
+ 408:Src/sensor.c  ****     do
+ 409:Src/sensor.c  ****     {
+ 410:Src/sensor.c  ****         HAL_Delay(1000);
+ 1552              		.loc 1 410 0 discriminator 1
+ 1553 0006 4FF47A70 		mov	r0, #1000
+ 1554 000a FFF7FEFF 		bl	HAL_Delay
+ARM GAS  /tmp/ccKrEBio.s 			page 36
+
+
+ 411:Src/sensor.c  ****         i2c_status = HAL_I2C_Master_Transmit(&hi2c1, WRITE_ADDRESS, (unsigned char*)&COMPASS_CALIBR
+ 1555              		.loc 1 411 0 discriminator 1
+ 1556 000e 2023     		movs	r3, #32
+ 1557 0010 99B2     		uxth	r1, r3
+ 1558 0012 4FF47A73 		mov	r3, #1000
+ 1559 0016 0093     		str	r3, [sp]
+ 1560 0018 0123     		movs	r3, #1
+ 1561 001a 0B4A     		ldr	r2, .L100
+ 1562 001c 0B48     		ldr	r0, .L100+4
+ 1563 001e FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 1564 0022 0346     		mov	r3, r0
+ 1565 0024 FB71     		strb	r3, [r7, #7]
+ 412:Src/sensor.c  **** 
+ 413:Src/sensor.c  ****         _Event_Handler("CALIB Sensor:Triying...");
+ 1566              		.loc 1 413 0 discriminator 1
+ 1567 0026 0A48     		ldr	r0, .L100+8
+ 1568 0028 FFF7FEFF 		bl	_Event_Handler
+ 414:Src/sensor.c  **** 
+ 415:Src/sensor.c  ****     }while(i2c_status != HAL_OK);
+ 1569              		.loc 1 415 0 discriminator 1
+ 1570 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 1571 002e 002B     		cmp	r3, #0
+ 1572 0030 E9D1     		bne	.L99
+ 416:Src/sensor.c  **** 
+ 417:Src/sensor.c  ****     _Event_Handler("Sensor Calib:OK");
+ 1573              		.loc 1 417 0
+ 1574 0032 0848     		ldr	r0, .L100+12
+ 1575 0034 FFF7FEFF 		bl	_Event_Handler
+ 418:Src/sensor.c  ****     HAL_Delay(10000);
+ 1576              		.loc 1 418 0
+ 1577 0038 42F21070 		movw	r0, #10000
+ 1578 003c FFF7FEFF 		bl	HAL_Delay
+ 419:Src/sensor.c  **** 
+ 420:Src/sensor.c  **** 
+ 421:Src/sensor.c  **** }
+ 1579              		.loc 1 421 0
+ 1580 0040 00BF     		nop
+ 1581 0042 0837     		adds	r7, r7, #8
+ 1582              	.LCFI71:
+ 1583              		.cfi_def_cfa_offset 8
+ 1584 0044 BD46     		mov	sp, r7
+ 1585              	.LCFI72:
+ 1586              		.cfi_def_cfa_register 13
+ 1587              		@ sp needed
+ 1588 0046 80BD     		pop	{r7, pc}
+ 1589              	.L101:
+ 1590              		.align	2
+ 1591              	.L100:
+ 1592 0048 00000000 		.word	COMPASS_CALIBRATION_COMMAND
+ 1593 004c 00000000 		.word	hi2c1
+ 1594 0050 94010000 		.word	.LC20
+ 1595 0054 AC010000 		.word	.LC21
+ 1596              		.cfi_endproc
+ 1597              	.LFE150:
+ 1599              		.text
+ 1600              	.Letext0:
+ 1601              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ARM GAS  /tmp/ccKrEBio.s 			page 37
+
+
+ 1602              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 1603              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 1604              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1605              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 1606              		.file 7 "/usr/include/newlib/sys/lock.h"
+ 1607              		.file 8 "/usr/include/newlib/sys/_types.h"
+ 1608              		.file 9 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 1609              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 1610              		.file 11 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h"
+ 1611              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1612              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 1613              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_i2c.h"
+ 1614              		.file 15 "Inc/sensor.h"
+ 1615              		.file 16 "Inc/i2c.h"
+ARM GAS  /tmp/ccKrEBio.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 sensor.c
+                            *COM*:0000000000000014 sensorValues
+     /tmp/ccKrEBio.s:23     .rodata.SENSOR_TIMEOUT:0000000000000000 SENSOR_TIMEOUT
+     /tmp/ccKrEBio.s:20     .rodata.SENSOR_TIMEOUT:0000000000000000 $d
+     /tmp/ccKrEBio.s:29     .rodata.WRITE_ADDRESS:0000000000000000 WRITE_ADDRESS
+     /tmp/ccKrEBio.s:35     .rodata.READ_ADDRESS:0000000000000000 READ_ADDRESS
+     /tmp/ccKrEBio.s:41     .rodata.WAKEUP_COMMAND:0000000000000000 WAKEUP_COMMAND
+     /tmp/ccKrEBio.s:47     .rodata.WHEATHER_COMMAND:0000000000000000 WHEATHER_COMMAND
+     /tmp/ccKrEBio.s:53     .rodata.COMPASS_CALIBRATION_COMMAND:0000000000000000 COMPASS_CALIBRATION_COMMAND
+     /tmp/ccKrEBio.s:59     .rodata.PRESS_WRITE_COMMAND:0000000000000000 PRESS_WRITE_COMMAND
+     /tmp/ccKrEBio.s:65     .rodata.TEMPERATURE_WRITE_COMMAND:0000000000000000 TEMPERATURE_WRITE_COMMAND
+     /tmp/ccKrEBio.s:71     .rodata.ALTITUDE_WRITE_COMMAND:0000000000000000 ALTITUDE_WRITE_COMMAND
+     /tmp/ccKrEBio.s:77     .rodata.COMPASS_WRITE_COMMAND:0000000000000000 COMPASS_WRITE_COMMAND
+     /tmp/ccKrEBio.s:83     .data.pressure_ready:0000000000000000 pressure_ready
+     /tmp/ccKrEBio.s:89     .data.altitude_ready:0000000000000000 altitude_ready
+     /tmp/ccKrEBio.s:95     .data.wheather_ready:0000000000000000 wheather_ready
+     /tmp/ccKrEBio.s:101    .data.temperature_ready:0000000000000000 temperature_ready
+     /tmp/ccKrEBio.s:107    .data.compass_ready:0000000000000000 compass_ready
+     /tmp/ccKrEBio.s:110    .text.sensorInit:0000000000000000 $t
+     /tmp/ccKrEBio.s:117    .text.sensorInit:0000000000000000 sensorInit
+     /tmp/ccKrEBio.s:1431   .text.WakeUpSensor:0000000000000000 WakeUpSensor
+     /tmp/ccKrEBio.s:141    .text.readAllSensors:0000000000000000 $t
+     /tmp/ccKrEBio.s:148    .text.readAllSensors:0000000000000000 readAllSensors
+     /tmp/ccKrEBio.s:219    .text.readPressure:0000000000000000 readPressure
+     /tmp/ccKrEBio.s:451    .text.readAltitude:0000000000000000 readAltitude
+     /tmp/ccKrEBio.s:716    .text.readWheather:0000000000000000 readWheather
+     /tmp/ccKrEBio.s:935    .text.readTemperature:0000000000000000 readTemperature
+     /tmp/ccKrEBio.s:1182   .text.readCompass:0000000000000000 readCompass
+     /tmp/ccKrEBio.s:194    .text.readAllSensors:000000000000003c $d
+     /tmp/ccKrEBio.s:199    .rodata:0000000000000000 $d
+     /tmp/ccKrEBio.s:212    .text.readPressure:0000000000000000 $t
+     /tmp/ccKrEBio.s:357    .text.readPressure:00000000000000bc $d
+     /tmp/ccKrEBio.s:368    .text.checkPressure:0000000000000000 $t
+     /tmp/ccKrEBio.s:375    .text.checkPressure:0000000000000000 checkPressure
+     /tmp/ccKrEBio.s:426    .text.checkPressure:000000000000002c $d
+     /tmp/ccKrEBio.s:444    .text.readAltitude:0000000000000000 $t
+     /tmp/ccKrEBio.s:621    .text.readAltitude:00000000000000f4 $d
+     /tmp/ccKrEBio.s:633    .text.checkAltitude:0000000000000000 $t
+     /tmp/ccKrEBio.s:640    .text.checkAltitude:0000000000000000 checkAltitude
+     /tmp/ccKrEBio.s:691    .text.checkAltitude:000000000000002c $d
+     /tmp/ccKrEBio.s:709    .text.readWheather:0000000000000000 $t
+     /tmp/ccKrEBio.s:841    .text.readWheather:00000000000000a8 $d
+     /tmp/ccKrEBio.s:852    .text.checkWheather:0000000000000000 $t
+     /tmp/ccKrEBio.s:859    .text.checkWheather:0000000000000000 checkWheather
+     /tmp/ccKrEBio.s:910    .text.checkWheather:000000000000002c $d
+     /tmp/ccKrEBio.s:928    .text.readTemperature:0000000000000000 $t
+     /tmp/ccKrEBio.s:1100   .text.readTemperature:00000000000000f0 $d
+     /tmp/ccKrEBio.s:1112   .text.checkTemperature:0000000000000000 $t
+     /tmp/ccKrEBio.s:1119   .text.checkTemperature:0000000000000000 checkTemperature
+     /tmp/ccKrEBio.s:1170   .text.checkTemperature:000000000000002c $d
+     /tmp/ccKrEBio.s:1175   .text.readCompass:0000000000000000 $t
+     /tmp/ccKrEBio.s:1303   .text.readCompass:00000000000000a4 $d
+     /tmp/ccKrEBio.s:1314   .text.checkCompass:0000000000000000 $t
+     /tmp/ccKrEBio.s:1321   .text.checkCompass:0000000000000000 checkCompass
+     /tmp/ccKrEBio.s:1368   .text.checkCompass:0000000000000024 $d
+     /tmp/ccKrEBio.s:1373   .text.SleepSensor:0000000000000000 $t
+ARM GAS  /tmp/ccKrEBio.s 			page 39
+
+
+     /tmp/ccKrEBio.s:1380   .text.SleepSensor:0000000000000000 SleepSensor
+     /tmp/ccKrEBio.s:1424   .text.WakeUpSensor:0000000000000000 $t
+     /tmp/ccKrEBio.s:1510   .text.WakeUpSensor:0000000000000064 $d
+     /tmp/ccKrEBio.s:1527   .text.calibrateCompass:0000000000000000 $t
+     /tmp/ccKrEBio.s:1534   .text.calibrateCompass:0000000000000000 calibrateCompass
+     /tmp/ccKrEBio.s:1592   .text.calibrateCompass:0000000000000048 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+HAL_I2C_Master_Transmit
+HAL_Delay
+HAL_I2C_Master_Receive
+_Event_Handler
+hi2c1

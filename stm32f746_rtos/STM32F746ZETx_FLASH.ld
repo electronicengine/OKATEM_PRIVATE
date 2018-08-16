@@ -41,9 +41,18 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 320K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
+
+RAM (xrw)       : ORIGIN = 0x200000C0, LENGTH = 320K - 192  /* 192 for vector table  */
+BOOTLOADER (rx) : ORIGIN = 0x08000000, LENGTH = 64K
+FIRMWARE (rx)   : ORIGIN = 0x08010000, LENGTH = 192K
+
+/*RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 320K
+FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K */
 }
+
+_main_app_start_address = 0x08010000;
+
+REGION_ALIAS("FLASH", FIRMWARE);
 
 /* Define output sections */
 SECTIONS

@@ -62,7 +62,11 @@ build/main.o: Src/main.c Inc/main.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/timers.h Inc/eth.h \
- Inc/i2c.h Inc/rtc.h Inc/spi.h Inc/tim.h Inc/usart.h Inc/gpio.h
+ Inc/i2c.h Inc/rtc.h Inc/spi.h Inc/tim.h Inc/usart.h Inc/gpio.h \
+ Inc/freertos.h /usr/include/newlib/string.h \
+ /usr/include/newlib/sys/string.h Inc/gps.h Inc/sensor.h \
+ /usr/include/newlib/inttypes.h Inc/motor.h Inc/usart.h Inc/spi.h \
+ Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h
 
 Inc/main.h:
 
@@ -231,3 +235,29 @@ Inc/tim.h:
 Inc/usart.h:
 
 Inc/gpio.h:
+
+Inc/freertos.h:
+
+/usr/include/newlib/string.h:
+
+/usr/include/newlib/sys/string.h:
+
+Inc/gps.h:
+
+Inc/sensor.h:
+
+/usr/include/newlib/inttypes.h:
+
+Inc/motor.h:
+
+Inc/usart.h:
+
+Inc/spi.h:
+
+Inc/sfp.h:
+
+Inc/tim.h:
+
+Inc/gpsops.h:
+
+Inc/freertos.h:

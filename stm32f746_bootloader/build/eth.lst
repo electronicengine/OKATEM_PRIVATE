@@ -1,0 +1,583 @@
+ARM GAS  /tmp/cc6UYqW3.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"eth.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	heth,72,4
+  18              		.section	.rodata
+  19              		.align	2
+  20              	.LC0:
+  21 0000 5372632F 		.ascii	"Src/eth.c\000"
+  21      6574682E 
+  21      6300
+  22              		.section	.text.MX_ETH_Init,"ax",%progbits
+  23              		.align	1
+  24              		.global	MX_ETH_Init
+  25              		.syntax unified
+  26              		.thumb
+  27              		.thumb_func
+  28              		.fpu fpv4-sp-d16
+  30              	MX_ETH_Init:
+  31              	.LFB136:
+  32              		.file 1 "Src/eth.c"
+   1:Src/eth.c     **** /**
+   2:Src/eth.c     ****   ******************************************************************************
+   3:Src/eth.c     ****   * File Name          : ETH.c
+   4:Src/eth.c     ****   * Description        : This file provides code for the configuration
+   5:Src/eth.c     ****   *                      of the ETH instances.
+   6:Src/eth.c     ****   ******************************************************************************
+   7:Src/eth.c     ****   ** This notice applies to any and all portions of this file
+   8:Src/eth.c     ****   * that are not between comment pairs USER CODE BEGIN and
+   9:Src/eth.c     ****   * USER CODE END. Other portions of this file, whether 
+  10:Src/eth.c     ****   * inserted by the user or by software development tools
+  11:Src/eth.c     ****   * are owned by their respective copyright owners.
+  12:Src/eth.c     ****   *
+  13:Src/eth.c     ****   * COPYRIGHT(c) 2018 STMicroelectronics
+  14:Src/eth.c     ****   *
+  15:Src/eth.c     ****   * Redistribution and use in source and binary forms, with or without modification,
+  16:Src/eth.c     ****   * are permitted provided that the following conditions are met:
+  17:Src/eth.c     ****   *   1. Redistributions of source code must retain the above copyright notice,
+  18:Src/eth.c     ****   *      this list of conditions and the following disclaimer.
+  19:Src/eth.c     ****   *   2. Redistributions in binary form must reproduce the above copyright notice,
+  20:Src/eth.c     ****   *      this list of conditions and the following disclaimer in the documentation
+  21:Src/eth.c     ****   *      and/or other materials provided with the distribution.
+  22:Src/eth.c     ****   *   3. Neither the name of STMicroelectronics nor the names of its contributors
+  23:Src/eth.c     ****   *      may be used to endorse or promote products derived from this software
+  24:Src/eth.c     ****   *      without specific prior written permission.
+ARM GAS  /tmp/cc6UYqW3.s 			page 2
+
+
+  25:Src/eth.c     ****   *
+  26:Src/eth.c     ****   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  27:Src/eth.c     ****   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  28:Src/eth.c     ****   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  29:Src/eth.c     ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  30:Src/eth.c     ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  31:Src/eth.c     ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  32:Src/eth.c     ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  33:Src/eth.c     ****   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  34:Src/eth.c     ****   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  35:Src/eth.c     ****   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  36:Src/eth.c     ****   *
+  37:Src/eth.c     ****   ******************************************************************************
+  38:Src/eth.c     ****   */
+  39:Src/eth.c     **** 
+  40:Src/eth.c     **** /* Includes ------------------------------------------------------------------*/
+  41:Src/eth.c     **** #include "eth.h"
+  42:Src/eth.c     **** 
+  43:Src/eth.c     **** #include "gpio.h"
+  44:Src/eth.c     **** 
+  45:Src/eth.c     **** /* USER CODE BEGIN 0 */
+  46:Src/eth.c     **** 
+  47:Src/eth.c     **** /* USER CODE END 0 */
+  48:Src/eth.c     **** 
+  49:Src/eth.c     **** ETH_HandleTypeDef heth;
+  50:Src/eth.c     **** 
+  51:Src/eth.c     **** /* ETH init function */
+  52:Src/eth.c     **** void MX_ETH_Init(void)
+  53:Src/eth.c     **** {
+  33              		.loc 1 53 0
+  34              		.cfi_startproc
+  35              		@ args = 0, pretend = 0, frame = 8
+  36              		@ frame_needed = 1, uses_anonymous_args = 0
+  37 0000 80B5     		push	{r7, lr}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 8
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 82B0     		sub	sp, sp, #8
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 16
+  45 0004 00AF     		add	r7, sp, #0
+  46              	.LCFI2:
+  47              		.cfi_def_cfa_register 7
+  54:Src/eth.c     ****    uint8_t MACAddr[6] ;
+  55:Src/eth.c     **** 
+  56:Src/eth.c     ****   heth.Instance = ETH;
+  48              		.loc 1 56 0
+  49 0006 184B     		ldr	r3, .L4
+  50 0008 184A     		ldr	r2, .L4+4
+  51 000a 1A60     		str	r2, [r3]
+  57:Src/eth.c     ****   heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  52              		.loc 1 57 0
+  53 000c 164B     		ldr	r3, .L4
+  54 000e 0122     		movs	r2, #1
+  55 0010 5A60     		str	r2, [r3, #4]
+  58:Src/eth.c     ****   heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
+ARM GAS  /tmp/cc6UYqW3.s 			page 3
+
+
+  56              		.loc 1 58 0
+  57 0012 154B     		ldr	r3, .L4
+  58 0014 0122     		movs	r2, #1
+  59 0016 1A82     		strh	r2, [r3, #16]	@ movhi
+  59:Src/eth.c     ****   MACAddr[0] = 0x00;
+  60              		.loc 1 59 0
+  61 0018 0023     		movs	r3, #0
+  62 001a 3B70     		strb	r3, [r7]
+  60:Src/eth.c     ****   MACAddr[1] = 0x80;
+  63              		.loc 1 60 0
+  64 001c 8023     		movs	r3, #128
+  65 001e 7B70     		strb	r3, [r7, #1]
+  61:Src/eth.c     ****   MACAddr[2] = 0xE1;
+  66              		.loc 1 61 0
+  67 0020 E123     		movs	r3, #225
+  68 0022 BB70     		strb	r3, [r7, #2]
+  62:Src/eth.c     ****   MACAddr[3] = 0x00;
+  69              		.loc 1 62 0
+  70 0024 0023     		movs	r3, #0
+  71 0026 FB70     		strb	r3, [r7, #3]
+  63:Src/eth.c     ****   MACAddr[4] = 0x00;
+  72              		.loc 1 63 0
+  73 0028 0023     		movs	r3, #0
+  74 002a 3B71     		strb	r3, [r7, #4]
+  64:Src/eth.c     ****   MACAddr[5] = 0x00;
+  75              		.loc 1 64 0
+  76 002c 0023     		movs	r3, #0
+  77 002e 7B71     		strb	r3, [r7, #5]
+  65:Src/eth.c     ****   heth.Init.MACAddr = &MACAddr[0];
+  78              		.loc 1 65 0
+  79 0030 0D4A     		ldr	r2, .L4
+  80 0032 3B46     		mov	r3, r7
+  81 0034 5361     		str	r3, [r2, #20]
+  66:Src/eth.c     ****   heth.Init.RxMode = ETH_RXPOLLING_MODE;
+  82              		.loc 1 66 0
+  83 0036 0C4B     		ldr	r3, .L4
+  84 0038 0022     		movs	r2, #0
+  85 003a 9A61     		str	r2, [r3, #24]
+  67:Src/eth.c     ****   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
+  86              		.loc 1 67 0
+  87 003c 0A4B     		ldr	r3, .L4
+  88 003e 0022     		movs	r2, #0
+  89 0040 DA61     		str	r2, [r3, #28]
+  68:Src/eth.c     ****   heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
+  90              		.loc 1 68 0
+  91 0042 094B     		ldr	r3, .L4
+  92 0044 4FF40002 		mov	r2, #8388608
+  93 0048 1A62     		str	r2, [r3, #32]
+  69:Src/eth.c     **** 
+  70:Src/eth.c     ****   /* USER CODE BEGIN MACADDRESS */
+  71:Src/eth.c     ****     
+  72:Src/eth.c     ****   /* USER CODE END MACADDRESS */
+  73:Src/eth.c     **** 
+  74:Src/eth.c     ****   if (HAL_ETH_Init(&heth) != HAL_OK)
+  94              		.loc 1 74 0
+  95 004a 0748     		ldr	r0, .L4
+  96 004c FFF7FEFF 		bl	HAL_ETH_Init
+ARM GAS  /tmp/cc6UYqW3.s 			page 4
+
+
+  97 0050 0346     		mov	r3, r0
+  98 0052 002B     		cmp	r3, #0
+  99 0054 03D0     		beq	.L3
+  75:Src/eth.c     ****   {
+  76:Src/eth.c     ****     _Error_Handler(__FILE__, __LINE__);
+ 100              		.loc 1 76 0
+ 101 0056 4C21     		movs	r1, #76
+ 102 0058 0548     		ldr	r0, .L4+8
+ 103 005a FFF7FEFF 		bl	_Error_Handler
+ 104              	.L3:
+  77:Src/eth.c     ****   }
+  78:Src/eth.c     **** 
+  79:Src/eth.c     **** }
+ 105              		.loc 1 79 0
+ 106 005e 00BF     		nop
+ 107 0060 0837     		adds	r7, r7, #8
+ 108              	.LCFI3:
+ 109              		.cfi_def_cfa_offset 8
+ 110 0062 BD46     		mov	sp, r7
+ 111              	.LCFI4:
+ 112              		.cfi_def_cfa_register 13
+ 113              		@ sp needed
+ 114 0064 80BD     		pop	{r7, pc}
+ 115              	.L5:
+ 116 0066 00BF     		.align	2
+ 117              	.L4:
+ 118 0068 00000000 		.word	heth
+ 119 006c 00800240 		.word	1073905664
+ 120 0070 00000000 		.word	.LC0
+ 121              		.cfi_endproc
+ 122              	.LFE136:
+ 124              		.section	.text.HAL_ETH_MspInit,"ax",%progbits
+ 125              		.align	1
+ 126              		.global	HAL_ETH_MspInit
+ 127              		.syntax unified
+ 128              		.thumb
+ 129              		.thumb_func
+ 130              		.fpu fpv4-sp-d16
+ 132              	HAL_ETH_MspInit:
+ 133              	.LFB137:
+  80:Src/eth.c     **** 
+  81:Src/eth.c     **** void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
+  82:Src/eth.c     **** {
+ 134              		.loc 1 82 0
+ 135              		.cfi_startproc
+ 136              		@ args = 0, pretend = 0, frame = 40
+ 137              		@ frame_needed = 1, uses_anonymous_args = 0
+ 138 0000 80B5     		push	{r7, lr}
+ 139              	.LCFI5:
+ 140              		.cfi_def_cfa_offset 8
+ 141              		.cfi_offset 7, -8
+ 142              		.cfi_offset 14, -4
+ 143 0002 8AB0     		sub	sp, sp, #40
+ 144              	.LCFI6:
+ 145              		.cfi_def_cfa_offset 48
+ 146 0004 00AF     		add	r7, sp, #0
+ 147              	.LCFI7:
+ARM GAS  /tmp/cc6UYqW3.s 			page 5
+
+
+ 148              		.cfi_def_cfa_register 7
+ 149 0006 7860     		str	r0, [r7, #4]
+  83:Src/eth.c     **** 
+  84:Src/eth.c     ****   GPIO_InitTypeDef GPIO_InitStruct;
+  85:Src/eth.c     ****   if(ethHandle->Instance==ETH)
+ 150              		.loc 1 85 0
+ 151 0008 7B68     		ldr	r3, [r7, #4]
+ 152 000a 1B68     		ldr	r3, [r3]
+ 153 000c 2D4A     		ldr	r2, .L9
+ 154 000e 9342     		cmp	r3, r2
+ 155 0010 54D1     		bne	.L8
+ 156              	.LBB2:
+  86:Src/eth.c     ****   {
+  87:Src/eth.c     ****   /* USER CODE BEGIN ETH_MspInit 0 */
+  88:Src/eth.c     **** 
+  89:Src/eth.c     ****   /* USER CODE END ETH_MspInit 0 */
+  90:Src/eth.c     ****     /* ETH clock enable */
+  91:Src/eth.c     ****     __HAL_RCC_ETH_CLK_ENABLE();
+ 157              		.loc 1 91 0
+ 158 0012 2D4A     		ldr	r2, .L9+4
+ 159 0014 2C4B     		ldr	r3, .L9+4
+ 160 0016 1B6B     		ldr	r3, [r3, #48]
+ 161 0018 43F00073 		orr	r3, r3, #33554432
+ 162 001c 1363     		str	r3, [r2, #48]
+ 163 001e 2A4B     		ldr	r3, .L9+4
+ 164 0020 1B6B     		ldr	r3, [r3, #48]
+ 165 0022 03F00073 		and	r3, r3, #33554432
+ 166 0026 3B61     		str	r3, [r7, #16]
+ 167 0028 3B69     		ldr	r3, [r7, #16]
+ 168              	.LBE2:
+ 169              	.LBB3:
+ 170 002a 274A     		ldr	r2, .L9+4
+ 171 002c 264B     		ldr	r3, .L9+4
+ 172 002e 1B6B     		ldr	r3, [r3, #48]
+ 173 0030 43F08063 		orr	r3, r3, #67108864
+ 174 0034 1363     		str	r3, [r2, #48]
+ 175 0036 244B     		ldr	r3, .L9+4
+ 176 0038 1B6B     		ldr	r3, [r3, #48]
+ 177 003a 03F08063 		and	r3, r3, #67108864
+ 178 003e FB60     		str	r3, [r7, #12]
+ 179 0040 FB68     		ldr	r3, [r7, #12]
+ 180              	.LBE3:
+ 181              	.LBB4:
+ 182 0042 214A     		ldr	r2, .L9+4
+ 183 0044 204B     		ldr	r3, .L9+4
+ 184 0046 1B6B     		ldr	r3, [r3, #48]
+ 185 0048 43F00063 		orr	r3, r3, #134217728
+ 186 004c 1363     		str	r3, [r2, #48]
+ 187 004e 1E4B     		ldr	r3, .L9+4
+ 188 0050 1B6B     		ldr	r3, [r3, #48]
+ 189 0052 03F00063 		and	r3, r3, #134217728
+ 190 0056 BB60     		str	r3, [r7, #8]
+ 191 0058 BB68     		ldr	r3, [r7, #8]
+ 192              	.LBE4:
+  92:Src/eth.c     ****   
+  93:Src/eth.c     ****     /**ETH GPIO Configuration    
+  94:Src/eth.c     ****     PC1     ------> ETH_MDC
+ARM GAS  /tmp/cc6UYqW3.s 			page 6
+
+
+  95:Src/eth.c     ****     PA1     ------> ETH_REF_CLK
+  96:Src/eth.c     ****     PA2     ------> ETH_MDIO
+  97:Src/eth.c     ****     PA7     ------> ETH_CRS_DV
+  98:Src/eth.c     ****     PC4     ------> ETH_RXD0
+  99:Src/eth.c     ****     PC5     ------> ETH_RXD1
+ 100:Src/eth.c     ****     PG11     ------> ETH_TX_EN
+ 101:Src/eth.c     ****     PG13     ------> ETH_TXD0
+ 102:Src/eth.c     ****     PG14     ------> ETH_TXD1 
+ 103:Src/eth.c     ****     */
+ 104:Src/eth.c     ****     GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5;
+ 193              		.loc 1 104 0
+ 194 005a 3223     		movs	r3, #50
+ 195 005c 7B61     		str	r3, [r7, #20]
+ 105:Src/eth.c     ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 196              		.loc 1 105 0
+ 197 005e 0223     		movs	r3, #2
+ 198 0060 BB61     		str	r3, [r7, #24]
+ 106:Src/eth.c     ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 199              		.loc 1 106 0
+ 200 0062 0023     		movs	r3, #0
+ 201 0064 FB61     		str	r3, [r7, #28]
+ 107:Src/eth.c     ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+ 202              		.loc 1 107 0
+ 203 0066 0323     		movs	r3, #3
+ 204 0068 3B62     		str	r3, [r7, #32]
+ 108:Src/eth.c     ****     GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+ 205              		.loc 1 108 0
+ 206 006a 0B23     		movs	r3, #11
+ 207 006c 7B62     		str	r3, [r7, #36]
+ 109:Src/eth.c     ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 208              		.loc 1 109 0
+ 209 006e 07F11403 		add	r3, r7, #20
+ 210 0072 1946     		mov	r1, r3
+ 211 0074 1548     		ldr	r0, .L9+8
+ 212 0076 FFF7FEFF 		bl	HAL_GPIO_Init
+ 110:Src/eth.c     **** 
+ 111:Src/eth.c     ****     GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7;
+ 213              		.loc 1 111 0
+ 214 007a 8623     		movs	r3, #134
+ 215 007c 7B61     		str	r3, [r7, #20]
+ 112:Src/eth.c     ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 216              		.loc 1 112 0
+ 217 007e 0223     		movs	r3, #2
+ 218 0080 BB61     		str	r3, [r7, #24]
+ 113:Src/eth.c     ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 219              		.loc 1 113 0
+ 220 0082 0023     		movs	r3, #0
+ 221 0084 FB61     		str	r3, [r7, #28]
+ 114:Src/eth.c     ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+ 222              		.loc 1 114 0
+ 223 0086 0323     		movs	r3, #3
+ 224 0088 3B62     		str	r3, [r7, #32]
+ 115:Src/eth.c     ****     GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+ 225              		.loc 1 115 0
+ 226 008a 0B23     		movs	r3, #11
+ 227 008c 7B62     		str	r3, [r7, #36]
+ 116:Src/eth.c     ****     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+ARM GAS  /tmp/cc6UYqW3.s 			page 7
+
+
+ 228              		.loc 1 116 0
+ 229 008e 07F11403 		add	r3, r7, #20
+ 230 0092 1946     		mov	r1, r3
+ 231 0094 0E48     		ldr	r0, .L9+12
+ 232 0096 FFF7FEFF 		bl	HAL_GPIO_Init
+ 117:Src/eth.c     **** 
+ 118:Src/eth.c     ****     GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_13|GPIO_PIN_14;
+ 233              		.loc 1 118 0
+ 234 009a 4FF4D043 		mov	r3, #26624
+ 235 009e 7B61     		str	r3, [r7, #20]
+ 119:Src/eth.c     ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 236              		.loc 1 119 0
+ 237 00a0 0223     		movs	r3, #2
+ 238 00a2 BB61     		str	r3, [r7, #24]
+ 120:Src/eth.c     ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 239              		.loc 1 120 0
+ 240 00a4 0023     		movs	r3, #0
+ 241 00a6 FB61     		str	r3, [r7, #28]
+ 121:Src/eth.c     ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+ 242              		.loc 1 121 0
+ 243 00a8 0323     		movs	r3, #3
+ 244 00aa 3B62     		str	r3, [r7, #32]
+ 122:Src/eth.c     ****     GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+ 245              		.loc 1 122 0
+ 246 00ac 0B23     		movs	r3, #11
+ 247 00ae 7B62     		str	r3, [r7, #36]
+ 123:Src/eth.c     ****     HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+ 248              		.loc 1 123 0
+ 249 00b0 07F11403 		add	r3, r7, #20
+ 250 00b4 1946     		mov	r1, r3
+ 251 00b6 0748     		ldr	r0, .L9+16
+ 252 00b8 FFF7FEFF 		bl	HAL_GPIO_Init
+ 253              	.L8:
+ 124:Src/eth.c     **** 
+ 125:Src/eth.c     ****   /* USER CODE BEGIN ETH_MspInit 1 */
+ 126:Src/eth.c     **** 
+ 127:Src/eth.c     ****   /* USER CODE END ETH_MspInit 1 */
+ 128:Src/eth.c     ****   }
+ 129:Src/eth.c     **** }
+ 254              		.loc 1 129 0
+ 255 00bc 00BF     		nop
+ 256 00be 2837     		adds	r7, r7, #40
+ 257              	.LCFI8:
+ 258              		.cfi_def_cfa_offset 8
+ 259 00c0 BD46     		mov	sp, r7
+ 260              	.LCFI9:
+ 261              		.cfi_def_cfa_register 13
+ 262              		@ sp needed
+ 263 00c2 80BD     		pop	{r7, pc}
+ 264              	.L10:
+ 265              		.align	2
+ 266              	.L9:
+ 267 00c4 00800240 		.word	1073905664
+ 268 00c8 00380240 		.word	1073887232
+ 269 00cc 00080240 		.word	1073874944
+ 270 00d0 00000240 		.word	1073872896
+ 271 00d4 00180240 		.word	1073879040
+ARM GAS  /tmp/cc6UYqW3.s 			page 8
+
+
+ 272              		.cfi_endproc
+ 273              	.LFE137:
+ 275              		.section	.text.HAL_ETH_MspDeInit,"ax",%progbits
+ 276              		.align	1
+ 277              		.global	HAL_ETH_MspDeInit
+ 278              		.syntax unified
+ 279              		.thumb
+ 280              		.thumb_func
+ 281              		.fpu fpv4-sp-d16
+ 283              	HAL_ETH_MspDeInit:
+ 284              	.LFB138:
+ 130:Src/eth.c     **** 
+ 131:Src/eth.c     **** void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
+ 132:Src/eth.c     **** {
+ 285              		.loc 1 132 0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 8
+ 288              		@ frame_needed = 1, uses_anonymous_args = 0
+ 289 0000 80B5     		push	{r7, lr}
+ 290              	.LCFI10:
+ 291              		.cfi_def_cfa_offset 8
+ 292              		.cfi_offset 7, -8
+ 293              		.cfi_offset 14, -4
+ 294 0002 82B0     		sub	sp, sp, #8
+ 295              	.LCFI11:
+ 296              		.cfi_def_cfa_offset 16
+ 297 0004 00AF     		add	r7, sp, #0
+ 298              	.LCFI12:
+ 299              		.cfi_def_cfa_register 7
+ 300 0006 7860     		str	r0, [r7, #4]
+ 133:Src/eth.c     **** 
+ 134:Src/eth.c     ****   if(ethHandle->Instance==ETH)
+ 301              		.loc 1 134 0
+ 302 0008 7B68     		ldr	r3, [r7, #4]
+ 303 000a 1B68     		ldr	r3, [r3]
+ 304 000c 124A     		ldr	r2, .L14
+ 305 000e 9342     		cmp	r3, r2
+ 306 0010 1ED1     		bne	.L13
+ 135:Src/eth.c     ****   {
+ 136:Src/eth.c     ****   /* USER CODE BEGIN ETH_MspDeInit 0 */
+ 137:Src/eth.c     **** 
+ 138:Src/eth.c     ****   /* USER CODE END ETH_MspDeInit 0 */
+ 139:Src/eth.c     ****     /* Peripheral clock disable */
+ 140:Src/eth.c     ****     __HAL_RCC_ETH_CLK_DISABLE();
+ 307              		.loc 1 140 0
+ 308 0012 124A     		ldr	r2, .L14+4
+ 309 0014 114B     		ldr	r3, .L14+4
+ 310 0016 1B6B     		ldr	r3, [r3, #48]
+ 311 0018 23F08063 		bic	r3, r3, #67108864
+ 312 001c 1363     		str	r3, [r2, #48]
+ 313 001e 0F4A     		ldr	r2, .L14+4
+ 314 0020 0E4B     		ldr	r3, .L14+4
+ 315 0022 1B6B     		ldr	r3, [r3, #48]
+ 316 0024 23F00063 		bic	r3, r3, #134217728
+ 317 0028 1363     		str	r3, [r2, #48]
+ 318 002a 0C4A     		ldr	r2, .L14+4
+ 319 002c 0B4B     		ldr	r3, .L14+4
+ARM GAS  /tmp/cc6UYqW3.s 			page 9
+
+
+ 320 002e 1B6B     		ldr	r3, [r3, #48]
+ 321 0030 23F00073 		bic	r3, r3, #33554432
+ 322 0034 1363     		str	r3, [r2, #48]
+ 141:Src/eth.c     ****   
+ 142:Src/eth.c     ****     /**ETH GPIO Configuration    
+ 143:Src/eth.c     ****     PC1     ------> ETH_MDC
+ 144:Src/eth.c     ****     PA1     ------> ETH_REF_CLK
+ 145:Src/eth.c     ****     PA2     ------> ETH_MDIO
+ 146:Src/eth.c     ****     PA7     ------> ETH_CRS_DV
+ 147:Src/eth.c     ****     PC4     ------> ETH_RXD0
+ 148:Src/eth.c     ****     PC5     ------> ETH_RXD1
+ 149:Src/eth.c     ****     PG11     ------> ETH_TX_EN
+ 150:Src/eth.c     ****     PG13     ------> ETH_TXD0
+ 151:Src/eth.c     ****     PG14     ------> ETH_TXD1 
+ 152:Src/eth.c     ****     */
+ 153:Src/eth.c     ****     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5);
+ 323              		.loc 1 153 0
+ 324 0036 3221     		movs	r1, #50
+ 325 0038 0948     		ldr	r0, .L14+8
+ 326 003a FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 154:Src/eth.c     **** 
+ 155:Src/eth.c     ****     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7);
+ 327              		.loc 1 155 0
+ 328 003e 8621     		movs	r1, #134
+ 329 0040 0848     		ldr	r0, .L14+12
+ 330 0042 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 156:Src/eth.c     **** 
+ 157:Src/eth.c     ****     HAL_GPIO_DeInit(GPIOG, GPIO_PIN_11|GPIO_PIN_13|GPIO_PIN_14);
+ 331              		.loc 1 157 0
+ 332 0046 4FF4D041 		mov	r1, #26624
+ 333 004a 0748     		ldr	r0, .L14+16
+ 334 004c FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 335              	.L13:
+ 158:Src/eth.c     **** 
+ 159:Src/eth.c     ****   /* USER CODE BEGIN ETH_MspDeInit 1 */
+ 160:Src/eth.c     **** 
+ 161:Src/eth.c     ****   /* USER CODE END ETH_MspDeInit 1 */
+ 162:Src/eth.c     ****   }
+ 163:Src/eth.c     **** } 
+ 336              		.loc 1 163 0
+ 337 0050 00BF     		nop
+ 338 0052 0837     		adds	r7, r7, #8
+ 339              	.LCFI13:
+ 340              		.cfi_def_cfa_offset 8
+ 341 0054 BD46     		mov	sp, r7
+ 342              	.LCFI14:
+ 343              		.cfi_def_cfa_register 13
+ 344              		@ sp needed
+ 345 0056 80BD     		pop	{r7, pc}
+ 346              	.L15:
+ 347              		.align	2
+ 348              	.L14:
+ 349 0058 00800240 		.word	1073905664
+ 350 005c 00380240 		.word	1073887232
+ 351 0060 00080240 		.word	1073874944
+ 352 0064 00000240 		.word	1073872896
+ 353 0068 00180240 		.word	1073879040
+ARM GAS  /tmp/cc6UYqW3.s 			page 10
+
+
+ 354              		.cfi_endproc
+ 355              	.LFE138:
+ 357              		.text
+ 358              	.Letext0:
+ 359              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 360              		.file 3 "/usr/include/newlib/sys/_stdint.h"
+ 361              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 362              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 363              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 364              		.file 7 "/usr/include/newlib/sys/lock.h"
+ 365              		.file 8 "/usr/include/newlib/sys/_types.h"
+ 366              		.file 9 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 367              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 368              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 369              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 370              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_eth.h"
+ 371              		.file 14 "Inc/eth.h"
+ARM GAS  /tmp/cc6UYqW3.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 eth.c
+                            *COM*:0000000000000048 heth
+     /tmp/cc6UYqW3.s:19     .rodata:0000000000000000 $d
+     /tmp/cc6UYqW3.s:23     .text.MX_ETH_Init:0000000000000000 $t
+     /tmp/cc6UYqW3.s:30     .text.MX_ETH_Init:0000000000000000 MX_ETH_Init
+     /tmp/cc6UYqW3.s:118    .text.MX_ETH_Init:0000000000000068 $d
+     /tmp/cc6UYqW3.s:125    .text.HAL_ETH_MspInit:0000000000000000 $t
+     /tmp/cc6UYqW3.s:132    .text.HAL_ETH_MspInit:0000000000000000 HAL_ETH_MspInit
+     /tmp/cc6UYqW3.s:267    .text.HAL_ETH_MspInit:00000000000000c4 $d
+     /tmp/cc6UYqW3.s:276    .text.HAL_ETH_MspDeInit:0000000000000000 $t
+     /tmp/cc6UYqW3.s:283    .text.HAL_ETH_MspDeInit:0000000000000000 HAL_ETH_MspDeInit
+     /tmp/cc6UYqW3.s:349    .text.HAL_ETH_MspDeInit:0000000000000058 $d
+                     .debug_frame:0000000000000010 $d
+
+UNDEFINED SYMBOLS
+HAL_ETH_Init
+_Error_Handler
+HAL_GPIO_Init
+HAL_GPIO_DeInit

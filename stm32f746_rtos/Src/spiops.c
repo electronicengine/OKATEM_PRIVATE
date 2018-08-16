@@ -1,19 +1,25 @@
 #include "spiops.h"
 #include "stdlib.h"
 
-#define SECTOR6_ADDRESS 0x08080000
+#define SECTOR6_ADDRESS 0x8080000
 
 
 void writeFlash(uint8_t Data, long Address)
 {
 
      HAL_FLASH_Unlock();
-     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , Data);
+     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
      HAL_FLASH_Lock();
 }
 
-void readFlash()
+uint8_t readFlash(int Address)
 {
+
+    uint8_t flash_data;
+
+    flash_data = *(uint8_t *)Address;
+
+    return flash_data;
 
 }
 
@@ -36,10 +42,13 @@ void spiComOps(void const * argument)
 {
 
     HAL_SPI_StateTypeDef status;
-    unsigned char *var;
 
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR );
-    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+
+//    HAL_FLASH_Unlock();
+
+//    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+
+//    HAL_FLASH_Lock();
 
     mprintf("spiOps\r\n");
 
@@ -70,14 +79,9 @@ void spiComOps(void const * argument)
 
                     for(int i=0;i<SPI_ENTITY_SIZE; i++)
                     {
-                        UpdateFile->data[i] = SpiRxData->data[i+2];
-                        writeFlash(UpdateFile -> data[i], SECTOR6_ADDRESS + ((i+1)*UpdateFile->current_sequence_number));
+//                        UpdateFile->data[i] = SpiRxData->data[i+2];
+                        writeFlash(SpiRxData->data[i + 8], (SECTOR6_ADDRESS + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1)) + i));
                     }
-
-
-
-//                    UpdateFile = (UPDATE_FILE_FORMAT *)(SpiRxData + offsetof(SPI_TRANSFER_FORMAT, header));
-
 
 
                 }
@@ -91,12 +95,7 @@ void spiComOps(void const * argument)
 
                 }
 
-
-
-
             }
-
-
 
 
             xSemaphoreTake(spiMutexHandle, portMAX_DELAY);

@@ -155,7 +155,7 @@ HAL_StatusTypeDef HAL_Init(void)
 {
   /* Configure Instruction cache through ART accelerator */ 
 #if (ART_ACCLERATOR_ENABLE != 0)
-   __HAL_FLASH_ART_ENABLE();
+//   __HAL_FLASH_ART_ENABLE();
 #endif /* ART_ACCLERATOR_ENABLE */
 
   /* Configure Flash prefetch */
@@ -163,12 +163,18 @@ HAL_StatusTypeDef HAL_Init(void)
   __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
 #endif /* PREFETCH_ENABLE */
 
+
   /* Set Interrupt Group Priority */
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
+
+
   /* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
   HAL_InitTick(TICK_INT_PRIORITY);
-  
+
+
+
+
   /* Init the low level hardware */
   HAL_MspInit();
   
@@ -246,11 +252,18 @@ __weak void HAL_MspDeInit(void)
   */
 __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
+
+
   /* Configure the SysTick to have interrupt in 1ms time basis*/
   if (HAL_SYSTICK_Config(SystemCoreClock / (1000U / uwTickFreq)) > 0U)
   {
+
     return HAL_ERROR;
   }
+
+
+
+
 
   /* Configure the SysTick IRQ priority */
   if (TickPriority < (1UL << __NVIC_PRIO_BITS))
