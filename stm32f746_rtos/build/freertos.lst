@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccHKiwYi.s 			page 1
+ARM GAS  /tmp/ccNsmR1g.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   50              		.cfi_startproc
   51              		@ args = 0, pretend = 0, frame = 0
   52              		@ frame_needed = 1, uses_anonymous_args = 0
-ARM GAS  /tmp/ccHKiwYi.s 			page 2
+ARM GAS  /tmp/ccNsmR1g.s 			page 2
 
 
   53 0000 80B5     		push	{r7, lr}
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   97              	.LFB142:
   14:Src/gpsops.c  **** 
   15:Src/gpsops.c  **** 
-ARM GAS  /tmp/ccHKiwYi.s 			page 3
+ARM GAS  /tmp/ccNsmR1g.s 			page 3
 
 
   16:Src/gpsops.c  **** 
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
  134 0030 2BD1     		bne	.L6
   34:Src/gpsops.c  ****         {
   35:Src/gpsops.c  **** 
-ARM GAS  /tmp/ccHKiwYi.s 			page 4
+ARM GAS  /tmp/ccNsmR1g.s 			page 4
 
 
   36:Src/gpsops.c  ****                xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   45:Src/gpsops.c  ****            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
  178              		.loc 1 45 0
  179 007c 4FF48051 		mov	r1, #4096
-ARM GAS  /tmp/ccHKiwYi.s 			page 5
+ARM GAS  /tmp/ccNsmR1g.s 			page 5
 
 
  180 0080 0E48     		ldr	r0, .L11+20
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
  218              		.thumb
  219              		.thumb_func
  220              		.fpu fpv4-sp-d16
-ARM GAS  /tmp/ccHKiwYi.s 			page 6
+ARM GAS  /tmp/ccNsmR1g.s 			page 6
 
 
  222              	writeFlash:
@@ -332,713 +332,886 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
  242 0008 3960     		str	r1, [r7]
  243 000a FB71     		strb	r3, [r7, #7]
    9:Src/spiops.c  **** 
-  10:Src/spiops.c  ****      HAL_FLASH_Unlock();
- 244              		.loc 2 10 0
- 245 000c FFF7FEFF 		bl	HAL_FLASH_Unlock
+  10:Src/spiops.c  **** 
   11:Src/spiops.c  ****      HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
- 246              		.loc 2 11 0
- 247 0010 3968     		ldr	r1, [r7]
- 248 0012 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
- 249 0014 4FF00004 		mov	r4, #0
- 250 0018 1A46     		mov	r2, r3
- 251 001a 2346     		mov	r3, r4
- 252 001c 0020     		movs	r0, #0
- 253 001e FFF7FEFF 		bl	HAL_FLASH_Program
-  12:Src/spiops.c  ****      HAL_FLASH_Lock();
- 254              		.loc 2 12 0
- 255 0022 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 244              		.loc 2 11 0
+ 245 000c 3968     		ldr	r1, [r7]
+ 246 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 247 0010 4FF00004 		mov	r4, #0
+ 248 0014 1A46     		mov	r2, r3
+ 249 0016 2346     		mov	r3, r4
+ 250 0018 0020     		movs	r0, #0
+ 251 001a FFF7FEFF 		bl	HAL_FLASH_Program
+  12:Src/spiops.c  **** 
   13:Src/spiops.c  **** }
- 256              		.loc 2 13 0
- 257 0026 00BF     		nop
- 258 0028 0C37     		adds	r7, r7, #12
- 259              	.LCFI8:
- 260              		.cfi_def_cfa_offset 12
- 261 002a BD46     		mov	sp, r7
- 262              	.LCFI9:
- 263              		.cfi_def_cfa_register 13
- 264              		@ sp needed
- 265 002c 90BD     		pop	{r4, r7, pc}
-ARM GAS  /tmp/ccHKiwYi.s 			page 7
+ 252              		.loc 2 13 0
+ 253 001e 00BF     		nop
+ 254 0020 0C37     		adds	r7, r7, #12
+ 255              	.LCFI8:
+ 256              		.cfi_def_cfa_offset 12
+ 257 0022 BD46     		mov	sp, r7
+ 258              	.LCFI9:
+ 259              		.cfi_def_cfa_register 13
+ 260              		@ sp needed
+ 261 0024 90BD     		pop	{r4, r7, pc}
+ 262              		.cfi_endproc
+ 263              	.LFE143:
+ 265              		.section	.text.readFlash,"ax",%progbits
+ 266              		.align	1
+ARM GAS  /tmp/ccNsmR1g.s 			page 7
 
 
- 266              		.cfi_endproc
- 267              	.LFE143:
- 269              		.section	.text.readFlash,"ax",%progbits
- 270              		.align	1
- 271              		.global	readFlash
- 272              		.syntax unified
- 273              		.thumb
- 274              		.thumb_func
- 275              		.fpu fpv4-sp-d16
- 277              	readFlash:
- 278              	.LFB144:
+ 267              		.global	readFlash
+ 268              		.syntax unified
+ 269              		.thumb
+ 270              		.thumb_func
+ 271              		.fpu fpv4-sp-d16
+ 273              	readFlash:
+ 274              	.LFB144:
   14:Src/spiops.c  **** 
-  15:Src/spiops.c  **** uint8_t readFlash(int Address)
-  16:Src/spiops.c  **** {
- 279              		.loc 2 16 0
- 280              		.cfi_startproc
- 281              		@ args = 0, pretend = 0, frame = 16
- 282              		@ frame_needed = 1, uses_anonymous_args = 0
- 283              		@ link register save eliminated.
- 284 0000 80B4     		push	{r7}
- 285              	.LCFI10:
- 286              		.cfi_def_cfa_offset 4
- 287              		.cfi_offset 7, -4
- 288 0002 85B0     		sub	sp, sp, #20
- 289              	.LCFI11:
- 290              		.cfi_def_cfa_offset 24
- 291 0004 00AF     		add	r7, sp, #0
- 292              	.LCFI12:
- 293              		.cfi_def_cfa_register 7
- 294 0006 7860     		str	r0, [r7, #4]
-  17:Src/spiops.c  **** 
-  18:Src/spiops.c  ****     uint8_t flash_data;
+  15:Src/spiops.c  **** 
+  16:Src/spiops.c  **** 
+  17:Src/spiops.c  **** uint8_t readFlash(int Address)
+  18:Src/spiops.c  **** {
+ 275              		.loc 2 18 0
+ 276              		.cfi_startproc
+ 277              		@ args = 0, pretend = 0, frame = 16
+ 278              		@ frame_needed = 1, uses_anonymous_args = 0
+ 279              		@ link register save eliminated.
+ 280 0000 80B4     		push	{r7}
+ 281              	.LCFI10:
+ 282              		.cfi_def_cfa_offset 4
+ 283              		.cfi_offset 7, -4
+ 284 0002 85B0     		sub	sp, sp, #20
+ 285              	.LCFI11:
+ 286              		.cfi_def_cfa_offset 24
+ 287 0004 00AF     		add	r7, sp, #0
+ 288              	.LCFI12:
+ 289              		.cfi_def_cfa_register 7
+ 290 0006 7860     		str	r0, [r7, #4]
   19:Src/spiops.c  **** 
-  20:Src/spiops.c  ****     flash_data = *(uint8_t *)Address;
- 295              		.loc 2 20 0
- 296 0008 7B68     		ldr	r3, [r7, #4]
- 297 000a 1B78     		ldrb	r3, [r3]
- 298 000c FB73     		strb	r3, [r7, #15]
+  20:Src/spiops.c  ****     uint8_t flash_data;
   21:Src/spiops.c  **** 
-  22:Src/spiops.c  ****     return flash_data;
- 299              		.loc 2 22 0
- 300 000e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+  22:Src/spiops.c  ****     flash_data = *(uint8_t *)Address;
+ 291              		.loc 2 22 0
+ 292 0008 7B68     		ldr	r3, [r7, #4]
+ 293 000a 1B78     		ldrb	r3, [r3]
+ 294 000c FB73     		strb	r3, [r7, #15]
   23:Src/spiops.c  **** 
-  24:Src/spiops.c  **** }
- 301              		.loc 2 24 0
- 302 0010 1846     		mov	r0, r3
- 303 0012 1437     		adds	r7, r7, #20
- 304              	.LCFI13:
- 305              		.cfi_def_cfa_offset 4
- 306 0014 BD46     		mov	sp, r7
- 307              	.LCFI14:
- 308              		.cfi_def_cfa_register 13
- 309              		@ sp needed
- 310 0016 5DF8047B 		ldr	r7, [sp], #4
- 311              	.LCFI15:
- 312              		.cfi_restore 7
- 313              		.cfi_def_cfa_offset 0
-ARM GAS  /tmp/ccHKiwYi.s 			page 8
-
-
- 314 001a 7047     		bx	lr
- 315              		.cfi_endproc
- 316              	.LFE144:
- 318              		.section	.text.SPI1_IRQHandler,"ax",%progbits
- 319              		.align	1
- 320              		.global	SPI1_IRQHandler
- 321              		.syntax unified
- 322              		.thumb
- 323              		.thumb_func
- 324              		.fpu fpv4-sp-d16
- 326              	SPI1_IRQHandler:
- 327              	.LFB145:
+  24:Src/spiops.c  ****     return flash_data;
+ 295              		.loc 2 24 0
+ 296 000e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
   25:Src/spiops.c  **** 
-  26:Src/spiops.c  **** 
+  26:Src/spiops.c  **** }
+ 297              		.loc 2 26 0
+ 298 0010 1846     		mov	r0, r3
+ 299 0012 1437     		adds	r7, r7, #20
+ 300              	.LCFI13:
+ 301              		.cfi_def_cfa_offset 4
+ 302 0014 BD46     		mov	sp, r7
+ 303              	.LCFI14:
+ 304              		.cfi_def_cfa_register 13
+ 305              		@ sp needed
+ 306 0016 5DF8047B 		ldr	r7, [sp], #4
+ 307              	.LCFI15:
+ 308              		.cfi_restore 7
+ 309              		.cfi_def_cfa_offset 0
+ 310 001a 7047     		bx	lr
+ 311              		.cfi_endproc
+ARM GAS  /tmp/ccNsmR1g.s 			page 8
+
+
+ 312              	.LFE144:
+ 314              		.section	.text.SPI1_IRQHandler,"ax",%progbits
+ 315              		.align	1
+ 316              		.global	SPI1_IRQHandler
+ 317              		.syntax unified
+ 318              		.thumb
+ 319              		.thumb_func
+ 320              		.fpu fpv4-sp-d16
+ 322              	SPI1_IRQHandler:
+ 323              	.LFB145:
   27:Src/spiops.c  **** 
   28:Src/spiops.c  **** 
-  29:Src/spiops.c  **** void SPI1_IRQHandler(void)
-  30:Src/spiops.c  **** {
- 328              		.loc 2 30 0
- 329              		.cfi_startproc
- 330              		@ args = 0, pretend = 0, frame = 0
- 331              		@ frame_needed = 1, uses_anonymous_args = 0
- 332 0000 80B5     		push	{r7, lr}
- 333              	.LCFI16:
- 334              		.cfi_def_cfa_offset 8
- 335              		.cfi_offset 7, -8
- 336              		.cfi_offset 14, -4
- 337 0002 00AF     		add	r7, sp, #0
- 338              	.LCFI17:
- 339              		.cfi_def_cfa_register 7
-  31:Src/spiops.c  **** 
-  32:Src/spiops.c  ****   HAL_SPI_IRQHandler(&hspi1);
- 340              		.loc 2 32 0
- 341 0004 0548     		ldr	r0, .L17
- 342 0006 FFF7FEFF 		bl	HAL_SPI_IRQHandler
-  33:Src/spiops.c  **** 
-  34:Src/spiops.c  ****   xSemaphoreGiveFromISR(spiSemaphoreHandle, NULL);
- 343              		.loc 2 34 0
- 344 000a 054B     		ldr	r3, .L17+4
- 345 000c 1B68     		ldr	r3, [r3]
- 346 000e 0021     		movs	r1, #0
- 347 0010 1846     		mov	r0, r3
- 348 0012 FFF7FEFF 		bl	xQueueGiveFromISR
-  35:Src/spiops.c  **** 
-  36:Src/spiops.c  **** }
- 349              		.loc 2 36 0
- 350 0016 00BF     		nop
- 351 0018 80BD     		pop	{r7, pc}
- 352              	.L18:
- 353 001a 00BF     		.align	2
- 354              	.L17:
- 355 001c 00000000 		.word	hspi1
- 356 0020 00000000 		.word	spiSemaphoreHandle
- 357              		.cfi_endproc
- 358              	.LFE145:
- 360              		.section	.rodata
- 361              		.align	2
-ARM GAS  /tmp/ccHKiwYi.s 			page 9
+  29:Src/spiops.c  **** 
+  30:Src/spiops.c  **** void SPI1_IRQHandler(void)
+  31:Src/spiops.c  **** {
+ 324              		.loc 2 31 0
+ 325              		.cfi_startproc
+ 326              		@ args = 0, pretend = 0, frame = 0
+ 327              		@ frame_needed = 1, uses_anonymous_args = 0
+ 328 0000 80B5     		push	{r7, lr}
+ 329              	.LCFI16:
+ 330              		.cfi_def_cfa_offset 8
+ 331              		.cfi_offset 7, -8
+ 332              		.cfi_offset 14, -4
+ 333 0002 00AF     		add	r7, sp, #0
+ 334              	.LCFI17:
+ 335              		.cfi_def_cfa_register 7
+  32:Src/spiops.c  **** 
+  33:Src/spiops.c  ****   HAL_SPI_IRQHandler(&hspi1);
+ 336              		.loc 2 33 0
+ 337 0004 0548     		ldr	r0, .L17
+ 338 0006 FFF7FEFF 		bl	HAL_SPI_IRQHandler
+  34:Src/spiops.c  **** 
+  35:Src/spiops.c  ****   xSemaphoreGiveFromISR(spiSemaphoreHandle, NULL);
+ 339              		.loc 2 35 0
+ 340 000a 054B     		ldr	r3, .L17+4
+ 341 000c 1B68     		ldr	r3, [r3]
+ 342 000e 0021     		movs	r1, #0
+ 343 0010 1846     		mov	r0, r3
+ 344 0012 FFF7FEFF 		bl	xQueueGiveFromISR
+  36:Src/spiops.c  **** 
+  37:Src/spiops.c  **** }
+ 345              		.loc 2 37 0
+ 346 0016 00BF     		nop
+ 347 0018 80BD     		pop	{r7, pc}
+ 348              	.L18:
+ 349 001a 00BF     		.align	2
+ 350              	.L17:
+ 351 001c 00000000 		.word	hspi1
+ 352 0020 00000000 		.word	spiSemaphoreHandle
+ 353              		.cfi_endproc
+ 354              	.LFE145:
+ 356              		.section	.rodata
+ 357              		.align	2
+ 358              	.LC10:
+ 359 001c 7370694F 		.ascii	"spiOps\015\012\000"
+ 359      70730D0A 
+ARM GAS  /tmp/ccNsmR1g.s 			page 9
 
 
- 362              	.LC10:
- 363 001c 7370694F 		.ascii	"spiOps\015\012\000"
- 363      70730D0A 
- 363      00
- 364 0025 000000   		.align	2
- 365              	.LC11:
- 366 0028 25640D0A 		.ascii	"%d\015\012\000"
- 366      00
- 367              		.section	.text.spiComOps,"ax",%progbits
- 368              		.align	1
- 369              		.global	spiComOps
- 370              		.syntax unified
- 371              		.thumb
- 372              		.thumb_func
- 373              		.fpu fpv4-sp-d16
- 375              	spiComOps:
- 376              	.LFB146:
-  37:Src/spiops.c  **** 
+ 359      00
+ 360 0025 000000   		.align	2
+ 361              	.LC11:
+ 362 0028 25640D0A 		.ascii	"%d\015\012\000"
+ 362      00
+ 363 002d 000000   		.align	2
+ 364              	.LC12:
+ 365 0030 57726974 		.ascii	"Writing data to memory\015\012\000"
+ 365      696E6720 
+ 365      64617461 
+ 365      20746F20 
+ 365      6D656D6F 
+ 366 0049 000000   		.align	2
+ 367              	.LC13:
+ 368 004c 57726974 		.ascii	"Writing is done\015\012\000"
+ 368      696E6720 
+ 368      69732064 
+ 368      6F6E650D 
+ 368      0A00
+ 369              		.section	.text.spiComOps,"ax",%progbits
+ 370              		.align	1
+ 371              		.global	spiComOps
+ 372              		.syntax unified
+ 373              		.thumb
+ 374              		.thumb_func
+ 375              		.fpu fpv4-sp-d16
+ 377              	spiComOps:
+ 378              	.LFB146:
   38:Src/spiops.c  **** 
   39:Src/spiops.c  **** 
-  40:Src/spiops.c  **** /* spiComOps function */
-  41:Src/spiops.c  **** void spiComOps(void const * argument)
-  42:Src/spiops.c  **** {
- 377              		.loc 2 42 0
- 378              		.cfi_startproc
- 379              		@ args = 0, pretend = 0, frame = 16
- 380              		@ frame_needed = 1, uses_anonymous_args = 0
- 381 0000 80B5     		push	{r7, lr}
- 382              	.LCFI18:
- 383              		.cfi_def_cfa_offset 8
- 384              		.cfi_offset 7, -8
- 385              		.cfi_offset 14, -4
- 386 0002 84B0     		sub	sp, sp, #16
- 387              	.LCFI19:
- 388              		.cfi_def_cfa_offset 24
- 389 0004 00AF     		add	r7, sp, #0
- 390              	.LCFI20:
- 391              		.cfi_def_cfa_register 7
- 392 0006 7860     		str	r0, [r7, #4]
-  43:Src/spiops.c  **** 
-  44:Src/spiops.c  ****     HAL_SPI_StateTypeDef status;
-  45:Src/spiops.c  **** 
+  40:Src/spiops.c  **** 
+  41:Src/spiops.c  **** /* spiComOps function */
+  42:Src/spiops.c  **** void spiComOps(void const * argument)
+  43:Src/spiops.c  **** {
+ 379              		.loc 2 43 0
+ 380              		.cfi_startproc
+ 381              		@ args = 0, pretend = 0, frame = 24
+ 382              		@ frame_needed = 1, uses_anonymous_args = 0
+ 383 0000 90B5     		push	{r4, r7, lr}
+ 384              	.LCFI18:
+ 385              		.cfi_def_cfa_offset 12
+ 386              		.cfi_offset 4, -12
+ 387              		.cfi_offset 7, -8
+ 388              		.cfi_offset 14, -4
+ 389 0002 87B0     		sub	sp, sp, #28
+ 390              	.LCFI19:
+ 391              		.cfi_def_cfa_offset 40
+ 392 0004 00AF     		add	r7, sp, #0
+ 393              	.LCFI20:
+ 394              		.cfi_def_cfa_register 7
+ 395 0006 7860     		str	r0, [r7, #4]
+  44:Src/spiops.c  **** 
+  45:Src/spiops.c  ****     HAL_SPI_StateTypeDef status;
   46:Src/spiops.c  **** 
-  47:Src/spiops.c  **** //    HAL_FLASH_Unlock();
+  47:Src/spiops.c  ****     unsigned char * update_file;
   48:Src/spiops.c  **** 
-  49:Src/spiops.c  **** //    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+  49:Src/spiops.c  ****     mprintf("spiOps\r\n");
+ARM GAS  /tmp/ccNsmR1g.s 			page 10
+
+
+ 396              		.loc 2 49 0
+ 397 0008 6248     		ldr	r0, .L35
+ 398 000a FFF7FEFF 		bl	mprintf
   50:Src/spiops.c  **** 
-  51:Src/spiops.c  **** //    HAL_FLASH_Lock();
-  52:Src/spiops.c  **** 
-  53:Src/spiops.c  ****     mprintf("spiOps\r\n");
- 393              		.loc 2 53 0
- 394 0008 9048     		ldr	r0, .L31
- 395 000a FFF7FEFF 		bl	mprintf
-  54:Src/spiops.c  **** 
-  55:Src/spiops.c  ****     HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SI
- 396              		.loc 2 55 0
- 397 000e 904B     		ldr	r3, .L31+4
-ARM GAS  /tmp/ccHKiwYi.s 			page 10
+  51:Src/spiops.c  **** 
+  52:Src/spiops.c  ****     HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SI
+ 399              		.loc 2 52 0
+ 400 000e 624B     		ldr	r3, .L35+4
+ 401 0010 1968     		ldr	r1, [r3]
+ 402 0012 624B     		ldr	r3, .L35+8
+ 403 0014 1A68     		ldr	r2, [r3]
+ 404 0016 7823     		movs	r3, #120
+ 405 0018 6148     		ldr	r0, .L35+12
+ 406 001a FFF7FEFF 		bl	HAL_SPI_TransmitReceive_IT
+ 407              	.L34:
+  53:Src/spiops.c  **** 
+  54:Src/spiops.c  ****     while(1)
+  55:Src/spiops.c  ****     {
+  56:Src/spiops.c  ****         if( xSemaphoreTake(spiSemaphoreHandle, 1) == pdPASS)
+ 408              		.loc 2 56 0
+ 409 001e 614B     		ldr	r3, .L35+16
+ 410 0020 1868     		ldr	r0, [r3]
+ 411 0022 0023     		movs	r3, #0
+ 412 0024 0122     		movs	r2, #1
+ 413 0026 0021     		movs	r1, #0
+ 414 0028 FFF7FEFF 		bl	xQueueGenericReceive
+ 415 002c 0346     		mov	r3, r0
+ 416 002e 012B     		cmp	r3, #1
+ 417 0030 F5D1     		bne	.L34
+  57:Src/spiops.c  ****         {
+  58:Src/spiops.c  **** 
+  59:Src/spiops.c  ****             status = HAL_SPI_GetState(&hspi1);
+ 418              		.loc 2 59 0
+ 419 0032 5B48     		ldr	r0, .L35+12
+ 420 0034 FFF7FEFF 		bl	HAL_SPI_GetState
+ 421 0038 0346     		mov	r3, r0
+ 422 003a FB72     		strb	r3, [r7, #11]
+  60:Src/spiops.c  ****             if(status == HAL_SPI_STATE_READY)
+ 423              		.loc 2 60 0
+ 424 003c FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+ 425 003e 012B     		cmp	r3, #1
+ 426 0040 40F0F780 		bne	.L21
+  61:Src/spiops.c  ****             {
+  62:Src/spiops.c  **** 
+  63:Src/spiops.c  **** 
+  64:Src/spiops.c  **** 
+  65:Src/spiops.c  ****                 if((SpiRxData->header & 0xff) == 'U' && ((SpiRxData->header >> 8) & 0xff) == 'P')
+ 427              		.loc 2 65 0
+ 428 0044 554B     		ldr	r3, .L35+8
+ 429 0046 1B68     		ldr	r3, [r3]
+ 430 0048 1B88     		ldrh	r3, [r3]
+ 431 004a DBB2     		uxtb	r3, r3
+ 432 004c 552B     		cmp	r3, #85
+ 433 004e 40F0DA80 		bne	.L22
+ 434              		.loc 2 65 0 is_stmt 0 discriminator 1
+ 435 0052 524B     		ldr	r3, .L35+8
+ 436 0054 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/ccNsmR1g.s 			page 11
 
 
- 398 0010 1968     		ldr	r1, [r3]
- 399 0012 904B     		ldr	r3, .L31+8
- 400 0014 1A68     		ldr	r2, [r3]
- 401 0016 7823     		movs	r3, #120
- 402 0018 8F48     		ldr	r0, .L31+12
- 403 001a FFF7FEFF 		bl	HAL_SPI_TransmitReceive_IT
- 404              	.L30:
-  56:Src/spiops.c  **** 
-  57:Src/spiops.c  ****     while(1)
-  58:Src/spiops.c  ****     {
-  59:Src/spiops.c  ****         if( xSemaphoreTake(spiSemaphoreHandle, 1) == pdPASS)
- 405              		.loc 2 59 0
- 406 001e 8F4B     		ldr	r3, .L31+16
- 407 0020 1868     		ldr	r0, [r3]
- 408 0022 0023     		movs	r3, #0
- 409 0024 0122     		movs	r2, #1
- 410 0026 0021     		movs	r1, #0
- 411 0028 FFF7FEFF 		bl	xQueueGenericReceive
- 412 002c 0346     		mov	r3, r0
- 413 002e 012B     		cmp	r3, #1
- 414 0030 F5D1     		bne	.L30
-  60:Src/spiops.c  ****         {
-  61:Src/spiops.c  **** 
-  62:Src/spiops.c  ****             status = HAL_SPI_GetState(&hspi1);
- 415              		.loc 2 62 0
- 416 0032 8948     		ldr	r0, .L31+12
- 417 0034 FFF7FEFF 		bl	HAL_SPI_GetState
- 418 0038 0346     		mov	r3, r0
- 419 003a FB72     		strb	r3, [r7, #11]
-  63:Src/spiops.c  ****             if(status == HAL_SPI_STATE_READY)
- 420              		.loc 2 63 0
- 421 003c FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
- 422 003e 012B     		cmp	r3, #1
- 423 0040 40F08380 		bne	.L21
-  64:Src/spiops.c  ****             {
-  65:Src/spiops.c  **** 
-  66:Src/spiops.c  ****                 if(SpiRxData -> header == ('U' | 'P' << 8 ))
- 424              		.loc 2 66 0
- 425 0044 834B     		ldr	r3, .L31+8
- 426 0046 1B68     		ldr	r3, [r3]
- 427 0048 1B88     		ldrh	r3, [r3]
- 428 004a 45F25502 		movw	r2, #20565
- 429 004e 9342     		cmp	r3, r2
- 430 0050 69D1     		bne	.L22
-  67:Src/spiops.c  ****                 {
+ 437 0056 1B88     		ldrh	r3, [r3]
+ 438 0058 1B0A     		lsrs	r3, r3, #8
+ 439 005a 9BB2     		uxth	r3, r3
+ 440 005c DBB2     		uxtb	r3, r3
+ 441 005e 502B     		cmp	r3, #80
+ 442 0060 40F0D180 		bne	.L22
+  66:Src/spiops.c  ****                 {
+  67:Src/spiops.c  **** 
   68:Src/spiops.c  **** 
-  69:Src/spiops.c  **** 
-  70:Src/spiops.c  ****                     UpdateFile->total_sequence_number = (SpiRxData->data[0]);
- 431              		.loc 2 70 0
- 432 0052 834B     		ldr	r3, .L31+20
- 433 0054 1B68     		ldr	r3, [r3]
- 434 0056 7F4A     		ldr	r2, .L31+8
- 435 0058 1268     		ldr	r2, [r2]
- 436 005a 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
- 437 005c 1A60     		str	r2, [r3]
-  71:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[1] << 8);
- 438              		.loc 2 71 0
-ARM GAS  /tmp/ccHKiwYi.s 			page 11
+  69:Src/spiops.c  ****                     UpdateFile->total_sequence_number = (SpiRxData->data[0]);
+ 443              		.loc 2 69 0 is_stmt 1
+ 444 0064 504B     		ldr	r3, .L35+20
+ 445 0066 1B68     		ldr	r3, [r3]
+ 446 0068 4C4A     		ldr	r2, .L35+8
+ 447 006a 1268     		ldr	r2, [r2]
+ 448 006c 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 449 006e 1A60     		str	r2, [r3]
+  70:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[1] << 8);
+ 450              		.loc 2 70 0
+ 451 0070 4D4B     		ldr	r3, .L35+20
+ 452 0072 1B68     		ldr	r3, [r3]
+ 453 0074 4C4A     		ldr	r2, .L35+20
+ 454 0076 1268     		ldr	r2, [r2]
+ 455 0078 1268     		ldr	r2, [r2]
+ 456 007a 4849     		ldr	r1, .L35+8
+ 457 007c 0968     		ldr	r1, [r1]
+ 458 007e C978     		ldrb	r1, [r1, #3]	@ zero_extendqisi2
+ 459 0080 0902     		lsls	r1, r1, #8
+ 460 0082 0A43     		orrs	r2, r2, r1
+ 461 0084 1A60     		str	r2, [r3]
+  71:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[2] << 16);
+ 462              		.loc 2 71 0
+ 463 0086 484B     		ldr	r3, .L35+20
+ 464 0088 1B68     		ldr	r3, [r3]
+ 465 008a 474A     		ldr	r2, .L35+20
+ 466 008c 1268     		ldr	r2, [r2]
+ 467 008e 1268     		ldr	r2, [r2]
+ 468 0090 4249     		ldr	r1, .L35+8
+ 469 0092 0968     		ldr	r1, [r1]
+ 470 0094 0979     		ldrb	r1, [r1, #4]	@ zero_extendqisi2
+ 471 0096 0904     		lsls	r1, r1, #16
+ 472 0098 0A43     		orrs	r2, r2, r1
+ 473 009a 1A60     		str	r2, [r3]
+  72:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[3] << 24);
+ 474              		.loc 2 72 0
+ 475 009c 424B     		ldr	r3, .L35+20
+ 476 009e 1B68     		ldr	r3, [r3]
+ 477 00a0 414A     		ldr	r2, .L35+20
+ 478 00a2 1268     		ldr	r2, [r2]
+ 479 00a4 1268     		ldr	r2, [r2]
+ 480 00a6 3D49     		ldr	r1, .L35+8
+ 481 00a8 0968     		ldr	r1, [r1]
+ 482 00aa 4979     		ldrb	r1, [r1, #5]	@ zero_extendqisi2
+ 483 00ac 0906     		lsls	r1, r1, #24
+ 484 00ae 0A43     		orrs	r2, r2, r1
+ 485 00b0 1A60     		str	r2, [r3]
+  73:Src/spiops.c  **** 
+ARM GAS  /tmp/ccNsmR1g.s 			page 12
 
 
- 439 005e 804B     		ldr	r3, .L31+20
- 440 0060 1B68     		ldr	r3, [r3]
- 441 0062 7F4A     		ldr	r2, .L31+20
- 442 0064 1268     		ldr	r2, [r2]
- 443 0066 1268     		ldr	r2, [r2]
- 444 0068 7A49     		ldr	r1, .L31+8
- 445 006a 0968     		ldr	r1, [r1]
- 446 006c C978     		ldrb	r1, [r1, #3]	@ zero_extendqisi2
- 447 006e 0902     		lsls	r1, r1, #8
- 448 0070 0A43     		orrs	r2, r2, r1
- 449 0072 1A60     		str	r2, [r3]
-  72:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[2] << 16);
- 450              		.loc 2 72 0
- 451 0074 7A4B     		ldr	r3, .L31+20
- 452 0076 1B68     		ldr	r3, [r3]
- 453 0078 794A     		ldr	r2, .L31+20
- 454 007a 1268     		ldr	r2, [r2]
- 455 007c 1268     		ldr	r2, [r2]
- 456 007e 7549     		ldr	r1, .L31+8
- 457 0080 0968     		ldr	r1, [r1]
- 458 0082 0979     		ldrb	r1, [r1, #4]	@ zero_extendqisi2
- 459 0084 0904     		lsls	r1, r1, #16
- 460 0086 0A43     		orrs	r2, r2, r1
- 461 0088 1A60     		str	r2, [r3]
-  73:Src/spiops.c  ****                     UpdateFile->total_sequence_number |= (SpiRxData->data[3] << 24);
- 462              		.loc 2 73 0
- 463 008a 754B     		ldr	r3, .L31+20
- 464 008c 1B68     		ldr	r3, [r3]
- 465 008e 744A     		ldr	r2, .L31+20
- 466 0090 1268     		ldr	r2, [r2]
- 467 0092 1268     		ldr	r2, [r2]
- 468 0094 6F49     		ldr	r1, .L31+8
- 469 0096 0968     		ldr	r1, [r1]
- 470 0098 4979     		ldrb	r1, [r1, #5]	@ zero_extendqisi2
- 471 009a 0906     		lsls	r1, r1, #24
- 472 009c 0A43     		orrs	r2, r2, r1
- 473 009e 1A60     		str	r2, [r3]
-  74:Src/spiops.c  **** 
-  75:Src/spiops.c  ****                     UpdateFile->current_sequence_number = (SpiRxData->data[4]);
- 474              		.loc 2 75 0
- 475 00a0 6F4B     		ldr	r3, .L31+20
- 476 00a2 1B68     		ldr	r3, [r3]
- 477 00a4 6B4A     		ldr	r2, .L31+8
- 478 00a6 1268     		ldr	r2, [r2]
- 479 00a8 9279     		ldrb	r2, [r2, #6]	@ zero_extendqisi2
- 480 00aa 5A60     		str	r2, [r3, #4]
-  76:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[5] << 8);
- 481              		.loc 2 76 0
- 482 00ac 6C4B     		ldr	r3, .L31+20
- 483 00ae 1B68     		ldr	r3, [r3]
- 484 00b0 6B4A     		ldr	r2, .L31+20
- 485 00b2 1268     		ldr	r2, [r2]
- 486 00b4 5268     		ldr	r2, [r2, #4]
- 487 00b6 6749     		ldr	r1, .L31+8
- 488 00b8 0968     		ldr	r1, [r1]
- 489 00ba C979     		ldrb	r1, [r1, #7]	@ zero_extendqisi2
- 490 00bc 0902     		lsls	r1, r1, #8
-ARM GAS  /tmp/ccHKiwYi.s 			page 12
-
-
- 491 00be 0A43     		orrs	r2, r2, r1
- 492 00c0 5A60     		str	r2, [r3, #4]
-  77:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[6] << 16);
- 493              		.loc 2 77 0
- 494 00c2 674B     		ldr	r3, .L31+20
- 495 00c4 1B68     		ldr	r3, [r3]
- 496 00c6 664A     		ldr	r2, .L31+20
- 497 00c8 1268     		ldr	r2, [r2]
- 498 00ca 5268     		ldr	r2, [r2, #4]
- 499 00cc 6149     		ldr	r1, .L31+8
- 500 00ce 0968     		ldr	r1, [r1]
- 501 00d0 097A     		ldrb	r1, [r1, #8]	@ zero_extendqisi2
- 502 00d2 0904     		lsls	r1, r1, #16
- 503 00d4 0A43     		orrs	r2, r2, r1
- 504 00d6 5A60     		str	r2, [r3, #4]
-  78:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[7] << 24);
- 505              		.loc 2 78 0
- 506 00d8 614B     		ldr	r3, .L31+20
- 507 00da 1B68     		ldr	r3, [r3]
- 508 00dc 604A     		ldr	r2, .L31+20
- 509 00de 1268     		ldr	r2, [r2]
- 510 00e0 5268     		ldr	r2, [r2, #4]
- 511 00e2 5C49     		ldr	r1, .L31+8
- 512 00e4 0968     		ldr	r1, [r1]
- 513 00e6 497A     		ldrb	r1, [r1, #9]	@ zero_extendqisi2
- 514 00e8 0906     		lsls	r1, r1, #24
- 515 00ea 0A43     		orrs	r2, r2, r1
- 516 00ec 5A60     		str	r2, [r3, #4]
- 517              	.LBB3:
-  79:Src/spiops.c  **** 
-  80:Src/spiops.c  ****                     for(int i=0;i<SPI_ENTITY_SIZE; i++)
- 518              		.loc 2 80 0
- 519 00ee 0023     		movs	r3, #0
- 520 00f0 FB60     		str	r3, [r7, #12]
- 521 00f2 15E0     		b	.L23
- 522              	.L24:
-  81:Src/spiops.c  ****                     {
-  82:Src/spiops.c  **** //                        UpdateFile->data[i] = SpiRxData->data[i+2];
-  83:Src/spiops.c  ****                         writeFlash(SpiRxData->data[i + 8], (SECTOR6_ADDRESS + (SPI_ENTITY_SIZE * (U
- 523              		.loc 2 83 0 discriminator 3
- 524 00f4 574B     		ldr	r3, .L31+8
- 525 00f6 1A68     		ldr	r2, [r3]
- 526 00f8 FB68     		ldr	r3, [r7, #12]
- 527 00fa 0833     		adds	r3, r3, #8
- 528 00fc 1344     		add	r3, r3, r2
- 529 00fe 9878     		ldrb	r0, [r3, #2]	@ zero_extendqisi2
- 530 0100 574B     		ldr	r3, .L31+20
+  74:Src/spiops.c  ****                     UpdateFile->current_sequence_number = (SpiRxData->data[4]);
+ 486              		.loc 2 74 0
+ 487 00b2 3D4B     		ldr	r3, .L35+20
+ 488 00b4 1B68     		ldr	r3, [r3]
+ 489 00b6 394A     		ldr	r2, .L35+8
+ 490 00b8 1268     		ldr	r2, [r2]
+ 491 00ba 9279     		ldrb	r2, [r2, #6]	@ zero_extendqisi2
+ 492 00bc 5A60     		str	r2, [r3, #4]
+  75:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[5] << 8);
+ 493              		.loc 2 75 0
+ 494 00be 3A4B     		ldr	r3, .L35+20
+ 495 00c0 1B68     		ldr	r3, [r3]
+ 496 00c2 394A     		ldr	r2, .L35+20
+ 497 00c4 1268     		ldr	r2, [r2]
+ 498 00c6 5268     		ldr	r2, [r2, #4]
+ 499 00c8 3449     		ldr	r1, .L35+8
+ 500 00ca 0968     		ldr	r1, [r1]
+ 501 00cc C979     		ldrb	r1, [r1, #7]	@ zero_extendqisi2
+ 502 00ce 0902     		lsls	r1, r1, #8
+ 503 00d0 0A43     		orrs	r2, r2, r1
+ 504 00d2 5A60     		str	r2, [r3, #4]
+  76:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[6] << 16);
+ 505              		.loc 2 76 0
+ 506 00d4 344B     		ldr	r3, .L35+20
+ 507 00d6 1B68     		ldr	r3, [r3]
+ 508 00d8 334A     		ldr	r2, .L35+20
+ 509 00da 1268     		ldr	r2, [r2]
+ 510 00dc 5268     		ldr	r2, [r2, #4]
+ 511 00de 2F49     		ldr	r1, .L35+8
+ 512 00e0 0968     		ldr	r1, [r1]
+ 513 00e2 097A     		ldrb	r1, [r1, #8]	@ zero_extendqisi2
+ 514 00e4 0904     		lsls	r1, r1, #16
+ 515 00e6 0A43     		orrs	r2, r2, r1
+ 516 00e8 5A60     		str	r2, [r3, #4]
+  77:Src/spiops.c  ****                     UpdateFile->current_sequence_number |= (SpiRxData->data[7] << 24);
+ 517              		.loc 2 77 0
+ 518 00ea 2F4B     		ldr	r3, .L35+20
+ 519 00ec 1B68     		ldr	r3, [r3]
+ 520 00ee 2E4A     		ldr	r2, .L35+20
+ 521 00f0 1268     		ldr	r2, [r2]
+ 522 00f2 5268     		ldr	r2, [r2, #4]
+ 523 00f4 2949     		ldr	r1, .L35+8
+ 524 00f6 0968     		ldr	r1, [r1]
+ 525 00f8 497A     		ldrb	r1, [r1, #9]	@ zero_extendqisi2
+ 526 00fa 0906     		lsls	r1, r1, #24
+ 527 00fc 0A43     		orrs	r2, r2, r1
+ 528 00fe 5A60     		str	r2, [r3, #4]
+  78:Src/spiops.c  **** 
+  79:Src/spiops.c  ****                     mprintf("%d\r\n", UpdateFile->current_sequence_number);
+ 529              		.loc 2 79 0
+ 530 0100 294B     		ldr	r3, .L35+20
  531 0102 1B68     		ldr	r3, [r3]
  532 0104 5B68     		ldr	r3, [r3, #4]
- 533 0106 6C22     		movs	r2, #108
- 534 0108 02FB03F2 		mul	r2, r2, r3
- 535 010c FB68     		ldr	r3, [r7, #12]
- 536 010e 1A44     		add	r2, r2, r3
- 537 0110 544B     		ldr	r3, .L31+24
- 538 0112 1344     		add	r3, r3, r2
- 539 0114 1946     		mov	r1, r3
- 540 0116 FFF7FEFF 		bl	writeFlash
-ARM GAS  /tmp/ccHKiwYi.s 			page 13
+ 533 0106 1946     		mov	r1, r3
+ 534 0108 2848     		ldr	r0, .L35+24
+ 535 010a FFF7FEFF 		bl	mprintf
+  80:Src/spiops.c  **** 
+ARM GAS  /tmp/ccNsmR1g.s 			page 13
 
 
-  80:Src/spiops.c  ****                     {
- 541              		.loc 2 80 0 discriminator 3
- 542 011a FB68     		ldr	r3, [r7, #12]
- 543 011c 0133     		adds	r3, r3, #1
- 544 011e FB60     		str	r3, [r7, #12]
- 545              	.L23:
-  80:Src/spiops.c  ****                     {
- 546              		.loc 2 80 0 is_stmt 0 discriminator 1
- 547 0120 FB68     		ldr	r3, [r7, #12]
- 548 0122 6B2B     		cmp	r3, #107
- 549 0124 E6DD     		ble	.L24
- 550              	.L22:
- 551              	.LBE3:
+  81:Src/spiops.c  ****                     if(UpdateFile->current_sequence_number == 1)
+ 536              		.loc 2 81 0
+ 537 010e 264B     		ldr	r3, .L35+20
+ 538 0110 1B68     		ldr	r3, [r3]
+ 539 0112 5B68     		ldr	r3, [r3, #4]
+ 540 0114 012B     		cmp	r3, #1
+ 541 0116 0AD1     		bne	.L23
+  82:Src/spiops.c  ****                     {
+  83:Src/spiops.c  ****                         update_file = malloc(UpdateFile->total_sequence_number*SPI_ENTITY_SIZE);
+ 542              		.loc 2 83 0
+ 543 0118 234B     		ldr	r3, .L35+20
+ 544 011a 1B68     		ldr	r3, [r3]
+ 545 011c 1B68     		ldr	r3, [r3]
+ 546 011e 6C22     		movs	r2, #108
+ 547 0120 02FB03F3 		mul	r3, r2, r3
+ 548 0124 1846     		mov	r0, r3
+ 549 0126 FFF7FEFF 		bl	malloc
+ 550 012a 0346     		mov	r3, r0
+ 551 012c 7B61     		str	r3, [r7, #20]
+ 552              	.L23:
+ 553              	.LBB3:
   84:Src/spiops.c  ****                     }
   85:Src/spiops.c  **** 
-  86:Src/spiops.c  **** 
-  87:Src/spiops.c  ****                 }
-  88:Src/spiops.c  **** 
-  89:Src/spiops.c  **** 
-  90:Src/spiops.c  ****                 if(SpiRxData -> header == ('C' | 'O' << 8 ))
- 552              		.loc 2 90 0 is_stmt 1
- 553 0126 4B4B     		ldr	r3, .L31+8
- 554 0128 1B68     		ldr	r3, [r3]
- 555 012a 1B88     		ldrh	r3, [r3]
- 556 012c 44F64372 		movw	r2, #20291
- 557 0130 9342     		cmp	r3, r2
- 558 0132 0AD1     		bne	.L21
-  91:Src/spiops.c  ****                 {
-  92:Src/spiops.c  **** 
-  93:Src/spiops.c  ****                     ControlData = (CONTROL_DATA_FORMAT *)SpiRxData + offsetof(SPI_TRANSFER_FORMAT, 
- 559              		.loc 2 93 0
- 560 0134 474B     		ldr	r3, .L31+8
+  86:Src/spiops.c  ****                     for(int i=0;i<SPI_ENTITY_SIZE; i++)
+ 554              		.loc 2 86 0
+ 555 012e 0023     		movs	r3, #0
+ 556 0130 3B61     		str	r3, [r7, #16]
+ 557 0132 14E0     		b	.L24
+ 558              	.L25:
+  87:Src/spiops.c  ****                     {
+  88:Src/spiops.c  **** //                        writeFlash(SpiRxData->data[i + 8], (SECTOR6_ADDRESS + (SPI_ENTITY_SIZE * 
+  89:Src/spiops.c  ****                         update_file[i + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1
+ 559              		.loc 2 89 0 discriminator 3
+ 560 0134 1C4B     		ldr	r3, .L35+20
  561 0136 1B68     		ldr	r3, [r3]
- 562 0138 4B4A     		ldr	r2, .L31+28
- 563 013a 1360     		str	r3, [r2]
-  94:Src/spiops.c  ****                     mprintf("%d\r\n", ControlData->x_position);
- 564              		.loc 2 94 0
- 565 013c 4A4B     		ldr	r3, .L31+28
- 566 013e 1B68     		ldr	r3, [r3]
- 567 0140 1B6B     		ldr	r3, [r3, #48]
- 568 0142 1946     		mov	r1, r3
- 569 0144 4948     		ldr	r0, .L31+32
- 570 0146 FFF7FEFF 		bl	mprintf
- 571              	.L21:
+ 562 0138 5B68     		ldr	r3, [r3, #4]
+ 563 013a 6C22     		movs	r2, #108
+ 564 013c 02FB03F2 		mul	r2, r2, r3
+ 565 0140 3B69     		ldr	r3, [r7, #16]
+ 566 0142 1344     		add	r3, r3, r2
+ 567 0144 6C3B     		subs	r3, r3, #108
+ 568 0146 7A69     		ldr	r2, [r7, #20]
+ 569 0148 1344     		add	r3, r3, r2
+ 570 014a 144A     		ldr	r2, .L35+8
+ 571 014c 1168     		ldr	r1, [r2]
+ 572 014e 3A69     		ldr	r2, [r7, #16]
+ 573 0150 0832     		adds	r2, r2, #8
+ 574 0152 0A44     		add	r2, r2, r1
+ 575 0154 9278     		ldrb	r2, [r2, #2]	@ zero_extendqisi2
+ 576 0156 1A70     		strb	r2, [r3]
+  86:Src/spiops.c  ****                     {
+ 577              		.loc 2 86 0 discriminator 3
+ 578 0158 3B69     		ldr	r3, [r7, #16]
+ 579 015a 0133     		adds	r3, r3, #1
+ 580 015c 3B61     		str	r3, [r7, #16]
+ 581              	.L24:
+  86:Src/spiops.c  ****                     {
+ARM GAS  /tmp/ccNsmR1g.s 			page 14
+
+
+ 582              		.loc 2 86 0 is_stmt 0 discriminator 1
+ 583 015e 3B69     		ldr	r3, [r7, #16]
+ 584 0160 6B2B     		cmp	r3, #107
+ 585 0162 E7DD     		ble	.L25
+ 586              	.LBE3:
+  90:Src/spiops.c  ****                     }
+  91:Src/spiops.c  **** 
+  92:Src/spiops.c  **** 
+  93:Src/spiops.c  ****                     if(UpdateFile->current_sequence_number == UpdateFile->total_sequence_number)
+ 587              		.loc 2 93 0 is_stmt 1
+ 588 0164 104B     		ldr	r3, .L35+20
+ 589 0166 1B68     		ldr	r3, [r3]
+ 590 0168 5A68     		ldr	r2, [r3, #4]
+ 591 016a 0F4B     		ldr	r3, .L35+20
+ 592 016c 1B68     		ldr	r3, [r3]
+ 593 016e 1B68     		ldr	r3, [r3]
+ 594 0170 9A42     		cmp	r2, r3
+ 595 0172 48D1     		bne	.L22
+  94:Src/spiops.c  ****                     {
   95:Src/spiops.c  **** 
-  96:Src/spiops.c  ****                 }
-  97:Src/spiops.c  **** 
-  98:Src/spiops.c  ****             }
-  99:Src/spiops.c  **** 
+  96:Src/spiops.c  ****                         mprintf("Writing data to memory\r\n");
+ 596              		.loc 2 96 0
+ 597 0174 0E48     		ldr	r0, .L35+28
+ 598 0176 FFF7FEFF 		bl	mprintf
+  97:Src/spiops.c  ****                         HAL_FLASH_Unlock();
+ 599              		.loc 2 97 0
+ 600 017a FFF7FEFF 		bl	HAL_FLASH_Unlock
+  98:Src/spiops.c  ****                         __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPER
+ 601              		.loc 2 98 0
+ 602 017e 0D4B     		ldr	r3, .L35+32
+ 603 0180 3322     		movs	r2, #51
+ 604 0182 DA60     		str	r2, [r3, #12]
+  99:Src/spiops.c  ****                         FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+ 605              		.loc 2 99 0
+ 606 0184 0221     		movs	r1, #2
+ 607 0186 0620     		movs	r0, #6
+ 608 0188 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 609              	.LBB4:
  100:Src/spiops.c  **** 
- 101:Src/spiops.c  ****             xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
- 572              		.loc 2 101 0
- 573 014a 494B     		ldr	r3, .L31+36
- 574 014c 1868     		ldr	r0, [r3]
- 575 014e 0023     		movs	r3, #0
- 576 0150 4FF0FF32 		mov	r2, #-1
- 577 0154 0021     		movs	r1, #0
-ARM GAS  /tmp/ccHKiwYi.s 			page 14
+ 101:Src/spiops.c  ****                         for(int i=0; i<SPI_ENTITY_SIZE*UpdateFile->total_sequence_number; i++)
+ 610              		.loc 2 101 0
+ 611 018c 0023     		movs	r3, #0
+ 612 018e FB60     		str	r3, [r7, #12]
+ 613 0190 28E0     		b	.L26
+ 614              	.L36:
+ 615 0192 00BF     		.align	2
+ 616              	.L35:
+ 617 0194 1C000000 		.word	.LC10
+ 618 0198 00000000 		.word	SpiTxData
+ 619 019c 00000000 		.word	SpiRxData
+ 620 01a0 00000000 		.word	hspi1
+ 621 01a4 00000000 		.word	spiSemaphoreHandle
+ 622 01a8 00000000 		.word	UpdateFile
+ 623 01ac 28000000 		.word	.LC11
+ 624 01b0 30000000 		.word	.LC12
+ 625 01b4 003C0240 		.word	1073888256
+ 626              	.L27:
+ARM GAS  /tmp/ccNsmR1g.s 			page 15
 
 
- 578 0156 FFF7FEFF 		bl	xQueueGenericReceive
- 102:Src/spiops.c  **** 
- 103:Src/spiops.c  ****             SpiTxData->header = (('E') | (('N') << 8 ));
- 579              		.loc 2 103 0
- 580 015a 3D4B     		ldr	r3, .L31+4
- 581 015c 1B68     		ldr	r3, [r3]
- 582 015e 44F64562 		movw	r2, #20037
- 583 0162 1A80     		strh	r2, [r3]	@ movhi
- 104:Src/spiops.c  ****             memcpy(&SpiTxData->data[0], (unsigned char *)EnvironmentData, SPI_DATA_SIZE);
- 584              		.loc 2 104 0
- 585 0164 3A4B     		ldr	r3, .L31+4
- 586 0166 1B68     		ldr	r3, [r3]
- 587 0168 981C     		adds	r0, r3, #2
- 588 016a 424B     		ldr	r3, .L31+40
- 589 016c 1B68     		ldr	r3, [r3]
- 590 016e 7422     		movs	r2, #116
- 591 0170 1946     		mov	r1, r3
- 592 0172 FFF7FEFF 		bl	memcpy
- 105:Src/spiops.c  ****             memcpy(&SpiTxData->data[99], (unsigned char *)&EnvironmentData->sensor_data, sizeof(SEN
- 593              		.loc 2 105 0
- 594 0176 364B     		ldr	r3, .L31+4
- 595 0178 1B68     		ldr	r3, [r3]
- 596 017a 03F16500 		add	r0, r3, #101
- 597 017e 3D4B     		ldr	r3, .L31+40
- 598 0180 1B68     		ldr	r3, [r3]
- 599 0182 6433     		adds	r3, r3, #100
- 600 0184 1422     		movs	r2, #20
- 601 0186 1946     		mov	r1, r3
- 602 0188 FFF7FEFF 		bl	memcpy
- 106:Src/spiops.c  ****             SpiTxData->checksum = (('C') | (('H') << 8 ));
- 603              		.loc 2 106 0
- 604 018c 304B     		ldr	r3, .L31+4
- 605 018e 1B68     		ldr	r3, [r3]
- 606 0190 44F64302 		movw	r2, #18499
- 607 0194 A3F87620 		strh	r2, [r3, #118]	@ movhi
- 107:Src/spiops.c  **** 
- 108:Src/spiops.c  ****             xSemaphoreGive(spiMutexHandle);
- 608              		.loc 2 108 0
- 609 0198 354B     		ldr	r3, .L31+36
- 610 019a 1868     		ldr	r0, [r3]
- 611 019c 0023     		movs	r3, #0
- 612 019e 0022     		movs	r2, #0
- 613 01a0 0021     		movs	r1, #0
- 614 01a2 FFF7FEFF 		bl	xQueueGenericSend
- 109:Src/spiops.c  **** 
- 110:Src/spiops.c  **** 
+ 102:Src/spiops.c  ****                         {
+ 103:Src/spiops.c  ****                             HAL_FLASH_Program(TYPEPROGRAM_BYTE, SECTOR6_ADDRESS + i , (uint8_t)upda
+ 627              		.loc 2 103 0 discriminator 3
+ 628 01b8 FA68     		ldr	r2, [r7, #12]
+ 629 01ba 5E4B     		ldr	r3, .L37
+ 630 01bc 1344     		add	r3, r3, r2
+ 631 01be 1946     		mov	r1, r3
+ 632 01c0 FB68     		ldr	r3, [r7, #12]
+ 633 01c2 7A69     		ldr	r2, [r7, #20]
+ 634 01c4 1344     		add	r3, r3, r2
+ 635 01c6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 636 01c8 DBB2     		uxtb	r3, r3
+ 637 01ca 4FF00004 		mov	r4, #0
+ 638 01ce 1A46     		mov	r2, r3
+ 639 01d0 2346     		mov	r3, r4
+ 640 01d2 0020     		movs	r0, #0
+ 641 01d4 FFF7FEFF 		bl	HAL_FLASH_Program
+ 104:Src/spiops.c  ****                             HAL_Delay(20);
+ 642              		.loc 2 104 0 discriminator 3
+ 643 01d8 1420     		movs	r0, #20
+ 644 01da FFF7FEFF 		bl	HAL_Delay
+ 101:Src/spiops.c  ****                         {
+ 645              		.loc 2 101 0 discriminator 3
+ 646 01de FB68     		ldr	r3, [r7, #12]
+ 647 01e0 0133     		adds	r3, r3, #1
+ 648 01e2 FB60     		str	r3, [r7, #12]
+ 649              	.L26:
+ 101:Src/spiops.c  ****                         {
+ 650              		.loc 2 101 0 is_stmt 0 discriminator 1
+ 651 01e4 544B     		ldr	r3, .L37+4
+ 652 01e6 1B68     		ldr	r3, [r3]
+ 653 01e8 1B68     		ldr	r3, [r3]
+ 654 01ea 6C22     		movs	r2, #108
+ 655 01ec 02FB03F2 		mul	r2, r2, r3
+ 656 01f0 FB68     		ldr	r3, [r7, #12]
+ 657 01f2 9A42     		cmp	r2, r3
+ 658 01f4 E0D8     		bhi	.L27
+ 659              	.LBE4:
+ 105:Src/spiops.c  ****                         }
+ 106:Src/spiops.c  **** 
+ 107:Src/spiops.c  ****                         HAL_FLASH_Lock();
+ 660              		.loc 2 107 0 is_stmt 1
+ 661 01f6 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 108:Src/spiops.c  **** 
+ 109:Src/spiops.c  ****                         free(update_file);
+ 662              		.loc 2 109 0
+ 663 01fa 7869     		ldr	r0, [r7, #20]
+ 664 01fc FFF7FEFF 		bl	free
+ 110:Src/spiops.c  ****                         mprintf("Writing is done\r\n");
+ 665              		.loc 2 110 0
+ 666 0200 4E48     		ldr	r0, .L37+8
+ 667 0202 FFF7FEFF 		bl	mprintf
+ 668              	.L22:
  111:Src/spiops.c  **** 
- 112:Src/spiops.c  ****             HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRA
- 615              		.loc 2 112 0
- 616 01a6 2A4B     		ldr	r3, .L31+4
- 617 01a8 1968     		ldr	r1, [r3]
- 618 01aa 2A4B     		ldr	r3, .L31+8
- 619 01ac 1A68     		ldr	r2, [r3]
- 620 01ae 7823     		movs	r3, #120
- 621 01b0 2948     		ldr	r0, .L31+12
- 622 01b2 FFF7FEFF 		bl	HAL_SPI_TransmitReceive_IT
- 113:Src/spiops.c  **** 
-ARM GAS  /tmp/ccHKiwYi.s 			page 15
-
-
+ 112:Src/spiops.c  **** 
+ 113:Src/spiops.c  ****                     }
  114:Src/spiops.c  **** 
- 115:Src/spiops.c  ****             if(ControlData -> step_motor1_direction == FORWARD)
- 623              		.loc 2 115 0
- 624 01b6 2C4B     		ldr	r3, .L31+28
- 625 01b8 1B68     		ldr	r3, [r3]
- 626 01ba 93F83C30 		ldrb	r3, [r3, #60]	@ zero_extendqisi2
- 627 01be 012B     		cmp	r3, #1
- 628 01c0 0AD1     		bne	.L25
- 116:Src/spiops.c  ****             {
- 117:Src/spiops.c  ****                 motor1.direction = FORWARD;
- 629              		.loc 2 117 0
- 630 01c2 2D4B     		ldr	r3, .L31+44
- 631 01c4 0122     		movs	r2, #1
- 632 01c6 1A60     		str	r2, [r3]
- 118:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor1_speed;
- 633              		.loc 2 118 0
- 634 01c8 274B     		ldr	r3, .L31+28
- 635 01ca 1B68     		ldr	r3, [r3]
- 636 01cc 93F84230 		ldrb	r3, [r3, #66]	@ zero_extendqisi2
- 637 01d0 1A46     		mov	r2, r3
- 638 01d2 294B     		ldr	r3, .L31+44
- 639 01d4 5A60     		str	r2, [r3, #4]
- 640 01d6 13E0     		b	.L26
- 641              	.L25:
- 119:Src/spiops.c  ****             }
- 120:Src/spiops.c  ****             else if(ControlData -> step_motor1_direction == BACKWARD)
- 642              		.loc 2 120 0
- 643 01d8 234B     		ldr	r3, .L31+28
- 644 01da 1B68     		ldr	r3, [r3]
- 645 01dc 93F83C30 		ldrb	r3, [r3, #60]	@ zero_extendqisi2
- 646 01e0 022B     		cmp	r3, #2
- 647 01e2 0AD1     		bne	.L27
- 121:Src/spiops.c  ****             {
- 122:Src/spiops.c  ****                 motor1.direction = BACKWARD;
- 648              		.loc 2 122 0
- 649 01e4 244B     		ldr	r3, .L31+44
- 650 01e6 0222     		movs	r2, #2
- 651 01e8 1A60     		str	r2, [r3]
- 123:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor1_speed;
- 652              		.loc 2 123 0
- 653 01ea 1F4B     		ldr	r3, .L31+28
- 654 01ec 1B68     		ldr	r3, [r3]
- 655 01ee 93F84230 		ldrb	r3, [r3, #66]	@ zero_extendqisi2
- 656 01f2 1A46     		mov	r2, r3
- 657 01f4 204B     		ldr	r3, .L31+44
- 658 01f6 5A60     		str	r2, [r3, #4]
- 659 01f8 02E0     		b	.L26
- 660              	.L27:
- 124:Src/spiops.c  ****             }
- 125:Src/spiops.c  ****             else
- 126:Src/spiops.c  ****             {
- 127:Src/spiops.c  ****                 motor1.direction = STOP;
- 661              		.loc 2 127 0
- 662 01fa 1F4B     		ldr	r3, .L31+44
- 663 01fc 0022     		movs	r2, #0
- 664 01fe 1A60     		str	r2, [r3]
- 665              	.L26:
-ARM GAS  /tmp/ccHKiwYi.s 			page 16
+ARM GAS  /tmp/ccNsmR1g.s 			page 16
 
 
- 128:Src/spiops.c  ****             }
- 129:Src/spiops.c  **** 
- 130:Src/spiops.c  ****             if(ControlData -> step_motor2_direction == FORWARD)
- 666              		.loc 2 130 0
- 667 0200 194B     		ldr	r3, .L31+28
- 668 0202 1B68     		ldr	r3, [r3]
- 669 0204 93F83D30 		ldrb	r3, [r3, #61]	@ zero_extendqisi2
- 670 0208 012B     		cmp	r3, #1
- 671 020a 0AD1     		bne	.L28
- 131:Src/spiops.c  ****             {
- 132:Src/spiops.c  ****                 motor2.direction = FORWARD;
- 672              		.loc 2 132 0
- 673 020c 1B4B     		ldr	r3, .L31+48
- 674 020e 0122     		movs	r2, #1
- 675 0210 1A60     		str	r2, [r3]
- 133:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor2_speed;
- 676              		.loc 2 133 0
- 677 0212 154B     		ldr	r3, .L31+28
+ 115:Src/spiops.c  **** 
+ 116:Src/spiops.c  **** //                    if(UpdateFile->total_sequence_number == UpdateFile->current_sequence_number)
+ 117:Src/spiops.c  **** //                        HAL_NVIC_SystemReset();
+ 118:Src/spiops.c  **** 
+ 119:Src/spiops.c  **** 
+ 120:Src/spiops.c  ****                 }
+ 121:Src/spiops.c  **** 
+ 122:Src/spiops.c  ****                 if((SpiRxData->header & 0xff) == 'C' && ((SpiRxData->header >> 8) & 0xff) == 'O')
+ 669              		.loc 2 122 0
+ 670 0206 4E4B     		ldr	r3, .L37+12
+ 671 0208 1B68     		ldr	r3, [r3]
+ 672 020a 1B88     		ldrh	r3, [r3]
+ 673 020c DBB2     		uxtb	r3, r3
+ 674 020e 432B     		cmp	r3, #67
+ 675 0210 0BD1     		bne	.L28
+ 676              		.loc 2 122 0 is_stmt 0 discriminator 1
+ 677 0212 4B4B     		ldr	r3, .L37+12
  678 0214 1B68     		ldr	r3, [r3]
- 679 0216 93F84330 		ldrb	r3, [r3, #67]	@ zero_extendqisi2
- 680 021a 1A46     		mov	r2, r3
- 681 021c 164B     		ldr	r3, .L31+44
- 682 021e 5A60     		str	r2, [r3, #4]
- 683 0220 FDE6     		b	.L30
- 684              	.L28:
- 134:Src/spiops.c  ****             }
- 135:Src/spiops.c  ****             else if(ControlData -> step_motor2_direction == BACKWARD)
- 685              		.loc 2 135 0
- 686 0222 114B     		ldr	r3, .L31+28
+ 679 0216 1B88     		ldrh	r3, [r3]
+ 680 0218 1B0A     		lsrs	r3, r3, #8
+ 681 021a 9BB2     		uxth	r3, r3
+ 682 021c DBB2     		uxtb	r3, r3
+ 683 021e 4F2B     		cmp	r3, #79
+ 684 0220 03D1     		bne	.L28
+ 123:Src/spiops.c  ****                 {
+ 124:Src/spiops.c  ****                     ControlData = (CONTROL_DATA_FORMAT *)SpiRxData + offsetof(SPI_TRANSFER_FORMAT, 
+ 685              		.loc 2 124 0 is_stmt 1
+ 686 0222 474B     		ldr	r3, .L37+12
  687 0224 1B68     		ldr	r3, [r3]
- 688 0226 93F83D30 		ldrb	r3, [r3, #61]	@ zero_extendqisi2
- 689 022a 022B     		cmp	r3, #2
- 690 022c 0AD1     		bne	.L29
- 136:Src/spiops.c  ****             {
- 137:Src/spiops.c  ****                 motor2.direction = BACKWARD;
- 691              		.loc 2 137 0
- 692 022e 134B     		ldr	r3, .L31+48
- 693 0230 0222     		movs	r2, #2
- 694 0232 1A60     		str	r2, [r3]
- 138:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor2_speed;
- 695              		.loc 2 138 0
- 696 0234 0C4B     		ldr	r3, .L31+28
- 697 0236 1B68     		ldr	r3, [r3]
- 698 0238 93F84330 		ldrb	r3, [r3, #67]	@ zero_extendqisi2
- 699 023c 1A46     		mov	r2, r3
- 700 023e 0E4B     		ldr	r3, .L31+44
- 701 0240 5A60     		str	r2, [r3, #4]
- 702 0242 ECE6     		b	.L30
- 703              	.L29:
- 139:Src/spiops.c  ****             }
- 140:Src/spiops.c  ****             else
- 141:Src/spiops.c  ****             {
- 142:Src/spiops.c  ****                 motor2.direction = STOP;
- 704              		.loc 2 142 0
- 705 0244 0D4B     		ldr	r3, .L31+48
- 706 0246 0022     		movs	r2, #0
- 707 0248 1A60     		str	r2, [r3]
-ARM GAS  /tmp/ccHKiwYi.s 			page 17
+ 688 0226 474A     		ldr	r2, .L37+16
+ 689 0228 1360     		str	r3, [r2]
+ 690              	.L28:
+ 125:Src/spiops.c  ****                 }
+ 126:Src/spiops.c  **** 
+ 127:Src/spiops.c  ****                 SpiRxData->header = 0;
+ 691              		.loc 2 127 0
+ 692 022a 454B     		ldr	r3, .L37+12
+ 693 022c 1B68     		ldr	r3, [r3]
+ 694 022e 0022     		movs	r2, #0
+ 695 0230 1A80     		strh	r2, [r3]	@ movhi
+ 696              	.L21:
+ 128:Src/spiops.c  **** 
+ 129:Src/spiops.c  ****             }
+ 130:Src/spiops.c  **** 
+ 131:Src/spiops.c  **** 
+ 132:Src/spiops.c  ****             xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+ 697              		.loc 2 132 0
+ 698 0232 454B     		ldr	r3, .L37+20
+ 699 0234 1868     		ldr	r0, [r3]
+ 700 0236 0023     		movs	r3, #0
+ 701 0238 4FF0FF32 		mov	r2, #-1
+ 702 023c 0021     		movs	r1, #0
+ 703 023e FFF7FEFF 		bl	xQueueGenericReceive
+ 133:Src/spiops.c  **** 
+ 134:Src/spiops.c  ****             SpiTxData->header = (('E') | (('N') << 8 ));
+ 704              		.loc 2 134 0
+ 705 0242 424B     		ldr	r3, .L37+24
+ARM GAS  /tmp/ccNsmR1g.s 			page 17
 
 
-  59:Src/spiops.c  ****         {
- 708              		.loc 2 59 0
- 709 024a E8E6     		b	.L30
- 710              	.L32:
- 711              		.align	2
- 712              	.L31:
- 713 024c 1C000000 		.word	.LC10
- 714 0250 00000000 		.word	SpiTxData
- 715 0254 00000000 		.word	SpiRxData
- 716 0258 00000000 		.word	hspi1
- 717 025c 00000000 		.word	spiSemaphoreHandle
- 718 0260 00000000 		.word	UpdateFile
- 719 0264 94FF0708 		.word	134741908
- 720 0268 00000000 		.word	ControlData
- 721 026c 28000000 		.word	.LC11
- 722 0270 00000000 		.word	spiMutexHandle
- 723 0274 00000000 		.word	EnvironmentData
- 724 0278 00000000 		.word	motor1
- 725 027c 00000000 		.word	motor2
- 726              		.cfi_endproc
- 727              	.LFE146:
- 729              		.section	.rodata
- 730 002d 000000   		.align	2
- 731              	.LC12:
- 732 0030 73656E73 		.ascii	"sensorOps\015\012\000"
- 732      6F724F70 
- 732      730D0A00 
- 733              		.section	.text.sensorOps,"ax",%progbits
- 734              		.align	1
- 735              		.global	sensorOps
- 736              		.syntax unified
- 737              		.thumb
- 738              		.thumb_func
- 739              		.fpu fpv4-sp-d16
- 741              	sensorOps:
- 742              	.LFB147:
- 743              		.file 3 "Src/sensorops.c"
+ 706 0244 1B68     		ldr	r3, [r3]
+ 707 0246 44F64562 		movw	r2, #20037
+ 708 024a 1A80     		strh	r2, [r3]	@ movhi
+ 135:Src/spiops.c  ****             memcpy(&SpiTxData->data[0], (unsigned char *)EnvironmentData, SPI_DATA_SIZE);
+ 709              		.loc 2 135 0
+ 710 024c 3F4B     		ldr	r3, .L37+24
+ 711 024e 1B68     		ldr	r3, [r3]
+ 712 0250 981C     		adds	r0, r3, #2
+ 713 0252 3F4B     		ldr	r3, .L37+28
+ 714 0254 1B68     		ldr	r3, [r3]
+ 715 0256 7422     		movs	r2, #116
+ 716 0258 1946     		mov	r1, r3
+ 717 025a FFF7FEFF 		bl	memcpy
+ 136:Src/spiops.c  ****             memcpy(&SpiTxData->data[99], (unsigned char *)&EnvironmentData->sensor_data, sizeof(SEN
+ 718              		.loc 2 136 0
+ 719 025e 3B4B     		ldr	r3, .L37+24
+ 720 0260 1B68     		ldr	r3, [r3]
+ 721 0262 03F16500 		add	r0, r3, #101
+ 722 0266 3A4B     		ldr	r3, .L37+28
+ 723 0268 1B68     		ldr	r3, [r3]
+ 724 026a 6433     		adds	r3, r3, #100
+ 725 026c 1422     		movs	r2, #20
+ 726 026e 1946     		mov	r1, r3
+ 727 0270 FFF7FEFF 		bl	memcpy
+ 137:Src/spiops.c  ****             SpiTxData->checksum = (('C') | (('H') << 8 ));
+ 728              		.loc 2 137 0
+ 729 0274 354B     		ldr	r3, .L37+24
+ 730 0276 1B68     		ldr	r3, [r3]
+ 731 0278 44F64302 		movw	r2, #18499
+ 732 027c A3F87620 		strh	r2, [r3, #118]	@ movhi
+ 138:Src/spiops.c  **** 
+ 139:Src/spiops.c  ****             xSemaphoreGive(spiMutexHandle);
+ 733              		.loc 2 139 0
+ 734 0280 314B     		ldr	r3, .L37+20
+ 735 0282 1868     		ldr	r0, [r3]
+ 736 0284 0023     		movs	r3, #0
+ 737 0286 0022     		movs	r2, #0
+ 738 0288 0021     		movs	r1, #0
+ 739 028a FFF7FEFF 		bl	xQueueGenericSend
+ 140:Src/spiops.c  **** 
+ 141:Src/spiops.c  **** 
+ 142:Src/spiops.c  **** 
+ 143:Src/spiops.c  ****             HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRA
+ 740              		.loc 2 143 0
+ 741 028e 2F4B     		ldr	r3, .L37+24
+ 742 0290 1968     		ldr	r1, [r3]
+ 743 0292 2B4B     		ldr	r3, .L37+12
+ 744 0294 1A68     		ldr	r2, [r3]
+ 745 0296 7823     		movs	r3, #120
+ 746 0298 2E48     		ldr	r0, .L37+32
+ 747 029a FFF7FEFF 		bl	HAL_SPI_TransmitReceive_IT
+ 144:Src/spiops.c  **** 
+ 145:Src/spiops.c  **** 
+ 146:Src/spiops.c  ****             if(ControlData -> step_motor1_direction == FORWARD)
+ 748              		.loc 2 146 0
+ 749 029e 294B     		ldr	r3, .L37+16
+ 750 02a0 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/ccNsmR1g.s 			page 18
+
+
+ 751 02a2 93F83C30 		ldrb	r3, [r3, #60]	@ zero_extendqisi2
+ 752 02a6 012B     		cmp	r3, #1
+ 753 02a8 0AD1     		bne	.L29
+ 147:Src/spiops.c  ****             {
+ 148:Src/spiops.c  ****                 motor1.direction = FORWARD;
+ 754              		.loc 2 148 0
+ 755 02aa 2B4B     		ldr	r3, .L37+36
+ 756 02ac 0122     		movs	r2, #1
+ 757 02ae 1A60     		str	r2, [r3]
+ 149:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor1_speed;
+ 758              		.loc 2 149 0
+ 759 02b0 244B     		ldr	r3, .L37+16
+ 760 02b2 1B68     		ldr	r3, [r3]
+ 761 02b4 93F84230 		ldrb	r3, [r3, #66]	@ zero_extendqisi2
+ 762 02b8 1A46     		mov	r2, r3
+ 763 02ba 274B     		ldr	r3, .L37+36
+ 764 02bc 5A60     		str	r2, [r3, #4]
+ 765 02be 13E0     		b	.L30
+ 766              	.L29:
+ 150:Src/spiops.c  ****             }
+ 151:Src/spiops.c  ****             else if(ControlData -> step_motor1_direction == BACKWARD)
+ 767              		.loc 2 151 0
+ 768 02c0 204B     		ldr	r3, .L37+16
+ 769 02c2 1B68     		ldr	r3, [r3]
+ 770 02c4 93F83C30 		ldrb	r3, [r3, #60]	@ zero_extendqisi2
+ 771 02c8 022B     		cmp	r3, #2
+ 772 02ca 0AD1     		bne	.L31
+ 152:Src/spiops.c  ****             {
+ 153:Src/spiops.c  ****                 motor1.direction = BACKWARD;
+ 773              		.loc 2 153 0
+ 774 02cc 224B     		ldr	r3, .L37+36
+ 775 02ce 0222     		movs	r2, #2
+ 776 02d0 1A60     		str	r2, [r3]
+ 154:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor1_speed;
+ 777              		.loc 2 154 0
+ 778 02d2 1C4B     		ldr	r3, .L37+16
+ 779 02d4 1B68     		ldr	r3, [r3]
+ 780 02d6 93F84230 		ldrb	r3, [r3, #66]	@ zero_extendqisi2
+ 781 02da 1A46     		mov	r2, r3
+ 782 02dc 1E4B     		ldr	r3, .L37+36
+ 783 02de 5A60     		str	r2, [r3, #4]
+ 784 02e0 02E0     		b	.L30
+ 785              	.L31:
+ 155:Src/spiops.c  ****             }
+ 156:Src/spiops.c  ****             else
+ 157:Src/spiops.c  ****             {
+ 158:Src/spiops.c  ****                 motor1.direction = STOP;
+ 786              		.loc 2 158 0
+ 787 02e2 1D4B     		ldr	r3, .L37+36
+ 788 02e4 0022     		movs	r2, #0
+ 789 02e6 1A60     		str	r2, [r3]
+ 790              	.L30:
+ 159:Src/spiops.c  ****             }
+ 160:Src/spiops.c  **** 
+ 161:Src/spiops.c  ****             if(ControlData -> step_motor2_direction == FORWARD)
+ 791              		.loc 2 161 0
+ 792 02e8 164B     		ldr	r3, .L37+16
+ARM GAS  /tmp/ccNsmR1g.s 			page 19
+
+
+ 793 02ea 1B68     		ldr	r3, [r3]
+ 794 02ec 93F83D30 		ldrb	r3, [r3, #61]	@ zero_extendqisi2
+ 795 02f0 012B     		cmp	r3, #1
+ 796 02f2 0AD1     		bne	.L32
+ 162:Src/spiops.c  ****             {
+ 163:Src/spiops.c  ****                 motor2.direction = FORWARD;
+ 797              		.loc 2 163 0
+ 798 02f4 194B     		ldr	r3, .L37+40
+ 799 02f6 0122     		movs	r2, #1
+ 800 02f8 1A60     		str	r2, [r3]
+ 164:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor2_speed;
+ 801              		.loc 2 164 0
+ 802 02fa 124B     		ldr	r3, .L37+16
+ 803 02fc 1B68     		ldr	r3, [r3]
+ 804 02fe 93F84330 		ldrb	r3, [r3, #67]	@ zero_extendqisi2
+ 805 0302 1A46     		mov	r2, r3
+ 806 0304 144B     		ldr	r3, .L37+36
+ 807 0306 5A60     		str	r2, [r3, #4]
+ 808 0308 89E6     		b	.L34
+ 809              	.L32:
+ 165:Src/spiops.c  ****             }
+ 166:Src/spiops.c  ****             else if(ControlData -> step_motor2_direction == BACKWARD)
+ 810              		.loc 2 166 0
+ 811 030a 0E4B     		ldr	r3, .L37+16
+ 812 030c 1B68     		ldr	r3, [r3]
+ 813 030e 93F83D30 		ldrb	r3, [r3, #61]	@ zero_extendqisi2
+ 814 0312 022B     		cmp	r3, #2
+ 815 0314 0AD1     		bne	.L33
+ 167:Src/spiops.c  ****             {
+ 168:Src/spiops.c  ****                 motor2.direction = BACKWARD;
+ 816              		.loc 2 168 0
+ 817 0316 114B     		ldr	r3, .L37+40
+ 818 0318 0222     		movs	r2, #2
+ 819 031a 1A60     		str	r2, [r3]
+ 169:Src/spiops.c  ****                 motor1.speed = ControlData -> step_motor2_speed;
+ 820              		.loc 2 169 0
+ 821 031c 094B     		ldr	r3, .L37+16
+ 822 031e 1B68     		ldr	r3, [r3]
+ 823 0320 93F84330 		ldrb	r3, [r3, #67]	@ zero_extendqisi2
+ 824 0324 1A46     		mov	r2, r3
+ 825 0326 0C4B     		ldr	r3, .L37+36
+ 826 0328 5A60     		str	r2, [r3, #4]
+ 827 032a 78E6     		b	.L34
+ 828              	.L33:
+ 170:Src/spiops.c  ****             }
+ 171:Src/spiops.c  ****             else
+ 172:Src/spiops.c  ****             {
+ 173:Src/spiops.c  ****                 motor2.direction = STOP;
+ 829              		.loc 2 173 0
+ 830 032c 0B4B     		ldr	r3, .L37+40
+ 831 032e 0022     		movs	r2, #0
+ 832 0330 1A60     		str	r2, [r3]
+  56:Src/spiops.c  ****         {
+ 833              		.loc 2 56 0
+ 834 0332 74E6     		b	.L34
+ 835              	.L38:
+ 836              		.align	2
+ARM GAS  /tmp/ccNsmR1g.s 			page 20
+
+
+ 837              	.L37:
+ 838 0334 00000808 		.word	134742016
+ 839 0338 00000000 		.word	UpdateFile
+ 840 033c 4C000000 		.word	.LC13
+ 841 0340 00000000 		.word	SpiRxData
+ 842 0344 00000000 		.word	ControlData
+ 843 0348 00000000 		.word	spiMutexHandle
+ 844 034c 00000000 		.word	SpiTxData
+ 845 0350 00000000 		.word	EnvironmentData
+ 846 0354 00000000 		.word	hspi1
+ 847 0358 00000000 		.word	motor1
+ 848 035c 00000000 		.word	motor2
+ 849              		.cfi_endproc
+ 850              	.LFE146:
+ 852              		.section	.rodata
+ 853 005e 0000     		.align	2
+ 854              	.LC14:
+ 855 0060 73656E73 		.ascii	"sensorOps\015\012\000"
+ 855      6F724F70 
+ 855      730D0A00 
+ 856              		.section	.text.sensorOps,"ax",%progbits
+ 857              		.align	1
+ 858              		.global	sensorOps
+ 859              		.syntax unified
+ 860              		.thumb
+ 861              		.thumb_func
+ 862              		.fpu fpv4-sp-d16
+ 864              	sensorOps:
+ 865              	.LFB147:
+ 866              		.file 3 "Src/sensorops.c"
    1:Src/sensorops.c **** #include "sensorops.h"
    2:Src/sensorops.c **** 
    3:Src/sensorops.c **** 
    4:Src/sensorops.c **** /* sensorOps function */
    5:Src/sensorops.c **** void sensorOps(void const * argument)
    6:Src/sensorops.c **** {
- 744              		.loc 3 6 0
- 745              		.cfi_startproc
- 746              		@ args = 0, pretend = 0, frame = 8
- 747              		@ frame_needed = 1, uses_anonymous_args = 0
- 748 0000 80B5     		push	{r7, lr}
- 749              	.LCFI21:
- 750              		.cfi_def_cfa_offset 8
- 751              		.cfi_offset 7, -8
- 752              		.cfi_offset 14, -4
- 753 0002 82B0     		sub	sp, sp, #8
- 754              	.LCFI22:
- 755              		.cfi_def_cfa_offset 16
- 756 0004 00AF     		add	r7, sp, #0
- 757              	.LCFI23:
-ARM GAS  /tmp/ccHKiwYi.s 			page 18
-
-
- 758              		.cfi_def_cfa_register 7
- 759 0006 7860     		str	r0, [r7, #4]
+ 867              		.loc 3 6 0
+ 868              		.cfi_startproc
+ 869              		@ args = 0, pretend = 0, frame = 8
+ 870              		@ frame_needed = 1, uses_anonymous_args = 0
+ 871 0000 80B5     		push	{r7, lr}
+ 872              	.LCFI21:
+ 873              		.cfi_def_cfa_offset 8
+ 874              		.cfi_offset 7, -8
+ 875              		.cfi_offset 14, -4
+ 876 0002 82B0     		sub	sp, sp, #8
+ 877              	.LCFI22:
+ 878              		.cfi_def_cfa_offset 16
+ 879 0004 00AF     		add	r7, sp, #0
+ 880              	.LCFI23:
+ 881              		.cfi_def_cfa_register 7
+ 882 0006 7860     		str	r0, [r7, #4]
    7:Src/sensorops.c **** 
    8:Src/sensorops.c ****   mprintf("sensorOps\r\n");
- 760              		.loc 3 8 0
- 761 0008 1A48     		ldr	r0, .L35
- 762 000a FFF7FEFF 		bl	mprintf
+ 883              		.loc 3 8 0
+ 884 0008 1A48     		ldr	r0, .L41
+ 885 000a FFF7FEFF 		bl	mprintf
+ARM GAS  /tmp/ccNsmR1g.s 			page 21
+
+
    9:Src/sensorops.c **** 
   10:Src/sensorops.c ****   sensorInit();
- 763              		.loc 3 10 0
- 764 000e FFF7FEFF 		bl	sensorInit
+ 886              		.loc 3 10 0
+ 887 000e FFF7FEFF 		bl	sensorInit
   11:Src/sensorops.c **** 
   12:Src/sensorops.c ****   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
- 765              		.loc 3 12 0
- 766 0012 0021     		movs	r1, #0
- 767 0014 1848     		ldr	r0, .L35+4
- 768 0016 FFF7FEFF 		bl	HAL_TIM_PWM_Start
- 769              	.L34:
+ 888              		.loc 3 12 0
+ 889 0012 0021     		movs	r1, #0
+ 890 0014 1848     		ldr	r0, .L41+4
+ 891 0016 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 892              	.L40:
   13:Src/sensorops.c **** 
   14:Src/sensorops.c **** 
   15:Src/sensorops.c **** 
@@ -1048,257 +1221,257 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   19:Src/sensorops.c ****   while(1)
   20:Src/sensorops.c ****   {
   21:Src/sensorops.c ****       readAllSensors();
- 770              		.loc 3 21 0 discriminator 1
- 771 001a FFF7FEFF 		bl	readAllSensors
+ 893              		.loc 3 21 0 discriminator 1
+ 894 001a FFF7FEFF 		bl	readAllSensors
   22:Src/sensorops.c **** 
   23:Src/sensorops.c **** 
   24:Src/sensorops.c ****       xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
- 772              		.loc 3 24 0 discriminator 1
- 773 001e 174B     		ldr	r3, .L35+8
- 774 0020 1868     		ldr	r0, [r3]
- 775 0022 0023     		movs	r3, #0
- 776 0024 4FF0FF32 		mov	r2, #-1
- 777 0028 0021     		movs	r1, #0
- 778 002a FFF7FEFF 		bl	xQueueGenericReceive
+ 895              		.loc 3 24 0 discriminator 1
+ 896 001e 174B     		ldr	r3, .L41+8
+ 897 0020 1868     		ldr	r0, [r3]
+ 898 0022 0023     		movs	r3, #0
+ 899 0024 4FF0FF32 		mov	r2, #-1
+ 900 0028 0021     		movs	r1, #0
+ 901 002a FFF7FEFF 		bl	xQueueGenericReceive
   25:Src/sensorops.c **** 
   26:Src/sensorops.c ****       EnvironmentData -> sensor_data.temperature = sensorValues.temperature;
- 779              		.loc 3 26 0 discriminator 1
- 780 002e 144B     		ldr	r3, .L35+12
- 781 0030 1B68     		ldr	r3, [r3]
- 782 0032 144A     		ldr	r2, .L35+16
- 783 0034 9268     		ldr	r2, [r2, #8]
- 784 0036 5A66     		str	r2, [r3, #100]
+ 902              		.loc 3 26 0 discriminator 1
+ 903 002e 144B     		ldr	r3, .L41+12
+ 904 0030 1B68     		ldr	r3, [r3]
+ 905 0032 144A     		ldr	r2, .L41+16
+ 906 0034 9268     		ldr	r2, [r2, #8]
+ 907 0036 5A66     		str	r2, [r3, #100]
   27:Src/sensorops.c ****       EnvironmentData -> sensor_data.pressure = sensorValues.pressure;
- 785              		.loc 3 27 0 discriminator 1
- 786 0038 114B     		ldr	r3, .L35+12
- 787 003a 1B68     		ldr	r3, [r3]
- 788 003c 114A     		ldr	r2, .L35+16
- 789 003e 1268     		ldr	r2, [r2]
- 790 0040 DA66     		str	r2, [r3, #108]
+ 908              		.loc 3 27 0 discriminator 1
+ 909 0038 114B     		ldr	r3, .L41+12
+ 910 003a 1B68     		ldr	r3, [r3]
+ 911 003c 114A     		ldr	r2, .L41+16
+ 912 003e 1268     		ldr	r2, [r2]
+ 913 0040 DA66     		str	r2, [r3, #108]
   28:Src/sensorops.c ****       EnvironmentData -> sensor_data.altitude = sensorValues.altitude;
- 791              		.loc 3 28 0 discriminator 1
- 792 0042 0F4B     		ldr	r3, .L35+12
-ARM GAS  /tmp/ccHKiwYi.s 			page 19
-
-
- 793 0044 1B68     		ldr	r3, [r3]
- 794 0046 0F4A     		ldr	r2, .L35+16
- 795 0048 5268     		ldr	r2, [r2, #4]
- 796 004a 1A67     		str	r2, [r3, #112]
+ 914              		.loc 3 28 0 discriminator 1
+ 915 0042 0F4B     		ldr	r3, .L41+12
+ 916 0044 1B68     		ldr	r3, [r3]
+ 917 0046 0F4A     		ldr	r2, .L41+16
+ 918 0048 5268     		ldr	r2, [r2, #4]
+ 919 004a 1A67     		str	r2, [r3, #112]
   29:Src/sensorops.c ****       EnvironmentData -> sensor_data.wheather_condition = sensorValues.wheather_condition;
- 797              		.loc 3 29 0 discriminator 1
- 798 004c 0C4B     		ldr	r3, .L35+12
- 799 004e 1B68     		ldr	r3, [r3]
- 800 0050 0C4A     		ldr	r2, .L35+16
- 801 0052 127B     		ldrb	r2, [r2, #12]	@ zero_extendqisi2
- 802 0054 83F87420 		strb	r2, [r3, #116]
+ 920              		.loc 3 29 0 discriminator 1
+ 921 004c 0C4B     		ldr	r3, .L41+12
+ARM GAS  /tmp/ccNsmR1g.s 			page 22
+
+
+ 922 004e 1B68     		ldr	r3, [r3]
+ 923 0050 0C4A     		ldr	r2, .L41+16
+ 924 0052 127B     		ldrb	r2, [r2, #12]	@ zero_extendqisi2
+ 925 0054 83F87420 		strb	r2, [r3, #116]
   30:Src/sensorops.c ****       EnvironmentData -> sensor_data.compass_degree = sensorValues.compass_degree;
- 803              		.loc 3 30 0 discriminator 1
- 804 0058 094B     		ldr	r3, .L35+12
- 805 005a 1B68     		ldr	r3, [r3]
- 806 005c 094A     		ldr	r2, .L35+16
- 807 005e 1269     		ldr	r2, [r2, #16]
- 808 0060 9A66     		str	r2, [r3, #104]
+ 926              		.loc 3 30 0 discriminator 1
+ 927 0058 094B     		ldr	r3, .L41+12
+ 928 005a 1B68     		ldr	r3, [r3]
+ 929 005c 094A     		ldr	r2, .L41+16
+ 930 005e 1269     		ldr	r2, [r2, #16]
+ 931 0060 9A66     		str	r2, [r3, #104]
   31:Src/sensorops.c **** 
   32:Src/sensorops.c ****       xSemaphoreGive(spiMutexHandle);
- 809              		.loc 3 32 0 discriminator 1
- 810 0062 064B     		ldr	r3, .L35+8
- 811 0064 1868     		ldr	r0, [r3]
- 812 0066 0023     		movs	r3, #0
- 813 0068 0022     		movs	r2, #0
- 814 006a 0021     		movs	r1, #0
- 815 006c FFF7FEFF 		bl	xQueueGenericSend
+ 932              		.loc 3 32 0 discriminator 1
+ 933 0062 064B     		ldr	r3, .L41+8
+ 934 0064 1868     		ldr	r0, [r3]
+ 935 0066 0023     		movs	r3, #0
+ 936 0068 0022     		movs	r2, #0
+ 937 006a 0021     		movs	r1, #0
+ 938 006c FFF7FEFF 		bl	xQueueGenericSend
   21:Src/sensorops.c **** 
- 816              		.loc 3 21 0 discriminator 1
- 817 0070 D3E7     		b	.L34
- 818              	.L36:
- 819 0072 00BF     		.align	2
- 820              	.L35:
- 821 0074 30000000 		.word	.LC12
- 822 0078 00000000 		.word	htim3
- 823 007c 00000000 		.word	spiMutexHandle
- 824 0080 00000000 		.word	EnvironmentData
- 825 0084 00000000 		.word	sensorValues
- 826              		.cfi_endproc
- 827              	.LFE147:
- 829              		.section	.rodata
- 830              		.align	2
- 831              	.LC13:
- 832 003c 6D6F746F 		.ascii	"motorOps\015\012\000"
- 832      724F7073 
- 832      0D0A00
- 833              		.section	.text.motorOps,"ax",%progbits
- 834              		.align	1
- 835              		.global	motorOps
- 836              		.syntax unified
- 837              		.thumb
- 838              		.thumb_func
- 839              		.fpu fpv4-sp-d16
- 841              	motorOps:
- 842              	.LFB148:
- 843              		.file 4 "Src/motorops.c"
+ 939              		.loc 3 21 0 discriminator 1
+ 940 0070 D3E7     		b	.L40
+ 941              	.L42:
+ 942 0072 00BF     		.align	2
+ 943              	.L41:
+ 944 0074 60000000 		.word	.LC14
+ 945 0078 00000000 		.word	htim3
+ 946 007c 00000000 		.word	spiMutexHandle
+ 947 0080 00000000 		.word	EnvironmentData
+ 948 0084 00000000 		.word	sensorValues
+ 949              		.cfi_endproc
+ 950              	.LFE147:
+ 952              		.section	.rodata
+ 953              		.align	2
+ 954              	.LC15:
+ 955 006c 6D6F746F 		.ascii	"motorOps\015\012\000"
+ 955      724F7073 
+ 955      0D0A00
+ 956              		.section	.text.motorOps,"ax",%progbits
+ 957              		.align	1
+ 958              		.global	motorOps
+ 959              		.syntax unified
+ 960              		.thumb
+ 961              		.thumb_func
+ 962              		.fpu fpv4-sp-d16
+ 964              	motorOps:
+ 965              	.LFB148:
+ 966              		.file 4 "Src/motorops.c"
    1:Src/motorops.c **** #include "motorops.h"
-ARM GAS  /tmp/ccHKiwYi.s 			page 20
-
-
    2:Src/motorops.c **** 
    3:Src/motorops.c **** 
    4:Src/motorops.c **** 
    5:Src/motorops.c **** void motorOps(void const * argument)
    6:Src/motorops.c **** {
- 844              		.loc 4 6 0
- 845              		.cfi_startproc
- 846              		@ args = 0, pretend = 0, frame = 16
- 847              		@ frame_needed = 1, uses_anonymous_args = 0
- 848 0000 80B5     		push	{r7, lr}
- 849              	.LCFI24:
- 850              		.cfi_def_cfa_offset 8
- 851              		.cfi_offset 7, -8
- 852              		.cfi_offset 14, -4
- 853 0002 84B0     		sub	sp, sp, #16
- 854              	.LCFI25:
- 855              		.cfi_def_cfa_offset 24
- 856 0004 00AF     		add	r7, sp, #0
- 857              	.LCFI26:
- 858              		.cfi_def_cfa_register 7
- 859 0006 7860     		str	r0, [r7, #4]
+ 967              		.loc 4 6 0
+ 968              		.cfi_startproc
+ARM GAS  /tmp/ccNsmR1g.s 			page 23
+
+
+ 969              		@ args = 0, pretend = 0, frame = 16
+ 970              		@ frame_needed = 1, uses_anonymous_args = 0
+ 971 0000 80B5     		push	{r7, lr}
+ 972              	.LCFI24:
+ 973              		.cfi_def_cfa_offset 8
+ 974              		.cfi_offset 7, -8
+ 975              		.cfi_offset 14, -4
+ 976 0002 84B0     		sub	sp, sp, #16
+ 977              	.LCFI25:
+ 978              		.cfi_def_cfa_offset 24
+ 979 0004 00AF     		add	r7, sp, #0
+ 980              	.LCFI26:
+ 981              		.cfi_def_cfa_register 7
+ 982 0006 7860     		str	r0, [r7, #4]
    7:Src/motorops.c **** 
    8:Src/motorops.c ****     int pwm = 45;
- 860              		.loc 4 8 0
- 861 0008 2D23     		movs	r3, #45
- 862 000a FB60     		str	r3, [r7, #12]
+ 983              		.loc 4 8 0
+ 984 0008 2D23     		movs	r3, #45
+ 985 000a FB60     		str	r3, [r7, #12]
    9:Src/motorops.c **** 
   10:Src/motorops.c ****     mprintf("motorOps\r\n");
- 863              		.loc 4 10 0
- 864 000c 1A48     		ldr	r0, .L43
- 865 000e FFF7FEFF 		bl	mprintf
+ 986              		.loc 4 10 0
+ 987 000c 1A48     		ldr	r0, .L49
+ 988 000e FFF7FEFF 		bl	mprintf
   11:Src/motorops.c **** 
   12:Src/motorops.c **** 
   13:Src/motorops.c **** 
   14:Src/motorops.c ****     __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, pwm);
- 866              		.loc 4 14 0
- 867 0012 1A4B     		ldr	r3, .L43+4
- 868 0014 1B68     		ldr	r3, [r3]
- 869 0016 FA68     		ldr	r2, [r7, #12]
- 870 0018 5A63     		str	r2, [r3, #52]
+ 989              		.loc 4 14 0
+ 990 0012 1A4B     		ldr	r3, .L49+4
+ 991 0014 1B68     		ldr	r3, [r3]
+ 992 0016 FA68     		ldr	r2, [r7, #12]
+ 993 0018 5A63     		str	r2, [r3, #52]
   15:Src/motorops.c ****     pwm++;
- 871              		.loc 4 15 0
- 872 001a FB68     		ldr	r3, [r7, #12]
- 873 001c 0133     		adds	r3, r3, #1
- 874 001e FB60     		str	r3, [r7, #12]
+ 994              		.loc 4 15 0
+ 995 001a FB68     		ldr	r3, [r7, #12]
+ 996 001c 0133     		adds	r3, r3, #1
+ 997 001e FB60     		str	r3, [r7, #12]
   16:Src/motorops.c ****     osDelay(100);
- 875              		.loc 4 16 0
- 876 0020 6420     		movs	r0, #100
- 877 0022 FFF7FEFF 		bl	osDelay
+ 998              		.loc 4 16 0
+ 999 0020 6420     		movs	r0, #100
+ 1000 0022 FFF7FEFF 		bl	osDelay
   17:Src/motorops.c **** 
   18:Src/motorops.c ****     if(pwm == 153)
- 878              		.loc 4 18 0
- 879 0026 FB68     		ldr	r3, [r7, #12]
- 880 0028 992B     		cmp	r3, #153
- 881 002a 01D1     		bne	.L38
+ 1001              		.loc 4 18 0
+ 1002 0026 FB68     		ldr	r3, [r7, #12]
+ 1003 0028 992B     		cmp	r3, #153
+ 1004 002a 01D1     		bne	.L44
   19:Src/motorops.c ****       pwm = 45;
- 882              		.loc 4 19 0
-ARM GAS  /tmp/ccHKiwYi.s 			page 21
-
-
- 883 002c 2D23     		movs	r3, #45
- 884 002e FB60     		str	r3, [r7, #12]
- 885              	.L38:
+ 1005              		.loc 4 19 0
+ 1006 002c 2D23     		movs	r3, #45
+ 1007 002e FB60     		str	r3, [r7, #12]
+ 1008              	.L44:
   20:Src/motorops.c **** 
   21:Src/motorops.c **** 
   22:Src/motorops.c ****     while(1)
   23:Src/motorops.c ****     {
+ARM GAS  /tmp/ccNsmR1g.s 			page 24
+
+
   24:Src/motorops.c **** 
   25:Src/motorops.c **** 
   26:Src/motorops.c **** 
   27:Src/motorops.c ****       if(motor1.direction == FORWARD)
- 886              		.loc 4 27 0
- 887 0030 134B     		ldr	r3, .L43+8
- 888 0032 1B68     		ldr	r3, [r3]
- 889 0034 012B     		cmp	r3, #1
- 890 0036 02D1     		bne	.L39
+ 1009              		.loc 4 27 0
+ 1010 0030 134B     		ldr	r3, .L49+8
+ 1011 0032 1B68     		ldr	r3, [r3]
+ 1012 0034 012B     		cmp	r3, #1
+ 1013 0036 02D1     		bne	.L45
   28:Src/motorops.c ****       {
   29:Src/motorops.c ****         motor1Drive(FORWARD);
- 891              		.loc 4 29 0
- 892 0038 0120     		movs	r0, #1
- 893 003a FFF7FEFF 		bl	motor1Drive
- 894              	.L39:
+ 1014              		.loc 4 29 0
+ 1015 0038 0120     		movs	r0, #1
+ 1016 003a FFF7FEFF 		bl	motor1Drive
+ 1017              	.L45:
   30:Src/motorops.c ****       }
   31:Src/motorops.c **** 
   32:Src/motorops.c ****       if(motor1.direction == BACKWARD)
- 895              		.loc 4 32 0
- 896 003e 104B     		ldr	r3, .L43+8
- 897 0040 1B68     		ldr	r3, [r3]
- 898 0042 022B     		cmp	r3, #2
- 899 0044 02D1     		bne	.L40
+ 1018              		.loc 4 32 0
+ 1019 003e 104B     		ldr	r3, .L49+8
+ 1020 0040 1B68     		ldr	r3, [r3]
+ 1021 0042 022B     		cmp	r3, #2
+ 1022 0044 02D1     		bne	.L46
   33:Src/motorops.c ****       {
   34:Src/motorops.c ****         motor1Drive(BACKWARD);
- 900              		.loc 4 34 0
- 901 0046 0220     		movs	r0, #2
- 902 0048 FFF7FEFF 		bl	motor1Drive
- 903              	.L40:
+ 1023              		.loc 4 34 0
+ 1024 0046 0220     		movs	r0, #2
+ 1025 0048 FFF7FEFF 		bl	motor1Drive
+ 1026              	.L46:
   35:Src/motorops.c ****       }
   36:Src/motorops.c **** 
   37:Src/motorops.c ****       if(motor2.direction == FORWARD)
- 904              		.loc 4 37 0
- 905 004c 0D4B     		ldr	r3, .L43+12
- 906 004e 1B68     		ldr	r3, [r3]
- 907 0050 012B     		cmp	r3, #1
- 908 0052 02D1     		bne	.L41
+ 1027              		.loc 4 37 0
+ 1028 004c 0D4B     		ldr	r3, .L49+12
+ 1029 004e 1B68     		ldr	r3, [r3]
+ 1030 0050 012B     		cmp	r3, #1
+ 1031 0052 02D1     		bne	.L47
   38:Src/motorops.c ****       {
   39:Src/motorops.c ****         motor2Drive(FORWARD);
- 909              		.loc 4 39 0
- 910 0054 0120     		movs	r0, #1
- 911 0056 FFF7FEFF 		bl	motor2Drive
- 912              	.L41:
+ 1032              		.loc 4 39 0
+ 1033 0054 0120     		movs	r0, #1
+ 1034 0056 FFF7FEFF 		bl	motor2Drive
+ 1035              	.L47:
   40:Src/motorops.c ****       }
   41:Src/motorops.c **** 
   42:Src/motorops.c ****       if(motor2.direction == BACKWARD)
- 913              		.loc 4 42 0
- 914 005a 0A4B     		ldr	r3, .L43+12
- 915 005c 1B68     		ldr	r3, [r3]
- 916 005e 022B     		cmp	r3, #2
-ARM GAS  /tmp/ccHKiwYi.s 			page 22
-
-
- 917 0060 02D1     		bne	.L42
+ 1036              		.loc 4 42 0
+ 1037 005a 0A4B     		ldr	r3, .L49+12
+ 1038 005c 1B68     		ldr	r3, [r3]
+ 1039 005e 022B     		cmp	r3, #2
+ 1040 0060 02D1     		bne	.L48
   43:Src/motorops.c ****       {
   44:Src/motorops.c ****         motor2Drive(BACKWARD);
- 918              		.loc 4 44 0
- 919 0062 0220     		movs	r0, #2
- 920 0064 FFF7FEFF 		bl	motor2Drive
- 921              	.L42:
+ 1041              		.loc 4 44 0
+ 1042 0062 0220     		movs	r0, #2
+ 1043 0064 FFF7FEFF 		bl	motor2Drive
+ 1044              	.L48:
+ARM GAS  /tmp/ccNsmR1g.s 			page 25
+
+
   45:Src/motorops.c ****       }
   46:Src/motorops.c **** 
   47:Src/motorops.c ****       osDelay(2 + motor1.speed);
- 922              		.loc 4 47 0
- 923 0068 054B     		ldr	r3, .L43+8
- 924 006a 5B68     		ldr	r3, [r3, #4]
- 925 006c 0233     		adds	r3, r3, #2
- 926 006e 1846     		mov	r0, r3
- 927 0070 FFF7FEFF 		bl	osDelay
+ 1045              		.loc 4 47 0
+ 1046 0068 054B     		ldr	r3, .L49+8
+ 1047 006a 5B68     		ldr	r3, [r3, #4]
+ 1048 006c 0233     		adds	r3, r3, #2
+ 1049 006e 1846     		mov	r0, r3
+ 1050 0070 FFF7FEFF 		bl	osDelay
   27:Src/motorops.c ****       {
- 928              		.loc 4 27 0
- 929 0074 DCE7     		b	.L38
- 930              	.L44:
- 931 0076 00BF     		.align	2
- 932              	.L43:
- 933 0078 3C000000 		.word	.LC13
- 934 007c 00000000 		.word	htim3
- 935 0080 00000000 		.word	motor1
- 936 0084 00000000 		.word	motor2
- 937              		.cfi_endproc
- 938              	.LFE148:
- 940              		.section	.text.vprint,"ax",%progbits
- 941              		.align	1
- 942              		.global	vprint
- 943              		.syntax unified
- 944              		.thumb
- 945              		.thumb_func
- 946              		.fpu fpv4-sp-d16
- 948              	vprint:
- 949              	.LFB149:
- 950              		.file 5 "Src/freertos.c"
+ 1051              		.loc 4 27 0
+ 1052 0074 DCE7     		b	.L44
+ 1053              	.L50:
+ 1054 0076 00BF     		.align	2
+ 1055              	.L49:
+ 1056 0078 6C000000 		.word	.LC15
+ 1057 007c 00000000 		.word	htim3
+ 1058 0080 00000000 		.word	motor1
+ 1059 0084 00000000 		.word	motor2
+ 1060              		.cfi_endproc
+ 1061              	.LFE148:
+ 1063              		.section	.text.vprint,"ax",%progbits
+ 1064              		.align	1
+ 1065              		.global	vprint
+ 1066              		.syntax unified
+ 1067              		.thumb
+ 1068              		.thumb_func
+ 1069              		.fpu fpv4-sp-d16
+ 1071              	vprint:
+ 1072              	.LFB149:
+ 1073              		.file 5 "Src/freertos.c"
    1:Src/freertos.c **** /**
    2:Src/freertos.c ****   ******************************************************************************
    3:Src/freertos.c ****   * File Name          : freertos.c
@@ -1318,9 +1491,6 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   17:Src/freertos.c ****   *
   18:Src/freertos.c ****   * 1. Redistribution of source code must retain the above copyright notice, 
   19:Src/freertos.c ****   *    this list of conditions and the following disclaimer.
-ARM GAS  /tmp/ccHKiwYi.s 			page 23
-
-
   20:Src/freertos.c ****   * 2. Redistributions in binary form must reproduce the above copyright notice,
   21:Src/freertos.c ****   *    this list of conditions and the following disclaimer in the documentation
   22:Src/freertos.c ****   *    and/or other materials provided with the distribution.
@@ -1328,6 +1498,9 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   24:Src/freertos.c ****   *    contributors to this software may be used to endorse or promote products 
   25:Src/freertos.c ****   *    derived from this software without specific written permission.
   26:Src/freertos.c ****   * 4. This software, including modifications and/or derivative works of this 
+ARM GAS  /tmp/ccNsmR1g.s 			page 26
+
+
   27:Src/freertos.c ****   *    software, must execute solely and exclusively on microcontroller or
   28:Src/freertos.c ****   *    microprocessor devices manufactured by or for STMicroelectronics.
   29:Src/freertos.c ****   * 5. Redistribution and use of this software other than as permitted under 
@@ -1364,532 +1537,532 @@ ARM GAS  /tmp/ccHKiwYi.s 			page 1
   60:Src/freertos.c **** 
   61:Src/freertos.c **** void vprint(const char *fmt, va_list argp)
   62:Src/freertos.c **** {
- 951              		.loc 5 62 0
- 952              		.cfi_startproc
- 953              		@ args = 0, pretend = 0, frame = 160
- 954              		@ frame_needed = 1, uses_anonymous_args = 0
- 955 0000 80B5     		push	{r7, lr}
- 956              	.LCFI27:
- 957              		.cfi_def_cfa_offset 8
- 958              		.cfi_offset 7, -8
- 959              		.cfi_offset 14, -4
- 960 0002 A8B0     		sub	sp, sp, #160
- 961              	.LCFI28:
- 962              		.cfi_def_cfa_offset 168
- 963 0004 00AF     		add	r7, sp, #0
- 964              	.LCFI29:
-ARM GAS  /tmp/ccHKiwYi.s 			page 24
-
-
- 965              		.cfi_def_cfa_register 7
- 966 0006 7860     		str	r0, [r7, #4]
- 967 0008 3960     		str	r1, [r7]
+ 1074              		.loc 5 62 0
+ 1075              		.cfi_startproc
+ 1076              		@ args = 0, pretend = 0, frame = 160
+ 1077              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1078 0000 80B5     		push	{r7, lr}
+ 1079              	.LCFI27:
+ 1080              		.cfi_def_cfa_offset 8
+ 1081              		.cfi_offset 7, -8
+ 1082              		.cfi_offset 14, -4
+ 1083 0002 A8B0     		sub	sp, sp, #160
+ 1084              	.LCFI28:
+ 1085              		.cfi_def_cfa_offset 168
+ 1086 0004 00AF     		add	r7, sp, #0
+ 1087              	.LCFI29:
+ 1088              		.cfi_def_cfa_register 7
+ 1089 0006 7860     		str	r0, [r7, #4]
+ 1090 0008 3960     		str	r1, [r7]
   63:Src/freertos.c ****     char string[150];
   64:Src/freertos.c **** 
   65:Src/freertos.c ****     if(0 < vsprintf(string,fmt,argp)) // build string
- 968              		.loc 5 65 0
- 969 000a 07F10803 		add	r3, r7, #8
- 970 000e 3A68     		ldr	r2, [r7]
- 971 0010 7968     		ldr	r1, [r7, #4]
- 972 0012 1846     		mov	r0, r3
- 973 0014 FFF7FEFF 		bl	vsprintf
- 974 0018 0346     		mov	r3, r0
- 975 001a 002B     		cmp	r3, #0
- 976 001c 0DDD     		ble	.L47
+ 1091              		.loc 5 65 0
+ARM GAS  /tmp/ccNsmR1g.s 			page 27
+
+
+ 1092 000a 07F10803 		add	r3, r7, #8
+ 1093 000e 3A68     		ldr	r2, [r7]
+ 1094 0010 7968     		ldr	r1, [r7, #4]
+ 1095 0012 1846     		mov	r0, r3
+ 1096 0014 FFF7FEFF 		bl	vsprintf
+ 1097 0018 0346     		mov	r3, r0
+ 1098 001a 002B     		cmp	r3, #0
+ 1099 001c 0DDD     		ble	.L53
   66:Src/freertos.c ****        HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via 
- 977              		.loc 5 66 0
- 978 001e 07F10803 		add	r3, r7, #8
- 979 0022 1846     		mov	r0, r3
- 980 0024 FFF7FEFF 		bl	strlen
- 981 0028 0346     		mov	r3, r0
- 982 002a 9AB2     		uxth	r2, r3
- 983 002c 07F10801 		add	r1, r7, #8
- 984 0030 6FF07F43 		mvn	r3, #-16777216
- 985 0034 0348     		ldr	r0, .L48
- 986 0036 FFF7FEFF 		bl	HAL_UART_Transmit
- 987              	.L47:
+ 1100              		.loc 5 66 0
+ 1101 001e 07F10803 		add	r3, r7, #8
+ 1102 0022 1846     		mov	r0, r3
+ 1103 0024 FFF7FEFF 		bl	strlen
+ 1104 0028 0346     		mov	r3, r0
+ 1105 002a 9AB2     		uxth	r2, r3
+ 1106 002c 07F10801 		add	r1, r7, #8
+ 1107 0030 6FF07F43 		mvn	r3, #-16777216
+ 1108 0034 0348     		ldr	r0, .L54
+ 1109 0036 FFF7FEFF 		bl	HAL_UART_Transmit
+ 1110              	.L53:
   67:Src/freertos.c **** 
   68:Src/freertos.c **** }
- 988              		.loc 5 68 0
- 989 003a 00BF     		nop
- 990 003c A037     		adds	r7, r7, #160
- 991              	.LCFI30:
- 992              		.cfi_def_cfa_offset 8
- 993 003e BD46     		mov	sp, r7
- 994              	.LCFI31:
- 995              		.cfi_def_cfa_register 13
- 996              		@ sp needed
- 997 0040 80BD     		pop	{r7, pc}
- 998              	.L49:
- 999 0042 00BF     		.align	2
- 1000              	.L48:
- 1001 0044 00000000 		.word	huart1
- 1002              		.cfi_endproc
- 1003              	.LFE149:
- 1005              		.section	.text.mprintf,"ax",%progbits
- 1006              		.align	1
- 1007              		.global	mprintf
- 1008              		.syntax unified
- 1009              		.thumb
- 1010              		.thumb_func
- 1011              		.fpu fpv4-sp-d16
- 1013              	mprintf:
- 1014              	.LFB150:
+ 1111              		.loc 5 68 0
+ 1112 003a 00BF     		nop
+ 1113 003c A037     		adds	r7, r7, #160
+ 1114              	.LCFI30:
+ 1115              		.cfi_def_cfa_offset 8
+ 1116 003e BD46     		mov	sp, r7
+ 1117              	.LCFI31:
+ 1118              		.cfi_def_cfa_register 13
+ 1119              		@ sp needed
+ 1120 0040 80BD     		pop	{r7, pc}
+ 1121              	.L55:
+ 1122 0042 00BF     		.align	2
+ 1123              	.L54:
+ 1124 0044 00000000 		.word	huart1
+ 1125              		.cfi_endproc
+ 1126              	.LFE149:
+ 1128              		.section	.text.mprintf,"ax",%progbits
+ 1129              		.align	1
+ 1130              		.global	mprintf
+ 1131              		.syntax unified
+ 1132              		.thumb
+ 1133              		.thumb_func
+ 1134              		.fpu fpv4-sp-d16
+ 1136              	mprintf:
+ 1137              	.LFB150:
   69:Src/freertos.c **** 
   70:Src/freertos.c **** 
   71:Src/freertos.c **** 
-ARM GAS  /tmp/ccHKiwYi.s 			page 25
-
-
   72:Src/freertos.c **** void mprintf(const char *fmt, ...) // custom printf() function
   73:Src/freertos.c **** {
- 1015              		.loc 5 73 0
- 1016              		.cfi_startproc
- 1017              		@ args = 4, pretend = 16, frame = 8
- 1018              		@ frame_needed = 1, uses_anonymous_args = 1
- 1019 0000 0FB4     		push	{r0, r1, r2, r3}
- 1020              	.LCFI32:
- 1021              		.cfi_def_cfa_offset 16
- 1022              		.cfi_offset 0, -16
- 1023              		.cfi_offset 1, -12
- 1024              		.cfi_offset 2, -8
- 1025              		.cfi_offset 3, -4
- 1026 0002 80B5     		push	{r7, lr}
- 1027              	.LCFI33:
- 1028              		.cfi_def_cfa_offset 24
- 1029              		.cfi_offset 7, -24
- 1030              		.cfi_offset 14, -20
- 1031 0004 82B0     		sub	sp, sp, #8
- 1032              	.LCFI34:
- 1033              		.cfi_def_cfa_offset 32
- 1034 0006 00AF     		add	r7, sp, #0
- 1035              	.LCFI35:
- 1036              		.cfi_def_cfa_register 7
+ 1138              		.loc 5 73 0
+ 1139              		.cfi_startproc
+ 1140              		@ args = 4, pretend = 16, frame = 8
+ 1141              		@ frame_needed = 1, uses_anonymous_args = 1
+ 1142 0000 0FB4     		push	{r0, r1, r2, r3}
+ARM GAS  /tmp/ccNsmR1g.s 			page 28
+
+
+ 1143              	.LCFI32:
+ 1144              		.cfi_def_cfa_offset 16
+ 1145              		.cfi_offset 0, -16
+ 1146              		.cfi_offset 1, -12
+ 1147              		.cfi_offset 2, -8
+ 1148              		.cfi_offset 3, -4
+ 1149 0002 80B5     		push	{r7, lr}
+ 1150              	.LCFI33:
+ 1151              		.cfi_def_cfa_offset 24
+ 1152              		.cfi_offset 7, -24
+ 1153              		.cfi_offset 14, -20
+ 1154 0004 82B0     		sub	sp, sp, #8
+ 1155              	.LCFI34:
+ 1156              		.cfi_def_cfa_offset 32
+ 1157 0006 00AF     		add	r7, sp, #0
+ 1158              	.LCFI35:
+ 1159              		.cfi_def_cfa_register 7
   74:Src/freertos.c **** 
   75:Src/freertos.c ****     xSemaphoreTake(uartMutexHandle, 100);
- 1037              		.loc 5 75 0
- 1038 0008 0D4B     		ldr	r3, .L51
- 1039 000a 1868     		ldr	r0, [r3]
- 1040 000c 0023     		movs	r3, #0
- 1041 000e 6422     		movs	r2, #100
- 1042 0010 0021     		movs	r1, #0
- 1043 0012 FFF7FEFF 		bl	xQueueGenericReceive
+ 1160              		.loc 5 75 0
+ 1161 0008 0D4B     		ldr	r3, .L57
+ 1162 000a 1868     		ldr	r0, [r3]
+ 1163 000c 0023     		movs	r3, #0
+ 1164 000e 6422     		movs	r2, #100
+ 1165 0010 0021     		movs	r1, #0
+ 1166 0012 FFF7FEFF 		bl	xQueueGenericReceive
   76:Src/freertos.c ****     va_list argp;
   77:Src/freertos.c ****     va_start(argp, fmt);
- 1044              		.loc 5 77 0
- 1045 0016 07F11403 		add	r3, r7, #20
- 1046 001a 7B60     		str	r3, [r7, #4]
+ 1167              		.loc 5 77 0
+ 1168 0016 07F11403 		add	r3, r7, #20
+ 1169 001a 7B60     		str	r3, [r7, #4]
   78:Src/freertos.c ****     vprint(fmt, argp);
- 1047              		.loc 5 78 0
- 1048 001c 7968     		ldr	r1, [r7, #4]
- 1049 001e 3869     		ldr	r0, [r7, #16]
- 1050 0020 FFF7FEFF 		bl	vprint
+ 1170              		.loc 5 78 0
+ 1171 001c 7968     		ldr	r1, [r7, #4]
+ 1172 001e 3869     		ldr	r0, [r7, #16]
+ 1173 0020 FFF7FEFF 		bl	vprint
   79:Src/freertos.c ****     va_end(argp);
   80:Src/freertos.c ****     xSemaphoreGive(uartMutexHandle);
- 1051              		.loc 5 80 0
- 1052 0024 064B     		ldr	r3, .L51
- 1053 0026 1868     		ldr	r0, [r3]
- 1054 0028 0023     		movs	r3, #0
- 1055 002a 0022     		movs	r2, #0
- 1056 002c 0021     		movs	r1, #0
- 1057 002e FFF7FEFF 		bl	xQueueGenericSend
+ 1174              		.loc 5 80 0
+ 1175 0024 064B     		ldr	r3, .L57
+ 1176 0026 1868     		ldr	r0, [r3]
+ 1177 0028 0023     		movs	r3, #0
+ 1178 002a 0022     		movs	r2, #0
+ 1179 002c 0021     		movs	r1, #0
+ 1180 002e FFF7FEFF 		bl	xQueueGenericSend
   81:Src/freertos.c **** 
   82:Src/freertos.c **** }
- 1058              		.loc 5 82 0
- 1059 0032 00BF     		nop
- 1060 0034 0837     		adds	r7, r7, #8
-ARM GAS  /tmp/ccHKiwYi.s 			page 26
+ 1181              		.loc 5 82 0
+ 1182 0032 00BF     		nop
+ 1183 0034 0837     		adds	r7, r7, #8
+ 1184              	.LCFI36:
+ 1185              		.cfi_def_cfa_offset 24
+ 1186 0036 BD46     		mov	sp, r7
+ 1187              	.LCFI37:
+ 1188              		.cfi_def_cfa_register 13
+ 1189              		@ sp needed
+ 1190 0038 BDE88040 		pop	{r7, lr}
+ARM GAS  /tmp/ccNsmR1g.s 			page 29
 
 
- 1061              	.LCFI36:
- 1062              		.cfi_def_cfa_offset 24
- 1063 0036 BD46     		mov	sp, r7
- 1064              	.LCFI37:
- 1065              		.cfi_def_cfa_register 13
- 1066              		@ sp needed
- 1067 0038 BDE88040 		pop	{r7, lr}
- 1068              	.LCFI38:
- 1069              		.cfi_restore 14
- 1070              		.cfi_restore 7
- 1071              		.cfi_def_cfa_offset 16
- 1072 003c 04B0     		add	sp, sp, #16
- 1073              	.LCFI39:
- 1074              		.cfi_restore 3
- 1075              		.cfi_restore 2
- 1076              		.cfi_restore 1
- 1077              		.cfi_restore 0
- 1078              		.cfi_def_cfa_offset 0
- 1079 003e 7047     		bx	lr
- 1080              	.L52:
- 1081              		.align	2
- 1082              	.L51:
- 1083 0040 00000000 		.word	uartMutexHandle
- 1084              		.cfi_endproc
- 1085              	.LFE150:
- 1087              		.section	.rodata
- 1088 0047 00       		.align	2
- 1089              	.LC0:
- 1090 0048 67707354 		.ascii	"gpsThread\000"
- 1090      68726561 
- 1090      6400
- 1091 0052 0000     		.align	2
- 1092              	.LC14:
- 1093 0054 48000000 		.word	.LC0
- 1094 0058 00000000 		.word	gpsOps
- 1095 005c 0100     		.short	1
- 1096 005e 0000     		.space	2
- 1097 0060 00000000 		.word	0
- 1098 0064 00040000 		.word	1024
- 1099              		.align	2
- 1100              	.LC2:
- 1101 0068 73656E73 		.ascii	"sensorThread\000"
- 1101      6F725468 
- 1101      72656164 
- 1101      00
- 1102 0075 000000   		.align	2
- 1103              	.LC15:
- 1104 0078 68000000 		.word	.LC2
- 1105 007c 00000000 		.word	sensorOps
- 1106 0080 FFFF     		.short	-1
- 1107 0082 0000     		.space	2
- 1108 0084 00000000 		.word	0
- 1109 0088 00020000 		.word	512
- 1110              		.align	2
- 1111              	.LC4:
- 1112 008c 73706943 		.ascii	"spiComThread\000"
- 1112      6F6D5468 
-ARM GAS  /tmp/ccHKiwYi.s 			page 27
+ 1191              	.LCFI38:
+ 1192              		.cfi_restore 14
+ 1193              		.cfi_restore 7
+ 1194              		.cfi_def_cfa_offset 16
+ 1195 003c 04B0     		add	sp, sp, #16
+ 1196              	.LCFI39:
+ 1197              		.cfi_restore 3
+ 1198              		.cfi_restore 2
+ 1199              		.cfi_restore 1
+ 1200              		.cfi_restore 0
+ 1201              		.cfi_def_cfa_offset 0
+ 1202 003e 7047     		bx	lr
+ 1203              	.L58:
+ 1204              		.align	2
+ 1205              	.L57:
+ 1206 0040 00000000 		.word	uartMutexHandle
+ 1207              		.cfi_endproc
+ 1208              	.LFE150:
+ 1210              		.section	.rodata
+ 1211 0077 00       		.align	2
+ 1212              	.LC0:
+ 1213 0078 67707354 		.ascii	"gpsThread\000"
+ 1213      68726561 
+ 1213      6400
+ 1214 0082 0000     		.align	2
+ 1215              	.LC16:
+ 1216 0084 78000000 		.word	.LC0
+ 1217 0088 00000000 		.word	gpsOps
+ 1218 008c 0100     		.short	1
+ 1219 008e 0000     		.space	2
+ 1220 0090 00000000 		.word	0
+ 1221 0094 00040000 		.word	1024
+ 1222              		.align	2
+ 1223              	.LC2:
+ 1224 0098 73656E73 		.ascii	"sensorThread\000"
+ 1224      6F725468 
+ 1224      72656164 
+ 1224      00
+ 1225 00a5 000000   		.align	2
+ 1226              	.LC17:
+ 1227 00a8 98000000 		.word	.LC2
+ 1228 00ac 00000000 		.word	sensorOps
+ 1229 00b0 FFFF     		.short	-1
+ 1230 00b2 0000     		.space	2
+ 1231 00b4 00000000 		.word	0
+ 1232 00b8 00020000 		.word	512
+ 1233              		.align	2
+ 1234              	.LC4:
+ 1235 00bc 73706943 		.ascii	"spiComThread\000"
+ 1235      6F6D5468 
+ 1235      72656164 
+ 1235      00
+ 1236 00c9 000000   		.align	2
+ 1237              	.LC18:
+ 1238 00cc BC000000 		.word	.LC4
+ 1239 00d0 00000000 		.word	spiComOps
+ 1240 00d4 0000     		.short	0
+ARM GAS  /tmp/ccNsmR1g.s 			page 30
 
 
- 1112      72656164 
- 1112      00
- 1113 0099 000000   		.align	2
- 1114              	.LC16:
- 1115 009c 8C000000 		.word	.LC4
- 1116 00a0 00000000 		.word	spiComOps
- 1117 00a4 0000     		.short	0
- 1118 00a6 0000     		.space	2
- 1119 00a8 00000000 		.word	0
- 1120 00ac 00020000 		.word	512
- 1121              		.align	2
- 1122              	.LC6:
- 1123 00b0 6D6F746F 		.ascii	"motorThread\000"
- 1123      72546872 
- 1123      65616400 
- 1124              		.align	2
- 1125              	.LC17:
- 1126 00bc B0000000 		.word	.LC6
- 1127 00c0 00000000 		.word	motorOps
- 1128 00c4 0000     		.short	0
- 1129 00c6 0000     		.space	2
- 1130 00c8 00000000 		.word	0
- 1131 00cc 00020000 		.word	512
- 1132              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
- 1133              		.align	1
- 1134              		.global	MX_FREERTOS_Init
- 1135              		.syntax unified
- 1136              		.thumb
- 1137              		.thumb_func
- 1138              		.fpu fpv4-sp-d16
- 1140              	MX_FREERTOS_Init:
- 1141              	.LFB151:
+ 1241 00d6 0000     		.space	2
+ 1242 00d8 00000000 		.word	0
+ 1243 00dc 00020000 		.word	512
+ 1244              		.align	2
+ 1245              	.LC6:
+ 1246 00e0 6D6F746F 		.ascii	"motorThread\000"
+ 1246      72546872 
+ 1246      65616400 
+ 1247              		.align	2
+ 1248              	.LC19:
+ 1249 00ec E0000000 		.word	.LC6
+ 1250 00f0 00000000 		.word	motorOps
+ 1251 00f4 0000     		.short	0
+ 1252 00f6 0000     		.space	2
+ 1253 00f8 00000000 		.word	0
+ 1254 00fc 00020000 		.word	512
+ 1255              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 1256              		.align	1
+ 1257              		.global	MX_FREERTOS_Init
+ 1258              		.syntax unified
+ 1259              		.thumb
+ 1260              		.thumb_func
+ 1261              		.fpu fpv4-sp-d16
+ 1263              	MX_FREERTOS_Init:
+ 1264              	.LFB151:
   83:Src/freertos.c **** 
   84:Src/freertos.c **** 
   85:Src/freertos.c **** 
   86:Src/freertos.c **** void MX_FREERTOS_Init(void)
   87:Src/freertos.c **** {
- 1142              		.loc 5 87 0
- 1143              		.cfi_startproc
- 1144              		@ args = 0, pretend = 0, frame = 104
- 1145              		@ frame_needed = 1, uses_anonymous_args = 0
- 1146 0000 B0B5     		push	{r4, r5, r7, lr}
- 1147              	.LCFI40:
- 1148              		.cfi_def_cfa_offset 16
- 1149              		.cfi_offset 4, -16
- 1150              		.cfi_offset 5, -12
- 1151              		.cfi_offset 7, -8
- 1152              		.cfi_offset 14, -4
- 1153 0002 9AB0     		sub	sp, sp, #104
- 1154              	.LCFI41:
- 1155              		.cfi_def_cfa_offset 120
- 1156 0004 00AF     		add	r7, sp, #0
- 1157              	.LCFI42:
- 1158              		.cfi_def_cfa_register 7
+ 1265              		.loc 5 87 0
+ 1266              		.cfi_startproc
+ 1267              		@ args = 0, pretend = 0, frame = 104
+ 1268              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1269 0000 B0B5     		push	{r4, r5, r7, lr}
+ 1270              	.LCFI40:
+ 1271              		.cfi_def_cfa_offset 16
+ 1272              		.cfi_offset 4, -16
+ 1273              		.cfi_offset 5, -12
+ 1274              		.cfi_offset 7, -8
+ 1275              		.cfi_offset 14, -4
+ 1276 0002 9AB0     		sub	sp, sp, #104
+ 1277              	.LCFI41:
+ 1278              		.cfi_def_cfa_offset 120
+ 1279 0004 00AF     		add	r7, sp, #0
+ 1280              	.LCFI42:
+ 1281              		.cfi_def_cfa_register 7
   88:Src/freertos.c **** 
   89:Src/freertos.c **** 
   90:Src/freertos.c ****   osMutexDef(spiMutex);
-ARM GAS  /tmp/ccHKiwYi.s 			page 28
-
-
- 1159              		.loc 5 90 0
- 1160 0006 0023     		movs	r3, #0
- 1161 0008 7B66     		str	r3, [r7, #100]
+ 1282              		.loc 5 90 0
+ 1283 0006 0023     		movs	r3, #0
+ 1284 0008 7B66     		str	r3, [r7, #100]
   91:Src/freertos.c ****   spiMutexHandle = osMutexCreate(osMutex(spiMutex));
- 1162              		.loc 5 91 0
- 1163 000a 07F16403 		add	r3, r7, #100
- 1164 000e 1846     		mov	r0, r3
- 1165 0010 FFF7FEFF 		bl	osMutexCreate
- 1166 0014 0246     		mov	r2, r0
- 1167 0016 4A4B     		ldr	r3, .L54
- 1168 0018 1A60     		str	r2, [r3]
+ 1285              		.loc 5 91 0
+ 1286 000a 07F16403 		add	r3, r7, #100
+ 1287 000e 1846     		mov	r0, r3
+ARM GAS  /tmp/ccNsmR1g.s 			page 31
+
+
+ 1288 0010 FFF7FEFF 		bl	osMutexCreate
+ 1289 0014 0246     		mov	r2, r0
+ 1290 0016 4A4B     		ldr	r3, .L60
+ 1291 0018 1A60     		str	r2, [r3]
   92:Src/freertos.c **** 
   93:Src/freertos.c ****   osMutexDef(uartMutex);
- 1169              		.loc 5 93 0
- 1170 001a 0023     		movs	r3, #0
- 1171 001c 3B66     		str	r3, [r7, #96]
+ 1292              		.loc 5 93 0
+ 1293 001a 0023     		movs	r3, #0
+ 1294 001c 3B66     		str	r3, [r7, #96]
   94:Src/freertos.c ****   uartMutexHandle = osMutexCreate(osMutex(uartMutex));
- 1172              		.loc 5 94 0
- 1173 001e 07F16003 		add	r3, r7, #96
- 1174 0022 1846     		mov	r0, r3
- 1175 0024 FFF7FEFF 		bl	osMutexCreate
- 1176 0028 0246     		mov	r2, r0
- 1177 002a 464B     		ldr	r3, .L54+4
- 1178 002c 1A60     		str	r2, [r3]
+ 1295              		.loc 5 94 0
+ 1296 001e 07F16003 		add	r3, r7, #96
+ 1297 0022 1846     		mov	r0, r3
+ 1298 0024 FFF7FEFF 		bl	osMutexCreate
+ 1299 0028 0246     		mov	r2, r0
+ 1300 002a 464B     		ldr	r3, .L60+4
+ 1301 002c 1A60     		str	r2, [r3]
   95:Src/freertos.c **** 
   96:Src/freertos.c ****   osMutexDef(memoryMutex);
- 1179              		.loc 5 96 0
- 1180 002e 0023     		movs	r3, #0
- 1181 0030 FB65     		str	r3, [r7, #92]
+ 1302              		.loc 5 96 0
+ 1303 002e 0023     		movs	r3, #0
+ 1304 0030 FB65     		str	r3, [r7, #92]
   97:Src/freertos.c ****   memoryMutexHandle = osMutexCreate(osMutex(memoryMutex));
- 1182              		.loc 5 97 0
- 1183 0032 07F15C03 		add	r3, r7, #92
- 1184 0036 1846     		mov	r0, r3
- 1185 0038 FFF7FEFF 		bl	osMutexCreate
- 1186 003c 0246     		mov	r2, r0
- 1187 003e 424B     		ldr	r3, .L54+8
- 1188 0040 1A60     		str	r2, [r3]
+ 1305              		.loc 5 97 0
+ 1306 0032 07F15C03 		add	r3, r7, #92
+ 1307 0036 1846     		mov	r0, r3
+ 1308 0038 FFF7FEFF 		bl	osMutexCreate
+ 1309 003c 0246     		mov	r2, r0
+ 1310 003e 424B     		ldr	r3, .L60+8
+ 1311 0040 1A60     		str	r2, [r3]
   98:Src/freertos.c **** 
   99:Src/freertos.c ****   osSemaphoreDef(uartSemaphore);
- 1189              		.loc 5 99 0
- 1190 0042 0023     		movs	r3, #0
- 1191 0044 BB65     		str	r3, [r7, #88]
+ 1312              		.loc 5 99 0
+ 1313 0042 0023     		movs	r3, #0
+ 1314 0044 BB65     		str	r3, [r7, #88]
  100:Src/freertos.c ****   uartSemaphoreHandle = osSemaphoreCreate(osSemaphore(uartSemaphore), 1);
- 1192              		.loc 5 100 0
- 1193 0046 07F15803 		add	r3, r7, #88
- 1194 004a 0121     		movs	r1, #1
- 1195 004c 1846     		mov	r0, r3
- 1196 004e FFF7FEFF 		bl	osSemaphoreCreate
- 1197 0052 0246     		mov	r2, r0
- 1198 0054 3D4B     		ldr	r3, .L54+12
- 1199 0056 1A60     		str	r2, [r3]
+ 1315              		.loc 5 100 0
+ 1316 0046 07F15803 		add	r3, r7, #88
+ 1317 004a 0121     		movs	r1, #1
+ 1318 004c 1846     		mov	r0, r3
+ 1319 004e FFF7FEFF 		bl	osSemaphoreCreate
+ 1320 0052 0246     		mov	r2, r0
+ 1321 0054 3D4B     		ldr	r3, .L60+12
+ 1322 0056 1A60     		str	r2, [r3]
  101:Src/freertos.c **** 
  102:Src/freertos.c ****   /* definition and creation of spiSemaphore */
  103:Src/freertos.c ****   osSemaphoreDef(spiSemaphore);
- 1200              		.loc 5 103 0
- 1201 0058 0023     		movs	r3, #0
- 1202 005a 7B65     		str	r3, [r7, #84]
-ARM GAS  /tmp/ccHKiwYi.s 			page 29
-
-
+ 1323              		.loc 5 103 0
+ 1324 0058 0023     		movs	r3, #0
+ 1325 005a 7B65     		str	r3, [r7, #84]
  104:Src/freertos.c ****   spiSemaphoreHandle = osSemaphoreCreate(osSemaphore(spiSemaphore), 1);
- 1203              		.loc 5 104 0
- 1204 005c 07F15403 		add	r3, r7, #84
- 1205 0060 0121     		movs	r1, #1
- 1206 0062 1846     		mov	r0, r3
- 1207 0064 FFF7FEFF 		bl	osSemaphoreCreate
- 1208 0068 0246     		mov	r2, r0
- 1209 006a 394B     		ldr	r3, .L54+16
- 1210 006c 1A60     		str	r2, [r3]
+ 1326              		.loc 5 104 0
+ 1327 005c 07F15403 		add	r3, r7, #84
+ 1328 0060 0121     		movs	r1, #1
+ 1329 0062 1846     		mov	r0, r3
+ 1330 0064 FFF7FEFF 		bl	osSemaphoreCreate
+ 1331 0068 0246     		mov	r2, r0
+ARM GAS  /tmp/ccNsmR1g.s 			page 32
+
+
+ 1332 006a 394B     		ldr	r3, .L60+16
+ 1333 006c 1A60     		str	r2, [r3]
  105:Src/freertos.c **** 
  106:Src/freertos.c ****   /* definition and creation of gpsThread */
  107:Src/freertos.c ****   osThreadDef(gpsThread, gpsOps, osPriorityAboveNormal, 0, 1024);
- 1211              		.loc 5 107 0
- 1212 006e 394B     		ldr	r3, .L54+20
- 1213 0070 07F14004 		add	r4, r7, #64
- 1214 0074 1D46     		mov	r5, r3
- 1215 0076 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 1216 0078 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 1217 007a 2B68     		ldr	r3, [r5]
- 1218 007c 2360     		str	r3, [r4]
+ 1334              		.loc 5 107 0
+ 1335 006e 394B     		ldr	r3, .L60+20
+ 1336 0070 07F14004 		add	r4, r7, #64
+ 1337 0074 1D46     		mov	r5, r3
+ 1338 0076 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1339 0078 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1340 007a 2B68     		ldr	r3, [r5]
+ 1341 007c 2360     		str	r3, [r4]
  108:Src/freertos.c ****   gpsThreadHandle = osThreadCreate(osThread(gpsThread), NULL);
- 1219              		.loc 5 108 0
- 1220 007e 07F14003 		add	r3, r7, #64
- 1221 0082 0021     		movs	r1, #0
- 1222 0084 1846     		mov	r0, r3
- 1223 0086 FFF7FEFF 		bl	osThreadCreate
- 1224 008a 0246     		mov	r2, r0
- 1225 008c 324B     		ldr	r3, .L54+24
- 1226 008e 1A60     		str	r2, [r3]
+ 1342              		.loc 5 108 0
+ 1343 007e 07F14003 		add	r3, r7, #64
+ 1344 0082 0021     		movs	r1, #0
+ 1345 0084 1846     		mov	r0, r3
+ 1346 0086 FFF7FEFF 		bl	osThreadCreate
+ 1347 008a 0246     		mov	r2, r0
+ 1348 008c 324B     		ldr	r3, .L60+24
+ 1349 008e 1A60     		str	r2, [r3]
  109:Src/freertos.c **** 
  110:Src/freertos.c ****   /* definition and creation of sensorThread */
  111:Src/freertos.c ****   osThreadDef(sensorThread, sensorOps, osPriorityBelowNormal, 0, 512);
- 1227              		.loc 5 111 0
- 1228 0090 324B     		ldr	r3, .L54+28
- 1229 0092 07F12C04 		add	r4, r7, #44
- 1230 0096 1D46     		mov	r5, r3
- 1231 0098 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 1232 009a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 1233 009c 2B68     		ldr	r3, [r5]
- 1234 009e 2360     		str	r3, [r4]
+ 1350              		.loc 5 111 0
+ 1351 0090 324B     		ldr	r3, .L60+28
+ 1352 0092 07F12C04 		add	r4, r7, #44
+ 1353 0096 1D46     		mov	r5, r3
+ 1354 0098 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1355 009a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1356 009c 2B68     		ldr	r3, [r5]
+ 1357 009e 2360     		str	r3, [r4]
  112:Src/freertos.c ****   sensorThreadHandle = osThreadCreate(osThread(sensorThread), NULL);
- 1235              		.loc 5 112 0
- 1236 00a0 07F12C03 		add	r3, r7, #44
- 1237 00a4 0021     		movs	r1, #0
- 1238 00a6 1846     		mov	r0, r3
- 1239 00a8 FFF7FEFF 		bl	osThreadCreate
- 1240 00ac 0246     		mov	r2, r0
- 1241 00ae 2C4B     		ldr	r3, .L54+32
- 1242 00b0 1A60     		str	r2, [r3]
+ 1358              		.loc 5 112 0
+ 1359 00a0 07F12C03 		add	r3, r7, #44
+ 1360 00a4 0021     		movs	r1, #0
+ 1361 00a6 1846     		mov	r0, r3
+ 1362 00a8 FFF7FEFF 		bl	osThreadCreate
+ 1363 00ac 0246     		mov	r2, r0
+ 1364 00ae 2C4B     		ldr	r3, .L60+32
+ 1365 00b0 1A60     		str	r2, [r3]
  113:Src/freertos.c **** 
  114:Src/freertos.c ****   /* definition and creation of spiComThread */
  115:Src/freertos.c ****   osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 512);
- 1243              		.loc 5 115 0
- 1244 00b2 2C4B     		ldr	r3, .L54+36
- 1245 00b4 07F11804 		add	r4, r7, #24
- 1246 00b8 1D46     		mov	r5, r3
- 1247 00ba 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
-ARM GAS  /tmp/ccHKiwYi.s 			page 30
-
-
- 1248 00bc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 1249 00be 2B68     		ldr	r3, [r5]
- 1250 00c0 2360     		str	r3, [r4]
+ 1366              		.loc 5 115 0
+ 1367 00b2 2C4B     		ldr	r3, .L60+36
+ 1368 00b4 07F11804 		add	r4, r7, #24
+ 1369 00b8 1D46     		mov	r5, r3
+ 1370 00ba 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1371 00bc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1372 00be 2B68     		ldr	r3, [r5]
+ 1373 00c0 2360     		str	r3, [r4]
  116:Src/freertos.c ****   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
- 1251              		.loc 5 116 0
- 1252 00c2 07F11803 		add	r3, r7, #24
- 1253 00c6 0021     		movs	r1, #0
- 1254 00c8 1846     		mov	r0, r3
- 1255 00ca FFF7FEFF 		bl	osThreadCreate
- 1256 00ce 0246     		mov	r2, r0
- 1257 00d0 254B     		ldr	r3, .L54+40
- 1258 00d2 1A60     		str	r2, [r3]
+ 1374              		.loc 5 116 0
+ 1375 00c2 07F11803 		add	r3, r7, #24
+ 1376 00c6 0021     		movs	r1, #0
+ARM GAS  /tmp/ccNsmR1g.s 			page 33
+
+
+ 1377 00c8 1846     		mov	r0, r3
+ 1378 00ca FFF7FEFF 		bl	osThreadCreate
+ 1379 00ce 0246     		mov	r2, r0
+ 1380 00d0 254B     		ldr	r3, .L60+40
+ 1381 00d2 1A60     		str	r2, [r3]
  117:Src/freertos.c **** 
  118:Src/freertos.c ****   osThreadDef(motorThread, motorOps, osPriorityNormal, 0, 512);
- 1259              		.loc 5 118 0
- 1260 00d4 254B     		ldr	r3, .L54+44
- 1261 00d6 3C1D     		adds	r4, r7, #4
- 1262 00d8 1D46     		mov	r5, r3
- 1263 00da 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 1264 00dc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 1265 00de 2B68     		ldr	r3, [r5]
- 1266 00e0 2360     		str	r3, [r4]
+ 1382              		.loc 5 118 0
+ 1383 00d4 254B     		ldr	r3, .L60+44
+ 1384 00d6 3C1D     		adds	r4, r7, #4
+ 1385 00d8 1D46     		mov	r5, r3
+ 1386 00da 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 1387 00dc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 1388 00de 2B68     		ldr	r3, [r5]
+ 1389 00e0 2360     		str	r3, [r4]
  119:Src/freertos.c ****   motorThreadHandle = osThreadCreate(osThread(motorThread), NULL);
- 1267              		.loc 5 119 0
- 1268 00e2 3B1D     		adds	r3, r7, #4
- 1269 00e4 0021     		movs	r1, #0
- 1270 00e6 1846     		mov	r0, r3
- 1271 00e8 FFF7FEFF 		bl	osThreadCreate
- 1272 00ec 0246     		mov	r2, r0
- 1273 00ee 204B     		ldr	r3, .L54+48
- 1274 00f0 1A60     		str	r2, [r3]
+ 1390              		.loc 5 119 0
+ 1391 00e2 3B1D     		adds	r3, r7, #4
+ 1392 00e4 0021     		movs	r1, #0
+ 1393 00e6 1846     		mov	r0, r3
+ 1394 00e8 FFF7FEFF 		bl	osThreadCreate
+ 1395 00ec 0246     		mov	r2, r0
+ 1396 00ee 204B     		ldr	r3, .L60+48
+ 1397 00f0 1A60     		str	r2, [r3]
  120:Src/freertos.c **** 
  121:Src/freertos.c **** 
  122:Src/freertos.c ****   EnvironmentData = malloc(sizeof(ENVIRONMENT_DATA_FORMAT));
- 1275              		.loc 5 122 0
- 1276 00f2 7820     		movs	r0, #120
- 1277 00f4 FFF7FEFF 		bl	malloc
- 1278 00f8 0346     		mov	r3, r0
- 1279 00fa 1A46     		mov	r2, r3
- 1280 00fc 1D4B     		ldr	r3, .L54+52
- 1281 00fe 1A60     		str	r2, [r3]
+ 1398              		.loc 5 122 0
+ 1399 00f2 7820     		movs	r0, #120
+ 1400 00f4 FFF7FEFF 		bl	malloc
+ 1401 00f8 0346     		mov	r3, r0
+ 1402 00fa 1A46     		mov	r2, r3
+ 1403 00fc 1D4B     		ldr	r3, .L60+52
+ 1404 00fe 1A60     		str	r2, [r3]
  123:Src/freertos.c ****   ControlData = malloc(sizeof(CONTROL_DATA_FORMAT));
- 1282              		.loc 5 123 0
- 1283 0100 7820     		movs	r0, #120
- 1284 0102 FFF7FEFF 		bl	malloc
- 1285 0106 0346     		mov	r3, r0
- 1286 0108 1A46     		mov	r2, r3
- 1287 010a 1B4B     		ldr	r3, .L54+56
- 1288 010c 1A60     		str	r2, [r3]
+ 1405              		.loc 5 123 0
+ 1406 0100 7820     		movs	r0, #120
+ 1407 0102 FFF7FEFF 		bl	malloc
+ 1408 0106 0346     		mov	r3, r0
+ 1409 0108 1A46     		mov	r2, r3
+ 1410 010a 1B4B     		ldr	r3, .L60+56
+ 1411 010c 1A60     		str	r2, [r3]
  124:Src/freertos.c ****   UpdateFile = malloc(sizeof(UPDATE_FILE_FORMAT));
- 1289              		.loc 5 124 0
- 1290 010e 7420     		movs	r0, #116
- 1291 0110 FFF7FEFF 		bl	malloc
- 1292 0114 0346     		mov	r3, r0
- 1293 0116 1A46     		mov	r2, r3
- 1294 0118 184B     		ldr	r3, .L54+60
- 1295 011a 1A60     		str	r2, [r3]
-ARM GAS  /tmp/ccHKiwYi.s 			page 31
-
-
+ 1412              		.loc 5 124 0
+ 1413 010e 7420     		movs	r0, #116
+ 1414 0110 FFF7FEFF 		bl	malloc
+ 1415 0114 0346     		mov	r3, r0
+ 1416 0116 1A46     		mov	r2, r3
+ 1417 0118 184B     		ldr	r3, .L60+60
+ 1418 011a 1A60     		str	r2, [r3]
  125:Src/freertos.c **** 
  126:Src/freertos.c ****   SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
- 1296              		.loc 5 126 0
- 1297 011c 7820     		movs	r0, #120
- 1298 011e FFF7FEFF 		bl	malloc
- 1299 0122 0346     		mov	r3, r0
- 1300 0124 1A46     		mov	r2, r3
- 1301 0126 164B     		ldr	r3, .L54+64
- 1302 0128 1A60     		str	r2, [r3]
+ 1419              		.loc 5 126 0
+ 1420 011c 7820     		movs	r0, #120
+ 1421 011e FFF7FEFF 		bl	malloc
+ 1422 0122 0346     		mov	r3, r0
+ 1423 0124 1A46     		mov	r2, r3
+ARM GAS  /tmp/ccNsmR1g.s 			page 34
+
+
+ 1424 0126 164B     		ldr	r3, .L60+64
+ 1425 0128 1A60     		str	r2, [r3]
  127:Src/freertos.c **** 
  128:Src/freertos.c ****   SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
- 1303              		.loc 5 128 0
- 1304 012a 7820     		movs	r0, #120
- 1305 012c FFF7FEFF 		bl	malloc
- 1306 0130 0346     		mov	r3, r0
- 1307 0132 1A46     		mov	r2, r3
- 1308 0134 134B     		ldr	r3, .L54+68
- 1309 0136 1A60     		str	r2, [r3]
+ 1426              		.loc 5 128 0
+ 1427 012a 7820     		movs	r0, #120
+ 1428 012c FFF7FEFF 		bl	malloc
+ 1429 0130 0346     		mov	r3, r0
+ 1430 0132 1A46     		mov	r2, r3
+ 1431 0134 134B     		ldr	r3, .L60+68
+ 1432 0136 1A60     		str	r2, [r3]
  129:Src/freertos.c **** 
  130:Src/freertos.c **** 
  131:Src/freertos.c **** }
- 1310              		.loc 5 131 0
- 1311 0138 00BF     		nop
- 1312 013a 6837     		adds	r7, r7, #104
- 1313              	.LCFI43:
- 1314              		.cfi_def_cfa_offset 16
- 1315 013c BD46     		mov	sp, r7
- 1316              	.LCFI44:
- 1317              		.cfi_def_cfa_register 13
- 1318              		@ sp needed
- 1319 013e B0BD     		pop	{r4, r5, r7, pc}
- 1320              	.L55:
- 1321              		.align	2
- 1322              	.L54:
- 1323 0140 00000000 		.word	spiMutexHandle
- 1324 0144 00000000 		.word	uartMutexHandle
- 1325 0148 00000000 		.word	memoryMutexHandle
- 1326 014c 00000000 		.word	uartSemaphoreHandle
- 1327 0150 00000000 		.word	spiSemaphoreHandle
- 1328 0154 54000000 		.word	.LC14
- 1329 0158 00000000 		.word	gpsThreadHandle
- 1330 015c 78000000 		.word	.LC15
- 1331 0160 00000000 		.word	sensorThreadHandle
- 1332 0164 9C000000 		.word	.LC16
- 1333 0168 00000000 		.word	spiComThreadHandle
- 1334 016c BC000000 		.word	.LC17
- 1335 0170 00000000 		.word	motorThreadHandle
- 1336 0174 00000000 		.word	EnvironmentData
- 1337 0178 00000000 		.word	ControlData
- 1338 017c 00000000 		.word	UpdateFile
- 1339 0180 00000000 		.word	SpiRxData
- 1340 0184 00000000 		.word	SpiTxData
- 1341              		.cfi_endproc
- 1342              	.LFE151:
- 1344              		.text
- 1345              	.Letext0:
- 1346              		.file 6 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h"
-ARM GAS  /tmp/ccHKiwYi.s 			page 32
+ 1433              		.loc 5 131 0
+ 1434 0138 00BF     		nop
+ 1435 013a 6837     		adds	r7, r7, #104
+ 1436              	.LCFI43:
+ 1437              		.cfi_def_cfa_offset 16
+ 1438 013c BD46     		mov	sp, r7
+ 1439              	.LCFI44:
+ 1440              		.cfi_def_cfa_register 13
+ 1441              		@ sp needed
+ 1442 013e B0BD     		pop	{r4, r5, r7, pc}
+ 1443              	.L61:
+ 1444              		.align	2
+ 1445              	.L60:
+ 1446 0140 00000000 		.word	spiMutexHandle
+ 1447 0144 00000000 		.word	uartMutexHandle
+ 1448 0148 00000000 		.word	memoryMutexHandle
+ 1449 014c 00000000 		.word	uartSemaphoreHandle
+ 1450 0150 00000000 		.word	spiSemaphoreHandle
+ 1451 0154 84000000 		.word	.LC16
+ 1452 0158 00000000 		.word	gpsThreadHandle
+ 1453 015c A8000000 		.word	.LC17
+ 1454 0160 00000000 		.word	sensorThreadHandle
+ 1455 0164 CC000000 		.word	.LC18
+ 1456 0168 00000000 		.word	spiComThreadHandle
+ 1457 016c EC000000 		.word	.LC19
+ 1458 0170 00000000 		.word	motorThreadHandle
+ 1459 0174 00000000 		.word	EnvironmentData
+ 1460 0178 00000000 		.word	ControlData
+ 1461 017c 00000000 		.word	UpdateFile
+ 1462 0180 00000000 		.word	SpiRxData
+ 1463 0184 00000000 		.word	SpiTxData
+ 1464              		.cfi_endproc
+ 1465              	.LFE151:
+ 1467              		.text
+ 1468              	.Letext0:
+ 1469              		.file 6 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h"
+ 1470              		.file 7 "/usr/include/newlib/machine/_default_types.h"
+ 1471              		.file 8 "/usr/include/newlib/sys/lock.h"
+ 1472              		.file 9 "/usr/include/newlib/sys/_types.h"
+ 1473              		.file 10 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 1474              		.file 11 "/usr/include/newlib/sys/reent.h"
+ 1475              		.file 12 "<built-in>"
+ 1476              		.file 13 "/usr/include/newlib/sys/_stdint.h"
+ARM GAS  /tmp/ccNsmR1g.s 			page 35
 
 
- 1347              		.file 7 "/usr/include/newlib/machine/_default_types.h"
- 1348              		.file 8 "/usr/include/newlib/sys/lock.h"
- 1349              		.file 9 "/usr/include/newlib/sys/_types.h"
- 1350              		.file 10 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
- 1351              		.file 11 "/usr/include/newlib/sys/reent.h"
- 1352              		.file 12 "<built-in>"
- 1353              		.file 13 "/usr/include/newlib/sys/_stdint.h"
- 1354              		.file 14 "Inc/main.h"
- 1355              		.file 15 "Drivers/CMSIS/Include/core_cm7.h"
- 1356              		.file 16 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 1357              		.file 17 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 1358              		.file 18 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 1359              		.file 19 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 1360              		.file 20 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
- 1361              		.file 21 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 1362              		.file 22 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
- 1363              		.file 23 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
- 1364              		.file 24 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 1365              		.file 25 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 1366              		.file 26 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
- 1367              		.file 27 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
- 1368              		.file 28 "Inc/gps.h"
- 1369              		.file 29 "Inc/sensor.h"
- 1370              		.file 30 "Inc/motor.h"
- 1371              		.file 31 "Inc/usart.h"
- 1372              		.file 32 "Inc/spi.h"
- 1373              		.file 33 "Inc/tim.h"
- 1374              		.file 34 "Inc/freertos.h"
-ARM GAS  /tmp/ccHKiwYi.s 			page 33
+ 1477              		.file 14 "Inc/main.h"
+ 1478              		.file 15 "Drivers/CMSIS/Include/core_cm7.h"
+ 1479              		.file 16 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1480              		.file 17 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 1481              		.file 18 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1482              		.file 19 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 1483              		.file 20 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 1484              		.file 21 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 1485              		.file 22 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 1486              		.file 23 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
+ 1487              		.file 24 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 1488              		.file 25 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 1489              		.file 26 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 1490              		.file 27 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 1491              		.file 28 "Inc/gps.h"
+ 1492              		.file 29 "Inc/sensor.h"
+ 1493              		.file 30 "Inc/motor.h"
+ 1494              		.file 31 "Inc/usart.h"
+ 1495              		.file 32 "Inc/spi.h"
+ 1496              		.file 33 "Inc/tim.h"
+ 1497              		.file 34 "Inc/freertos.h"
+ARM GAS  /tmp/ccNsmR1g.s 			page 36
 
 
 DEFINED SYMBOLS
@@ -1915,42 +2088,44 @@ DEFINED SYMBOLS
                             *COM*:0000000000000004 ControlData
                             *COM*:0000000000000004 UpdateFile
                             *COM*:0000000000000001 rx_buf
-     /tmp/ccHKiwYi.s:39     .text.UART4_IRQHandler:0000000000000000 $t
-     /tmp/ccHKiwYi.s:46     .text.UART4_IRQHandler:0000000000000000 UART4_IRQHandler
-     /tmp/ccHKiwYi.s:76     .text.UART4_IRQHandler:000000000000001c $d
-     /tmp/ccHKiwYi.s:82     .rodata:0000000000000000 $d
-     /tmp/ccHKiwYi.s:89     .text.gpsOps:0000000000000000 $t
-     /tmp/ccHKiwYi.s:96     .text.gpsOps:0000000000000000 gpsOps
-     /tmp/ccHKiwYi.s:1013   .text.mprintf:0000000000000000 mprintf
-     /tmp/ccHKiwYi.s:203    .text.gpsOps:00000000000000a8 $d
-     /tmp/ccHKiwYi.s:215    .text.writeFlash:0000000000000000 $t
-     /tmp/ccHKiwYi.s:222    .text.writeFlash:0000000000000000 writeFlash
-     /tmp/ccHKiwYi.s:270    .text.readFlash:0000000000000000 $t
-     /tmp/ccHKiwYi.s:277    .text.readFlash:0000000000000000 readFlash
-     /tmp/ccHKiwYi.s:319    .text.SPI1_IRQHandler:0000000000000000 $t
-     /tmp/ccHKiwYi.s:326    .text.SPI1_IRQHandler:0000000000000000 SPI1_IRQHandler
-     /tmp/ccHKiwYi.s:355    .text.SPI1_IRQHandler:000000000000001c $d
-     /tmp/ccHKiwYi.s:368    .text.spiComOps:0000000000000000 $t
-     /tmp/ccHKiwYi.s:375    .text.spiComOps:0000000000000000 spiComOps
-     /tmp/ccHKiwYi.s:713    .text.spiComOps:000000000000024c $d
-     /tmp/ccHKiwYi.s:734    .text.sensorOps:0000000000000000 $t
-     /tmp/ccHKiwYi.s:741    .text.sensorOps:0000000000000000 sensorOps
-     /tmp/ccHKiwYi.s:821    .text.sensorOps:0000000000000074 $d
-     /tmp/ccHKiwYi.s:834    .text.motorOps:0000000000000000 $t
-     /tmp/ccHKiwYi.s:841    .text.motorOps:0000000000000000 motorOps
-     /tmp/ccHKiwYi.s:933    .text.motorOps:0000000000000078 $d
-     /tmp/ccHKiwYi.s:941    .text.vprint:0000000000000000 $t
-     /tmp/ccHKiwYi.s:948    .text.vprint:0000000000000000 vprint
-     /tmp/ccHKiwYi.s:1001   .text.vprint:0000000000000044 $d
-     /tmp/ccHKiwYi.s:1006   .text.mprintf:0000000000000000 $t
-     /tmp/ccHKiwYi.s:1083   .text.mprintf:0000000000000040 $d
-     /tmp/ccHKiwYi.s:1133   .text.MX_FREERTOS_Init:0000000000000000 $t
-     /tmp/ccHKiwYi.s:1140   .text.MX_FREERTOS_Init:0000000000000000 MX_FREERTOS_Init
-     /tmp/ccHKiwYi.s:1323   .text.MX_FREERTOS_Init:0000000000000140 $d
+     /tmp/ccNsmR1g.s:39     .text.UART4_IRQHandler:0000000000000000 $t
+     /tmp/ccNsmR1g.s:46     .text.UART4_IRQHandler:0000000000000000 UART4_IRQHandler
+     /tmp/ccNsmR1g.s:76     .text.UART4_IRQHandler:000000000000001c $d
+     /tmp/ccNsmR1g.s:82     .rodata:0000000000000000 $d
+     /tmp/ccNsmR1g.s:89     .text.gpsOps:0000000000000000 $t
+     /tmp/ccNsmR1g.s:96     .text.gpsOps:0000000000000000 gpsOps
+     /tmp/ccNsmR1g.s:1136   .text.mprintf:0000000000000000 mprintf
+     /tmp/ccNsmR1g.s:203    .text.gpsOps:00000000000000a8 $d
+     /tmp/ccNsmR1g.s:215    .text.writeFlash:0000000000000000 $t
+     /tmp/ccNsmR1g.s:222    .text.writeFlash:0000000000000000 writeFlash
+     /tmp/ccNsmR1g.s:266    .text.readFlash:0000000000000000 $t
+     /tmp/ccNsmR1g.s:273    .text.readFlash:0000000000000000 readFlash
+     /tmp/ccNsmR1g.s:315    .text.SPI1_IRQHandler:0000000000000000 $t
+     /tmp/ccNsmR1g.s:322    .text.SPI1_IRQHandler:0000000000000000 SPI1_IRQHandler
+     /tmp/ccNsmR1g.s:351    .text.SPI1_IRQHandler:000000000000001c $d
+     /tmp/ccNsmR1g.s:370    .text.spiComOps:0000000000000000 $t
+     /tmp/ccNsmR1g.s:377    .text.spiComOps:0000000000000000 spiComOps
+     /tmp/ccNsmR1g.s:617    .text.spiComOps:0000000000000194 $d
+     /tmp/ccNsmR1g.s:628    .text.spiComOps:00000000000001b8 $t
+     /tmp/ccNsmR1g.s:838    .text.spiComOps:0000000000000334 $d
+     /tmp/ccNsmR1g.s:857    .text.sensorOps:0000000000000000 $t
+     /tmp/ccNsmR1g.s:864    .text.sensorOps:0000000000000000 sensorOps
+     /tmp/ccNsmR1g.s:944    .text.sensorOps:0000000000000074 $d
+     /tmp/ccNsmR1g.s:957    .text.motorOps:0000000000000000 $t
+     /tmp/ccNsmR1g.s:964    .text.motorOps:0000000000000000 motorOps
+     /tmp/ccNsmR1g.s:1056   .text.motorOps:0000000000000078 $d
+     /tmp/ccNsmR1g.s:1064   .text.vprint:0000000000000000 $t
+     /tmp/ccNsmR1g.s:1071   .text.vprint:0000000000000000 vprint
+     /tmp/ccNsmR1g.s:1124   .text.vprint:0000000000000044 $d
+     /tmp/ccNsmR1g.s:1129   .text.mprintf:0000000000000000 $t
+     /tmp/ccNsmR1g.s:1206   .text.mprintf:0000000000000040 $d
+     /tmp/ccNsmR1g.s:1256   .text.MX_FREERTOS_Init:0000000000000000 $t
+     /tmp/ccNsmR1g.s:1263   .text.MX_FREERTOS_Init:0000000000000000 MX_FREERTOS_Init
+     /tmp/ccNsmR1g.s:1446   .text.MX_FREERTOS_Init:0000000000000140 $d
+ARM GAS  /tmp/ccNsmR1g.s 			page 37
+
+
                      .debug_frame:0000000000000010 $d
-
-ARM GAS  /tmp/ccHKiwYi.s 			page 34
-
 
 UNDEFINED SYMBOLS
 HAL_UART_IRQHandler
@@ -1964,13 +2139,17 @@ HAL_GPIO_TogglePin
 enableGps
 receiveGpsData
 HAL_UART_Receive_IT
-HAL_FLASH_Unlock
 HAL_FLASH_Program
-HAL_FLASH_Lock
 HAL_SPI_IRQHandler
 hspi1
 HAL_SPI_TransmitReceive_IT
 HAL_SPI_GetState
+malloc
+HAL_FLASH_Unlock
+FLASH_Erase_Sector
+HAL_Delay
+HAL_FLASH_Lock
+free
 memcpy
 sensorInit
 HAL_TIM_PWM_Start
@@ -1986,4 +2165,3 @@ huart1
 osMutexCreate
 osSemaphoreCreate
 osThreadCreate
-malloc

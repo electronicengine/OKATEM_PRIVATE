@@ -138,11 +138,40 @@ Controller::Controller_Status Controller::setControlData(CONTROL_DATA_FORMAT& Da
 Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 {
 
+//    static unsigned char *file_data = new unsigned char [43644];
 
 
-    static unsigned char *file_data = new unsigned char [SPI_ENTITY_SIZE * 405];
+//    if(Data.current_sequence_number == Data.total_sequence_number)
+//    {
+//        for(int i=0; i<43644 % SPI_ENTITY_SIZE; i++)
+//        {
+//            file_data[i + (SPI_ENTITY_SIZE * (Data.current_sequence_number - 1))] = Data.data[i];
+//        }
 
 
+//        FILE *write_ptr;
+
+//        write_ptr = fopen("test.bin","wb");  // w for write, b for binary
+
+//        fwrite(file_data,43644,1,write_ptr); // write 10 bytes from our buffer
+
+//        fclose(write_ptr);
+
+//        delete [] file_data;
+//    }
+//    else
+//    {
+//        for(int i=0;i<SPI_ENTITY_SIZE; i++)
+//        {
+//            file_data[i + (SPI_ENTITY_SIZE * (Data.current_sequence_number - 1))] = Data.data[i];
+//        }
+//    }
+
+
+
+
+
+//    return Controller_Status::ok;
 
     if(gmIsTransmitted)
     {
@@ -187,6 +216,7 @@ void Controller::communicationThread()
 
 
     unsigned char *spi_transfer_data;
+    int wait_time = 100000;
 
     SpiCom::Spi_Status status;
 
@@ -198,8 +228,17 @@ void Controller::communicationThread()
 
         gmMutex.lock();
 
-
             spi_transfer_data = gmSpiTxData;
+
+            if((gmSpiTxData.header & 0xff) == 'C' && ((gmSpiTxData.header >> 8) & 0xff) == 'O')
+            {
+                wait_time = 100000;
+            }
+            else if((gmSpiTxData.header & 0xff) == 'U' && ((gmSpiTxData.header >> 8) & 0xff) == 'P')
+            {
+                wait_time = 150000;
+                std::cout << "UP" << std::endl;
+            }
 
             status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
 
@@ -225,7 +264,7 @@ void Controller::communicationThread()
         gmMutex.unlock();
 
 
-        usleep(100000);
+        usleep(wait_time);
 
 
     }

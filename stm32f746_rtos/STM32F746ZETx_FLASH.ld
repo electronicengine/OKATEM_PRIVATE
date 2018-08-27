@@ -41,7 +41,6 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-
 RAM (xrw)       : ORIGIN = 0x200000C0, LENGTH = 320K - 192  /* 192 for vector table  */
 BOOTLOADER (rx) : ORIGIN = 0x08000000, LENGTH = 64K
 FIRMWARE (rx)   : ORIGIN = 0x08010000, LENGTH = 192K

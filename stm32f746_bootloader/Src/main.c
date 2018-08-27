@@ -54,25 +54,42 @@
 #include <stdarg.h>
 #include <string.h>
 #include <inttypes.h>
+#include <stdlib.h>
+
+#define SUCCESS 0
+#define FAIL -1
 
 #define APPLICATION_ADDRESS        0x08010000
+#define UPDATE_FILE_ADRESS         0x08080000
+
 
 typedef void (*pFunction)(void);
 
 void SystemClock_Config(void);
 void vprint(const char *fmt, va_list argp);
 void mprintf(const char *fmt, ...);
+void EnablePrivilegedMode (void);
+void bootRTOS();
+int checkUpdate();
+void loadUpdateFile();
+void writeFlash(uint8_t Data, long Address);
+uint8_t readFlash(int Address);
 
-void EnablePrivilegedMode (void){
-        __disable_irq();
-        __set_CONTROL((__get_CONTROL( ))& 0xFFFFFFFE);  // enter priv mode
-        __enable_irq();
-}
+
+
+
+//void SPI1_IRQHandler(void)
+//{
+
+//  HAL_SPI_IRQHandler(&hspi1);
+
+//}
+
 
 
 int main(void)
 {
-
+    int ret = 0;
 
     HAL_Init();
     SystemClock_Config();
@@ -88,56 +105,166 @@ int main(void)
     mprintf("Bootloader Initializing...\r\n");
 
 
+    HAL_Delay(5000);
+
+//    HAL_FLASH_Unlock();
+//    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+//    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
+//    HAL_FLASH_Lock();
+
+
+    ret = checkUpdate();
+
+    if(ret == SUCCESS)
+    {
+        loadUpdateFile();
+        HAL_Delay(1000);
+        bootRTOS();
+    }
+    else
+    {
+        bootRTOS();
+    }
+
+
+}
+
+int checkUpdate()
+{
+
+    uint32_t data;
+
+    mprintf("Checking Firmware Update File...\r\n");
+
+    data = readFlash(UPDATE_FILE_ADRESS) | (readFlash(UPDATE_FILE_ADRESS + 1) << 8)
+            | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
+
+
+
+    if(data == 0xffffffff)
+    {
+        mprintf("There is no update file in the flash\r\n");
+        return FAIL;
+
+    }
+    else if(data > 512000 || data < 0)
+    {
+        mprintf("There is no update file in the flash\r\n");
+
+        HAL_FLASH_Unlock();
+        FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+        FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
+        HAL_FLASH_Lock();
+
+        return FAIL;
+    }
+    else
+    {
+        mprintf("A Update file has been found in the flash");
+        return SUCCESS;
+    }
+
+}
+
+
+
+void loadUpdateFile()
+{
+    uint32_t file_size;
+    unsigned char *data;
+
+    file_size = readFlash(UPDATE_FILE_ADRESS) | readFlash(UPDATE_FILE_ADRESS + 1) << 8
+            | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
+
+
+    mprintf("Update File Size : %d\r\n", file_size);
+
+    data = malloc(file_size);
+
+
+    HAL_FLASH_Unlock();
+    FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
+    FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
+    FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
+    FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
+    HAL_FLASH_Lock();
+
+    HAL_Delay(1000);
+
+    for(int i=0; i<file_size; i++)
+        data[i] =readFlash(UPDATE_FILE_ADRESS + 4 + i);
+
+    for(int i=0; i<file_size; i++)
+        writeFlash(data[i], APPLICATION_ADDRESS + i);
+
+
+    HAL_Delay(1000);
+
+    HAL_FLASH_Unlock();
+    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
+    HAL_FLASH_Lock();
+
+    mprintf("UpdateFile has been writen on memory\r\n");
+
+
+    free(data);
+
+
+}
+
+
+
+void bootRTOS()
+{
+
+
     pFunction appEntry;
     uint32_t appStack;
 
+    mprintf("Booting...\r\n");
 
-//      EnablePrivilegedMode( ) ;
-
-
-//  // Disable all interrupts
-//   NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
-//   NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
+//    EnablePrivilegedMode( ) ;
 
 
-// // Clear pendings
-
-//   NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
-//   NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
-
+//    // Disable all interrupts
+//    NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
+//    NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
 
 
-//// Stop sys tick
+//    // Clear pendings
+//    NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
+//    NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
 
-//   SysTick->CTRL = 0 ;
-//   SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
 
-//// Disable individual fault handlers if the bootloader used them.
+//    // Stop sys tick
+//    SysTick->CTRL = 0 ;
+//    SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
 
-//   SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
+//    // Disable individual fault handlers if the bootloader used them.
+//    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
 //                    SCB_SHCSR_BUSFAULTENA_Msk | \
 //                    SCB_SHCSR_MEMFAULTENA_Msk ) ;
 
-//// Activate the MSP, if the core is found to currently run with the PSP.
-
-//   if( CONTROL_SPSEL_Msk & __get_CONTROL( ) )
-//   {  /* MSP is not active */
+//    // Activate the MSP, if the core is found to currently run with the PSP.
+//    if( CONTROL_SPSEL_Msk & __get_CONTROL( ) )
+//    {  /* MSP is not active */
 //     __set_CONTROL( __get_CONTROL( ) & ~CONTROL_SPSEL_Msk ) ;
-//   }
+//    }
 
-//   __set_CONTROL(0);
+//    __set_CONTROL(0);
 
     /* Get the application stack pointer (First entry in the application vector table) */
     appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
@@ -145,11 +272,7 @@ int main(void)
     /* Get the application entry point (Second entry in the application vector table) */
     appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
 
-    /* Reconfigure vector table offset register to match the application location */
-//    SCB->VTOR = (unsigned long)APPLICATION_ADDRESS;
-
-    /* Set the application stack pointer */
-
+//    /* Set the application stack pointer */
 //    SYSCFG->MEMRMP = 0x01;
 
 //    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
@@ -161,14 +284,38 @@ int main(void)
     /* Start the application */
     appEntry();
 
+}
 
-//    while(1)
-//    {
-//        mprintf("bla bla\r\n");
-//        HAL_Delay(1000);
-//    }
+
+
+
+void writeFlash(uint8_t Data, long Address)
+{
+
+     HAL_FLASH_Unlock();
+     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
+     HAL_FLASH_Lock();
+}
+
+uint8_t readFlash(int Address)
+{
+
+    uint8_t flash_data;
+
+    flash_data = *(uint8_t *)Address;
+
+    return flash_data;
 
 }
+
+
+
+void EnablePrivilegedMode (void){
+        __disable_irq();
+        __set_CONTROL((__get_CONTROL( ))& 0xFFFFFFFE);  // enter priv mode
+        __enable_irq();
+}
+
 
 
 void vprint(const char *fmt, va_list argp)

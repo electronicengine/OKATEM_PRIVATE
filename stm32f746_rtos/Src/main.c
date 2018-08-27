@@ -90,40 +90,12 @@ int main(void)
   MX_TIM2_Init();
 
 
-
-
   MX_FREERTOS_Init();
 
   osKernelStart();
 
 
-
-    mprintf(" Bootloader SCB->VTOR: %X\r\n", SCB->VTOR);
-
-//  pFunction appEntry;
-//  uint32_t appStack;
-
-//  appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
-//  appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
-
-//  __set_MSP(appStack);
-
-//  /* Start the application */
-//  appEntry();
-
-
-
-
-
-
-
-  while (1)
-  {
-        mprintf("SCB->VTOR: %X\r\n", SCB->VTOR);
-
-        HAL_Delay(1000);
-
-  }
+  while (1);
 
 
 }

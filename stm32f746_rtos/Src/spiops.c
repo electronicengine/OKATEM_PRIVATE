@@ -7,10 +7,12 @@
 void writeFlash(uint8_t Data, long Address)
 {
 
-     HAL_FLASH_Unlock();
+
      HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
-     HAL_FLASH_Lock();
+
 }
+
+
 
 uint8_t readFlash(int Address)
 {
@@ -22,7 +24,6 @@ uint8_t readFlash(int Address)
     return flash_data;
 
 }
-
 
 
 
@@ -43,14 +44,10 @@ void spiComOps(void const * argument)
 
     HAL_SPI_StateTypeDef status;
 
-
-//    HAL_FLASH_Unlock();
-
-//    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
-
-//    HAL_FLASH_Lock();
+    unsigned char * update_file;
 
     mprintf("spiOps\r\n");
+
 
     HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SIZE);
 
@@ -63,7 +60,9 @@ void spiComOps(void const * argument)
             if(status == HAL_SPI_STATE_READY)
             {
 
-                if(SpiRxData -> header == ('U' | 'P' << 8 ))
+
+
+                if((SpiRxData->header & 0xff) == 'U' && ((SpiRxData->header >> 8) & 0xff) == 'P')
                 {
 
 
@@ -77,23 +76,55 @@ void spiComOps(void const * argument)
                     UpdateFile->current_sequence_number |= (SpiRxData->data[6] << 16);
                     UpdateFile->current_sequence_number |= (SpiRxData->data[7] << 24);
 
+                    mprintf("%d\r\n", UpdateFile->current_sequence_number);
+
+                    if(UpdateFile->current_sequence_number == 1)
+                    {
+                        update_file = malloc(UpdateFile->total_sequence_number*SPI_ENTITY_SIZE);
+                    }
+
                     for(int i=0;i<SPI_ENTITY_SIZE; i++)
                     {
-//                        UpdateFile->data[i] = SpiRxData->data[i+2];
-                        writeFlash(SpiRxData->data[i + 8], (SECTOR6_ADDRESS + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1)) + i));
+//                        writeFlash(SpiRxData->data[i + 8], (SECTOR6_ADDRESS + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1)) + i));
+                        update_file[i + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1))] = SpiRxData->data[i + 8];
                     }
 
 
+                    if(UpdateFile->current_sequence_number == UpdateFile->total_sequence_number)
+                    {
+
+                        mprintf("Writing data to memory\r\n");
+                        HAL_FLASH_Unlock();
+                        __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR );
+                        FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+
+                        for(int i=0; i<SPI_ENTITY_SIZE*UpdateFile->total_sequence_number; i++)
+                        {
+                            HAL_FLASH_Program(TYPEPROGRAM_BYTE, SECTOR6_ADDRESS + i , (uint8_t)update_file[i]);
+                            HAL_Delay(20);
+                        }
+
+                        HAL_FLASH_Lock();
+
+                        free(update_file);
+                        mprintf("Writing is done\r\n");
+
+
+                    }
+
+
+//                    if(UpdateFile->total_sequence_number == UpdateFile->current_sequence_number)
+//                        HAL_NVIC_SystemReset();
+
+
                 }
 
-
-                if(SpiRxData -> header == ('C' | 'O' << 8 ))
+                if((SpiRxData->header & 0xff) == 'C' && ((SpiRxData->header >> 8) & 0xff) == 'O')
                 {
-
                     ControlData = (CONTROL_DATA_FORMAT *)SpiRxData + offsetof(SPI_TRANSFER_FORMAT, header);
-                    mprintf("%d\r\n", ControlData->x_position);
-
                 }
+
+                SpiRxData->header = 0;
 
             }
 
