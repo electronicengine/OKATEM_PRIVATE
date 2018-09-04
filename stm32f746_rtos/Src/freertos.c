@@ -104,7 +104,7 @@ void MX_FREERTOS_Init(void)
   spiSemaphoreHandle = osSemaphoreCreate(osSemaphore(spiSemaphore), 1);
 
   /* definition and creation of gpsThread */
-  osThreadDef(gpsThread, gpsOps, osPriorityAboveNormal, 0, 1024);
+  osThreadDef(gpsThread, gpsOps, osPriorityNormal, 0, 1024);
   gpsThreadHandle = osThreadCreate(osThread(gpsThread), NULL);
 
   /* definition and creation of sensorThread */
@@ -112,7 +112,7 @@ void MX_FREERTOS_Init(void)
   sensorThreadHandle = osThreadCreate(osThread(sensorThread), NULL);
 
   /* definition and creation of spiComThread */
-  osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 512);
+  osThreadDef(spiComThread, spiComOps, osPriorityAboveNormal, 0, 1024);
   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
 
   osThreadDef(motorThread, motorOps, osPriorityNormal, 0, 512);
@@ -126,6 +126,7 @@ void MX_FREERTOS_Init(void)
   SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
 
   SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
+  SpiCheckData = malloc(sizeof(SPI_TRANSFER_FORMAT));
 
 
 }

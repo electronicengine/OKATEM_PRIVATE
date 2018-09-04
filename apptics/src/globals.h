@@ -331,7 +331,6 @@ struct SPI_TRANSFER_FORMAT
     operator unsigned char*()
     {
 
-
         unsigned char *spi_data = new unsigned char[SPI_TRANSFER_SIZE];
 
         spi_data[0] = header & 0xff;
@@ -428,6 +427,7 @@ struct UPDATE_FILE_FORMAT
 
     operator SPI_TRANSFER_FORMAT()
     {
+        int checksum = 0;
 
         SPI_TRANSFER_FORMAT spi_transfer_format;
 
@@ -448,7 +448,11 @@ struct UPDATE_FILE_FORMAT
         for(int i=8; i<SPI_ENTITY_SIZE + 8; i++)
           spi_transfer_format.data[i] = data[i - 8];
 
-        spi_transfer_format.checksum = 0x20;
+        for(int i=0; i<SPI_ENTITY_SIZE; i++)
+            checksum += data[i];
+
+        spi_transfer_format.checksum = checksum;
+
 
         return spi_transfer_format;
 

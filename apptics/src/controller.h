@@ -18,6 +18,7 @@
 
 #include "globals.h"
 #include "spicom.h"
+#include "queue.h"
 
 
 #define FORWARD 1
@@ -66,10 +67,17 @@ private:
 
     volatile bool gmIsReceived = false;
     volatile bool gmIsTransmitted = false;
+    volatile bool gmCorruptedPackage = false;
+
+    uint32_t gmDesiredPackageSequence = 1;
+    uint32_t gmCurrentPackageSequence = 1;
 
     SpiCom gmSpi;
 
     std::mutex gmMutex;
+
+    UPDATE_FILE_FORMAT gmBackupUpdateFile;
+    UPDATE_FILE_FORMAT gmUpdateFile;
 
     void communicationThread();
 

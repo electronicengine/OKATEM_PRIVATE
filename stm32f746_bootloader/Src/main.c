@@ -172,6 +172,7 @@ void loadUpdateFile()
 {
     uint32_t file_size;
     unsigned char *data;
+    HAL_StatusTypeDef status;
 
     file_size = readFlash(UPDATE_FILE_ADRESS) | readFlash(UPDATE_FILE_ADRESS + 1) << 8
             | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
@@ -183,30 +184,39 @@ void loadUpdateFile()
 
 
     HAL_FLASH_Unlock();
+
     FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
     FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
     FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
     FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
-    HAL_FLASH_Lock();
 
-    HAL_Delay(1000);
-
-    for(int i=0; i<file_size; i++)
-        data[i] =readFlash(UPDATE_FILE_ADRESS + 4 + i);
+    HAL_Delay(50);
 
     for(int i=0; i<file_size; i++)
-        writeFlash(data[i], APPLICATION_ADDRESS + i);
+    {
+        data[i] = readFlash(UPDATE_FILE_ADRESS + 4 + i);
+    }
+
+    for(int i=0; i<file_size; i++)
+    {
+        status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, APPLICATION_ADDRESS + i , data[i]);
+
+        if(status != HAL_OK)
+            mprintf("Hal flash error\r\n");
+
+    }
 
 
-    HAL_Delay(1000);
 
-    HAL_FLASH_Unlock();
     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+    HAL_Delay(1);
     FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
+    HAL_Delay(1);
+
     HAL_FLASH_Lock();
+
 
     mprintf("UpdateFile has been writen on memory\r\n");
-
 
     free(data);
 

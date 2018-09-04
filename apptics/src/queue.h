@@ -26,6 +26,16 @@ public:
         return gmQueue.size();
     }
 
+    void clear()
+    {
+        gmQueue.clear();
+    }
+
+    T get_element(int Number)
+    {
+        return gmQueue[Number];
+    }
+
     T pop_front()
     {
 
@@ -70,6 +80,7 @@ public:
     {
         gmQueue.insert(gmQueue.begin(), Package);
     }
+
 
 };
 

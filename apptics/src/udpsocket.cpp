@@ -154,6 +154,7 @@ void UdpSocket::recieveData()
 
                 UPDATE_FILE_FORMAT update_file;
                 update_file = gmData;
+
                 gmUpdateFileQueue.push_back(update_file);
 
             }

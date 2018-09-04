@@ -53,7 +53,6 @@ bool get_cpu_times(size_t &idle_time, size_t &total_time);
 int main()
 {
 
-
     Controller::Controller_Status controller_status = Controller::Controller_Status::ok;
 
     tracker.runTracking();
@@ -86,6 +85,7 @@ int main()
         {
             controller.setControlData(control_data);
         }
+
 
         if( update_file.is_available == true)
         {

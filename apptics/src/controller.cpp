@@ -138,60 +138,61 @@ Controller::Controller_Status Controller::setControlData(CONTROL_DATA_FORMAT& Da
 Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 {
 
-//    static unsigned char *file_data = new unsigned char [43644];
-
-
-//    if(Data.current_sequence_number == Data.total_sequence_number)
-//    {
-//        for(int i=0; i<43644 % SPI_ENTITY_SIZE; i++)
-//        {
-//            file_data[i + (SPI_ENTITY_SIZE * (Data.current_sequence_number - 1))] = Data.data[i];
-//        }
-
-
-//        FILE *write_ptr;
-
-//        write_ptr = fopen("test.bin","wb");  // w for write, b for binary
-
-//        fwrite(file_data,43644,1,write_ptr); // write 10 bytes from our buffer
-
-//        fclose(write_ptr);
-
-//        delete [] file_data;
-//    }
-//    else
-//    {
-//        for(int i=0;i<SPI_ENTITY_SIZE; i++)
-//        {
-//            file_data[i + (SPI_ENTITY_SIZE * (Data.current_sequence_number - 1))] = Data.data[i];
-//        }
-//    }
-
-
-
-
-
-//    return Controller_Status::ok;
+    static int percent = 0;
+    static int last_percent;
 
     if(gmIsTransmitted)
     {
 
         gmMutex.lock();
 
-        gmSpiTxData = Data;
+        if(gmDesiredPackageSequence >= gmCurrentPackageSequence)
+        {
+           gmUpdateFile = Data;
 
-        std::cout << Data.current_sequence_number << "/" << Data.total_sequence_number << "\r" << std::endl;
+           gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
-        gmIsTransmitted = false;
+           gmSpiTxData = gmUpdateFile;
 
-        gmMutex.unlock();
+           gmIsTransmitted = false;
 
-        return Controller_Status::ok;
+           gmMutex.unlock();
+
+
+           percent = (int)(((double)gmUpdateFile.current_sequence_number/Data.total_sequence_number) * 100);
+
+           if(percent != last_percent)
+           std::cout << "Update file %" << percent << " is uploaded. " << "\r" << std::endl;
+
+            last_percent = percent;
+
+
+           return Controller_Status::ok;
+
+        }
+        else
+        {
+
+            gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
+
+            gmSpiTxData = gmUpdateFile;
+
+            gmIsTransmitted = false;
+
+            gmMutex.unlock();
+
+            return Controller_Status::error;
+
+        }
+
     }
     else
     {
         return Controller_Status::error;
     }
+
+
+
 
 }
 
@@ -218,6 +219,10 @@ void Controller::communicationThread()
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
 
+
+    UPDATE_FILE_FORMAT update_file;
+    UPDATE_FILE_FORMAT backup_update_file;
+
     SpiCom::Spi_Status status;
 
 
@@ -228,36 +233,66 @@ void Controller::communicationThread()
 
         gmMutex.lock();
 
-            spi_transfer_data = gmSpiTxData;
+        spi_transfer_data = gmSpiTxData;
 
-            if((gmSpiTxData.header & 0xff) == 'C' && ((gmSpiTxData.header >> 8) & 0xff) == 'O')
-            {
-                wait_time = 100000;
-            }
-            else if((gmSpiTxData.header & 0xff) == 'U' && ((gmSpiTxData.header >> 8) & 0xff) == 'P')
-            {
-                wait_time = 150000;
-                std::cout << "UP" << std::endl;
-            }
+        status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
 
-            status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
+        if(status == SpiCom::Spi_Status::succesfully_writeread)
+        {
+           gmSpiRxData = spi_transfer_data;
 
-            if(status == SpiCom::Spi_Status::succesfully_writeread)
+
+            if(spi_transfer_data[0] == 'U' && spi_transfer_data[1] == 'P')
             {
-                gmSpiRxData = spi_transfer_data;
-                gmSpiTxData.clear();
-                gmIsTransmitted = true;
-                gmIsReceived = true;
+                gmDesiredPackageSequence = spi_transfer_data[2] | (spi_transfer_data[3] << 8) |
+                        (spi_transfer_data[4] << 16) | (spi_transfer_data[5] << 24);
+
+                if((gmDesiredPackageSequence < gmCurrentPackageSequence))
+                {
+                    gmSpiTxData = gmBackupUpdateFile;
+                    gmCurrentPackageSequence = gmBackupUpdateFile.current_sequence_number;
+
+                    gmSpiRxData.clear();
+                    gmIsTransmitted = false;
+                    gmIsReceived = true;
+
+                }
+                else if((gmDesiredPackageSequence > gmCurrentPackageSequence))
+                {
+
+                    gmSpiRxData.clear();
+                    gmIsTransmitted = true;
+                    gmIsReceived = true;
+
+                }else if(((gmDesiredPackageSequence == gmCurrentPackageSequence)))
+                {
+                    gmBackupUpdateFile = gmUpdateFile;
+                    gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
+
+                    gmSpiRxData.clear();
+                    gmIsTransmitted = true;
+                    gmIsReceived = true;
+
+                }
+
             }
             else
             {
-
                 gmSpiRxData.clear();
-                gmSpiTxData.clear();
-                gmIsTransmitted = false;
-                gmIsReceived = false;
-
+                gmIsTransmitted = true;
+                gmIsReceived = true;
             }
+
+        }
+        else
+        {
+
+            gmSpiRxData.clear();
+            gmSpiTxData.clear();
+            gmIsTransmitted = false;
+            gmIsReceived = false;
+
+        }
 
 
 

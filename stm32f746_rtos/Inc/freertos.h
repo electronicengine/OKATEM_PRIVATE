@@ -42,7 +42,7 @@ osSemaphoreId spiSemaphoreHandle;
 osSemaphoreId uartSemaphoreHandle;
 
 
-
+SPI_TRANSFER_FORMAT *SpiCheckData;
 SPI_TRANSFER_FORMAT *SpiTxData;
 SPI_TRANSFER_FORMAT *SpiRxData;
 ENVIRONMENT_DATA_FORMAT *EnvironmentData;

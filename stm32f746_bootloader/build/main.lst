@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccg1mW9H.s 			page 1
+ARM GAS  /tmp/cc3BkDrd.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   15:Src/main.c    ****   * are permitted provided that the following conditions are met:
   16:Src/main.c    ****   *   1. Redistributions of source code must retain the above copyright notice,
   17:Src/main.c    ****   *      this list of conditions and the following disclaimer.
-ARM GAS  /tmp/ccg1mW9H.s 			page 2
+ARM GAS  /tmp/cc3BkDrd.s 			page 2
 
 
   18:Src/main.c    ****   *   2. Redistributions in binary form must reproduce the above copyright notice,
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   72:Src/main.c    **** void bootRTOS();
   73:Src/main.c    **** int checkUpdate();
   74:Src/main.c    **** void loadUpdateFile();
-ARM GAS  /tmp/ccg1mW9H.s 			page 3
+ARM GAS  /tmp/cc3BkDrd.s 			page 3
 
 
   75:Src/main.c    **** void writeFlash(uint8_t Data, long Address);
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   67 001e FFF7FEFF 		bl	MX_SPI1_Init
  100:Src/main.c    ****     MX_TIM3_Init();
   68              		.loc 1 100 0
-ARM GAS  /tmp/ccg1mW9H.s 			page 4
+ARM GAS  /tmp/cc3BkDrd.s 			page 4
 
 
   69 0022 FFF7FEFF 		bl	MX_TIM3_Init
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  126:Src/main.c    ****         bootRTOS();
   98              		.loc 1 126 0
   99 005e FFF7FEFF 		bl	bootRTOS
-ARM GAS  /tmp/ccg1mW9H.s 			page 5
+ARM GAS  /tmp/cc3BkDrd.s 			page 5
 
 
  100              	.L3:
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  132:Src/main.c    **** int checkUpdate()
  133:Src/main.c    **** {
  139              		.loc 1 133 0
-ARM GAS  /tmp/ccg1mW9H.s 			page 6
+ARM GAS  /tmp/cc3BkDrd.s 			page 6
 
 
  140              		.cfi_startproc
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  182 003c 7B68     		ldr	r3, [r7, #4]
  183 003e B3F1FF3F 		cmp	r3, #-1
  184 0042 05D1     		bne	.L8
-ARM GAS  /tmp/ccg1mW9H.s 			page 7
+ARM GAS  /tmp/cc3BkDrd.s 			page 7
 
 
  145:Src/main.c    ****     {
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  219 0082 0023     		movs	r3, #0
  220              	.L9:
  165:Src/main.c    ****     }
-ARM GAS  /tmp/ccg1mW9H.s 			page 8
+ARM GAS  /tmp/cc3BkDrd.s 			page 8
 
 
  166:Src/main.c    **** 
@@ -455,366 +455,401 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  247      203A2025 
  248              		.align	2
  249              	.LC5:
- 250 00b0 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
- 250      74654669 
- 250      6C652068 
- 250      61732062 
- 250      65656E20 
- 251              		.section	.text.loadUpdateFile,"ax",%progbits
- 252              		.align	1
- 253              		.global	loadUpdateFile
- 254              		.syntax unified
- 255              		.thumb
- 256              		.thumb_func
- 257              		.fpu fpv4-sp-d16
- 259              	loadUpdateFile:
- 260              	.LFB138:
+ 250 00b0 48616C20 		.ascii	"Hal flash error\015\012\000"
+ 250      666C6173 
+ 250      68206572 
+ 250      726F720D 
+ 250      0A00
+ 251 00c2 0000     		.align	2
+ 252              	.LC6:
+ 253 00c4 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
+ 253      74654669 
+ 253      6C652068 
+ 253      61732062 
+ 253      65656E20 
+ 254              		.section	.text.loadUpdateFile,"ax",%progbits
+ 255              		.align	1
+ 256              		.global	loadUpdateFile
+ 257              		.syntax unified
+ 258              		.thumb
+ 259              		.thumb_func
+ 260              		.fpu fpv4-sp-d16
+ 262              	loadUpdateFile:
+ 263              	.LFB138:
  168:Src/main.c    **** 
  169:Src/main.c    **** 
+ARM GAS  /tmp/cc3BkDrd.s 			page 9
+
+
  170:Src/main.c    **** 
  171:Src/main.c    **** void loadUpdateFile()
  172:Src/main.c    **** {
- 261              		.loc 1 172 0
- 262              		.cfi_startproc
- 263              		@ args = 0, pretend = 0, frame = 16
- 264              		@ frame_needed = 1, uses_anonymous_args = 0
-ARM GAS  /tmp/ccg1mW9H.s 			page 9
-
-
- 265 0000 90B5     		push	{r4, r7, lr}
- 266              	.LCFI10:
- 267              		.cfi_def_cfa_offset 12
- 268              		.cfi_offset 4, -12
- 269              		.cfi_offset 7, -8
- 270              		.cfi_offset 14, -4
- 271 0002 85B0     		sub	sp, sp, #20
- 272              	.LCFI11:
- 273              		.cfi_def_cfa_offset 32
- 274 0004 00AF     		add	r7, sp, #0
- 275              	.LCFI12:
- 276              		.cfi_def_cfa_register 7
+ 264              		.loc 1 172 0
+ 265              		.cfi_startproc
+ 266              		@ args = 0, pretend = 0, frame = 24
+ 267              		@ frame_needed = 1, uses_anonymous_args = 0
+ 268 0000 90B5     		push	{r4, r7, lr}
+ 269              	.LCFI10:
+ 270              		.cfi_def_cfa_offset 12
+ 271              		.cfi_offset 4, -12
+ 272              		.cfi_offset 7, -8
+ 273              		.cfi_offset 14, -4
+ 274 0002 87B0     		sub	sp, sp, #28
+ 275              	.LCFI11:
+ 276              		.cfi_def_cfa_offset 40
+ 277 0004 00AF     		add	r7, sp, #0
+ 278              	.LCFI12:
+ 279              		.cfi_def_cfa_register 7
  173:Src/main.c    ****     uint32_t file_size;
  174:Src/main.c    ****     unsigned char *data;
- 175:Src/main.c    **** 
- 176:Src/main.c    ****     file_size = readFlash(UPDATE_FILE_ADRESS) | readFlash(UPDATE_FILE_ADRESS + 1) << 8
- 277              		.loc 1 176 0
- 278 0006 3E48     		ldr	r0, .L18
- 279 0008 FFF7FEFF 		bl	readFlash
- 280 000c 0346     		mov	r3, r0
- 281 000e 1C46     		mov	r4, r3
- 282 0010 3C48     		ldr	r0, .L18+4
- 283 0012 FFF7FEFF 		bl	readFlash
- 284 0016 0346     		mov	r3, r0
- 285 0018 1B02     		lsls	r3, r3, #8
- 286 001a 1C43     		orrs	r4, r4, r3
+ 175:Src/main.c    ****     HAL_StatusTypeDef status;
+ 176:Src/main.c    **** 
+ 177:Src/main.c    ****     file_size = readFlash(UPDATE_FILE_ADRESS) | readFlash(UPDATE_FILE_ADRESS + 1) << 8
+ 280              		.loc 1 177 0
+ 281 0006 4348     		ldr	r0, .L19
+ 282 0008 FFF7FEFF 		bl	readFlash
+ 283 000c 0346     		mov	r3, r0
+ 284 000e 1C46     		mov	r4, r3
+ 285 0010 4148     		ldr	r0, .L19+4
+ 286 0012 FFF7FEFF 		bl	readFlash
+ 287 0016 0346     		mov	r3, r0
+ 288 0018 1B02     		lsls	r3, r3, #8
+ 289 001a 1C43     		orrs	r4, r4, r3
+ 178:Src/main.c    ****             | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
+ 290              		.loc 1 178 0
+ 291 001c 3F48     		ldr	r0, .L19+8
+ 292 001e FFF7FEFF 		bl	readFlash
+ 293 0022 0346     		mov	r3, r0
+ 294 0024 1B04     		lsls	r3, r3, #16
+ 295 0026 1C43     		orrs	r4, r4, r3
+ 296 0028 3D48     		ldr	r0, .L19+12
+ 297 002a FFF7FEFF 		bl	readFlash
+ 298 002e 0346     		mov	r3, r0
+ 299 0030 1B06     		lsls	r3, r3, #24
+ 300 0032 2343     		orrs	r3, r3, r4
  177:Src/main.c    ****             | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
- 287              		.loc 1 177 0
- 288 001c 3A48     		ldr	r0, .L18+8
- 289 001e FFF7FEFF 		bl	readFlash
- 290 0022 0346     		mov	r3, r0
- 291 0024 1B04     		lsls	r3, r3, #16
- 292 0026 1C43     		orrs	r4, r4, r3
- 293 0028 3848     		ldr	r0, .L18+12
- 294 002a FFF7FEFF 		bl	readFlash
- 295 002e 0346     		mov	r3, r0
- 296 0030 1B06     		lsls	r3, r3, #24
- 297 0032 2343     		orrs	r3, r3, r4
- 176:Src/main.c    ****             | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
- 298              		.loc 1 176 0
- 299 0034 7B60     		str	r3, [r7, #4]
- 178:Src/main.c    **** 
+ 301              		.loc 1 177 0
+ 302 0034 FB60     		str	r3, [r7, #12]
  179:Src/main.c    **** 
- 180:Src/main.c    ****     mprintf("Update File Size : %d\r\n", file_size);
- 300              		.loc 1 180 0
- 301 0036 7968     		ldr	r1, [r7, #4]
- 302 0038 3548     		ldr	r0, .L18+16
- 303 003a FFF7FEFF 		bl	mprintf
- 181:Src/main.c    **** 
- 182:Src/main.c    ****     data = malloc(file_size);
- 304              		.loc 1 182 0
- 305 003e 7868     		ldr	r0, [r7, #4]
- 306 0040 FFF7FEFF 		bl	malloc
- 307 0044 0346     		mov	r3, r0
- 308 0046 3B60     		str	r3, [r7]
- 183:Src/main.c    **** 
+ 180:Src/main.c    **** 
+ 181:Src/main.c    ****     mprintf("Update File Size : %d\r\n", file_size);
+ 303              		.loc 1 181 0
+ 304 0036 F968     		ldr	r1, [r7, #12]
+ 305 0038 3A48     		ldr	r0, .L19+16
+ 306 003a FFF7FEFF 		bl	mprintf
+ 182:Src/main.c    **** 
+ARM GAS  /tmp/cc3BkDrd.s 			page 10
+
+
+ 183:Src/main.c    ****     data = malloc(file_size);
+ 307              		.loc 1 183 0
+ 308 003e F868     		ldr	r0, [r7, #12]
+ 309 0040 FFF7FEFF 		bl	malloc
+ 310 0044 0346     		mov	r3, r0
+ 311 0046 BB60     		str	r3, [r7, #8]
  184:Src/main.c    **** 
-ARM GAS  /tmp/ccg1mW9H.s 			page 10
+ 185:Src/main.c    **** 
+ 186:Src/main.c    ****     HAL_FLASH_Unlock();
+ 312              		.loc 1 186 0
+ 313 0048 FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 187:Src/main.c    **** 
+ 188:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
+ 314              		.loc 1 188 0
+ 315 004c 0221     		movs	r1, #2
+ 316 004e 0220     		movs	r0, #2
+ 317 0050 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 189:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
+ 318              		.loc 1 189 0
+ 319 0054 0221     		movs	r1, #2
+ 320 0056 0320     		movs	r0, #3
+ 321 0058 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 190:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
+ 322              		.loc 1 190 0
+ 323 005c 0221     		movs	r1, #2
+ 324 005e 0420     		movs	r0, #4
+ 325 0060 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 191:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
+ 326              		.loc 1 191 0
+ 327 0064 0221     		movs	r1, #2
+ 328 0066 0520     		movs	r0, #5
+ 329 0068 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 192:Src/main.c    **** 
+ 193:Src/main.c    ****     HAL_Delay(50);
+ 330              		.loc 1 193 0
+ 331 006c 3220     		movs	r0, #50
+ 332 006e FFF7FEFF 		bl	HAL_Delay
+ 333              	.LBB12:
+ 194:Src/main.c    **** 
+ 195:Src/main.c    ****     for(int i=0; i<file_size; i++)
+ 334              		.loc 1 195 0
+ 335 0072 0023     		movs	r3, #0
+ 336 0074 7B61     		str	r3, [r7, #20]
+ 337 0076 0DE0     		b	.L14
+ 338              	.L15:
+ 196:Src/main.c    ****     {
+ 197:Src/main.c    ****         data[i] = readFlash(UPDATE_FILE_ADRESS + 4 + i);
+ 339              		.loc 1 197 0 discriminator 3
+ 340 0078 7B69     		ldr	r3, [r7, #20]
+ 341 007a BA68     		ldr	r2, [r7, #8]
+ 342 007c D418     		adds	r4, r2, r3
+ 343 007e 7A69     		ldr	r2, [r7, #20]
+ 344 0080 294B     		ldr	r3, .L19+20
+ 345 0082 1344     		add	r3, r3, r2
+ 346 0084 1846     		mov	r0, r3
+ 347 0086 FFF7FEFF 		bl	readFlash
+ 348 008a 0346     		mov	r3, r0
+ARM GAS  /tmp/cc3BkDrd.s 			page 11
 
 
- 185:Src/main.c    ****     HAL_FLASH_Unlock();
- 309              		.loc 1 185 0
- 310 0048 FFF7FEFF 		bl	HAL_FLASH_Unlock
- 186:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
- 311              		.loc 1 186 0
- 312 004c 0221     		movs	r1, #2
- 313 004e 0220     		movs	r0, #2
- 314 0050 FFF7FEFF 		bl	FLASH_Erase_Sector
- 187:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
- 315              		.loc 1 187 0
- 316 0054 0221     		movs	r1, #2
- 317 0056 0320     		movs	r0, #3
- 318 0058 FFF7FEFF 		bl	FLASH_Erase_Sector
- 188:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
- 319              		.loc 1 188 0
- 320 005c 0221     		movs	r1, #2
- 321 005e 0420     		movs	r0, #4
- 322 0060 FFF7FEFF 		bl	FLASH_Erase_Sector
- 189:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
- 323              		.loc 1 189 0
- 324 0064 0221     		movs	r1, #2
- 325 0066 0520     		movs	r0, #5
- 326 0068 FFF7FEFF 		bl	FLASH_Erase_Sector
- 190:Src/main.c    ****     HAL_FLASH_Lock();
- 327              		.loc 1 190 0
- 328 006c FFF7FEFF 		bl	HAL_FLASH_Lock
- 191:Src/main.c    **** 
- 192:Src/main.c    ****     HAL_Delay(1000);
- 329              		.loc 1 192 0
- 330 0070 4FF47A70 		mov	r0, #1000
- 331 0074 FFF7FEFF 		bl	HAL_Delay
- 332              	.LBB12:
- 193:Src/main.c    **** 
- 194:Src/main.c    ****     for(int i=0; i<file_size; i++)
- 333              		.loc 1 194 0
- 334 0078 0023     		movs	r3, #0
- 335 007a FB60     		str	r3, [r7, #12]
- 336 007c 0DE0     		b	.L14
- 337              	.L15:
- 195:Src/main.c    ****         data[i] =readFlash(UPDATE_FILE_ADRESS + 4 + i);
- 338              		.loc 1 195 0 discriminator 3
- 339 007e FB68     		ldr	r3, [r7, #12]
- 340 0080 3A68     		ldr	r2, [r7]
- 341 0082 D418     		adds	r4, r2, r3
- 342 0084 FA68     		ldr	r2, [r7, #12]
- 343 0086 234B     		ldr	r3, .L18+20
- 344 0088 1344     		add	r3, r3, r2
- 345 008a 1846     		mov	r0, r3
- 346 008c FFF7FEFF 		bl	readFlash
- 347 0090 0346     		mov	r3, r0
- 348 0092 2370     		strb	r3, [r4]
- 194:Src/main.c    ****         data[i] =readFlash(UPDATE_FILE_ADRESS + 4 + i);
- 349              		.loc 1 194 0 discriminator 3
- 350 0094 FB68     		ldr	r3, [r7, #12]
- 351 0096 0133     		adds	r3, r3, #1
- 352 0098 FB60     		str	r3, [r7, #12]
- 353              	.L14:
-ARM GAS  /tmp/ccg1mW9H.s 			page 11
-
-
- 194:Src/main.c    ****         data[i] =readFlash(UPDATE_FILE_ADRESS + 4 + i);
- 354              		.loc 1 194 0 is_stmt 0 discriminator 1
- 355 009a FA68     		ldr	r2, [r7, #12]
- 356 009c 7B68     		ldr	r3, [r7, #4]
- 357 009e 9A42     		cmp	r2, r3
- 358 00a0 EDD3     		bcc	.L15
- 359              	.LBE12:
- 360              	.LBB13:
- 196:Src/main.c    **** 
- 197:Src/main.c    ****     for(int i=0; i<file_size; i++)
- 361              		.loc 1 197 0 is_stmt 1
- 362 00a2 0023     		movs	r3, #0
- 363 00a4 BB60     		str	r3, [r7, #8]
- 364 00a6 0CE0     		b	.L16
- 365              	.L17:
- 198:Src/main.c    ****         writeFlash(data[i], APPLICATION_ADDRESS + i);
- 366              		.loc 1 198 0 discriminator 3
- 367 00a8 BB68     		ldr	r3, [r7, #8]
- 368 00aa 3A68     		ldr	r2, [r7]
- 369 00ac 1344     		add	r3, r3, r2
- 370 00ae 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
- 371 00b0 BA68     		ldr	r2, [r7, #8]
- 372 00b2 194B     		ldr	r3, .L18+24
- 373 00b4 1344     		add	r3, r3, r2
- 374 00b6 1946     		mov	r1, r3
- 375 00b8 FFF7FEFF 		bl	writeFlash
- 197:Src/main.c    ****         writeFlash(data[i], APPLICATION_ADDRESS + i);
- 376              		.loc 1 197 0 discriminator 3
- 377 00bc BB68     		ldr	r3, [r7, #8]
- 378 00be 0133     		adds	r3, r3, #1
- 379 00c0 BB60     		str	r3, [r7, #8]
- 380              	.L16:
- 197:Src/main.c    ****         writeFlash(data[i], APPLICATION_ADDRESS + i);
- 381              		.loc 1 197 0 is_stmt 0 discriminator 1
- 382 00c2 BA68     		ldr	r2, [r7, #8]
- 383 00c4 7B68     		ldr	r3, [r7, #4]
- 384 00c6 9A42     		cmp	r2, r3
- 385 00c8 EED3     		bcc	.L17
- 386              	.LBE13:
+ 349 008c 2370     		strb	r3, [r4]
+ 195:Src/main.c    ****     {
+ 350              		.loc 1 195 0 discriminator 3
+ 351 008e 7B69     		ldr	r3, [r7, #20]
+ 352 0090 0133     		adds	r3, r3, #1
+ 353 0092 7B61     		str	r3, [r7, #20]
+ 354              	.L14:
+ 195:Src/main.c    ****     {
+ 355              		.loc 1 195 0 is_stmt 0 discriminator 1
+ 356 0094 7A69     		ldr	r2, [r7, #20]
+ 357 0096 FB68     		ldr	r3, [r7, #12]
+ 358 0098 9A42     		cmp	r2, r3
+ 359 009a EDD3     		bcc	.L15
+ 360              	.LBE12:
+ 361              	.LBB13:
+ 198:Src/main.c    ****     }
  199:Src/main.c    **** 
- 200:Src/main.c    **** 
- 201:Src/main.c    ****     HAL_Delay(1000);
- 387              		.loc 1 201 0 is_stmt 1
- 388 00ca 4FF47A70 		mov	r0, #1000
- 389 00ce FFF7FEFF 		bl	HAL_Delay
- 202:Src/main.c    **** 
- 203:Src/main.c    ****     HAL_FLASH_Unlock();
- 390              		.loc 1 203 0
- 391 00d2 FFF7FEFF 		bl	HAL_FLASH_Unlock
- 204:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
- 392              		.loc 1 204 0
- 393 00d6 0221     		movs	r1, #2
- 394 00d8 0620     		movs	r0, #6
- 395 00da FFF7FEFF 		bl	FLASH_Erase_Sector
- 205:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
- 396              		.loc 1 205 0
- 397 00de 0221     		movs	r1, #2
-ARM GAS  /tmp/ccg1mW9H.s 			page 12
+ 200:Src/main.c    ****     for(int i=0; i<file_size; i++)
+ 362              		.loc 1 200 0 is_stmt 1
+ 363 009c 0023     		movs	r3, #0
+ 364 009e 3B61     		str	r3, [r7, #16]
+ 365 00a0 1AE0     		b	.L16
+ 366              	.L18:
+ 201:Src/main.c    ****     {
+ 202:Src/main.c    ****         status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, APPLICATION_ADDRESS + i , data[i]);
+ 367              		.loc 1 202 0
+ 368 00a2 3A69     		ldr	r2, [r7, #16]
+ 369 00a4 214B     		ldr	r3, .L19+24
+ 370 00a6 1344     		add	r3, r3, r2
+ 371 00a8 1946     		mov	r1, r3
+ 372 00aa 3B69     		ldr	r3, [r7, #16]
+ 373 00ac BA68     		ldr	r2, [r7, #8]
+ 374 00ae 1344     		add	r3, r3, r2
+ 375 00b0 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 376 00b2 DBB2     		uxtb	r3, r3
+ 377 00b4 4FF00004 		mov	r4, #0
+ 378 00b8 1A46     		mov	r2, r3
+ 379 00ba 2346     		mov	r3, r4
+ 380 00bc 0020     		movs	r0, #0
+ 381 00be FFF7FEFF 		bl	HAL_FLASH_Program
+ 382 00c2 0346     		mov	r3, r0
+ 383 00c4 FB71     		strb	r3, [r7, #7]
+ 203:Src/main.c    **** 
+ 204:Src/main.c    ****         if(status != HAL_OK)
+ 384              		.loc 1 204 0
+ 385 00c6 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 386 00c8 002B     		cmp	r3, #0
+ 387 00ca 02D0     		beq	.L17
+ 205:Src/main.c    ****             mprintf("Hal flash error\r\n");
+ 388              		.loc 1 205 0
+ 389 00cc 1848     		ldr	r0, .L19+28
+ 390 00ce FFF7FEFF 		bl	mprintf
+ 391              	.L17:
+ 200:Src/main.c    ****     {
+ 392              		.loc 1 200 0 discriminator 2
+ 393 00d2 3B69     		ldr	r3, [r7, #16]
+ 394 00d4 0133     		adds	r3, r3, #1
+ARM GAS  /tmp/cc3BkDrd.s 			page 12
 
 
- 398 00e0 0720     		movs	r0, #7
- 399 00e2 FFF7FEFF 		bl	FLASH_Erase_Sector
- 206:Src/main.c    ****     HAL_FLASH_Lock();
- 400              		.loc 1 206 0
- 401 00e6 FFF7FEFF 		bl	HAL_FLASH_Lock
- 207:Src/main.c    **** 
- 208:Src/main.c    ****     mprintf("UpdateFile has been writen on memory\r\n");
- 402              		.loc 1 208 0
- 403 00ea 0C48     		ldr	r0, .L18+28
- 404 00ec FFF7FEFF 		bl	mprintf
+ 395 00d6 3B61     		str	r3, [r7, #16]
+ 396              	.L16:
+ 200:Src/main.c    ****     {
+ 397              		.loc 1 200 0 is_stmt 0 discriminator 1
+ 398 00d8 3A69     		ldr	r2, [r7, #16]
+ 399 00da FB68     		ldr	r3, [r7, #12]
+ 400 00dc 9A42     		cmp	r2, r3
+ 401 00de E0D3     		bcc	.L18
+ 402              	.LBE13:
+ 206:Src/main.c    **** 
+ 207:Src/main.c    ****     }
+ 208:Src/main.c    **** 
  209:Src/main.c    **** 
  210:Src/main.c    **** 
- 211:Src/main.c    ****     free(data);
- 405              		.loc 1 211 0
- 406 00f0 3868     		ldr	r0, [r7]
- 407 00f2 FFF7FEFF 		bl	free
- 212:Src/main.c    **** 
- 213:Src/main.c    **** 
- 214:Src/main.c    **** }
- 408              		.loc 1 214 0
- 409 00f6 00BF     		nop
- 410 00f8 1437     		adds	r7, r7, #20
- 411              	.LCFI13:
- 412              		.cfi_def_cfa_offset 12
- 413 00fa BD46     		mov	sp, r7
- 414              	.LCFI14:
- 415              		.cfi_def_cfa_register 13
- 416              		@ sp needed
- 417 00fc 90BD     		pop	{r4, r7, pc}
- 418              	.L19:
- 419 00fe 00BF     		.align	2
- 420              	.L18:
- 421 0100 00000808 		.word	134742016
- 422 0104 01000808 		.word	134742017
- 423 0108 02000808 		.word	134742018
- 424 010c 03000808 		.word	134742019
- 425 0110 98000000 		.word	.LC4
- 426 0114 04000808 		.word	134742020
- 427 0118 00000108 		.word	134283264
- 428 011c B0000000 		.word	.LC5
- 429              		.cfi_endproc
- 430              	.LFE138:
- 432              		.section	.rodata
- 433 00d7 00       		.align	2
- 434              	.LC6:
- 435 00d8 426F6F74 		.ascii	"Booting...\015\012\000"
- 435      696E672E 
- 435      2E2E0D0A 
- 435      00
- 436              		.section	.text.bootRTOS,"ax",%progbits
- 437              		.align	1
- 438              		.global	bootRTOS
- 439              		.syntax unified
- 440              		.thumb
- 441              		.thumb_func
- 442              		.fpu fpv4-sp-d16
- 444              	bootRTOS:
-ARM GAS  /tmp/ccg1mW9H.s 			page 13
-
-
- 445              	.LFB139:
+ 211:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+ 403              		.loc 1 211 0 is_stmt 1
+ 404 00e0 0221     		movs	r1, #2
+ 405 00e2 0620     		movs	r0, #6
+ 406 00e4 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 212:Src/main.c    ****     HAL_Delay(1);
+ 407              		.loc 1 212 0
+ 408 00e8 0120     		movs	r0, #1
+ 409 00ea FFF7FEFF 		bl	HAL_Delay
+ 213:Src/main.c    ****     FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
+ 410              		.loc 1 213 0
+ 411 00ee 0221     		movs	r1, #2
+ 412 00f0 0720     		movs	r0, #7
+ 413 00f2 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 214:Src/main.c    ****     HAL_Delay(1);
+ 414              		.loc 1 214 0
+ 415 00f6 0120     		movs	r0, #1
+ 416 00f8 FFF7FEFF 		bl	HAL_Delay
  215:Src/main.c    **** 
- 216:Src/main.c    **** 
+ 216:Src/main.c    ****     HAL_FLASH_Lock();
+ 417              		.loc 1 216 0
+ 418 00fc FFF7FEFF 		bl	HAL_FLASH_Lock
  217:Src/main.c    **** 
- 218:Src/main.c    **** void bootRTOS()
- 219:Src/main.c    **** {
- 446              		.loc 1 219 0
- 447              		.cfi_startproc
- 448              		@ args = 0, pretend = 0, frame = 16
- 449              		@ frame_needed = 1, uses_anonymous_args = 0
- 450 0000 80B5     		push	{r7, lr}
- 451              	.LCFI15:
- 452              		.cfi_def_cfa_offset 8
- 453              		.cfi_offset 7, -8
- 454              		.cfi_offset 14, -4
- 455 0002 84B0     		sub	sp, sp, #16
- 456              	.LCFI16:
- 457              		.cfi_def_cfa_offset 24
- 458 0004 00AF     		add	r7, sp, #0
- 459              	.LCFI17:
- 460              		.cfi_def_cfa_register 7
+ 218:Src/main.c    **** 
+ 219:Src/main.c    ****     mprintf("UpdateFile has been writen on memory\r\n");
+ 419              		.loc 1 219 0
+ 420 0100 0C48     		ldr	r0, .L19+32
+ 421 0102 FFF7FEFF 		bl	mprintf
  220:Src/main.c    **** 
- 221:Src/main.c    **** 
- 222:Src/main.c    ****     pFunction appEntry;
- 223:Src/main.c    ****     uint32_t appStack;
- 224:Src/main.c    **** 
- 225:Src/main.c    ****     mprintf("Booting...\r\n");
- 461              		.loc 1 225 0
- 462 0006 0A48     		ldr	r0, .L21
- 463 0008 FFF7FEFF 		bl	mprintf
+ 221:Src/main.c    ****     free(data);
+ 422              		.loc 1 221 0
+ 423 0106 B868     		ldr	r0, [r7, #8]
+ 424 0108 FFF7FEFF 		bl	free
+ 222:Src/main.c    **** 
+ 223:Src/main.c    **** 
+ 224:Src/main.c    **** }
+ 425              		.loc 1 224 0
+ 426 010c 00BF     		nop
+ 427 010e 1C37     		adds	r7, r7, #28
+ 428              	.LCFI13:
+ 429              		.cfi_def_cfa_offset 12
+ 430 0110 BD46     		mov	sp, r7
+ 431              	.LCFI14:
+ARM GAS  /tmp/cc3BkDrd.s 			page 13
+
+
+ 432              		.cfi_def_cfa_register 13
+ 433              		@ sp needed
+ 434 0112 90BD     		pop	{r4, r7, pc}
+ 435              	.L20:
+ 436              		.align	2
+ 437              	.L19:
+ 438 0114 00000808 		.word	134742016
+ 439 0118 01000808 		.word	134742017
+ 440 011c 02000808 		.word	134742018
+ 441 0120 03000808 		.word	134742019
+ 442 0124 98000000 		.word	.LC4
+ 443 0128 04000808 		.word	134742020
+ 444 012c 00000108 		.word	134283264
+ 445 0130 B0000000 		.word	.LC5
+ 446 0134 C4000000 		.word	.LC6
+ 447              		.cfi_endproc
+ 448              	.LFE138:
+ 450              		.section	.rodata
+ 451 00eb 00       		.align	2
+ 452              	.LC7:
+ 453 00ec 426F6F74 		.ascii	"Booting...\015\012\000"
+ 453      696E672E 
+ 453      2E2E0D0A 
+ 453      00
+ 454              		.section	.text.bootRTOS,"ax",%progbits
+ 455              		.align	1
+ 456              		.global	bootRTOS
+ 457              		.syntax unified
+ 458              		.thumb
+ 459              		.thumb_func
+ 460              		.fpu fpv4-sp-d16
+ 462              	bootRTOS:
+ 463              	.LFB139:
+ 225:Src/main.c    **** 
  226:Src/main.c    **** 
- 227:Src/main.c    **** //    EnablePrivilegedMode( ) ;
- 228:Src/main.c    **** 
- 229:Src/main.c    **** 
- 230:Src/main.c    **** //    // Disable all interrupts
- 231:Src/main.c    **** //    NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
- 232:Src/main.c    **** //    NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
- 233:Src/main.c    **** //    NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
- 234:Src/main.c    **** //    NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
- 235:Src/main.c    **** //    NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
- 236:Src/main.c    **** //    NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
- 237:Src/main.c    **** //    NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
- 238:Src/main.c    **** //    NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
+ 227:Src/main.c    **** 
+ 228:Src/main.c    **** void bootRTOS()
+ 229:Src/main.c    **** {
+ 464              		.loc 1 229 0
+ 465              		.cfi_startproc
+ 466              		@ args = 0, pretend = 0, frame = 16
+ 467              		@ frame_needed = 1, uses_anonymous_args = 0
+ 468 0000 80B5     		push	{r7, lr}
+ 469              	.LCFI15:
+ 470              		.cfi_def_cfa_offset 8
+ 471              		.cfi_offset 7, -8
+ 472              		.cfi_offset 14, -4
+ 473 0002 84B0     		sub	sp, sp, #16
+ 474              	.LCFI16:
+ 475              		.cfi_def_cfa_offset 24
+ 476 0004 00AF     		add	r7, sp, #0
+ 477              	.LCFI17:
+ 478              		.cfi_def_cfa_register 7
+ 230:Src/main.c    **** 
+ 231:Src/main.c    **** 
+ 232:Src/main.c    ****     pFunction appEntry;
+ 233:Src/main.c    ****     uint32_t appStack;
+ARM GAS  /tmp/cc3BkDrd.s 			page 14
+
+
+ 234:Src/main.c    **** 
+ 235:Src/main.c    ****     mprintf("Booting...\r\n");
+ 479              		.loc 1 235 0
+ 480 0006 0A48     		ldr	r0, .L22
+ 481 0008 FFF7FEFF 		bl	mprintf
+ 236:Src/main.c    **** 
+ 237:Src/main.c    **** //    EnablePrivilegedMode( ) ;
+ 238:Src/main.c    **** 
  239:Src/main.c    **** 
- 240:Src/main.c    **** 
- 241:Src/main.c    **** //    // Clear pendings
- 242:Src/main.c    **** //    NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
- 243:Src/main.c    **** //    NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
- 244:Src/main.c    **** //    NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
- 245:Src/main.c    **** //    NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
- 246:Src/main.c    **** //    NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
- 247:Src/main.c    **** //    NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
- 248:Src/main.c    **** //    NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
- 249:Src/main.c    **** //    NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
+ 240:Src/main.c    **** //    // Disable all interrupts
+ 241:Src/main.c    **** //    NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
+ 242:Src/main.c    **** //    NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
+ 243:Src/main.c    **** //    NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
+ 244:Src/main.c    **** //    NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
+ 245:Src/main.c    **** //    NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
+ 246:Src/main.c    **** //    NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
+ 247:Src/main.c    **** //    NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
+ 248:Src/main.c    **** //    NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
+ 249:Src/main.c    **** 
  250:Src/main.c    **** 
- 251:Src/main.c    **** 
- 252:Src/main.c    **** //    // Stop sys tick
-ARM GAS  /tmp/ccg1mW9H.s 			page 14
-
-
- 253:Src/main.c    **** //    SysTick->CTRL = 0 ;
- 254:Src/main.c    **** //    SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
- 255:Src/main.c    **** 
- 256:Src/main.c    **** //    // Disable individual fault handlers if the bootloader used them.
- 257:Src/main.c    **** //    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
- 258:Src/main.c    **** //                    SCB_SHCSR_BUSFAULTENA_Msk | \
- 259:Src/main.c    **** //                    SCB_SHCSR_MEMFAULTENA_Msk ) ;
+ 251:Src/main.c    **** //    // Clear pendings
+ 252:Src/main.c    **** //    NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
+ 253:Src/main.c    **** //    NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
+ 254:Src/main.c    **** //    NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
+ 255:Src/main.c    **** //    NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
+ 256:Src/main.c    **** //    NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
+ 257:Src/main.c    **** //    NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
+ 258:Src/main.c    **** //    NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
+ 259:Src/main.c    **** //    NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
  260:Src/main.c    **** 
- 261:Src/main.c    **** //    // Activate the MSP, if the core is found to currently run with the PSP.
- 262:Src/main.c    **** //    if( CONTROL_SPSEL_Msk & __get_CONTROL( ) )
- 263:Src/main.c    **** //    {  /* MSP is not active */
- 264:Src/main.c    **** //     __set_CONTROL( __get_CONTROL( ) & ~CONTROL_SPSEL_Msk ) ;
- 265:Src/main.c    **** //    }
- 266:Src/main.c    **** 
- 267:Src/main.c    **** //    __set_CONTROL(0);
- 268:Src/main.c    **** 
- 269:Src/main.c    ****     /* Get the application stack pointer (First entry in the application vector table) */
- 270:Src/main.c    ****     appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
- 464              		.loc 1 270 0
- 465 000c 094B     		ldr	r3, .L21+4
- 466 000e 1B68     		ldr	r3, [r3]
- 467 0010 FB60     		str	r3, [r7, #12]
- 271:Src/main.c    **** 
- 272:Src/main.c    ****     /* Get the application entry point (Second entry in the application vector table) */
- 273:Src/main.c    ****     appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
- 468              		.loc 1 273 0
- 469 0012 094B     		ldr	r3, .L21+8
- 470 0014 1B68     		ldr	r3, [r3]
- 471 0016 BB60     		str	r3, [r7, #8]
- 472 0018 FB68     		ldr	r3, [r7, #12]
- 473 001a 7B60     		str	r3, [r7, #4]
- 474              	.LBB14:
- 475              	.LBB15:
- 476              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+ 261:Src/main.c    **** 
+ 262:Src/main.c    **** //    // Stop sys tick
+ 263:Src/main.c    **** //    SysTick->CTRL = 0 ;
+ 264:Src/main.c    **** //    SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
+ 265:Src/main.c    **** 
+ 266:Src/main.c    **** //    // Disable individual fault handlers if the bootloader used them.
+ 267:Src/main.c    **** //    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
+ 268:Src/main.c    **** //                    SCB_SHCSR_BUSFAULTENA_Msk | \
+ 269:Src/main.c    **** //                    SCB_SHCSR_MEMFAULTENA_Msk ) ;
+ 270:Src/main.c    **** 
+ 271:Src/main.c    **** //    // Activate the MSP, if the core is found to currently run with the PSP.
+ 272:Src/main.c    **** //    if( CONTROL_SPSEL_Msk & __get_CONTROL( ) )
+ 273:Src/main.c    **** //    {  /* MSP is not active */
+ 274:Src/main.c    **** //     __set_CONTROL( __get_CONTROL( ) & ~CONTROL_SPSEL_Msk ) ;
+ 275:Src/main.c    **** //    }
+ 276:Src/main.c    **** 
+ 277:Src/main.c    **** //    __set_CONTROL(0);
+ 278:Src/main.c    **** 
+ 279:Src/main.c    ****     /* Get the application stack pointer (First entry in the application vector table) */
+ 280:Src/main.c    ****     appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
+ 482              		.loc 1 280 0
+ 483 000c 094B     		ldr	r3, .L22+4
+ 484 000e 1B68     		ldr	r3, [r3]
+ 485 0010 FB60     		str	r3, [r7, #12]
+ 281:Src/main.c    **** 
+ 282:Src/main.c    ****     /* Get the application entry point (Second entry in the application vector table) */
+ 283:Src/main.c    ****     appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
+ARM GAS  /tmp/cc3BkDrd.s 			page 15
+
+
+ 486              		.loc 1 283 0
+ 487 0012 094B     		ldr	r3, .L22+8
+ 488 0014 1B68     		ldr	r3, [r3]
+ 489 0016 BB60     		str	r3, [r7, #8]
+ 490 0018 FB68     		ldr	r3, [r7, #12]
+ 491 001a 7B60     		str	r3, [r7, #4]
+ 492              	.LBB14:
+ 493              	.LBB15:
+ 494              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
    2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
    3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS Cortex-M Core Function/Instruction Header File
@@ -838,9 +873,6 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   21:Drivers/CMSIS/Include/cmsis_gcc.h ****    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   22:Drivers/CMSIS/Include/cmsis_gcc.h ****    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   23:Drivers/CMSIS/Include/cmsis_gcc.h ****    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARM GAS  /tmp/ccg1mW9H.s 			page 15
-
-
   24:Drivers/CMSIS/Include/cmsis_gcc.h ****    ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDERS AND CONTRIBUTORS BE
   25:Drivers/CMSIS/Include/cmsis_gcc.h ****    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
   26:Drivers/CMSIS/Include/cmsis_gcc.h ****    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
@@ -866,6 +898,9 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   46:Drivers/CMSIS/Include/cmsis_gcc.h **** 
   47:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
   48:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+ARM GAS  /tmp/cc3BkDrd.s 			page 16
+
+
   49:Drivers/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
   50:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
   51:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -898,9 +933,6 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
   78:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Control Register value
   79:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
   80:Drivers/CMSIS/Include/cmsis_gcc.h **** __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_CONTROL(void)
-ARM GAS  /tmp/ccg1mW9H.s 			page 16
-
-
   81:Drivers/CMSIS/Include/cmsis_gcc.h **** {
   82:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
   83:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -926,6 +958,9 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  103:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               IPSR Register value
  104:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  105:Drivers/CMSIS/Include/cmsis_gcc.h **** __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_IPSR(void)
+ARM GAS  /tmp/cc3BkDrd.s 			page 17
+
+
  106:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  107:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
  108:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -958,9 +993,6 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  135:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  136:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
  137:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  /tmp/ccg1mW9H.s 			page 17
-
-
  138:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, xpsr" : "=r" (result) );
  139:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
  140:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -986,6 +1018,9 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  160:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfProcStack  Process Stack Pointer value to set
  161:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  162:Drivers/CMSIS/Include/cmsis_gcc.h **** __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
+ARM GAS  /tmp/cc3BkDrd.s 			page 18
+
+
  163:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  164:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR psp, %0\n" : : "r" (topOfProcStack) : "sp");
  165:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1014,915 +1049,912 @@ ARM GAS  /tmp/ccg1mW9H.s 			page 1
  188:Drivers/CMSIS/Include/cmsis_gcc.h **** __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
  189:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  190:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR msp, %0\n" : : "r" (topOfMainStack) : "sp");
- 477              		.loc 2 190 0
- 478 001c 7B68     		ldr	r3, [r7, #4]
- 479              		.syntax unified
- 480              	@ 190 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
-ARM GAS  /tmp/ccg1mW9H.s 			page 18
-
-
- 481 001e 83F30888 		MSR msp, r3
- 482              	
- 483              	@ 0 "" 2
- 484              		.thumb
- 485              		.syntax unified
- 486              	.LBE15:
- 487              	.LBE14:
- 274:Src/main.c    **** 
- 275:Src/main.c    **** //    /* Set the application stack pointer */
- 276:Src/main.c    **** //    SYSCFG->MEMRMP = 0x01;
- 277:Src/main.c    **** 
- 278:Src/main.c    **** //    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
- 279:Src/main.c    **** //                     SCB_SHCSR_BUSFAULTENA_Msk | \
- 280:Src/main.c    **** //                     SCB_SHCSR_MEMFAULTENA_Msk ) ;
- 281:Src/main.c    **** 
- 282:Src/main.c    ****     __set_MSP(appStack);
- 283:Src/main.c    **** 
- 284:Src/main.c    ****     /* Start the application */
- 285:Src/main.c    ****     appEntry();
- 488              		.loc 1 285 0
- 489 0022 BB68     		ldr	r3, [r7, #8]
- 490 0024 9847     		blx	r3
- 491              	.LVL0:
- 286:Src/main.c    **** 
- 287:Src/main.c    **** }
- 492              		.loc 1 287 0
- 493 0026 00BF     		nop
- 494 0028 1037     		adds	r7, r7, #16
- 495              	.LCFI18:
- 496              		.cfi_def_cfa_offset 8
- 497 002a BD46     		mov	sp, r7
- 498              	.LCFI19:
- 499              		.cfi_def_cfa_register 13
- 500              		@ sp needed
- 501 002c 80BD     		pop	{r7, pc}
- 502              	.L22:
- 503 002e 00BF     		.align	2
- 504              	.L21:
- 505 0030 D8000000 		.word	.LC6
- 506 0034 00000108 		.word	134283264
- 507 0038 04000108 		.word	134283268
- 508              		.cfi_endproc
- 509              	.LFE139:
- 511              		.section	.text.writeFlash,"ax",%progbits
- 512              		.align	1
- 513              		.global	writeFlash
- 514              		.syntax unified
- 515              		.thumb
- 516              		.thumb_func
- 517              		.fpu fpv4-sp-d16
- 519              	writeFlash:
- 520              	.LFB140:
- 288:Src/main.c    **** 
- 289:Src/main.c    **** 
- 290:Src/main.c    **** 
+ 495              		.loc 2 190 0
+ 496 001c 7B68     		ldr	r3, [r7, #4]
+ 497              		.syntax unified
+ 498              	@ 190 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 499 001e 83F30888 		MSR msp, r3
+ 500              	
+ 501              	@ 0 "" 2
+ 502              		.thumb
+ 503              		.syntax unified
+ 504              	.LBE15:
+ 505              	.LBE14:
+ 284:Src/main.c    **** 
+ 285:Src/main.c    **** //    /* Set the application stack pointer */
+ 286:Src/main.c    **** //    SYSCFG->MEMRMP = 0x01;
+ 287:Src/main.c    **** 
+ 288:Src/main.c    **** //    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk | \
+ 289:Src/main.c    **** //                     SCB_SHCSR_BUSFAULTENA_Msk | \
+ 290:Src/main.c    **** //                     SCB_SHCSR_MEMFAULTENA_Msk ) ;
  291:Src/main.c    **** 
- 292:Src/main.c    **** void writeFlash(uint8_t Data, long Address)
-ARM GAS  /tmp/ccg1mW9H.s 			page 19
+ 292:Src/main.c    ****     __set_MSP(appStack);
+ 293:Src/main.c    **** 
+ 294:Src/main.c    ****     /* Start the application */
+ 295:Src/main.c    ****     appEntry();
+ 506              		.loc 1 295 0
+ 507 0022 BB68     		ldr	r3, [r7, #8]
+ 508 0024 9847     		blx	r3
+ 509              	.LVL0:
+ 296:Src/main.c    **** 
+ 297:Src/main.c    **** }
+ARM GAS  /tmp/cc3BkDrd.s 			page 19
 
 
- 293:Src/main.c    **** {
- 521              		.loc 1 293 0
- 522              		.cfi_startproc
- 523              		@ args = 0, pretend = 0, frame = 8
- 524              		@ frame_needed = 1, uses_anonymous_args = 0
- 525 0000 90B5     		push	{r4, r7, lr}
- 526              	.LCFI20:
- 527              		.cfi_def_cfa_offset 12
- 528              		.cfi_offset 4, -12
- 529              		.cfi_offset 7, -8
- 530              		.cfi_offset 14, -4
- 531 0002 83B0     		sub	sp, sp, #12
- 532              	.LCFI21:
- 533              		.cfi_def_cfa_offset 24
- 534 0004 00AF     		add	r7, sp, #0
- 535              	.LCFI22:
- 536              		.cfi_def_cfa_register 7
- 537 0006 0346     		mov	r3, r0
- 538 0008 3960     		str	r1, [r7]
- 539 000a FB71     		strb	r3, [r7, #7]
- 294:Src/main.c    **** 
- 295:Src/main.c    ****      HAL_FLASH_Unlock();
- 540              		.loc 1 295 0
- 541 000c FFF7FEFF 		bl	HAL_FLASH_Unlock
- 296:Src/main.c    ****      HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
- 542              		.loc 1 296 0
- 543 0010 3968     		ldr	r1, [r7]
- 544 0012 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
- 545 0014 4FF00004 		mov	r4, #0
- 546 0018 1A46     		mov	r2, r3
- 547 001a 2346     		mov	r3, r4
- 548 001c 0020     		movs	r0, #0
- 549 001e FFF7FEFF 		bl	HAL_FLASH_Program
- 297:Src/main.c    ****      HAL_FLASH_Lock();
- 550              		.loc 1 297 0
- 551 0022 FFF7FEFF 		bl	HAL_FLASH_Lock
- 298:Src/main.c    **** }
- 552              		.loc 1 298 0
- 553 0026 00BF     		nop
- 554 0028 0C37     		adds	r7, r7, #12
- 555              	.LCFI23:
- 556              		.cfi_def_cfa_offset 12
- 557 002a BD46     		mov	sp, r7
- 558              	.LCFI24:
- 559              		.cfi_def_cfa_register 13
- 560              		@ sp needed
- 561 002c 90BD     		pop	{r4, r7, pc}
- 562              		.cfi_endproc
- 563              	.LFE140:
- 565              		.section	.text.readFlash,"ax",%progbits
- 566              		.align	1
- 567              		.global	readFlash
- 568              		.syntax unified
- 569              		.thumb
- 570              		.thumb_func
- 571              		.fpu fpv4-sp-d16
- 573              	readFlash:
-ARM GAS  /tmp/ccg1mW9H.s 			page 20
-
-
- 574              	.LFB141:
+ 510              		.loc 1 297 0
+ 511 0026 00BF     		nop
+ 512 0028 1037     		adds	r7, r7, #16
+ 513              	.LCFI18:
+ 514              		.cfi_def_cfa_offset 8
+ 515 002a BD46     		mov	sp, r7
+ 516              	.LCFI19:
+ 517              		.cfi_def_cfa_register 13
+ 518              		@ sp needed
+ 519 002c 80BD     		pop	{r7, pc}
+ 520              	.L23:
+ 521 002e 00BF     		.align	2
+ 522              	.L22:
+ 523 0030 EC000000 		.word	.LC7
+ 524 0034 00000108 		.word	134283264
+ 525 0038 04000108 		.word	134283268
+ 526              		.cfi_endproc
+ 527              	.LFE139:
+ 529              		.section	.text.writeFlash,"ax",%progbits
+ 530              		.align	1
+ 531              		.global	writeFlash
+ 532              		.syntax unified
+ 533              		.thumb
+ 534              		.thumb_func
+ 535              		.fpu fpv4-sp-d16
+ 537              	writeFlash:
+ 538              	.LFB140:
+ 298:Src/main.c    **** 
  299:Src/main.c    **** 
- 300:Src/main.c    **** uint8_t readFlash(int Address)
- 301:Src/main.c    **** {
- 575              		.loc 1 301 0
- 576              		.cfi_startproc
- 577              		@ args = 0, pretend = 0, frame = 16
- 578              		@ frame_needed = 1, uses_anonymous_args = 0
- 579              		@ link register save eliminated.
- 580 0000 80B4     		push	{r7}
- 581              	.LCFI25:
- 582              		.cfi_def_cfa_offset 4
- 583              		.cfi_offset 7, -4
- 584 0002 85B0     		sub	sp, sp, #20
- 585              	.LCFI26:
- 586              		.cfi_def_cfa_offset 24
- 587 0004 00AF     		add	r7, sp, #0
- 588              	.LCFI27:
- 589              		.cfi_def_cfa_register 7
- 590 0006 7860     		str	r0, [r7, #4]
- 302:Src/main.c    **** 
- 303:Src/main.c    ****     uint8_t flash_data;
+ 300:Src/main.c    **** 
+ 301:Src/main.c    **** 
+ 302:Src/main.c    **** void writeFlash(uint8_t Data, long Address)
+ 303:Src/main.c    **** {
+ 539              		.loc 1 303 0
+ 540              		.cfi_startproc
+ 541              		@ args = 0, pretend = 0, frame = 8
+ 542              		@ frame_needed = 1, uses_anonymous_args = 0
+ 543 0000 90B5     		push	{r4, r7, lr}
+ 544              	.LCFI20:
+ 545              		.cfi_def_cfa_offset 12
+ 546              		.cfi_offset 4, -12
+ 547              		.cfi_offset 7, -8
+ 548              		.cfi_offset 14, -4
+ 549 0002 83B0     		sub	sp, sp, #12
+ 550              	.LCFI21:
+ 551              		.cfi_def_cfa_offset 24
+ 552 0004 00AF     		add	r7, sp, #0
+ 553              	.LCFI22:
+ 554              		.cfi_def_cfa_register 7
+ 555 0006 0346     		mov	r3, r0
+ 556 0008 3960     		str	r1, [r7]
+ 557 000a FB71     		strb	r3, [r7, #7]
  304:Src/main.c    **** 
- 305:Src/main.c    ****     flash_data = *(uint8_t *)Address;
- 591              		.loc 1 305 0
- 592 0008 7B68     		ldr	r3, [r7, #4]
- 593 000a 1B78     		ldrb	r3, [r3]
- 594 000c FB73     		strb	r3, [r7, #15]
- 306:Src/main.c    **** 
- 307:Src/main.c    ****     return flash_data;
- 595              		.loc 1 307 0
- 596 000e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
- 308:Src/main.c    **** 
- 309:Src/main.c    **** }
- 597              		.loc 1 309 0
- 598 0010 1846     		mov	r0, r3
- 599 0012 1437     		adds	r7, r7, #20
- 600              	.LCFI28:
- 601              		.cfi_def_cfa_offset 4
- 602 0014 BD46     		mov	sp, r7
- 603              	.LCFI29:
- 604              		.cfi_def_cfa_register 13
- 605              		@ sp needed
- 606 0016 5DF8047B 		ldr	r7, [sp], #4
- 607              	.LCFI30:
- 608              		.cfi_restore 7
- 609              		.cfi_def_cfa_offset 0
- 610 001a 7047     		bx	lr
- 611              		.cfi_endproc
- 612              	.LFE141:
- 614              		.section	.text.EnablePrivilegedMode,"ax",%progbits
- 615              		.align	1
- 616              		.global	EnablePrivilegedMode
- 617              		.syntax unified
- 618              		.thumb
- 619              		.thumb_func
- 620              		.fpu fpv4-sp-d16
-ARM GAS  /tmp/ccg1mW9H.s 			page 21
+ 305:Src/main.c    ****      HAL_FLASH_Unlock();
+ 558              		.loc 1 305 0
+ 559 000c FFF7FEFF 		bl	HAL_FLASH_Unlock
+ 306:Src/main.c    ****      HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
+ARM GAS  /tmp/cc3BkDrd.s 			page 20
 
 
- 622              	EnablePrivilegedMode:
- 623              	.LFB142:
- 310:Src/main.c    **** 
- 311:Src/main.c    **** 
+ 560              		.loc 1 306 0
+ 561 0010 3968     		ldr	r1, [r7]
+ 562 0012 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 563 0014 4FF00004 		mov	r4, #0
+ 564 0018 1A46     		mov	r2, r3
+ 565 001a 2346     		mov	r3, r4
+ 566 001c 0020     		movs	r0, #0
+ 567 001e FFF7FEFF 		bl	HAL_FLASH_Program
+ 307:Src/main.c    ****      HAL_FLASH_Lock();
+ 568              		.loc 1 307 0
+ 569 0022 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 308:Src/main.c    **** }
+ 570              		.loc 1 308 0
+ 571 0026 00BF     		nop
+ 572 0028 0C37     		adds	r7, r7, #12
+ 573              	.LCFI23:
+ 574              		.cfi_def_cfa_offset 12
+ 575 002a BD46     		mov	sp, r7
+ 576              	.LCFI24:
+ 577              		.cfi_def_cfa_register 13
+ 578              		@ sp needed
+ 579 002c 90BD     		pop	{r4, r7, pc}
+ 580              		.cfi_endproc
+ 581              	.LFE140:
+ 583              		.section	.text.readFlash,"ax",%progbits
+ 584              		.align	1
+ 585              		.global	readFlash
+ 586              		.syntax unified
+ 587              		.thumb
+ 588              		.thumb_func
+ 589              		.fpu fpv4-sp-d16
+ 591              	readFlash:
+ 592              	.LFB141:
+ 309:Src/main.c    **** 
+ 310:Src/main.c    **** uint8_t readFlash(int Address)
+ 311:Src/main.c    **** {
+ 593              		.loc 1 311 0
+ 594              		.cfi_startproc
+ 595              		@ args = 0, pretend = 0, frame = 16
+ 596              		@ frame_needed = 1, uses_anonymous_args = 0
+ 597              		@ link register save eliminated.
+ 598 0000 80B4     		push	{r7}
+ 599              	.LCFI25:
+ 600              		.cfi_def_cfa_offset 4
+ 601              		.cfi_offset 7, -4
+ 602 0002 85B0     		sub	sp, sp, #20
+ 603              	.LCFI26:
+ 604              		.cfi_def_cfa_offset 24
+ 605 0004 00AF     		add	r7, sp, #0
+ 606              	.LCFI27:
+ 607              		.cfi_def_cfa_register 7
+ 608 0006 7860     		str	r0, [r7, #4]
  312:Src/main.c    **** 
- 313:Src/main.c    **** void EnablePrivilegedMode (void){
- 624              		.loc 1 313 0
- 625              		.cfi_startproc
- 626              		@ args = 0, pretend = 0, frame = 8
- 627              		@ frame_needed = 1, uses_anonymous_args = 0
- 628              		@ link register save eliminated.
- 629 0000 80B4     		push	{r7}
- 630              	.LCFI31:
- 631              		.cfi_def_cfa_offset 4
- 632              		.cfi_offset 7, -4
- 633 0002 83B0     		sub	sp, sp, #12
- 634              	.LCFI32:
- 635              		.cfi_def_cfa_offset 16
- 636 0004 00AF     		add	r7, sp, #0
- 637              	.LCFI33:
- 638              		.cfi_def_cfa_register 7
- 639              	.LBB16:
- 640              	.LBB17:
+ 313:Src/main.c    ****     uint8_t flash_data;
+ 314:Src/main.c    **** 
+ 315:Src/main.c    ****     flash_data = *(uint8_t *)Address;
+ 609              		.loc 1 315 0
+ARM GAS  /tmp/cc3BkDrd.s 			page 21
+
+
+ 610 0008 7B68     		ldr	r3, [r7, #4]
+ 611 000a 1B78     		ldrb	r3, [r3]
+ 612 000c FB73     		strb	r3, [r7, #15]
+ 316:Src/main.c    **** 
+ 317:Src/main.c    ****     return flash_data;
+ 613              		.loc 1 317 0
+ 614 000e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 318:Src/main.c    **** 
+ 319:Src/main.c    **** }
+ 615              		.loc 1 319 0
+ 616 0010 1846     		mov	r0, r3
+ 617 0012 1437     		adds	r7, r7, #20
+ 618              	.LCFI28:
+ 619              		.cfi_def_cfa_offset 4
+ 620 0014 BD46     		mov	sp, r7
+ 621              	.LCFI29:
+ 622              		.cfi_def_cfa_register 13
+ 623              		@ sp needed
+ 624 0016 5DF8047B 		ldr	r7, [sp], #4
+ 625              	.LCFI30:
+ 626              		.cfi_restore 7
+ 627              		.cfi_def_cfa_offset 0
+ 628 001a 7047     		bx	lr
+ 629              		.cfi_endproc
+ 630              	.LFE141:
+ 632              		.section	.text.EnablePrivilegedMode,"ax",%progbits
+ 633              		.align	1
+ 634              		.global	EnablePrivilegedMode
+ 635              		.syntax unified
+ 636              		.thumb
+ 637              		.thumb_func
+ 638              		.fpu fpv4-sp-d16
+ 640              	EnablePrivilegedMode:
+ 641              	.LFB142:
+ 320:Src/main.c    **** 
+ 321:Src/main.c    **** 
+ 322:Src/main.c    **** 
+ 323:Src/main.c    **** void EnablePrivilegedMode (void){
+ 642              		.loc 1 323 0
+ 643              		.cfi_startproc
+ 644              		@ args = 0, pretend = 0, frame = 8
+ 645              		@ frame_needed = 1, uses_anonymous_args = 0
+ 646              		@ link register save eliminated.
+ 647 0000 80B4     		push	{r7}
+ 648              	.LCFI31:
+ 649              		.cfi_def_cfa_offset 4
+ 650              		.cfi_offset 7, -4
+ 651 0002 83B0     		sub	sp, sp, #12
+ 652              	.LCFI32:
+ 653              		.cfi_def_cfa_offset 16
+ 654 0004 00AF     		add	r7, sp, #0
+ 655              	.LCFI33:
+ 656              		.cfi_def_cfa_register 7
+ 657              	.LBB16:
+ 658              	.LBB17:
   71:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 641              		.loc 2 71 0
- 642              		.syntax unified
- 643              	@ 71 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 644 0006 72B6     		cpsid i
- 645              	@ 0 "" 2
- 646              		.thumb
- 647              		.syntax unified
- 648              	.LBE17:
- 649              	.LBE16:
- 650              	.LBB18:
- 651              	.LBB19:
+ 659              		.loc 2 71 0
+ARM GAS  /tmp/cc3BkDrd.s 			page 22
+
+
+ 660              		.syntax unified
+ 661              	@ 71 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 662 0006 72B6     		cpsid i
+ 663              	@ 0 "" 2
+ 664              		.thumb
+ 665              		.syntax unified
+ 666              	.LBE17:
+ 667              	.LBE16:
+ 668              	.LBB18:
+ 669              	.LBB19:
   84:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
- 652              		.loc 2 84 0
- 653              		.syntax unified
- 654              	@ 84 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 655 0008 EFF31483 		MRS r3, control
- 656              	@ 0 "" 2
- 657              		.thumb
- 658              		.syntax unified
- 659 000c 3B60     		str	r3, [r7]
-  85:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 660              		.loc 2 85 0
- 661 000e 3B68     		ldr	r3, [r7]
- 662              	.LBE19:
- 663              	.LBE18:
- 314:Src/main.c    ****         __disable_irq();
- 315:Src/main.c    ****         __set_CONTROL((__get_CONTROL( ))& 0xFFFFFFFE);  // enter priv mode
- 664              		.loc 1 315 0
- 665 0010 23F00103 		bic	r3, r3, #1
- 666 0014 7B60     		str	r3, [r7, #4]
- 667              	.LBB20:
- 668              	.LBB21:
-  96:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  /tmp/ccg1mW9H.s 			page 22
-
-
- 669              		.loc 2 96 0
- 670 0016 7B68     		ldr	r3, [r7, #4]
+ 670              		.loc 2 84 0
  671              		.syntax unified
- 672              	@ 96 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 673 0018 83F31488 		MSR control, r3
+ 672              	@ 84 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 673 0008 EFF31483 		MRS r3, control
  674              	@ 0 "" 2
  675              		.thumb
  676              		.syntax unified
- 677              	.LBE21:
- 678              	.LBE20:
- 679              	.LBB22:
- 680              	.LBB23:
+ 677 000c 3B60     		str	r3, [r7]
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 678              		.loc 2 85 0
+ 679 000e 3B68     		ldr	r3, [r7]
+ 680              	.LBE19:
+ 681              	.LBE18:
+ 324:Src/main.c    ****         __disable_irq();
+ 325:Src/main.c    ****         __set_CONTROL((__get_CONTROL( ))& 0xFFFFFFFE);  // enter priv mode
+ 682              		.loc 1 325 0
+ 683 0010 23F00103 		bic	r3, r3, #1
+ 684 0014 7B60     		str	r3, [r7, #4]
+ 685              	.LBB20:
+ 686              	.LBB21:
+  96:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 687              		.loc 2 96 0
+ 688 0016 7B68     		ldr	r3, [r7, #4]
+ 689              		.syntax unified
+ 690              	@ 96 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 691 0018 83F31488 		MSR control, r3
+ 692              	@ 0 "" 2
+ 693              		.thumb
+ 694              		.syntax unified
+ 695              	.LBE21:
+ 696              	.LBE20:
+ 697              	.LBB22:
+ 698              	.LBB23:
   60:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 681              		.loc 2 60 0
- 682              		.syntax unified
- 683              	@ 60 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 684 001c 62B6     		cpsie i
- 685              	@ 0 "" 2
- 686              		.thumb
- 687              		.syntax unified
- 688              	.LBE23:
- 689              	.LBE22:
- 316:Src/main.c    ****         __enable_irq();
- 317:Src/main.c    **** }
- 690              		.loc 1 317 0
- 691 001e 00BF     		nop
- 692 0020 0C37     		adds	r7, r7, #12
- 693              	.LCFI34:
- 694              		.cfi_def_cfa_offset 4
- 695 0022 BD46     		mov	sp, r7
- 696              	.LCFI35:
- 697              		.cfi_def_cfa_register 13
- 698              		@ sp needed
- 699 0024 5DF8047B 		ldr	r7, [sp], #4
- 700              	.LCFI36:
- 701              		.cfi_restore 7
- 702              		.cfi_def_cfa_offset 0
- 703 0028 7047     		bx	lr
- 704              		.cfi_endproc
- 705              	.LFE142:
- 707              		.section	.text.vprint,"ax",%progbits
- 708              		.align	1
- 709              		.global	vprint
- 710              		.syntax unified
- 711              		.thumb
- 712              		.thumb_func
- 713              		.fpu fpv4-sp-d16
- 715              	vprint:
- 716              	.LFB143:
- 318:Src/main.c    **** 
- 319:Src/main.c    **** 
- 320:Src/main.c    **** 
- 321:Src/main.c    **** void vprint(const char *fmt, va_list argp)
- 322:Src/main.c    **** {
- 717              		.loc 1 322 0
- 718              		.cfi_startproc
- 719              		@ args = 0, pretend = 0, frame = 208
-ARM GAS  /tmp/ccg1mW9H.s 			page 23
+ 699              		.loc 2 60 0
+ 700              		.syntax unified
+ 701              	@ 60 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 702 001c 62B6     		cpsie i
+ 703              	@ 0 "" 2
+ 704              		.thumb
+ 705              		.syntax unified
+ 706              	.LBE23:
+ 707              	.LBE22:
+ 326:Src/main.c    ****         __enable_irq();
+ 327:Src/main.c    **** }
+ 708              		.loc 1 327 0
+ARM GAS  /tmp/cc3BkDrd.s 			page 23
 
 
- 720              		@ frame_needed = 1, uses_anonymous_args = 0
- 721 0000 80B5     		push	{r7, lr}
- 722              	.LCFI37:
- 723              		.cfi_def_cfa_offset 8
- 724              		.cfi_offset 7, -8
- 725              		.cfi_offset 14, -4
- 726 0002 B4B0     		sub	sp, sp, #208
- 727              	.LCFI38:
- 728              		.cfi_def_cfa_offset 216
- 729 0004 00AF     		add	r7, sp, #0
- 730              	.LCFI39:
- 731              		.cfi_def_cfa_register 7
- 732 0006 7860     		str	r0, [r7, #4]
- 733 0008 3960     		str	r1, [r7]
- 323:Src/main.c    ****     char string[200];
- 324:Src/main.c    ****     if(0 < vsprintf(string,fmt,argp)) // build string
- 734              		.loc 1 324 0
- 735 000a 07F10803 		add	r3, r7, #8
- 736 000e 3A68     		ldr	r2, [r7]
- 737 0010 7968     		ldr	r1, [r7, #4]
- 738 0012 1846     		mov	r0, r3
- 739 0014 FFF7FEFF 		bl	vsprintf
- 740 0018 0346     		mov	r3, r0
- 741 001a 002B     		cmp	r3, #0
- 742 001c 0DDD     		ble	.L30
- 325:Src/main.c    ****     {
- 326:Src/main.c    ****         HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via
- 743              		.loc 1 326 0
- 744 001e 07F10803 		add	r3, r7, #8
- 745 0022 1846     		mov	r0, r3
- 746 0024 FFF7FEFF 		bl	strlen
- 747 0028 0346     		mov	r3, r0
- 748 002a 9AB2     		uxth	r2, r3
- 749 002c 07F10801 		add	r1, r7, #8
- 750 0030 6FF07F43 		mvn	r3, #-16777216
- 751 0034 0348     		ldr	r0, .L31
- 752 0036 FFF7FEFF 		bl	HAL_UART_Transmit
- 753              	.L30:
- 327:Src/main.c    ****     }
- 328:Src/main.c    **** }
- 754              		.loc 1 328 0
- 755 003a 00BF     		nop
- 756 003c D037     		adds	r7, r7, #208
- 757              	.LCFI40:
- 758              		.cfi_def_cfa_offset 8
- 759 003e BD46     		mov	sp, r7
- 760              	.LCFI41:
- 761              		.cfi_def_cfa_register 13
- 762              		@ sp needed
- 763 0040 80BD     		pop	{r7, pc}
- 764              	.L32:
- 765 0042 00BF     		.align	2
- 766              	.L31:
- 767 0044 00000000 		.word	huart1
- 768              		.cfi_endproc
- 769              	.LFE143:
- 771              		.section	.text.mprintf,"ax",%progbits
-ARM GAS  /tmp/ccg1mW9H.s 			page 24
-
-
- 772              		.align	1
- 773              		.global	mprintf
- 774              		.syntax unified
- 775              		.thumb
- 776              		.thumb_func
- 777              		.fpu fpv4-sp-d16
- 779              	mprintf:
- 780              	.LFB144:
+ 709 001e 00BF     		nop
+ 710 0020 0C37     		adds	r7, r7, #12
+ 711              	.LCFI34:
+ 712              		.cfi_def_cfa_offset 4
+ 713 0022 BD46     		mov	sp, r7
+ 714              	.LCFI35:
+ 715              		.cfi_def_cfa_register 13
+ 716              		@ sp needed
+ 717 0024 5DF8047B 		ldr	r7, [sp], #4
+ 718              	.LCFI36:
+ 719              		.cfi_restore 7
+ 720              		.cfi_def_cfa_offset 0
+ 721 0028 7047     		bx	lr
+ 722              		.cfi_endproc
+ 723              	.LFE142:
+ 725              		.section	.text.vprint,"ax",%progbits
+ 726              		.align	1
+ 727              		.global	vprint
+ 728              		.syntax unified
+ 729              		.thumb
+ 730              		.thumb_func
+ 731              		.fpu fpv4-sp-d16
+ 733              	vprint:
+ 734              	.LFB143:
+ 328:Src/main.c    **** 
  329:Src/main.c    **** 
  330:Src/main.c    **** 
- 331:Src/main.c    **** 
- 332:Src/main.c    **** void mprintf(const char *fmt, ...) // custom printf() function
- 333:Src/main.c    **** {
- 781              		.loc 1 333 0
- 782              		.cfi_startproc
- 783              		@ args = 4, pretend = 16, frame = 8
- 784              		@ frame_needed = 1, uses_anonymous_args = 1
- 785 0000 0FB4     		push	{r0, r1, r2, r3}
- 786              	.LCFI42:
- 787              		.cfi_def_cfa_offset 16
- 788              		.cfi_offset 0, -16
- 789              		.cfi_offset 1, -12
- 790              		.cfi_offset 2, -8
- 791              		.cfi_offset 3, -4
- 792 0002 80B5     		push	{r7, lr}
- 793              	.LCFI43:
- 794              		.cfi_def_cfa_offset 24
- 795              		.cfi_offset 7, -24
- 796              		.cfi_offset 14, -20
- 797 0004 82B0     		sub	sp, sp, #8
- 798              	.LCFI44:
- 799              		.cfi_def_cfa_offset 32
- 800 0006 00AF     		add	r7, sp, #0
- 801              	.LCFI45:
- 802              		.cfi_def_cfa_register 7
- 334:Src/main.c    ****     va_list argp;
- 335:Src/main.c    ****     va_start(argp, fmt);
- 803              		.loc 1 335 0
- 804 0008 07F11403 		add	r3, r7, #20
- 805 000c 7B60     		str	r3, [r7, #4]
- 336:Src/main.c    ****     vprint(fmt, argp);
- 806              		.loc 1 336 0
- 807 000e 7968     		ldr	r1, [r7, #4]
- 808 0010 3869     		ldr	r0, [r7, #16]
- 809 0012 FFF7FEFF 		bl	vprint
- 337:Src/main.c    ****     va_end(argp);
+ 331:Src/main.c    **** void vprint(const char *fmt, va_list argp)
+ 332:Src/main.c    **** {
+ 735              		.loc 1 332 0
+ 736              		.cfi_startproc
+ 737              		@ args = 0, pretend = 0, frame = 208
+ 738              		@ frame_needed = 1, uses_anonymous_args = 0
+ 739 0000 80B5     		push	{r7, lr}
+ 740              	.LCFI37:
+ 741              		.cfi_def_cfa_offset 8
+ 742              		.cfi_offset 7, -8
+ 743              		.cfi_offset 14, -4
+ 744 0002 B4B0     		sub	sp, sp, #208
+ 745              	.LCFI38:
+ 746              		.cfi_def_cfa_offset 216
+ 747 0004 00AF     		add	r7, sp, #0
+ 748              	.LCFI39:
+ 749              		.cfi_def_cfa_register 7
+ 750 0006 7860     		str	r0, [r7, #4]
+ 751 0008 3960     		str	r1, [r7]
+ 333:Src/main.c    ****     char string[200];
+ 334:Src/main.c    ****     if(0 < vsprintf(string,fmt,argp)) // build string
+ 752              		.loc 1 334 0
+ 753 000a 07F10803 		add	r3, r7, #8
+ 754 000e 3A68     		ldr	r2, [r7]
+ 755 0010 7968     		ldr	r1, [r7, #4]
+ 756 0012 1846     		mov	r0, r3
+ 757 0014 FFF7FEFF 		bl	vsprintf
+ 758 0018 0346     		mov	r3, r0
+ 759 001a 002B     		cmp	r3, #0
+ 760 001c 0DDD     		ble	.L31
+ARM GAS  /tmp/cc3BkDrd.s 			page 24
+
+
+ 335:Src/main.c    ****     {
+ 336:Src/main.c    ****         HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via
+ 761              		.loc 1 336 0
+ 762 001e 07F10803 		add	r3, r7, #8
+ 763 0022 1846     		mov	r0, r3
+ 764 0024 FFF7FEFF 		bl	strlen
+ 765 0028 0346     		mov	r3, r0
+ 766 002a 9AB2     		uxth	r2, r3
+ 767 002c 07F10801 		add	r1, r7, #8
+ 768 0030 6FF07F43 		mvn	r3, #-16777216
+ 769 0034 0348     		ldr	r0, .L32
+ 770 0036 FFF7FEFF 		bl	HAL_UART_Transmit
+ 771              	.L31:
+ 337:Src/main.c    ****     }
  338:Src/main.c    **** }
- 810              		.loc 1 338 0
- 811 0016 00BF     		nop
- 812 0018 0837     		adds	r7, r7, #8
- 813              	.LCFI46:
- 814              		.cfi_def_cfa_offset 24
- 815 001a BD46     		mov	sp, r7
- 816              	.LCFI47:
- 817              		.cfi_def_cfa_register 13
- 818              		@ sp needed
- 819 001c BDE88040 		pop	{r7, lr}
-ARM GAS  /tmp/ccg1mW9H.s 			page 25
-
-
- 820              	.LCFI48:
- 821              		.cfi_restore 14
- 822              		.cfi_restore 7
- 823              		.cfi_def_cfa_offset 16
- 824 0020 04B0     		add	sp, sp, #16
- 825              	.LCFI49:
- 826              		.cfi_restore 3
- 827              		.cfi_restore 2
- 828              		.cfi_restore 1
- 829              		.cfi_restore 0
- 830              		.cfi_def_cfa_offset 0
- 831 0022 7047     		bx	lr
- 832              		.cfi_endproc
- 833              	.LFE144:
- 835              		.section	.rodata
- 836 00e5 000000   		.align	2
- 837              	.LC7:
- 838 00e8 5372632F 		.ascii	"Src/main.c\000"
- 838      6D61696E 
- 838      2E6300
- 839              		.section	.text.SystemClock_Config,"ax",%progbits
- 840              		.align	1
- 841              		.global	SystemClock_Config
- 842              		.syntax unified
- 843              		.thumb
- 844              		.thumb_func
- 845              		.fpu fpv4-sp-d16
- 847              	SystemClock_Config:
- 848              	.LFB145:
+ 772              		.loc 1 338 0
+ 773 003a 00BF     		nop
+ 774 003c D037     		adds	r7, r7, #208
+ 775              	.LCFI40:
+ 776              		.cfi_def_cfa_offset 8
+ 777 003e BD46     		mov	sp, r7
+ 778              	.LCFI41:
+ 779              		.cfi_def_cfa_register 13
+ 780              		@ sp needed
+ 781 0040 80BD     		pop	{r7, pc}
+ 782              	.L33:
+ 783 0042 00BF     		.align	2
+ 784              	.L32:
+ 785 0044 00000000 		.word	huart1
+ 786              		.cfi_endproc
+ 787              	.LFE143:
+ 789              		.section	.text.mprintf,"ax",%progbits
+ 790              		.align	1
+ 791              		.global	mprintf
+ 792              		.syntax unified
+ 793              		.thumb
+ 794              		.thumb_func
+ 795              		.fpu fpv4-sp-d16
+ 797              	mprintf:
+ 798              	.LFB144:
  339:Src/main.c    **** 
  340:Src/main.c    **** 
  341:Src/main.c    **** 
- 342:Src/main.c    **** void SystemClock_Config(void)
+ 342:Src/main.c    **** void mprintf(const char *fmt, ...) // custom printf() function
  343:Src/main.c    **** {
- 849              		.loc 1 343 0
- 850              		.cfi_startproc
- 851              		@ args = 0, pretend = 0, frame = 208
- 852              		@ frame_needed = 1, uses_anonymous_args = 0
- 853 0000 80B5     		push	{r7, lr}
- 854              	.LCFI50:
- 855              		.cfi_def_cfa_offset 8
- 856              		.cfi_offset 7, -8
- 857              		.cfi_offset 14, -4
- 858 0002 B4B0     		sub	sp, sp, #208
- 859              	.LCFI51:
- 860              		.cfi_def_cfa_offset 216
- 861 0004 00AF     		add	r7, sp, #0
- 862              	.LCFI52:
- 863              		.cfi_def_cfa_register 7
- 864              	.LBB24:
- 344:Src/main.c    **** 
- 345:Src/main.c    ****   RCC_OscInitTypeDef RCC_OscInitStruct;
- 346:Src/main.c    ****   RCC_ClkInitTypeDef RCC_ClkInitStruct;
- 347:Src/main.c    ****   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
- 348:Src/main.c    **** 
- 349:Src/main.c    ****     /**Configure the main internal regulator output voltage 
- 350:Src/main.c    ****     */
-ARM GAS  /tmp/ccg1mW9H.s 			page 26
+ 799              		.loc 1 343 0
+ 800              		.cfi_startproc
+ 801              		@ args = 4, pretend = 16, frame = 8
+ 802              		@ frame_needed = 1, uses_anonymous_args = 1
+ 803 0000 0FB4     		push	{r0, r1, r2, r3}
+ 804              	.LCFI42:
+ 805              		.cfi_def_cfa_offset 16
+ 806              		.cfi_offset 0, -16
+ 807              		.cfi_offset 1, -12
+ 808              		.cfi_offset 2, -8
+ 809              		.cfi_offset 3, -4
+ 810 0002 80B5     		push	{r7, lr}
+ARM GAS  /tmp/cc3BkDrd.s 			page 25
 
 
- 351:Src/main.c    ****   __HAL_RCC_PWR_CLK_ENABLE();
- 865              		.loc 1 351 0
- 866 0006 524A     		ldr	r2, .L39
- 867 0008 514B     		ldr	r3, .L39
- 868 000a 1B6C     		ldr	r3, [r3, #64]
- 869 000c 43F08053 		orr	r3, r3, #268435456
- 870 0010 1364     		str	r3, [r2, #64]
- 871 0012 4F4B     		ldr	r3, .L39
- 872 0014 1B6C     		ldr	r3, [r3, #64]
- 873 0016 03F08053 		and	r3, r3, #268435456
- 874 001a 7B60     		str	r3, [r7, #4]
- 875 001c 7B68     		ldr	r3, [r7, #4]
- 876              	.LBE24:
- 877              	.LBB25:
- 352:Src/main.c    **** 
- 353:Src/main.c    ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
- 878              		.loc 1 353 0
- 879 001e 4D4A     		ldr	r2, .L39+4
- 880 0020 4C4B     		ldr	r3, .L39+4
- 881 0022 1B68     		ldr	r3, [r3]
- 882 0024 43F44043 		orr	r3, r3, #49152
- 883 0028 1360     		str	r3, [r2]
- 884 002a 4A4B     		ldr	r3, .L39+4
- 885 002c 1B68     		ldr	r3, [r3]
- 886 002e 03F44043 		and	r3, r3, #49152
- 887 0032 3B60     		str	r3, [r7]
- 888 0034 3B68     		ldr	r3, [r7]
- 889              	.LBE25:
+ 811              	.LCFI43:
+ 812              		.cfi_def_cfa_offset 24
+ 813              		.cfi_offset 7, -24
+ 814              		.cfi_offset 14, -20
+ 815 0004 82B0     		sub	sp, sp, #8
+ 816              	.LCFI44:
+ 817              		.cfi_def_cfa_offset 32
+ 818 0006 00AF     		add	r7, sp, #0
+ 819              	.LCFI45:
+ 820              		.cfi_def_cfa_register 7
+ 344:Src/main.c    ****     va_list argp;
+ 345:Src/main.c    ****     va_start(argp, fmt);
+ 821              		.loc 1 345 0
+ 822 0008 07F11403 		add	r3, r7, #20
+ 823 000c 7B60     		str	r3, [r7, #4]
+ 346:Src/main.c    ****     vprint(fmt, argp);
+ 824              		.loc 1 346 0
+ 825 000e 7968     		ldr	r1, [r7, #4]
+ 826 0010 3869     		ldr	r0, [r7, #16]
+ 827 0012 FFF7FEFF 		bl	vprint
+ 347:Src/main.c    ****     va_end(argp);
+ 348:Src/main.c    **** }
+ 828              		.loc 1 348 0
+ 829 0016 00BF     		nop
+ 830 0018 0837     		adds	r7, r7, #8
+ 831              	.LCFI46:
+ 832              		.cfi_def_cfa_offset 24
+ 833 001a BD46     		mov	sp, r7
+ 834              	.LCFI47:
+ 835              		.cfi_def_cfa_register 13
+ 836              		@ sp needed
+ 837 001c BDE88040 		pop	{r7, lr}
+ 838              	.LCFI48:
+ 839              		.cfi_restore 14
+ 840              		.cfi_restore 7
+ 841              		.cfi_def_cfa_offset 16
+ 842 0020 04B0     		add	sp, sp, #16
+ 843              	.LCFI49:
+ 844              		.cfi_restore 3
+ 845              		.cfi_restore 2
+ 846              		.cfi_restore 1
+ 847              		.cfi_restore 0
+ 848              		.cfi_def_cfa_offset 0
+ 849 0022 7047     		bx	lr
+ 850              		.cfi_endproc
+ 851              	.LFE144:
+ 853              		.section	.rodata
+ 854 00f9 000000   		.align	2
+ 855              	.LC8:
+ 856 00fc 5372632F 		.ascii	"Src/main.c\000"
+ 856      6D61696E 
+ 856      2E6300
+ 857              		.section	.text.SystemClock_Config,"ax",%progbits
+ 858              		.align	1
+ 859              		.global	SystemClock_Config
+ 860              		.syntax unified
+ 861              		.thumb
+ARM GAS  /tmp/cc3BkDrd.s 			page 26
+
+
+ 862              		.thumb_func
+ 863              		.fpu fpv4-sp-d16
+ 865              	SystemClock_Config:
+ 866              	.LFB145:
+ 349:Src/main.c    **** 
+ 350:Src/main.c    **** 
+ 351:Src/main.c    **** 
+ 352:Src/main.c    **** void SystemClock_Config(void)
+ 353:Src/main.c    **** {
+ 867              		.loc 1 353 0
+ 868              		.cfi_startproc
+ 869              		@ args = 0, pretend = 0, frame = 208
+ 870              		@ frame_needed = 1, uses_anonymous_args = 0
+ 871 0000 80B5     		push	{r7, lr}
+ 872              	.LCFI50:
+ 873              		.cfi_def_cfa_offset 8
+ 874              		.cfi_offset 7, -8
+ 875              		.cfi_offset 14, -4
+ 876 0002 B4B0     		sub	sp, sp, #208
+ 877              	.LCFI51:
+ 878              		.cfi_def_cfa_offset 216
+ 879 0004 00AF     		add	r7, sp, #0
+ 880              	.LCFI52:
+ 881              		.cfi_def_cfa_register 7
+ 882              	.LBB24:
  354:Src/main.c    **** 
- 355:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
- 356:Src/main.c    ****     */
- 357:Src/main.c    ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
- 890              		.loc 1 357 0
- 891 0036 0923     		movs	r3, #9
- 892 0038 C7F8A030 		str	r3, [r7, #160]
- 358:Src/main.c    ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 893              		.loc 1 358 0
- 894 003c 4FF48033 		mov	r3, #65536
- 895 0040 C7F8A430 		str	r3, [r7, #164]
- 359:Src/main.c    ****   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
- 896              		.loc 1 359 0
- 897 0044 0123     		movs	r3, #1
- 898 0046 C7F8B430 		str	r3, [r7, #180]
- 360:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 899              		.loc 1 360 0
- 900 004a 0223     		movs	r3, #2
- 901 004c C7F8B830 		str	r3, [r7, #184]
- 361:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 902              		.loc 1 361 0
- 903 0050 4FF48003 		mov	r3, #4194304
- 904 0054 C7F8BC30 		str	r3, [r7, #188]
- 362:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLM = 8;
- 905              		.loc 1 362 0
- 906 0058 0823     		movs	r3, #8
- 907 005a C7F8C030 		str	r3, [r7, #192]
- 363:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLN = 336;
- 908              		.loc 1 363 0
-ARM GAS  /tmp/ccg1mW9H.s 			page 27
+ 355:Src/main.c    ****   RCC_OscInitTypeDef RCC_OscInitStruct;
+ 356:Src/main.c    ****   RCC_ClkInitTypeDef RCC_ClkInitStruct;
+ 357:Src/main.c    ****   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
+ 358:Src/main.c    **** 
+ 359:Src/main.c    ****     /**Configure the main internal regulator output voltage 
+ 360:Src/main.c    ****     */
+ 361:Src/main.c    ****   __HAL_RCC_PWR_CLK_ENABLE();
+ 883              		.loc 1 361 0
+ 884 0006 524A     		ldr	r2, .L40
+ 885 0008 514B     		ldr	r3, .L40
+ 886 000a 1B6C     		ldr	r3, [r3, #64]
+ 887 000c 43F08053 		orr	r3, r3, #268435456
+ 888 0010 1364     		str	r3, [r2, #64]
+ 889 0012 4F4B     		ldr	r3, .L40
+ 890 0014 1B6C     		ldr	r3, [r3, #64]
+ 891 0016 03F08053 		and	r3, r3, #268435456
+ 892 001a 7B60     		str	r3, [r7, #4]
+ 893 001c 7B68     		ldr	r3, [r7, #4]
+ 894              	.LBE24:
+ 895              	.LBB25:
+ 362:Src/main.c    **** 
+ 363:Src/main.c    ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 896              		.loc 1 363 0
+ 897 001e 4D4A     		ldr	r2, .L40+4
+ 898 0020 4C4B     		ldr	r3, .L40+4
+ 899 0022 1B68     		ldr	r3, [r3]
+ 900 0024 43F44043 		orr	r3, r3, #49152
+ 901 0028 1360     		str	r3, [r2]
+ 902 002a 4A4B     		ldr	r3, .L40+4
+ 903 002c 1B68     		ldr	r3, [r3]
+ 904 002e 03F44043 		and	r3, r3, #49152
+ARM GAS  /tmp/cc3BkDrd.s 			page 27
 
 
- 909 005e 4FF4A873 		mov	r3, #336
- 910 0062 C7F8C430 		str	r3, [r7, #196]
- 364:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 911              		.loc 1 364 0
- 912 0066 0223     		movs	r3, #2
- 913 0068 C7F8C830 		str	r3, [r7, #200]
- 365:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLQ = 2;
- 914              		.loc 1 365 0
- 915 006c 0223     		movs	r3, #2
- 916 006e C7F8CC30 		str	r3, [r7, #204]
- 366:Src/main.c    ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 917              		.loc 1 366 0
- 918 0072 07F1A003 		add	r3, r7, #160
- 919 0076 1846     		mov	r0, r3
- 920 0078 FFF7FEFF 		bl	HAL_RCC_OscConfig
- 921 007c 0346     		mov	r3, r0
- 922 007e 002B     		cmp	r3, #0
- 923 0080 04D0     		beq	.L35
- 367:Src/main.c    ****   {
- 368:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
- 924              		.loc 1 368 0
- 925 0082 4FF4B871 		mov	r1, #368
- 926 0086 3448     		ldr	r0, .L39+8
- 927 0088 FFF7FEFF 		bl	_Error_Handler
- 928              	.L35:
- 369:Src/main.c    ****   }
- 370:Src/main.c    **** 
- 371:Src/main.c    ****     /**Activate the Over-Drive mode 
- 372:Src/main.c    ****     */
- 373:Src/main.c    ****   if (HAL_PWREx_EnableOverDrive() != HAL_OK)
- 929              		.loc 1 373 0
- 930 008c FFF7FEFF 		bl	HAL_PWREx_EnableOverDrive
- 931 0090 0346     		mov	r3, r0
- 932 0092 002B     		cmp	r3, #0
- 933 0094 04D0     		beq	.L36
- 374:Src/main.c    ****   {
- 375:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
- 934              		.loc 1 375 0
- 935 0096 40F27711 		movw	r1, #375
- 936 009a 2F48     		ldr	r0, .L39+8
- 937 009c FFF7FEFF 		bl	_Error_Handler
- 938              	.L36:
- 376:Src/main.c    ****   }
- 377:Src/main.c    **** 
- 378:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
- 379:Src/main.c    ****     */
- 380:Src/main.c    ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 939              		.loc 1 380 0
- 940 00a0 0F23     		movs	r3, #15
- 941 00a2 C7F88C30 		str	r3, [r7, #140]
- 381:Src/main.c    ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 382:Src/main.c    ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
- 942              		.loc 1 382 0
- 943 00a6 0223     		movs	r3, #2
- 944 00a8 C7F89030 		str	r3, [r7, #144]
- 383:Src/main.c    ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 945              		.loc 1 383 0
-ARM GAS  /tmp/ccg1mW9H.s 			page 28
+ 905 0032 3B60     		str	r3, [r7]
+ 906 0034 3B68     		ldr	r3, [r7]
+ 907              	.LBE25:
+ 364:Src/main.c    **** 
+ 365:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
+ 366:Src/main.c    ****     */
+ 367:Src/main.c    ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+ 908              		.loc 1 367 0
+ 909 0036 0923     		movs	r3, #9
+ 910 0038 C7F8A030 		str	r3, [r7, #160]
+ 368:Src/main.c    ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 911              		.loc 1 368 0
+ 912 003c 4FF48033 		mov	r3, #65536
+ 913 0040 C7F8A430 		str	r3, [r7, #164]
+ 369:Src/main.c    ****   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+ 914              		.loc 1 369 0
+ 915 0044 0123     		movs	r3, #1
+ 916 0046 C7F8B430 		str	r3, [r7, #180]
+ 370:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 917              		.loc 1 370 0
+ 918 004a 0223     		movs	r3, #2
+ 919 004c C7F8B830 		str	r3, [r7, #184]
+ 371:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 920              		.loc 1 371 0
+ 921 0050 4FF48003 		mov	r3, #4194304
+ 922 0054 C7F8BC30 		str	r3, [r7, #188]
+ 372:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLM = 8;
+ 923              		.loc 1 372 0
+ 924 0058 0823     		movs	r3, #8
+ 925 005a C7F8C030 		str	r3, [r7, #192]
+ 373:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLN = 336;
+ 926              		.loc 1 373 0
+ 927 005e 4FF4A873 		mov	r3, #336
+ 928 0062 C7F8C430 		str	r3, [r7, #196]
+ 374:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 929              		.loc 1 374 0
+ 930 0066 0223     		movs	r3, #2
+ 931 0068 C7F8C830 		str	r3, [r7, #200]
+ 375:Src/main.c    ****   RCC_OscInitStruct.PLL.PLLQ = 2;
+ 932              		.loc 1 375 0
+ 933 006c 0223     		movs	r3, #2
+ 934 006e C7F8CC30 		str	r3, [r7, #204]
+ 376:Src/main.c    ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 935              		.loc 1 376 0
+ 936 0072 07F1A003 		add	r3, r7, #160
+ 937 0076 1846     		mov	r0, r3
+ 938 0078 FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 939 007c 0346     		mov	r3, r0
+ 940 007e 002B     		cmp	r3, #0
+ 941 0080 04D0     		beq	.L36
+ 377:Src/main.c    ****   {
+ 378:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 942              		.loc 1 378 0
+ 943 0082 4FF4BD71 		mov	r1, #378
+ 944 0086 3448     		ldr	r0, .L40+8
+ 945 0088 FFF7FEFF 		bl	_Error_Handler
+ 946              	.L36:
+ARM GAS  /tmp/cc3BkDrd.s 			page 28
 
 
- 946 00ac 0023     		movs	r3, #0
- 947 00ae C7F89430 		str	r3, [r7, #148]
- 384:Src/main.c    ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
- 948              		.loc 1 384 0
- 949 00b2 4FF4A053 		mov	r3, #5120
- 950 00b6 C7F89830 		str	r3, [r7, #152]
- 385:Src/main.c    ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
- 951              		.loc 1 385 0
- 952 00ba 4FF48053 		mov	r3, #4096
- 953 00be C7F89C30 		str	r3, [r7, #156]
- 386:Src/main.c    **** 
- 387:Src/main.c    ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
- 954              		.loc 1 387 0
- 955 00c2 07F18C03 		add	r3, r7, #140
- 956 00c6 0721     		movs	r1, #7
- 957 00c8 1846     		mov	r0, r3
- 958 00ca FFF7FEFF 		bl	HAL_RCC_ClockConfig
- 959 00ce 0346     		mov	r3, r0
- 960 00d0 002B     		cmp	r3, #0
- 961 00d2 04D0     		beq	.L37
- 388:Src/main.c    ****   {
- 389:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
- 962              		.loc 1 389 0
- 963 00d4 40F28511 		movw	r1, #389
- 964 00d8 1F48     		ldr	r0, .L39+8
- 965 00da FFF7FEFF 		bl	_Error_Handler
- 966              	.L37:
- 390:Src/main.c    ****   }
- 391:Src/main.c    **** 
- 392:Src/main.c    ****   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
- 967              		.loc 1 392 0
- 968 00de 1F4B     		ldr	r3, .L39+12
- 969 00e0 BB60     		str	r3, [r7, #8]
- 393:Src/main.c    ****                               |RCC_PERIPHCLK_UART4|RCC_PERIPHCLK_UART7
- 394:Src/main.c    ****                               |RCC_PERIPHCLK_UART8|RCC_PERIPHCLK_I2C1
- 395:Src/main.c    ****                               |RCC_PERIPHCLK_I2C2|RCC_PERIPHCLK_I2C3
- 396:Src/main.c    ****                               |RCC_PERIPHCLK_I2C4;
- 397:Src/main.c    ****   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
- 970              		.loc 1 397 0
- 971 00e2 4FF40073 		mov	r3, #512
- 972 00e6 BB63     		str	r3, [r7, #56]
- 398:Src/main.c    ****   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
- 973              		.loc 1 398 0
- 974 00e8 0023     		movs	r3, #0
- 975 00ea FB64     		str	r3, [r7, #76]
- 399:Src/main.c    ****   PeriphClkInitStruct.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
- 976              		.loc 1 399 0
- 977 00ec 0023     		movs	r3, #0
- 978 00ee BB65     		str	r3, [r7, #88]
- 400:Src/main.c    ****   PeriphClkInitStruct.Uart7ClockSelection = RCC_UART7CLKSOURCE_PCLK1;
- 979              		.loc 1 400 0
- 980 00f0 0023     		movs	r3, #0
- 981 00f2 7B66     		str	r3, [r7, #100]
- 401:Src/main.c    ****   PeriphClkInitStruct.Uart8ClockSelection = RCC_UART8CLKSOURCE_PCLK1;
- 982              		.loc 1 401 0
- 983 00f4 0023     		movs	r3, #0
- 984 00f6 BB66     		str	r3, [r7, #104]
-ARM GAS  /tmp/ccg1mW9H.s 			page 29
+ 379:Src/main.c    ****   }
+ 380:Src/main.c    **** 
+ 381:Src/main.c    ****     /**Activate the Over-Drive mode 
+ 382:Src/main.c    ****     */
+ 383:Src/main.c    ****   if (HAL_PWREx_EnableOverDrive() != HAL_OK)
+ 947              		.loc 1 383 0
+ 948 008c FFF7FEFF 		bl	HAL_PWREx_EnableOverDrive
+ 949 0090 0346     		mov	r3, r0
+ 950 0092 002B     		cmp	r3, #0
+ 951 0094 04D0     		beq	.L37
+ 384:Src/main.c    ****   {
+ 385:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 952              		.loc 1 385 0
+ 953 0096 40F28111 		movw	r1, #385
+ 954 009a 2F48     		ldr	r0, .L40+8
+ 955 009c FFF7FEFF 		bl	_Error_Handler
+ 956              	.L37:
+ 386:Src/main.c    ****   }
+ 387:Src/main.c    **** 
+ 388:Src/main.c    ****     /**Initializes the CPU, AHB and APB busses clocks 
+ 389:Src/main.c    ****     */
+ 390:Src/main.c    ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 957              		.loc 1 390 0
+ 958 00a0 0F23     		movs	r3, #15
+ 959 00a2 C7F88C30 		str	r3, [r7, #140]
+ 391:Src/main.c    ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 392:Src/main.c    ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 960              		.loc 1 392 0
+ 961 00a6 0223     		movs	r3, #2
+ 962 00a8 C7F89030 		str	r3, [r7, #144]
+ 393:Src/main.c    ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 963              		.loc 1 393 0
+ 964 00ac 0023     		movs	r3, #0
+ 965 00ae C7F89430 		str	r3, [r7, #148]
+ 394:Src/main.c    ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+ 966              		.loc 1 394 0
+ 967 00b2 4FF4A053 		mov	r3, #5120
+ 968 00b6 C7F89830 		str	r3, [r7, #152]
+ 395:Src/main.c    ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+ 969              		.loc 1 395 0
+ 970 00ba 4FF48053 		mov	r3, #4096
+ 971 00be C7F89C30 		str	r3, [r7, #156]
+ 396:Src/main.c    **** 
+ 397:Src/main.c    ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
+ 972              		.loc 1 397 0
+ 973 00c2 07F18C03 		add	r3, r7, #140
+ 974 00c6 0721     		movs	r1, #7
+ 975 00c8 1846     		mov	r0, r3
+ 976 00ca FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 977 00ce 0346     		mov	r3, r0
+ 978 00d0 002B     		cmp	r3, #0
+ 979 00d2 04D0     		beq	.L38
+ 398:Src/main.c    ****   {
+ 399:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 980              		.loc 1 399 0
+ 981 00d4 40F28F11 		movw	r1, #399
+ 982 00d8 1F48     		ldr	r0, .L40+8
+ARM GAS  /tmp/cc3BkDrd.s 			page 29
 
 
- 402:Src/main.c    ****   PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+ 983 00da FFF7FEFF 		bl	_Error_Handler
+ 984              	.L38:
+ 400:Src/main.c    ****   }
+ 401:Src/main.c    **** 
+ 402:Src/main.c    ****   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
  985              		.loc 1 402 0
- 986 00f8 0023     		movs	r3, #0
- 987 00fa FB66     		str	r3, [r7, #108]
- 403:Src/main.c    ****   PeriphClkInitStruct.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
- 988              		.loc 1 403 0
- 989 00fc 0023     		movs	r3, #0
- 990 00fe 3B67     		str	r3, [r7, #112]
- 404:Src/main.c    ****   PeriphClkInitStruct.I2c3ClockSelection = RCC_I2C3CLKSOURCE_PCLK1;
- 991              		.loc 1 404 0
- 992 0100 0023     		movs	r3, #0
- 993 0102 7B67     		str	r3, [r7, #116]
- 405:Src/main.c    ****   PeriphClkInitStruct.I2c4ClockSelection = RCC_I2C4CLKSOURCE_PCLK1;
- 994              		.loc 1 405 0
- 995 0104 0023     		movs	r3, #0
- 996 0106 BB67     		str	r3, [r7, #120]
- 406:Src/main.c    ****   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
- 997              		.loc 1 406 0
- 998 0108 07F10803 		add	r3, r7, #8
- 999 010c 1846     		mov	r0, r3
- 1000 010e FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
- 1001 0112 0346     		mov	r3, r0
- 1002 0114 002B     		cmp	r3, #0
- 1003 0116 04D0     		beq	.L38
- 407:Src/main.c    ****   {
- 408:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
- 1004              		.loc 1 408 0
- 1005 0118 4FF4CC71 		mov	r1, #408
- 1006 011c 0E48     		ldr	r0, .L39+8
- 1007 011e FFF7FEFF 		bl	_Error_Handler
- 1008              	.L38:
- 409:Src/main.c    ****   }
- 410:Src/main.c    **** 
- 411:Src/main.c    **** 
- 412:Src/main.c    ****   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
- 1009              		.loc 1 412 0
- 1010 0122 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
- 1011 0126 0246     		mov	r2, r0
- 1012 0128 0D4B     		ldr	r3, .L39+16
- 1013 012a A3FB0223 		umull	r2, r3, r3, r2
- 1014 012e 9B09     		lsrs	r3, r3, #6
- 1015 0130 1846     		mov	r0, r3
- 1016 0132 FFF7FEFF 		bl	HAL_SYSTICK_Config
- 413:Src/main.c    **** 
- 414:Src/main.c    **** 
- 415:Src/main.c    ****   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
- 1017              		.loc 1 415 0
- 1018 0136 0420     		movs	r0, #4
- 1019 0138 FFF7FEFF 		bl	HAL_SYSTICK_CLKSourceConfig
- 416:Src/main.c    **** 
- 417:Src/main.c    **** 
- 418:Src/main.c    ****   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
- 1020              		.loc 1 418 0
- 1021 013c 0022     		movs	r2, #0
- 1022 013e 0021     		movs	r1, #0
- 1023 0140 4FF0FF30 		mov	r0, #-1
- 1024 0144 FFF7FEFF 		bl	HAL_NVIC_SetPriority
-ARM GAS  /tmp/ccg1mW9H.s 			page 30
+ 986 00de 1F4B     		ldr	r3, .L40+12
+ 987 00e0 BB60     		str	r3, [r7, #8]
+ 403:Src/main.c    ****                               |RCC_PERIPHCLK_UART4|RCC_PERIPHCLK_UART7
+ 404:Src/main.c    ****                               |RCC_PERIPHCLK_UART8|RCC_PERIPHCLK_I2C1
+ 405:Src/main.c    ****                               |RCC_PERIPHCLK_I2C2|RCC_PERIPHCLK_I2C3
+ 406:Src/main.c    ****                               |RCC_PERIPHCLK_I2C4;
+ 407:Src/main.c    ****   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+ 988              		.loc 1 407 0
+ 989 00e2 4FF40073 		mov	r3, #512
+ 990 00e6 BB63     		str	r3, [r7, #56]
+ 408:Src/main.c    ****   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+ 991              		.loc 1 408 0
+ 992 00e8 0023     		movs	r3, #0
+ 993 00ea FB64     		str	r3, [r7, #76]
+ 409:Src/main.c    ****   PeriphClkInitStruct.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
+ 994              		.loc 1 409 0
+ 995 00ec 0023     		movs	r3, #0
+ 996 00ee BB65     		str	r3, [r7, #88]
+ 410:Src/main.c    ****   PeriphClkInitStruct.Uart7ClockSelection = RCC_UART7CLKSOURCE_PCLK1;
+ 997              		.loc 1 410 0
+ 998 00f0 0023     		movs	r3, #0
+ 999 00f2 7B66     		str	r3, [r7, #100]
+ 411:Src/main.c    ****   PeriphClkInitStruct.Uart8ClockSelection = RCC_UART8CLKSOURCE_PCLK1;
+ 1000              		.loc 1 411 0
+ 1001 00f4 0023     		movs	r3, #0
+ 1002 00f6 BB66     		str	r3, [r7, #104]
+ 412:Src/main.c    ****   PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+ 1003              		.loc 1 412 0
+ 1004 00f8 0023     		movs	r3, #0
+ 1005 00fa FB66     		str	r3, [r7, #108]
+ 413:Src/main.c    ****   PeriphClkInitStruct.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+ 1006              		.loc 1 413 0
+ 1007 00fc 0023     		movs	r3, #0
+ 1008 00fe 3B67     		str	r3, [r7, #112]
+ 414:Src/main.c    ****   PeriphClkInitStruct.I2c3ClockSelection = RCC_I2C3CLKSOURCE_PCLK1;
+ 1009              		.loc 1 414 0
+ 1010 0100 0023     		movs	r3, #0
+ 1011 0102 7B67     		str	r3, [r7, #116]
+ 415:Src/main.c    ****   PeriphClkInitStruct.I2c4ClockSelection = RCC_I2C4CLKSOURCE_PCLK1;
+ 1012              		.loc 1 415 0
+ 1013 0104 0023     		movs	r3, #0
+ 1014 0106 BB67     		str	r3, [r7, #120]
+ 416:Src/main.c    ****   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+ 1015              		.loc 1 416 0
+ 1016 0108 07F10803 		add	r3, r7, #8
+ 1017 010c 1846     		mov	r0, r3
+ 1018 010e FFF7FEFF 		bl	HAL_RCCEx_PeriphCLKConfig
+ 1019 0112 0346     		mov	r3, r0
+ 1020 0114 002B     		cmp	r3, #0
+ 1021 0116 04D0     		beq	.L39
+ 417:Src/main.c    ****   {
+ARM GAS  /tmp/cc3BkDrd.s 			page 30
 
 
- 419:Src/main.c    **** 
- 420:Src/main.c    **** }
- 1025              		.loc 1 420 0
- 1026 0148 00BF     		nop
- 1027 014a D037     		adds	r7, r7, #208
- 1028              	.LCFI53:
- 1029              		.cfi_def_cfa_offset 8
- 1030 014c BD46     		mov	sp, r7
- 1031              	.LCFI54:
- 1032              		.cfi_def_cfa_register 13
- 1033              		@ sp needed
- 1034 014e 80BD     		pop	{r7, pc}
- 1035              	.L40:
- 1036              		.align	2
- 1037              	.L39:
- 1038 0150 00380240 		.word	1073887232
- 1039 0154 00700040 		.word	1073770496
- 1040 0158 E8000000 		.word	.LC7
- 1041 015c 60F20300 		.word	258656
- 1042 0160 D34D6210 		.word	274877907
- 1043              		.cfi_endproc
- 1044              	.LFE145:
- 1046              		.section	.rodata
- 1047 00f3 00       		.align	2
- 1048              	.LC8:
- 1049 00f4 4552524F 		.ascii	"ERROR EVENT %s - %d\015\012\000"
- 1049      52204556 
- 1049      454E5420 
- 1049      2573202D 
- 1049      2025640D 
- 1050              		.section	.text._Error_Handler,"ax",%progbits
- 1051              		.align	1
- 1052              		.global	_Error_Handler
- 1053              		.syntax unified
- 1054              		.thumb
- 1055              		.thumb_func
- 1056              		.fpu fpv4-sp-d16
- 1058              	_Error_Handler:
- 1059              	.LFB146:
+ 418:Src/main.c    ****     _Error_Handler(__FILE__, __LINE__);
+ 1022              		.loc 1 418 0
+ 1023 0118 4FF4D171 		mov	r1, #418
+ 1024 011c 0E48     		ldr	r0, .L40+8
+ 1025 011e FFF7FEFF 		bl	_Error_Handler
+ 1026              	.L39:
+ 419:Src/main.c    ****   }
+ 420:Src/main.c    **** 
  421:Src/main.c    **** 
- 422:Src/main.c    **** 
- 423:Src/main.c    **** void _Error_Handler(char *file, int line)
- 424:Src/main.c    **** {
- 1060              		.loc 1 424 0
- 1061              		.cfi_startproc
- 1062              		@ args = 0, pretend = 0, frame = 8
- 1063              		@ frame_needed = 1, uses_anonymous_args = 0
- 1064 0000 80B5     		push	{r7, lr}
- 1065              	.LCFI55:
- 1066              		.cfi_def_cfa_offset 8
- 1067              		.cfi_offset 7, -8
- 1068              		.cfi_offset 14, -4
- 1069 0002 82B0     		sub	sp, sp, #8
- 1070              	.LCFI56:
- 1071              		.cfi_def_cfa_offset 16
- 1072 0004 00AF     		add	r7, sp, #0
- 1073              	.LCFI57:
-ARM GAS  /tmp/ccg1mW9H.s 			page 31
-
-
- 1074              		.cfi_def_cfa_register 7
- 1075 0006 7860     		str	r0, [r7, #4]
- 1076 0008 3960     		str	r1, [r7]
- 425:Src/main.c    **** 
- 426:Src/main.c    ****     mprintf("ERROR EVENT %s - %d\r\n", file, line);
- 1077              		.loc 1 426 0
- 1078 000a 3A68     		ldr	r2, [r7]
- 1079 000c 7968     		ldr	r1, [r7, #4]
- 1080 000e 0348     		ldr	r0, .L42
- 1081 0010 FFF7FEFF 		bl	mprintf
+ 422:Src/main.c    ****   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+ 1027              		.loc 1 422 0
+ 1028 0122 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+ 1029 0126 0246     		mov	r2, r0
+ 1030 0128 0D4B     		ldr	r3, .L40+16
+ 1031 012a A3FB0223 		umull	r2, r3, r3, r2
+ 1032 012e 9B09     		lsrs	r3, r3, #6
+ 1033 0130 1846     		mov	r0, r3
+ 1034 0132 FFF7FEFF 		bl	HAL_SYSTICK_Config
+ 423:Src/main.c    **** 
+ 424:Src/main.c    **** 
+ 425:Src/main.c    ****   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+ 1035              		.loc 1 425 0
+ 1036 0136 0420     		movs	r0, #4
+ 1037 0138 FFF7FEFF 		bl	HAL_SYSTICK_CLKSourceConfig
+ 426:Src/main.c    **** 
  427:Src/main.c    **** 
- 428:Src/main.c    **** }
- 1082              		.loc 1 428 0
- 1083 0014 00BF     		nop
- 1084 0016 0837     		adds	r7, r7, #8
- 1085              	.LCFI58:
- 1086              		.cfi_def_cfa_offset 8
- 1087 0018 BD46     		mov	sp, r7
- 1088              	.LCFI59:
- 1089              		.cfi_def_cfa_register 13
- 1090              		@ sp needed
- 1091 001a 80BD     		pop	{r7, pc}
- 1092              	.L43:
- 1093              		.align	2
- 1094              	.L42:
- 1095 001c F4000000 		.word	.LC8
- 1096              		.cfi_endproc
- 1097              	.LFE146:
- 1099              		.section	.rodata
- 1100 010a 0000     		.align	2
- 1101              	.LC9:
- 1102 010c 25730D0A 		.ascii	"%s\015\012\000"
- 1102      00
- 1103              		.section	.text._Event_Handler,"ax",%progbits
- 1104              		.align	1
- 1105              		.global	_Event_Handler
- 1106              		.syntax unified
- 1107              		.thumb
- 1108              		.thumb_func
- 1109              		.fpu fpv4-sp-d16
- 1111              	_Event_Handler:
- 1112              	.LFB147:
+ 428:Src/main.c    ****   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+ 1038              		.loc 1 428 0
+ 1039 013c 0022     		movs	r2, #0
+ 1040 013e 0021     		movs	r1, #0
+ 1041 0140 4FF0FF30 		mov	r0, #-1
+ 1042 0144 FFF7FEFF 		bl	HAL_NVIC_SetPriority
  429:Src/main.c    **** 
- 430:Src/main.c    **** void _Event_Handler(char *Event)
- 431:Src/main.c    **** {
- 1113              		.loc 1 431 0
- 1114              		.cfi_startproc
- 1115              		@ args = 0, pretend = 0, frame = 8
- 1116              		@ frame_needed = 1, uses_anonymous_args = 0
- 1117 0000 80B5     		push	{r7, lr}
- 1118              	.LCFI60:
- 1119              		.cfi_def_cfa_offset 8
- 1120              		.cfi_offset 7, -8
- 1121              		.cfi_offset 14, -4
- 1122 0002 82B0     		sub	sp, sp, #8
- 1123              	.LCFI61:
- 1124              		.cfi_def_cfa_offset 16
-ARM GAS  /tmp/ccg1mW9H.s 			page 32
+ 430:Src/main.c    **** }
+ 1043              		.loc 1 430 0
+ 1044 0148 00BF     		nop
+ 1045 014a D037     		adds	r7, r7, #208
+ 1046              	.LCFI53:
+ 1047              		.cfi_def_cfa_offset 8
+ 1048 014c BD46     		mov	sp, r7
+ 1049              	.LCFI54:
+ 1050              		.cfi_def_cfa_register 13
+ 1051              		@ sp needed
+ 1052 014e 80BD     		pop	{r7, pc}
+ 1053              	.L41:
+ 1054              		.align	2
+ 1055              	.L40:
+ 1056 0150 00380240 		.word	1073887232
+ 1057 0154 00700040 		.word	1073770496
+ 1058 0158 FC000000 		.word	.LC8
+ 1059 015c 60F20300 		.word	258656
+ 1060 0160 D34D6210 		.word	274877907
+ 1061              		.cfi_endproc
+ 1062              	.LFE145:
+ 1064              		.section	.rodata
+ 1065 0107 00       		.align	2
+ 1066              	.LC9:
+ARM GAS  /tmp/cc3BkDrd.s 			page 31
 
 
- 1125 0004 00AF     		add	r7, sp, #0
- 1126              	.LCFI62:
- 1127              		.cfi_def_cfa_register 7
- 1128 0006 7860     		str	r0, [r7, #4]
- 432:Src/main.c    ****     mprintf("%s\r\n", Event);
- 1129              		.loc 1 432 0
- 1130 0008 7968     		ldr	r1, [r7, #4]
- 1131 000a 0348     		ldr	r0, .L45
- 1132 000c FFF7FEFF 		bl	mprintf
- 433:Src/main.c    **** }
- 1133              		.loc 1 433 0
- 1134 0010 00BF     		nop
- 1135 0012 0837     		adds	r7, r7, #8
- 1136              	.LCFI63:
+ 1067 0108 4552524F 		.ascii	"ERROR EVENT %s - %d\015\012\000"
+ 1067      52204556 
+ 1067      454E5420 
+ 1067      2573202D 
+ 1067      2025640D 
+ 1068              		.section	.text._Error_Handler,"ax",%progbits
+ 1069              		.align	1
+ 1070              		.global	_Error_Handler
+ 1071              		.syntax unified
+ 1072              		.thumb
+ 1073              		.thumb_func
+ 1074              		.fpu fpv4-sp-d16
+ 1076              	_Error_Handler:
+ 1077              	.LFB146:
+ 431:Src/main.c    **** 
+ 432:Src/main.c    **** 
+ 433:Src/main.c    **** void _Error_Handler(char *file, int line)
+ 434:Src/main.c    **** {
+ 1078              		.loc 1 434 0
+ 1079              		.cfi_startproc
+ 1080              		@ args = 0, pretend = 0, frame = 8
+ 1081              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1082 0000 80B5     		push	{r7, lr}
+ 1083              	.LCFI55:
+ 1084              		.cfi_def_cfa_offset 8
+ 1085              		.cfi_offset 7, -8
+ 1086              		.cfi_offset 14, -4
+ 1087 0002 82B0     		sub	sp, sp, #8
+ 1088              	.LCFI56:
+ 1089              		.cfi_def_cfa_offset 16
+ 1090 0004 00AF     		add	r7, sp, #0
+ 1091              	.LCFI57:
+ 1092              		.cfi_def_cfa_register 7
+ 1093 0006 7860     		str	r0, [r7, #4]
+ 1094 0008 3960     		str	r1, [r7]
+ 435:Src/main.c    **** 
+ 436:Src/main.c    ****     mprintf("ERROR EVENT %s - %d\r\n", file, line);
+ 1095              		.loc 1 436 0
+ 1096 000a 3A68     		ldr	r2, [r7]
+ 1097 000c 7968     		ldr	r1, [r7, #4]
+ 1098 000e 0348     		ldr	r0, .L43
+ 1099 0010 FFF7FEFF 		bl	mprintf
+ 437:Src/main.c    **** 
+ 438:Src/main.c    **** }
+ 1100              		.loc 1 438 0
+ 1101 0014 00BF     		nop
+ 1102 0016 0837     		adds	r7, r7, #8
+ 1103              	.LCFI58:
+ 1104              		.cfi_def_cfa_offset 8
+ 1105 0018 BD46     		mov	sp, r7
+ 1106              	.LCFI59:
+ 1107              		.cfi_def_cfa_register 13
+ 1108              		@ sp needed
+ 1109 001a 80BD     		pop	{r7, pc}
+ 1110              	.L44:
+ 1111              		.align	2
+ 1112              	.L43:
+ARM GAS  /tmp/cc3BkDrd.s 			page 32
+
+
+ 1113 001c 08010000 		.word	.LC9
+ 1114              		.cfi_endproc
+ 1115              	.LFE146:
+ 1117              		.section	.rodata
+ 1118 011e 0000     		.align	2
+ 1119              	.LC10:
+ 1120 0120 25730D0A 		.ascii	"%s\015\012\000"
+ 1120      00
+ 1121              		.section	.text._Event_Handler,"ax",%progbits
+ 1122              		.align	1
+ 1123              		.global	_Event_Handler
+ 1124              		.syntax unified
+ 1125              		.thumb
+ 1126              		.thumb_func
+ 1127              		.fpu fpv4-sp-d16
+ 1129              	_Event_Handler:
+ 1130              	.LFB147:
+ 439:Src/main.c    **** 
+ 440:Src/main.c    **** void _Event_Handler(char *Event)
+ 441:Src/main.c    **** {
+ 1131              		.loc 1 441 0
+ 1132              		.cfi_startproc
+ 1133              		@ args = 0, pretend = 0, frame = 8
+ 1134              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1135 0000 80B5     		push	{r7, lr}
+ 1136              	.LCFI60:
  1137              		.cfi_def_cfa_offset 8
- 1138 0014 BD46     		mov	sp, r7
- 1139              	.LCFI64:
- 1140              		.cfi_def_cfa_register 13
- 1141              		@ sp needed
- 1142 0016 80BD     		pop	{r7, pc}
- 1143              	.L46:
- 1144              		.align	2
- 1145              	.L45:
- 1146 0018 0C010000 		.word	.LC9
- 1147              		.cfi_endproc
- 1148              	.LFE147:
- 1150              		.text
- 1151              	.Letext0:
- 1152              		.file 3 "/usr/include/newlib/machine/_default_types.h"
- 1153              		.file 4 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h"
- 1154              		.file 5 "/usr/include/newlib/sys/lock.h"
- 1155              		.file 6 "/usr/include/newlib/sys/_types.h"
- 1156              		.file 7 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
- 1157              		.file 8 "/usr/include/newlib/sys/reent.h"
- 1158              		.file 9 "<built-in>"
- 1159              		.file 10 "/usr/include/newlib/sys/_stdint.h"
- 1160              		.file 11 "Drivers/CMSIS/Include/core_cm7.h"
- 1161              		.file 12 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 1162              		.file 13 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 1163              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 1164              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h"
- 1165              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h"
- 1166              		.file 17 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 1167              		.file 18 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_eth.h"
- 1168              		.file 19 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_i2c.h"
- 1169              		.file 20 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rtc.h"
- 1170              		.file 21 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
- 1171              		.file 22 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 1172              		.file 23 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
- 1173              		.file 24 "Inc/eth.h"
- 1174              		.file 25 "Inc/i2c.h"
- 1175              		.file 26 "Inc/rtc.h"
- 1176              		.file 27 "Inc/spi.h"
- 1177              		.file 28 "Inc/tim.h"
- 1178              		.file 29 "Inc/usart.h"
- 1179              		.file 30 "Inc/motor.h"
- 1180              		.file 31 "Inc/sensor.h"
-ARM GAS  /tmp/ccg1mW9H.s 			page 33
+ 1138              		.cfi_offset 7, -8
+ 1139              		.cfi_offset 14, -4
+ 1140 0002 82B0     		sub	sp, sp, #8
+ 1141              	.LCFI61:
+ 1142              		.cfi_def_cfa_offset 16
+ 1143 0004 00AF     		add	r7, sp, #0
+ 1144              	.LCFI62:
+ 1145              		.cfi_def_cfa_register 7
+ 1146 0006 7860     		str	r0, [r7, #4]
+ 442:Src/main.c    ****     mprintf("%s\r\n", Event);
+ 1147              		.loc 1 442 0
+ 1148 0008 7968     		ldr	r1, [r7, #4]
+ 1149 000a 0348     		ldr	r0, .L46
+ 1150 000c FFF7FEFF 		bl	mprintf
+ 443:Src/main.c    **** }
+ 1151              		.loc 1 443 0
+ 1152 0010 00BF     		nop
+ 1153 0012 0837     		adds	r7, r7, #8
+ 1154              	.LCFI63:
+ 1155              		.cfi_def_cfa_offset 8
+ 1156 0014 BD46     		mov	sp, r7
+ 1157              	.LCFI64:
+ 1158              		.cfi_def_cfa_register 13
+ 1159              		@ sp needed
+ 1160 0016 80BD     		pop	{r7, pc}
+ 1161              	.L47:
+ 1162              		.align	2
+ 1163              	.L46:
+ 1164 0018 20010000 		.word	.LC10
+ 1165              		.cfi_endproc
+ARM GAS  /tmp/cc3BkDrd.s 			page 33
 
 
- 1181              		.file 32 "Inc/gps.h"
-ARM GAS  /tmp/ccg1mW9H.s 			page 34
+ 1166              	.LFE147:
+ 1168              		.text
+ 1169              	.Letext0:
+ 1170              		.file 3 "/usr/include/newlib/machine/_default_types.h"
+ 1171              		.file 4 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h"
+ 1172              		.file 5 "/usr/include/newlib/sys/lock.h"
+ 1173              		.file 6 "/usr/include/newlib/sys/_types.h"
+ 1174              		.file 7 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 1175              		.file 8 "/usr/include/newlib/sys/reent.h"
+ 1176              		.file 9 "<built-in>"
+ 1177              		.file 10 "/usr/include/newlib/sys/_stdint.h"
+ 1178              		.file 11 "Drivers/CMSIS/Include/core_cm7.h"
+ 1179              		.file 12 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1180              		.file 13 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 1181              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1182              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h"
+ 1183              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h"
+ 1184              		.file 17 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 1185              		.file 18 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_eth.h"
+ 1186              		.file 19 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_i2c.h"
+ 1187              		.file 20 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rtc.h"
+ 1188              		.file 21 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 1189              		.file 22 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 1190              		.file 23 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 1191              		.file 24 "Inc/eth.h"
+ 1192              		.file 25 "Inc/i2c.h"
+ 1193              		.file 26 "Inc/rtc.h"
+ 1194              		.file 27 "Inc/spi.h"
+ 1195              		.file 28 "Inc/tim.h"
+ 1196              		.file 29 "Inc/usart.h"
+ 1197              		.file 30 "Inc/motor.h"
+ 1198              		.file 31 "Inc/sensor.h"
+ 1199              		.file 32 "Inc/gps.h"
+ARM GAS  /tmp/cc3BkDrd.s 			page 34
 
 
 DEFINED SYMBOLS
@@ -1933,39 +1965,39 @@ DEFINED SYMBOLS
                             *COM*:0000000000000008 motor4
                             *COM*:0000000000000014 sensorValues
                             *COM*:00000000000001a0 gpsData
-     /tmp/ccg1mW9H.s:24     .rodata:0000000000000000 $d
-     /tmp/ccg1mW9H.s:28     .text.main:0000000000000000 $t
-     /tmp/ccg1mW9H.s:35     .text.main:0000000000000000 main
-     /tmp/ccg1mW9H.s:847    .text.SystemClock_Config:0000000000000000 SystemClock_Config
-     /tmp/ccg1mW9H.s:779    .text.mprintf:0000000000000000 mprintf
-     /tmp/ccg1mW9H.s:137    .text.checkUpdate:0000000000000000 checkUpdate
-     /tmp/ccg1mW9H.s:259    .text.loadUpdateFile:0000000000000000 loadUpdateFile
-     /tmp/ccg1mW9H.s:444    .text.bootRTOS:0000000000000000 bootRTOS
-     /tmp/ccg1mW9H.s:115    .text.main:000000000000006c $d
-     /tmp/ccg1mW9H.s:130    .text.checkUpdate:0000000000000000 $t
-     /tmp/ccg1mW9H.s:573    .text.readFlash:0000000000000000 readFlash
-     /tmp/ccg1mW9H.s:234    .text.checkUpdate:000000000000008c $d
-     /tmp/ccg1mW9H.s:252    .text.loadUpdateFile:0000000000000000 $t
-     /tmp/ccg1mW9H.s:519    .text.writeFlash:0000000000000000 writeFlash
-     /tmp/ccg1mW9H.s:421    .text.loadUpdateFile:0000000000000100 $d
-     /tmp/ccg1mW9H.s:437    .text.bootRTOS:0000000000000000 $t
-     /tmp/ccg1mW9H.s:505    .text.bootRTOS:0000000000000030 $d
-     /tmp/ccg1mW9H.s:512    .text.writeFlash:0000000000000000 $t
-     /tmp/ccg1mW9H.s:566    .text.readFlash:0000000000000000 $t
-     /tmp/ccg1mW9H.s:615    .text.EnablePrivilegedMode:0000000000000000 $t
-     /tmp/ccg1mW9H.s:622    .text.EnablePrivilegedMode:0000000000000000 EnablePrivilegedMode
-     /tmp/ccg1mW9H.s:708    .text.vprint:0000000000000000 $t
-     /tmp/ccg1mW9H.s:715    .text.vprint:0000000000000000 vprint
-     /tmp/ccg1mW9H.s:767    .text.vprint:0000000000000044 $d
-     /tmp/ccg1mW9H.s:772    .text.mprintf:0000000000000000 $t
-     /tmp/ccg1mW9H.s:840    .text.SystemClock_Config:0000000000000000 $t
-     /tmp/ccg1mW9H.s:1058   .text._Error_Handler:0000000000000000 _Error_Handler
-     /tmp/ccg1mW9H.s:1038   .text.SystemClock_Config:0000000000000150 $d
-     /tmp/ccg1mW9H.s:1051   .text._Error_Handler:0000000000000000 $t
-     /tmp/ccg1mW9H.s:1095   .text._Error_Handler:000000000000001c $d
-     /tmp/ccg1mW9H.s:1104   .text._Event_Handler:0000000000000000 $t
-     /tmp/ccg1mW9H.s:1111   .text._Event_Handler:0000000000000000 _Event_Handler
-     /tmp/ccg1mW9H.s:1146   .text._Event_Handler:0000000000000018 $d
+     /tmp/cc3BkDrd.s:24     .rodata:0000000000000000 $d
+     /tmp/cc3BkDrd.s:28     .text.main:0000000000000000 $t
+     /tmp/cc3BkDrd.s:35     .text.main:0000000000000000 main
+     /tmp/cc3BkDrd.s:865    .text.SystemClock_Config:0000000000000000 SystemClock_Config
+     /tmp/cc3BkDrd.s:797    .text.mprintf:0000000000000000 mprintf
+     /tmp/cc3BkDrd.s:137    .text.checkUpdate:0000000000000000 checkUpdate
+     /tmp/cc3BkDrd.s:262    .text.loadUpdateFile:0000000000000000 loadUpdateFile
+     /tmp/cc3BkDrd.s:462    .text.bootRTOS:0000000000000000 bootRTOS
+     /tmp/cc3BkDrd.s:115    .text.main:000000000000006c $d
+     /tmp/cc3BkDrd.s:130    .text.checkUpdate:0000000000000000 $t
+     /tmp/cc3BkDrd.s:591    .text.readFlash:0000000000000000 readFlash
+     /tmp/cc3BkDrd.s:234    .text.checkUpdate:000000000000008c $d
+     /tmp/cc3BkDrd.s:255    .text.loadUpdateFile:0000000000000000 $t
+     /tmp/cc3BkDrd.s:438    .text.loadUpdateFile:0000000000000114 $d
+     /tmp/cc3BkDrd.s:455    .text.bootRTOS:0000000000000000 $t
+     /tmp/cc3BkDrd.s:523    .text.bootRTOS:0000000000000030 $d
+     /tmp/cc3BkDrd.s:530    .text.writeFlash:0000000000000000 $t
+     /tmp/cc3BkDrd.s:537    .text.writeFlash:0000000000000000 writeFlash
+     /tmp/cc3BkDrd.s:584    .text.readFlash:0000000000000000 $t
+     /tmp/cc3BkDrd.s:633    .text.EnablePrivilegedMode:0000000000000000 $t
+     /tmp/cc3BkDrd.s:640    .text.EnablePrivilegedMode:0000000000000000 EnablePrivilegedMode
+     /tmp/cc3BkDrd.s:726    .text.vprint:0000000000000000 $t
+     /tmp/cc3BkDrd.s:733    .text.vprint:0000000000000000 vprint
+     /tmp/cc3BkDrd.s:785    .text.vprint:0000000000000044 $d
+     /tmp/cc3BkDrd.s:790    .text.mprintf:0000000000000000 $t
+     /tmp/cc3BkDrd.s:858    .text.SystemClock_Config:0000000000000000 $t
+     /tmp/cc3BkDrd.s:1076   .text._Error_Handler:0000000000000000 _Error_Handler
+     /tmp/cc3BkDrd.s:1056   .text.SystemClock_Config:0000000000000150 $d
+     /tmp/cc3BkDrd.s:1069   .text._Error_Handler:0000000000000000 $t
+     /tmp/cc3BkDrd.s:1113   .text._Error_Handler:000000000000001c $d
+     /tmp/cc3BkDrd.s:1122   .text._Event_Handler:0000000000000000 $t
+     /tmp/cc3BkDrd.s:1129   .text._Event_Handler:0000000000000000 _Event_Handler
+     /tmp/cc3BkDrd.s:1164   .text._Event_Handler:0000000000000018 $d
                      .debug_frame:0000000000000010 $d
 
 UNDEFINED SYMBOLS
@@ -1982,12 +2014,12 @@ HAL_Delay
 HAL_FLASH_Unlock
 FLASH_Erase_Sector
 HAL_FLASH_Lock
-ARM GAS  /tmp/ccg1mW9H.s 			page 35
+ARM GAS  /tmp/cc3BkDrd.s 			page 35
 
 
 malloc
-free
 HAL_FLASH_Program
+free
 vsprintf
 strlen
 HAL_UART_Transmit
