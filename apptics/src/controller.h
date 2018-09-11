@@ -80,6 +80,8 @@ private:
     UPDATE_FILE_FORMAT gmUpdateFile;
 
     void communicationThread();
+    Controller_Status checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData);
+    Controller_Status checkIfEnvironmentData(const SPI_TRANSFER_FORMAT& SpiData);
 
 
 };

@@ -22,6 +22,7 @@
 #include "queue.h"
 
 
+
 clock_t now = 0;
 clock_t last = 0;
 
@@ -53,7 +54,7 @@ bool get_cpu_times(size_t &idle_time, size_t &total_time);
 int main()
 {
 
-    Controller::Controller_Status controller_status = Controller::Controller_Status::ok;
+    Controller::Controller_Status update_file_status = Controller::Controller_Status::ok;
 
     tracker.runTracking();
 
@@ -78,18 +79,16 @@ int main()
 
         control_data = udp_socket.getSocketControlData();
 
-        if(controller_status == Controller::Controller_Status::ok)
+        if(update_file_status == Controller::Controller_Status::ok)
             update_file = udp_socket.getSocketUpdateData();
 
-        if(control_data.is_transmitted == true)
+        if(update_file.is_available == true)
+        {
+            update_file_status = controller.setUpdateData(update_file);
+        }
+        else if(control_data.is_transmitted == true)
         {
             controller.setControlData(control_data);
-        }
-
-
-        if( update_file.is_available == true)
-        {
-           controller_status = controller.setUpdateData(update_file);
         }
 
         control_data.clear();

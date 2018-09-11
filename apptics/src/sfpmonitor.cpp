@@ -155,8 +155,8 @@ void SfpMonitor::runSfpMonitor()
         ret = readValues();
         gmMutex.unlock();
 
-        if(ret < 0)
-            printAll("SfpMonitor getValues is failed");
+//        if(ret < 0)
+//            printAll("SfpMonitor getValues is failed");
 
         usleep(10000);
 

@@ -112,7 +112,7 @@ void UdpSocket::openPort()
     printAll("binding datagram socket\r\n");
     }
 
-    printf("Socket has port number # %d \r\n", ntohs(name.sin_port));
+    printf("Socket has port number %d\n\r", ntohs(name.sin_port));
 
 
     std::thread listening_port(&UdpSocket::recieveData, this);
