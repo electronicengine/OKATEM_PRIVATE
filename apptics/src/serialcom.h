@@ -29,16 +29,6 @@ class SerialCom
 
 
 public:
-    enum class Serial_Status
-    {
-        time_out,
-        cannot_open,
-        cannot_write,
-        cannot_read,
-        succesfully_opened,
-        succesfully_written,
-        succesfully_read
-    }Status;
 
 
     SerialCom();
@@ -61,7 +51,7 @@ public:
 
 
     template<typename ...TAIL>
-    Serial_Status writeData(const TAIL&... ContainerPack)
+    Status writeData(const TAIL&... ContainerPack)
     {
 
 
@@ -87,14 +77,15 @@ public:
         else
         {
             printAll("Serial_Status::cannot_write");
-            return Serial_Status::cannot_write;
+            return Status::error;
 
         }
-        return Serial_Status::succesfully_written;
+        return Status::ok;
     }
 
 
-    Serial_Status readData(std::vector<unsigned char>& Container, int &Size, int Timeout);
+    Status readData(std::vector<unsigned char>& Container, int &Size, int Timeout);
+    Status readData(std::vector<unsigned char>& Container, unsigned char Header, unsigned char Footer);
 
 
 
@@ -107,9 +98,9 @@ private:
     volatile short int gmTimeOutFlag = 0;
     volatile short int gmSetTime = 0;
 
-    Serial_Status Init();
+    Status Init();
     void setTimeout(int TimeOut);
-    Serial_Status Close();
+    Status Close();
 
 //    virtual ~SerialCom();
 

@@ -1,7 +1,6 @@
 #include "spicom.h"
-#include "globals.h"
 
-SpiCom::Spi_Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, int Size)
+Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, int Size)
 {
     int container_size = Size;
     struct spi_ioc_transfer spi[container_size];
@@ -26,13 +25,13 @@ SpiCom::Spi_Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, i
     if(ret < 0)
     {
         printAll("Error - Problem transmitting spi data..ioctl");
-        return Spi_Status::cannot_writeread;
+        return Status::error;
     }
 
-    return Spi_Status::succesfully_writeread;
+    return Status::ok;
 }
 
-SpiCom::Spi_Status SpiCom::spiClosePort()
+Status SpiCom::spiClosePort()
 {
 
     int ret;
@@ -41,14 +40,14 @@ SpiCom::Spi_Status SpiCom::spiClosePort()
     if(ret < 0)
     {
         printAll("Error - Could not close SPI device");
-        return Spi_Status::cannot_close;
+        return Status::error;
     }
     else
-        return Spi_Status::succesfully_closed;
+        return Status::ok;
 
 }
 
-SpiCom::Spi_Status SpiCom::init()
+Status SpiCom::init()
 {
 
     int ret;
@@ -76,7 +75,7 @@ SpiCom::Spi_Status SpiCom::init()
         if(ret < 0)
         {
             printAll("Could not set SPIMode (WR)...ioctl fail");
-            return Spi_Status::cannot_open;
+            return Status::error;
         }
         else
         {
@@ -84,7 +83,7 @@ SpiCom::Spi_Status SpiCom::init()
             if(ret < 0)
             {
               printAll("Could not set SPIMode (RD)...ioctl fail");
-              return Spi_Status::cannot_open;
+              return Status::error;
             }
             else
             {
@@ -92,7 +91,7 @@ SpiCom::Spi_Status SpiCom::init()
                 if(ret < 0)
                 {
                   printAll("Could not set SPI bitsPerWord (WR)...ioctl fail");
-                  return Spi_Status::cannot_open;
+                  return Status::error;
                 }
                 else
                 {
@@ -100,7 +99,7 @@ SpiCom::Spi_Status SpiCom::init()
                     if(ret < 0)
                     {
                       printAll("Could not set SPI bitsPerWord(RD)...ioctl fail");
-                      return Spi_Status::cannot_open;
+                      return Status::error;
                     }
                     else
                     {
@@ -108,7 +107,7 @@ SpiCom::Spi_Status SpiCom::init()
                         if(ret < 0)
                         {
                           printAll("Could not set SPI speed (WR)...ioctl fail");
-                          return Spi_Status::cannot_open;
+                          return Status::error;
                         }
                         else
                         {
@@ -116,7 +115,7 @@ SpiCom::Spi_Status SpiCom::init()
                             if(ret < 0)
                             {
                               printAll("Could not set SPI speed (RD)...ioctl fail");
-                              return Spi_Status::cannot_open;
+                              return Status::error;
                             }
                         }
                     }
@@ -126,7 +125,7 @@ SpiCom::Spi_Status SpiCom::init()
 
         printAll("SpiPort Succesfully Opened");
 
-        return Spi_Status::succesfully_opened;
+        return Status::ok;
     }
 
 }

@@ -31,23 +31,16 @@ class LoraWan
 
 public:
 
-    enum class Lora_Status{
-        init_error,
-        send_error,
-        receive_error
-    };
-
-
     LoraWan();
     LoraWan(std::string Power);
     LoraWan(std::string Power, std::string Freqency);
 
-    Lora_Status scanArea();
-    Lora_Status sendBeacon();
-    Lora_Status init();
+    Status scanArea();
+    Status sendBeacon();
+    Status init();
 
-    void setLoraData(const SFP_DATA& SfpData, const ENVIRONMENT_DATA_FORMAT& StmData);
-    void getLoraData(SFP_DATA& SfpData, ENVIRONMENT_DATA_FORMAT& StmData);
+    void setLoraData(const SFP_DATA_FORMAT& SfpData, const ENVIRONMENT_DATA_FORMAT& StmData);
+    void getLoraData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& StmData);
     void listen();
 
 private:
@@ -56,10 +49,10 @@ private:
     time_t gmLastBeacon = 0;
     time_t gmNow = 0;
 
-    SFP_DATA gmLoraSfp;
+    SFP_DATA_FORMAT gmLoraSfp;
     ENVIRONMENT_DATA_FORMAT gmLoraStm;
 
-    SFP_DATA gmRecievedLoraSfp;
+    SFP_DATA_FORMAT gmRecievedLoraSfp;
     ENVIRONMENT_DATA_FORMAT gmRecievedLoraStm;
 
     std::string gmBaundRate;

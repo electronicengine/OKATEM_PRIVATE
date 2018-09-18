@@ -11,27 +11,17 @@
 #include <vector>
 #include <string.h>
 
+#include "globals.h"
+
 class SpiCom
 {
 public:
 
-    enum class Spi_Status
-    {
-        time_out,
-        cannot_open,
-        cannot_close,
-        cannot_writeread,
-        succesfully_opened,
-        succesfully_closed,
-        succesfully_writeread,
-
-    }Status;
-
     SpiCom();
     SpiCom(const std::string& SpiFile, int SpiSpeed);
 
-    Spi_Status spiTransmiteReceive(unsigned char *TransmittedData, int Size);
-    Spi_Status spiClosePort();
+    Status spiTransmiteReceive(unsigned char *TransmittedData, int Size);
+    Status spiClosePort();
 
 
 private:
@@ -44,7 +34,7 @@ private:
     unsigned char gmSpiMode;
     unsigned char gmSpiPerWords;
 
-    Spi_Status init();
+    Status init();
 
 };
 

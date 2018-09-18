@@ -18,23 +18,23 @@ Controller::~Controller()
 
 
 
-Controller::Controller_Status Controller::isReady()
+Status Controller::isReady()
 {
 
     if(gmIsTransmitted)
     {
-        return Controller_Status::ok;
+        return Status::ok;
     }
     else
     {
-        return Controller_Status::error;
+        return Status::error;
     }
 
 }
 
 
 
-Controller::Controller_Status Controller::zoomInCamera()
+Status Controller::zoomInCamera()
 {
 
 
@@ -47,13 +47,13 @@ Controller::Controller_Status Controller::zoomInCamera()
 
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 
 }
 
 
 
-Controller::Controller_Status Controller::zoomOutCamera()
+Status Controller::zoomOutCamera()
 {
 
     gmControlData.servo_motor1_degree = 120;
@@ -63,12 +63,12 @@ Controller::Controller_Status Controller::zoomOutCamera()
     gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 }
 
 
 
-Controller::Controller_Status Controller::driveMotorLeft()
+Status Controller::driveMotorLeft()
 {
 
     gmControlData.step_motor2_direction = FORWARD;
@@ -78,12 +78,12 @@ Controller::Controller_Status Controller::driveMotorLeft()
     gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 }
 
 
 
-Controller::Controller_Status Controller::driveMotorRight()
+Status Controller::driveMotorRight()
 {
 
     gmControlData.step_motor2_direction = BACKWARD;
@@ -93,12 +93,12 @@ Controller::Controller_Status Controller::driveMotorRight()
     gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 }
 
 
 
-Controller::Controller_Status Controller::driveMotorUp()
+Status Controller::driveMotorUp()
 {
 
     gmControlData.step_motor1_direction = FORWARD;
@@ -108,12 +108,12 @@ Controller::Controller_Status Controller::driveMotorUp()
     gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 }
 
 
 
-Controller::Controller_Status Controller::driveMotorDown()
+Status Controller::driveMotorDown()
 {
 
 
@@ -124,13 +124,13 @@ Controller::Controller_Status Controller::driveMotorDown()
     gmSpiTxData = gmControlData;
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 
 }
 
 
 
-Controller::Controller_Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
+Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
 {
     gmMutex.lock();
 
@@ -138,12 +138,12 @@ Controller::Controller_Status Controller::setControlData(CONTROL_DATA_FORMAT& Da
 
     gmMutex.unlock();
 
-    return Controller_Status::ok;
+    return Status::ok;
 }
 
 
 
-Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
+Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 {
 
     static int percent = 0;
@@ -176,7 +176,7 @@ Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data
             last_percent = percent;
 
 
-           return Controller_Status::ok;
+           return Status::ok;
 
         }
         else
@@ -190,14 +190,14 @@ Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data
 
             gmMutex.unlock();
 
-            return Controller_Status::error;
+            return Status::error;
 
         }
 
     }
     else
     {
-        return Controller_Status::error;
+        return Status::error;
     }
 
 
@@ -208,17 +208,20 @@ Controller::Controller_Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data
 ENVIRONMENT_DATA_FORMAT Controller::getStmEnvironment()
 {
 
+    ENVIRONMENT_DATA_FORMAT data;
+
     gmMutex.lock();
 
     if(gmIsReceived)
     {
+
         gmIsReceived = false;
-        gmEnvironmentData = gmSpiRxData;
+        data = gmEnvironmentData;
     }
 
     gmMutex.unlock();
 
-    return gmEnvironmentData;
+    return data;
 }
 
 
@@ -229,14 +232,9 @@ void Controller::communicationThread()
 
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
-    uint16_t last_package_checksum = 0;
 
+    Status status;
 
-    UPDATE_FILE_FORMAT update_file;
-    UPDATE_FILE_FORMAT backup_update_file;
-
-    SpiCom::Spi_Status status;
-    Controller_Status ret;
 
 
     printAll("Stm Spi Communication Thread Starting...");
@@ -244,38 +242,40 @@ void Controller::communicationThread()
     while(true)
     {
 
+
         gmMutex.lock();
-
-
 
         spi_transfer_data = gmSpiTxData;
 
         status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
 
-        if(status == SpiCom::Spi_Status::succesfully_writeread)
+
+        if(status == Status::ok)
         {
            gmSpiRxData = spi_transfer_data;
 
-            ret = checkIfUpdateData(gmSpiRxData);
-            if(ret == Controller_Status::ok)
+            status = checkIfUpdateData(gmSpiRxData);
+            if(status == Status::ok)
             {
                gmIsTransmitted = true;
-               gmIsReceived = false;
+               gmIsReceived = true;
 
             }
             else
             {
-                ret = checkIfEnvironmentData(gmSpiRxData);
-                if(ret == Controller_Status::ok)
+                status = checkIfEnvironmentData(gmSpiRxData);
+                if(status == Status::ok)
                 {
                     gmIsReceived = true;
-                    gmIsTransmitted = false;
+                    gmIsTransmitted = true;
                 }
                 else
                 {
                     gmIsTransmitted = false;
                     gmIsReceived = false;
                 }
+
+
             }
 
         }
@@ -289,6 +289,9 @@ void Controller::communicationThread()
 
         }
 
+
+
+        gmSpiTxData.clear();
         gmMutex.unlock();
 
         usleep(wait_time);
@@ -300,7 +303,7 @@ void Controller::communicationThread()
 
 
 
-Controller::Controller_Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
+Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
 {
 
     UPDATE_FILE_FORMAT file_package_response;
@@ -320,7 +323,7 @@ Controller::Controller_Status Controller::checkIfUpdateData(const SPI_TRANSFER_F
 
             gmSpiRxData.clear();
 
-            return Controller_Status::error;
+            return Status::error;
 
 
         }
@@ -329,7 +332,7 @@ Controller::Controller_Status Controller::checkIfUpdateData(const SPI_TRANSFER_F
 
             gmSpiRxData.clear();
 
-            return Controller_Status::ok;
+            return Status::ok;
 
 
         }else if(((gmDesiredPackageSequence == gmCurrentPackageSequence)))
@@ -338,50 +341,47 @@ Controller::Controller_Status Controller::checkIfUpdateData(const SPI_TRANSFER_F
             gmBackupUpdateFile = gmUpdateFile;
             gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
-            std::cout << gmDesiredPackageSequence << "-" << gmCurrentPackageSequence << std::endl;
-
             if(gmCurrentPackageSequence == gmUpdateFile.total_sequence_number)
             {
-                std::cout << "Firmware Updating is done" << std::endl;
+                printAll("Firmware Updating is done");
                 gmUpdateFile.clear();
                 gmSpiTxData.clear();
 
-                return Controller_Status::error;
+                return Status::error;
             }
 
             gmSpiRxData.clear();
 
-            return Controller_Status::ok;
+            return Status::ok;
 
         }
 
     }
     else
     {
-        gmSpiRxData.clear();
-
-        return Controller_Status::ok;
+        return Status::error;
     }
 
 }
 
 
 
-Controller::Controller_Status Controller::checkIfEnvironmentData(const SPI_TRANSFER_FORMAT &SpiData)
+Status Controller::checkIfEnvironmentData(const SPI_TRANSFER_FORMAT &SpiData)
 {
+
 
     if((SpiData.header & 0xff) == 'E' && ((SpiData.header >> 8) & 0xff) == 'N')
     {
+
         gmEnvironmentData = gmSpiRxData;
 
         gmSpiRxData.clear();
 
-        return Controller_Status::ok;
+        return Status::ok;
 
     }
     else
     {
-        gmSpiRxData.clear();
-        return Controller_Status::error;
+        return Status::error;
     }
 }

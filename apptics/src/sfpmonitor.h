@@ -12,6 +12,8 @@
 #include <thread>
 #include <mutex>
 
+#include "globals.h"
+
 #define ADAPTER_NUMBER (int)1
 
 #define SFP_I2C_INFO_ADDRESS 0x50
@@ -19,19 +21,6 @@
 
 #define SFP_DIAG_VALUE_OFFSET 96
 #define SFP_DIAG_VALUE_STRIDE 26
-
-
-struct SFP_DATA
-{
-    int type;
-    float temperature;
-    float vcc;
-    float tx_bias;
-    float tx_power;
-    float rx_power;
-    int status;
-
-};
 
 
 
@@ -44,7 +33,7 @@ public:
     ~SfpMonitor();
 
 
-    SFP_DATA getValues();
+    SFP_DATA_FORMAT getValues();
     float getTemperature();
     float getVcc();
     float getTxBias();
@@ -54,7 +43,7 @@ public:
 
 private:
 
-    SFP_DATA gmSfpData;
+    SFP_DATA_FORMAT gmSfpData;
     int gmFileDescriptor;
     char gmBuffer[256];
     std::mutex gmMutex;

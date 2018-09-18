@@ -66,7 +66,7 @@ build/freertos.o: Src/freertos.c Inc/freertos.h \
  Inc/sensor.h /usr/include/newlib/inttypes.h Inc/motor.h Inc/usart.h \
  Inc/spi.h Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h Src/gpsops.c \
  Inc/gpsops.h Src/spiops.c Inc/spiops.h Src/sensorops.c Inc/sensorops.h \
- Src/motorops.c Inc/motorops.h
+ Src/motorops.c Inc/motorops.h Inc/main.h
 
 Inc/freertos.h:
 
@@ -261,3 +261,5 @@ Inc/sensorops.h:
 Src/motorops.c:
 
 Inc/motorops.h:
+
+Inc/main.h:

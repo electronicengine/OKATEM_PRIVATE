@@ -1,13 +1,67 @@
 #include "serialcom.h"
 
-
-
-
-
-SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Container, int &Size, int Timeout)
+Status SerialCom::readData(std::vector<unsigned char>& Container, unsigned char Header, unsigned char Footer)
 {
+
+    bool start = false;
+    bool stop = false;
+
+    int read_size = 0;
+    unsigned char rx_data;
+
+
+    if(gmFileDescriptor != -1)
+    {
+
+        do
+        {
+           read_size = read(gmFileDescriptor, &rx_data, sizeof(unsigned char));
+
+            if(read_size > 0)
+            {
+
+                if(rx_data == Footer)
+                {
+                    stop = true;
+                    start = false;
+                }
+
+                if(start == true)
+                {
+                    Container.push_back(rx_data);
+                }
+
+                if(rx_data == Header)
+                {
+                    start = true;
+                    stop = false;
+                }
+
+
+
+            }
+
+
+        }
+        while((start == true && stop == false) || (start == false && stop == false));
+
+        return Status::ok;
+    }
+    else
+    {
+        return Status::error;
+    }
+
+
+}
+
+
+Status SerialCom::readData(std::vector<unsigned char>& Container, int &Size, int Timeout)
+{
+
    int data_index = 0;
    int read_size = 0;
+
    int rx_data;
 
    time_t begining = time(NULL);
@@ -15,23 +69,19 @@ SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Contain
    clock_t last_data_comming = 0;
    clock_t now = 0;
 
-   if (gmFileDescriptor != -1)
+   if(gmFileDescriptor != -1)
    {
-
 
        if(Size == 0)
            Size = 999999;
 
-
-
        do
        {
-
            last = time(NULL);
 
 
-           if(( last - begining >= (Timeout + std::rand() % 10) )&& Timeout != 0)
-               return Serial_Status::time_out;
+           if((last - begining >= (Timeout + std::rand() % 10) )&& Timeout != 0)
+               return Status::time_out;
 
           read_size = read(gmFileDescriptor, &rx_data, sizeof(unsigned char));
 
@@ -42,11 +92,11 @@ SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Contain
               gmTimeOutFlag = 0;
               gmSetTime = 0;
               Size = data_index;
-              return Serial_Status::succesfully_read;
+              return Status::ok;
           }
 
 
-           if (read_size > 0)
+           if(read_size > 0)
            {
 
 //               printf("%c", rx_data);
@@ -66,20 +116,22 @@ SerialCom::Serial_Status SerialCom::readData(std::vector<unsigned char>& Contain
                gmTimeOutFlag = 0;
                gmSetTime = 0;
                Size = data_index;
-               return Serial_Status::time_out;
+               return Status::time_out;
 
            }
 
        }
        while(data_index != Size);
 
-       return Serial_Status::succesfully_read;
+       return Status::ok;
    }
    else
    {
-       return Serial_Status::cannot_read;
+       return Status::error;
    }
+
 }
+
 
 
 void SerialCom::setTimeout(int TimeOut)
@@ -99,7 +151,7 @@ void SerialCom::setTimeout(int TimeOut)
 
 
 
-SerialCom::Serial_Status SerialCom::Close()
+Status SerialCom::Close()
 {
    tcflush(gmFileDescriptor, TCIFLUSH);
    close(gmFileDescriptor);
@@ -107,7 +159,7 @@ SerialCom::Serial_Status SerialCom::Close()
 
 
 
-SerialCom::Serial_Status SerialCom::Init()
+Status SerialCom::Init()
 {
 
     //-------------------------
@@ -132,7 +184,7 @@ SerialCom::Serial_Status SerialCom::Init()
     {
             //ERROR - CAN'T OPEN SERIAL PORT
             printAll("Serial Port file can not opened");
-            return Serial_Status::cannot_open;
+            return Status::error;
     }
 
     //CONFIGURE THE UART
@@ -195,7 +247,7 @@ SerialCom::Serial_Status SerialCom::Init()
     {
             printAll("Serial Port Baundrate is wrongly");
             Close();
-            return Serial_Status::cannot_open;
+            return Status::error;
     }
 
     options.c_iflag = IGNPAR;
@@ -205,37 +257,48 @@ SerialCom::Serial_Status SerialCom::Init()
     tcsetattr(gmFileDescriptor, TCSANOW, &options);
 
 
-    return Serial_Status::succesfully_opened;
+    return Status::ok;
 
 }
+
 
 
 SerialCom::SerialCom() : gmBaundRate("B57600"), gmPort("/dev/ttyS2")
 {
-    Status = Init();
-    if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened");
-    else
-        printAll("Serial Port Can Not Opened");
+    Status status;
 
+    status = Init();
+
+    if(status == Status::ok)
+        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
+    else
+        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
+
+
 
 SerialCom::SerialCom(const std::string& BaundRate) : gmBaundRate(BaundRate), gmPort("/dev/ttyS2")
 {
-    Status = Init();
-    if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened");
+    Status status;
+
+    status = Init();
+    if(status == Status::ok)
+        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
     else
-        printAll("Serial Port Can Not Opened");
+        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
+
+
 
 SerialCom::SerialCom(const std::string& BaundRate, const std::string& Port) : gmBaundRate(BaundRate), gmPort(Port)
 {
-    Status = Init();
-    if(Status == Serial_Status::succesfully_opened)
-        printAll("Serial Port Succesfully Opened");
+    Status status;
+
+    status = Init();
+    if(status == Status::ok)
+        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
     else
-        printAll("Serial Port Can Not Opened");
+        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
 
 

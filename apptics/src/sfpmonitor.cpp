@@ -1,5 +1,5 @@
 #include "sfpmonitor.h"
-#include "globals.h"
+
 
 
 
@@ -31,9 +31,9 @@ SfpMonitor::~SfpMonitor()
     close(gmFileDescriptor);
 }
 
-SFP_DATA SfpMonitor::getValues()
+SFP_DATA_FORMAT SfpMonitor::getValues()
 {
-    SFP_DATA data;
+    SFP_DATA_FORMAT data;
 
     gmMutex.lock();
     data = gmSfpData;

@@ -21,8 +21,20 @@
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
 
-static std::mutex printMutex;
 
+
+#define FORWARD 1
+#define BACKWARD 2
+#define STOP 0
+
+enum class Status
+{
+
+    time_out,
+    error,
+    ok
+
+};
 
 void removeLine(char* sourcefile, int line);
 int countLine(char* sourcefile);
@@ -72,8 +84,6 @@ void writeLog(const T& Log)
 
     std::string log_data;
 
-
-    printMutex.lock();
 
     log_data = Log;
 
@@ -125,7 +135,6 @@ void writeLog(const T& Log)
     file <<  currentDateTime<std::string>() << " : " << log_data << std::endl;
     file.close();
 
-    printMutex.unlock();
 
 }
 
@@ -138,10 +147,9 @@ void printAll(const TAIL&... tail)
 
     std::string package = serializer(tail...);
 
-//    std::cout << package << std::endl;
+    std::cout << package << std::endl;
 
-    writeLog(package);
-
+//    writeLog(package);
 
 
 
@@ -201,6 +209,18 @@ std::string convertHexToAscii(const T& Data)
 
 
 
+
+struct SFP_DATA_FORMAT
+{
+    int type;
+    float temperature;
+    float vcc;
+    float tx_bias;
+    float tx_power;
+    float rx_power;
+    int status;
+
+};
 
 struct SENSOR_DATA
 {

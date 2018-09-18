@@ -21,38 +21,29 @@
 #include "queue.h"
 
 
-#define FORWARD 1
-#define BACKWARD 2
-
 
 
 class Controller
 {
 public:
 
-    enum class Controller_Status
-    {
-        time_out,
-        error,
-        ok
 
-    }Status;
 
     Controller();
     ~Controller();
 
-    Controller_Status isReady();
+    Status isReady();
 
-    Controller_Status zoomInCamera();
-    Controller_Status zoomOutCamera();
+    Status zoomInCamera();
+    Status zoomOutCamera();
 
-    Controller_Status driveMotorLeft();
-    Controller_Status driveMotorRight();
-    Controller_Status driveMotorDown();
-    Controller_Status driveMotorUp();
+    Status driveMotorLeft();
+    Status driveMotorRight();
+    Status driveMotorDown();
+    Status driveMotorUp();
 
-    Controller_Status setControlData(CONTROL_DATA_FORMAT& Data);
-    Controller_Status setUpdateData(UPDATE_FILE_FORMAT& Data);
+    Status setControlData(CONTROL_DATA_FORMAT& Data);
+    Status setUpdateData(UPDATE_FILE_FORMAT& Data);
 
     ENVIRONMENT_DATA_FORMAT getStmEnvironment();
 
@@ -66,8 +57,8 @@ private:
     CONTROL_DATA_FORMAT gmControlData;
 
     volatile bool gmIsReceived = false;
-    volatile bool gmIsTransmitted = false;
-    volatile bool gmCorruptedPackage = false;
+    volatile bool gmIsTransmitted = true;
+
 
     uint32_t gmDesiredPackageSequence = 1;
     uint32_t gmCurrentPackageSequence = 1;
@@ -80,8 +71,8 @@ private:
     UPDATE_FILE_FORMAT gmUpdateFile;
 
     void communicationThread();
-    Controller_Status checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData);
-    Controller_Status checkIfEnvironmentData(const SPI_TRANSFER_FORMAT& SpiData);
+    Status checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData);
+    Status checkIfEnvironmentData(const SPI_TRANSFER_FORMAT& SpiData);
 
 
 };

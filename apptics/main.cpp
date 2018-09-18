@@ -20,8 +20,7 @@
 #include "sfpmonitor.h"
 #include "udpsocket.h"
 #include "queue.h"
-
-
+#include "lcdhmi.h"
 
 clock_t now = 0;
 clock_t last = 0;
@@ -31,17 +30,19 @@ bool is_busy = 0;
 ENVIRONMENT_DATA_FORMAT stm_data;
 ENVIRONMENT_DATA_FORMAT lora_stm_data;
 
-CONTROL_DATA_FORMAT control_data;
+CONTROL_DATA_FORMAT udp_control_data;
+CONTROL_DATA_FORMAT lcd_control_data;
 UPDATE_FILE_FORMAT update_file;
 
-SFP_DATA sfp_data;
-SFP_DATA lora_sfp_data;
+SFP_DATA_FORMAT sfp_data;
+SFP_DATA_FORMAT lora_sfp_data;
 
 LoraWan lora;
 Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
 UdpSocket udp_socket;
+LcdHMI lcd_hmi;
 
 Queue<UPDATE_FILE_FORMAT> file_queue;
 
@@ -54,7 +55,7 @@ bool get_cpu_times(size_t &idle_time, size_t &total_time);
 int main()
 {
 
-    Controller::Controller_Status update_file_status = Controller::Controller_Status::ok;
+    Status update_file_status = Status::ok;
 
     tracker.runTracking();
 
@@ -77,21 +78,29 @@ int main()
 
         lora.getLoraData(lora_sfp_data, lora_stm_data);
 
-        control_data = udp_socket.getSocketControlData();
+        udp_control_data = udp_socket.getSocketControlData();
 
-        if(update_file_status == Controller::Controller_Status::ok)
+        lcd_control_data = lcd_hmi.getHCMControlData();
+
+
+
+        if(update_file_status == Status::ok)
             update_file = udp_socket.getSocketUpdateData();
 
         if(update_file.is_available == true)
         {
             update_file_status = controller.setUpdateData(update_file);
         }
-        else if(control_data.is_transmitted == true)
+        else if(udp_control_data == true)
         {
-            controller.setControlData(control_data);
+            controller.setControlData(udp_control_data);
+        }
+        else if(lcd_control_data == true)
+        {
+            controller.setControlData(lcd_control_data);
         }
 
-        control_data.clear();
+        udp_control_data.clear();
 
         now = clock();
 
@@ -112,15 +121,15 @@ int main()
 void writeJson()
 {
 
-//    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
-//                 " - Temperature: ", (int)stm_data.sensor_data.temperature,
-//                 " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
-//                 " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-//                 " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
-//        printAll("\n\n\n");
+    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')),
+                 " - Temperature: ", (int)stm_data.sensor_data.temperature,
+                 " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
+                 " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
+                 " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected");
+        printAll("\n\n\n");
 
-//        printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
-//        printAll("\n\n\n");
+        printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
+        printAll("\n\n\n");
 
 //        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
 //        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
@@ -219,7 +228,7 @@ void writeJson()
     writer.Key("memory_usage");
     writer.Double(phys_mem_med);
 
-
+    
     writer.Key("remote_terminal_status");
     writer.String((lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 

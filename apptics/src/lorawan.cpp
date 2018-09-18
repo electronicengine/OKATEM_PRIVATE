@@ -1,6 +1,6 @@
 #include "lorawan.h"
 
-LoraWan::Lora_Status LoraWan::init()
+Status LoraWan::init()
 {
 
     printAll("Lora Inıtializing... ");
@@ -72,7 +72,7 @@ LoraWan::Lora_Status LoraWan::init()
 
 
 
-LoraWan::Lora_Status LoraWan::sendBeacon()
+Status LoraWan::sendBeacon()
 {
 
     std::string Data = prepareData();
@@ -136,7 +136,7 @@ LoraWan::Lora_Status LoraWan::sendBeacon()
 void LoraWan::listenChannel()
 {
 
-    SerialCom::Serial_Status status;
+    Status status;
 
     std::vector<unsigned char> lora_return;
     int return_size;
@@ -167,7 +167,7 @@ void LoraWan::listenChannel()
             status = gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
 
-            if(status == SerialCom::Serial_Status::time_out)
+            if(status == Status::time_out)
             {
                 timeout = 1;
                 break;
@@ -320,7 +320,7 @@ void LoraWan::listen()
 
 
 
-void LoraWan::setLoraData(const SFP_DATA &SfpData, const ENVIRONMENT_DATA_FORMAT &StmData)
+void LoraWan::setLoraData(const SFP_DATA_FORMAT &SfpData, const ENVIRONMENT_DATA_FORMAT &StmData)
 {
 
     gmMutex.lock();
@@ -332,7 +332,7 @@ void LoraWan::setLoraData(const SFP_DATA &SfpData, const ENVIRONMENT_DATA_FORMAT
 
 }
 
-void LoraWan::getLoraData(SFP_DATA &SfpData, ENVIRONMENT_DATA_FORMAT &StmData)
+void LoraWan::getLoraData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &StmData)
 {
 
     gmMutex.lock();

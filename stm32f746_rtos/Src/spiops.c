@@ -1,4 +1,4 @@
-#include "spiops.h"
+﻿#include "spiops.h"
 #include "stdlib.h"
 
 #define SECTOR6_ADDRESS 0x8080000
@@ -89,6 +89,7 @@ void spiComOps(void const * argument)
 
                     if(ret == HAL_OK)
                     {
+
                         control_data_available = 1;
 
                         putControlDataResponse();
@@ -98,6 +99,8 @@ void spiComOps(void const * argument)
                     {
                         putEnvironmentData();
                     }
+
+
                 }
 
             }
@@ -117,6 +120,7 @@ void spiComOps(void const * argument)
         }
         else if(control_data_available == 1)
         {
+
             processControlData();
 
             control_data_available = 0;
@@ -156,7 +160,12 @@ HAL_StatusTypeDef checkIfControlData()
     if((SpiRxData->header & 0xff) == 'C' && ((SpiRxData->header >> 8) & 0xff) == 'O')
     {
 
-        memcpy(ControlData, SpiRxData->data, SPI_DATA_SIZE);
+//        mprintf("%d\r\n", SpiRxData->data[58]);
+
+        ControlData = (CONTROL_DATA_FORMAT *) SpiRxData + offsetof(SPI_TRANSFER_FORMAT, header);
+
+//        memcpy(ControlData, SpiRxData->data, SPI_DATA_SIZE);
+
 
         return HAL_OK;
 
@@ -398,11 +407,13 @@ void processControlData()
 
     if(ControlData -> step_motor1_direction == FORWARD)
     {
+        mprintf("1u\r\n");
         motor1.direction = FORWARD;
         motor1.speed = ControlData -> step_motor1_speed;
     }
     else if(ControlData -> step_motor1_direction == BACKWARD)
     {
+        mprintf("1d\r\n");
         motor1.direction = BACKWARD;
         motor1.speed = ControlData -> step_motor1_speed;
     }
@@ -413,11 +424,13 @@ void processControlData()
 
     if(ControlData -> step_motor2_direction == FORWARD)
     {
+        mprintf("2u\r\n");
         motor2.direction = FORWARD;
         motor1.speed = ControlData -> step_motor2_speed;
     }
     else if(ControlData -> step_motor2_direction == BACKWARD)
     {
+        mprintf("2d\r\n");
         motor2.direction = BACKWARD;
         motor1.speed = ControlData -> step_motor2_speed;
     }
