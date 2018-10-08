@@ -1,5 +1,7 @@
 #include "spicom.h"
 
+extern std::map<std::string, bool> CheckList;
+
 Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, int Size)
 {
     int container_size = Size;
@@ -7,6 +9,7 @@ Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, int Size)
     int ret = -1;
 
     //one spi transfer for each byte
+
 
     for (int i = 0 ; i < container_size ; i++)
     {
@@ -25,6 +28,8 @@ Status SpiCom::spiTransmiteReceive(unsigned char *TransmittedData, int Size)
     if(ret < 0)
     {
         printAll("Error - Problem transmitting spi data..ioctl");
+//        CheckList["SpiCom"] = false;
+
         return Status::error;
     }
 

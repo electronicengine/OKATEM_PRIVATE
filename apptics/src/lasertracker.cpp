@@ -2,18 +2,30 @@
 
 #include <thread>
 #include <pthread.h>
+#include <string>
 
-#include "globals.h"
 
+extern std::map<std::string, bool> CheckList;
 
 LaserTracker::LaserTracker(const std::string VideoLocation)
 {
+
+    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
 
     mVideoCapture = new cv::VideoCapture(VideoLocation);
 
     mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
     if (!mVideoCapture->isOpened())
-           printAll("LaserTracker Camera can not opened");
+    {
+        printAll("LaserTracker init is Failed");
+
+        CheckList["LaserTracker"] = false;
+    }
+    else
+    {
+        CheckList["LaserTracker"] = true;
+
+    }
 
 }
 
@@ -22,11 +34,22 @@ LaserTracker::LaserTracker(const std::string VideoLocation)
 LaserTracker::LaserTracker(int Camera)
 {
 
+    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
+
     mVideoCapture = new cv::VideoCapture(Camera);
 
     mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
     if (!mVideoCapture->isOpened())
+    {
         printAll("LaserTracker init is Failed");
+
+        CheckList["LaserTracker"] = false;
+    }
+    else
+    {
+        CheckList["LaserTracker"] = true;
+
+    }
 
 }
 
@@ -34,6 +57,7 @@ LaserTracker::LaserTracker(int Camera)
 
 LaserTracker::~LaserTracker()
 {
+
 
 
 }
@@ -77,10 +101,6 @@ float LaserTracker::getEdgeRate()
 
 int LaserTracker::startTracking()
 {
-
-
-
-
     std::vector<cv::Vec3f> red_circles;
 
 
@@ -103,9 +123,13 @@ int LaserTracker::startTracking()
 
         cv::waitKey(1); // needed
 
+        CheckList["LaserTracker"] = true;
+
     }
 
     printAll("Laser Tracker Source Connection has been faild.");
+
+    CheckList["LaserTracker"] = false;
     return FAIL;
 
 }

@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccL05mal.s 			page 1
+ARM GAS  /tmp/ccIHoMGM.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -21,21 +21,23 @@ ARM GAS  /tmp/ccL05mal.s 			page 1
   18              		.comm	motor2,8,4
   19              		.comm	motor3,8,4
   20              		.comm	motor4,8,4
-  21              		.global	reductor_coefficient
-  22              		.section	.rodata.reductor_coefficient,"a",%progbits
-  23              		.align	2
-  26              	reductor_coefficient:
-  27 0000 2C010000 		.word	300
-  28              		.section	.text.motorInit,"ax",%progbits
-  29              		.align	1
-  30              		.global	motorInit
-  31              		.syntax unified
-  32              		.thumb
-  33              		.thumb_func
-  34              		.fpu fpv4-sp-d16
-  36              	motorInit:
-  37              	.LFB136:
-  38              		.file 1 "Src/motor.c"
+  21              		.comm	servo1,8,4
+  22              		.comm	servo2,8,4
+  23              		.global	reductor_coefficient
+  24              		.section	.rodata.reductor_coefficient,"a",%progbits
+  25              		.align	2
+  28              	reductor_coefficient:
+  29 0000 2C010000 		.word	300
+  30              		.section	.text.motorInit,"ax",%progbits
+  31              		.align	1
+  32              		.global	motorInit
+  33              		.syntax unified
+  34              		.thumb
+  35              		.thumb_func
+  36              		.fpu fpv4-sp-d16
+  38              	motorInit:
+  39              	.LFB136:
+  40              		.file 1 "Src/motor.c"
    1:Src/motor.c   **** 
    2:Src/motor.c   **** 
    3:Src/motor.c   **** #include "motor.h"
@@ -48,1595 +50,1070 @@ ARM GAS  /tmp/ccL05mal.s 			page 1
   10:Src/motor.c   **** 
   11:Src/motor.c   **** void motorInit()
   12:Src/motor.c   **** {
-  39              		.loc 1 12 0
-  40              		.cfi_startproc
-  41              		@ args = 0, pretend = 0, frame = 0
-  42              		@ frame_needed = 1, uses_anonymous_args = 0
-  43 0000 80B5     		push	{r7, lr}
-  44              	.LCFI0:
-  45              		.cfi_def_cfa_offset 8
-  46              		.cfi_offset 7, -8
-  47              		.cfi_offset 14, -4
-  48 0002 00AF     		add	r7, sp, #0
-ARM GAS  /tmp/ccL05mal.s 			page 2
+  41              		.loc 1 12 0
+  42              		.cfi_startproc
+  43              		@ args = 0, pretend = 0, frame = 0
+  44              		@ frame_needed = 1, uses_anonymous_args = 0
+  45 0000 80B5     		push	{r7, lr}
+  46              	.LCFI0:
+  47              		.cfi_def_cfa_offset 8
+  48              		.cfi_offset 7, -8
+ARM GAS  /tmp/ccIHoMGM.s 			page 2
 
 
-  49              	.LCFI1:
-  50              		.cfi_def_cfa_register 7
+  49              		.cfi_offset 14, -4
+  50 0002 00AF     		add	r7, sp, #0
+  51              	.LCFI1:
+  52              		.cfi_def_cfa_register 7
   13:Src/motor.c   ****     HAL_TIM_Base_Start_IT(&htim2);
-  51              		.loc 1 13 0
-  52 0004 0248     		ldr	r0, .L2
-  53 0006 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+  53              		.loc 1 13 0
+  54 0004 0248     		ldr	r0, .L2
+  55 0006 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
   14:Src/motor.c   **** }
-  54              		.loc 1 14 0
-  55 000a 00BF     		nop
-  56 000c 80BD     		pop	{r7, pc}
-  57              	.L3:
-  58 000e 00BF     		.align	2
-  59              	.L2:
-  60 0010 00000000 		.word	htim2
-  61              		.cfi_endproc
-  62              	.LFE136:
-  64              		.section	.text.motor1Drive,"ax",%progbits
-  65              		.align	1
-  66              		.global	motor1Drive
-  67              		.syntax unified
-  68              		.thumb
-  69              		.thumb_func
-  70              		.fpu fpv4-sp-d16
-  72              	motor1Drive:
-  73              	.LFB137:
+  56              		.loc 1 14 0
+  57 000a 00BF     		nop
+  58 000c 80BD     		pop	{r7, pc}
+  59              	.L3:
+  60 000e 00BF     		.align	2
+  61              	.L2:
+  62 0010 00000000 		.word	htim2
+  63              		.cfi_endproc
+  64              	.LFE136:
+  66              		.section	.text.motor1Drive,"ax",%progbits
+  67              		.align	1
+  68              		.global	motor1Drive
+  69              		.syntax unified
+  70              		.thumb
+  71              		.thumb_func
+  72              		.fpu fpv4-sp-d16
+  74              	motor1Drive:
+  75              	.LFB137:
   15:Src/motor.c   **** 
   16:Src/motor.c   **** void  motor1Drive(int Direction)
   17:Src/motor.c   **** {
-  74              		.loc 1 17 0
-  75              		.cfi_startproc
-  76              		@ args = 0, pretend = 0, frame = 8
-  77              		@ frame_needed = 1, uses_anonymous_args = 0
-  78 0000 80B5     		push	{r7, lr}
-  79              	.LCFI2:
-  80              		.cfi_def_cfa_offset 8
-  81              		.cfi_offset 7, -8
-  82              		.cfi_offset 14, -4
-  83 0002 82B0     		sub	sp, sp, #8
-  84              	.LCFI3:
-  85              		.cfi_def_cfa_offset 16
-  86 0004 00AF     		add	r7, sp, #0
-  87              	.LCFI4:
-  88              		.cfi_def_cfa_register 7
-  89 0006 7860     		str	r0, [r7, #4]
+  76              		.loc 1 17 0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 8
+  79              		@ frame_needed = 1, uses_anonymous_args = 0
+  80 0000 80B5     		push	{r7, lr}
+  81              	.LCFI2:
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 7, -8
+  84              		.cfi_offset 14, -4
+  85 0002 82B0     		sub	sp, sp, #8
+  86              	.LCFI3:
+  87              		.cfi_def_cfa_offset 16
+  88 0004 00AF     		add	r7, sp, #0
+  89              	.LCFI4:
+  90              		.cfi_def_cfa_register 7
+  91 0006 7860     		str	r0, [r7, #4]
   18:Src/motor.c   ****     static volatile int phase = 1;
   19:Src/motor.c   **** 
   20:Src/motor.c   ****     if(Direction == FORWARD)
-  90              		.loc 1 20 0
-  91 0008 7B68     		ldr	r3, [r7, #4]
-  92 000a 012B     		cmp	r3, #1
-  93 000c 40F08580 		bne	.L5
+  92              		.loc 1 20 0
+  93 0008 7B68     		ldr	r3, [r7, #4]
+  94 000a 012B     		cmp	r3, #1
+  95 000c 40F08A80 		bne	.L5
   21:Src/motor.c   ****     {
   22:Src/motor.c   **** 
-  23:Src/motor.c   **** //            motor2.degree--;
+  23:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP1_GPIO_Port, ENABLE_STEP1_PIN,GPIO_PIN_SET);
+  96              		.loc 1 23 0
+ARM GAS  /tmp/ccIHoMGM.s 			page 3
+
+
+  97 0010 0122     		movs	r2, #1
+  98 0012 1021     		movs	r1, #16
+  99 0014 9C48     		ldr	r0, .L15
+ 100 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
   24:Src/motor.c   **** 
   25:Src/motor.c   ****           if(phase  == 1)
-  94              		.loc 1 25 0
-ARM GAS  /tmp/ccL05mal.s 			page 3
-
-
-  95 0010 884B     		ldr	r3, .L14
-  96 0012 1B68     		ldr	r3, [r3]
-  97 0014 012B     		cmp	r3, #1
-  98 0016 1DD1     		bne	.L6
+ 101              		.loc 1 25 0
+ 102 001a 9C4B     		ldr	r3, .L15+4
+ 103 001c 1B68     		ldr	r3, [r3]
+ 104 001e 012B     		cmp	r3, #1
+ 105 0020 1DD1     		bne	.L6
   26:Src/motor.c   ****           {
   27:Src/motor.c   **** 
   28:Src/motor.c   **** 
   29:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
-  99              		.loc 1 29 0
- 100 0018 0122     		movs	r2, #1
- 101 001a 4FF40051 		mov	r1, #8192
- 102 001e 8648     		ldr	r0, .L14+4
- 103 0020 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 106              		.loc 1 29 0
+ 107 0022 0122     		movs	r2, #1
+ 108 0024 4FF40051 		mov	r1, #8192
+ 109 0028 9948     		ldr	r0, .L15+8
+ 110 002a FFF7FEFF 		bl	HAL_GPIO_WritePin
   30:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
- 104              		.loc 1 30 0
- 105 0024 0022     		movs	r2, #0
- 106 0026 4FF48041 		mov	r1, #16384
- 107 002a 8348     		ldr	r0, .L14+4
- 108 002c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 111              		.loc 1 30 0
+ 112 002e 0022     		movs	r2, #0
+ 113 0030 4FF48041 		mov	r1, #16384
+ 114 0034 9648     		ldr	r0, .L15+8
+ 115 0036 FFF7FEFF 		bl	HAL_GPIO_WritePin
   31:Src/motor.c   **** 
   32:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
- 109              		.loc 1 32 0
- 110 0030 0122     		movs	r2, #1
- 111 0032 4FF48071 		mov	r1, #256
- 112 0036 8148     		ldr	r0, .L14+8
- 113 0038 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 116              		.loc 1 32 0
+ 117 003a 0122     		movs	r2, #1
+ 118 003c 4FF48071 		mov	r1, #256
+ 119 0040 9448     		ldr	r0, .L15+12
+ 120 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
   33:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
- 114              		.loc 1 33 0
- 115 003c 0022     		movs	r2, #0
- 116 003e 4FF40041 		mov	r1, #32768
- 117 0042 7D48     		ldr	r0, .L14+4
- 118 0044 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 121              		.loc 1 33 0
+ 122 0046 0022     		movs	r2, #0
+ 123 0048 4FF40041 		mov	r1, #32768
+ 124 004c 9048     		ldr	r0, .L15+8
+ 125 004e FFF7FEFF 		bl	HAL_GPIO_WritePin
   34:Src/motor.c   ****               phase ++;
- 119              		.loc 1 34 0
- 120 0048 7A4B     		ldr	r3, .L14
- 121 004a 1B68     		ldr	r3, [r3]
- 122 004c 0133     		adds	r3, r3, #1
- 123 004e 794A     		ldr	r2, .L14
- 124 0050 1360     		str	r3, [r2]
- 125 0052 62E0     		b	.L5
- 126              	.L6:
+ 126              		.loc 1 34 0
+ 127 0052 8E4B     		ldr	r3, .L15+4
+ 128 0054 1B68     		ldr	r3, [r3]
+ 129 0056 0133     		adds	r3, r3, #1
+ 130 0058 8C4A     		ldr	r2, .L15+4
+ 131 005a 1360     		str	r3, [r2]
+ 132 005c 62E0     		b	.L5
+ 133              	.L6:
   35:Src/motor.c   **** 
   36:Src/motor.c   ****           }
   37:Src/motor.c   ****           else if(phase  == 2)
- 127              		.loc 1 37 0
- 128 0054 774B     		ldr	r3, .L14
- 129 0056 1B68     		ldr	r3, [r3]
- 130 0058 022B     		cmp	r3, #2
- 131 005a 1DD1     		bne	.L7
+ 134              		.loc 1 37 0
+ 135 005e 8B4B     		ldr	r3, .L15+4
+ 136 0060 1B68     		ldr	r3, [r3]
+ 137 0062 022B     		cmp	r3, #2
+ 138 0064 1DD1     		bne	.L7
   38:Src/motor.c   ****           {
+ARM GAS  /tmp/ccIHoMGM.s 			page 4
+
+
   39:Src/motor.c   **** 
   40:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
- 132              		.loc 1 40 0
- 133 005c 0122     		movs	r2, #1
- 134 005e 4FF40051 		mov	r1, #8192
- 135 0062 7548     		ldr	r0, .L14+4
- 136 0064 FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  /tmp/ccL05mal.s 			page 4
-
-
+ 139              		.loc 1 40 0
+ 140 0066 0122     		movs	r2, #1
+ 141 0068 4FF40051 		mov	r1, #8192
+ 142 006c 8848     		ldr	r0, .L15+8
+ 143 006e FFF7FEFF 		bl	HAL_GPIO_WritePin
   41:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
- 137              		.loc 1 41 0
- 138 0068 0022     		movs	r2, #0
- 139 006a 4FF48041 		mov	r1, #16384
- 140 006e 7248     		ldr	r0, .L14+4
- 141 0070 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 144              		.loc 1 41 0
+ 145 0072 0022     		movs	r2, #0
+ 146 0074 4FF48041 		mov	r1, #16384
+ 147 0078 8548     		ldr	r0, .L15+8
+ 148 007a FFF7FEFF 		bl	HAL_GPIO_WritePin
   42:Src/motor.c   **** 
   43:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
- 142              		.loc 1 43 0
- 143 0074 0122     		movs	r2, #1
- 144 0076 4FF40041 		mov	r1, #32768
- 145 007a 6F48     		ldr	r0, .L14+4
- 146 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 149              		.loc 1 43 0
+ 150 007e 0122     		movs	r2, #1
+ 151 0080 4FF40041 		mov	r1, #32768
+ 152 0084 8248     		ldr	r0, .L15+8
+ 153 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
   44:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
- 147              		.loc 1 44 0
- 148 0080 0022     		movs	r2, #0
- 149 0082 4FF48071 		mov	r1, #256
- 150 0086 6D48     		ldr	r0, .L14+8
- 151 0088 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 154              		.loc 1 44 0
+ 155 008a 0022     		movs	r2, #0
+ 156 008c 4FF48071 		mov	r1, #256
+ 157 0090 8048     		ldr	r0, .L15+12
+ 158 0092 FFF7FEFF 		bl	HAL_GPIO_WritePin
   45:Src/motor.c   ****               phase ++;
- 152              		.loc 1 45 0
- 153 008c 694B     		ldr	r3, .L14
- 154 008e 1B68     		ldr	r3, [r3]
- 155 0090 0133     		adds	r3, r3, #1
- 156 0092 684A     		ldr	r2, .L14
- 157 0094 1360     		str	r3, [r2]
- 158 0096 40E0     		b	.L5
- 159              	.L7:
+ 159              		.loc 1 45 0
+ 160 0096 7D4B     		ldr	r3, .L15+4
+ 161 0098 1B68     		ldr	r3, [r3]
+ 162 009a 0133     		adds	r3, r3, #1
+ 163 009c 7B4A     		ldr	r2, .L15+4
+ 164 009e 1360     		str	r3, [r2]
+ 165 00a0 40E0     		b	.L5
+ 166              	.L7:
   46:Src/motor.c   **** 
   47:Src/motor.c   ****           }
   48:Src/motor.c   ****           else if(phase  == 3)
- 160              		.loc 1 48 0
- 161 0098 664B     		ldr	r3, .L14
- 162 009a 1B68     		ldr	r3, [r3]
- 163 009c 032B     		cmp	r3, #3
- 164 009e 1DD1     		bne	.L8
+ 167              		.loc 1 48 0
+ 168 00a2 7A4B     		ldr	r3, .L15+4
+ 169 00a4 1B68     		ldr	r3, [r3]
+ 170 00a6 032B     		cmp	r3, #3
+ 171 00a8 1DD1     		bne	.L8
   49:Src/motor.c   ****           {
   50:Src/motor.c   **** 
   51:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
- 165              		.loc 1 51 0
- 166 00a0 0122     		movs	r2, #1
- 167 00a2 4FF48041 		mov	r1, #16384
- 168 00a6 6448     		ldr	r0, .L14+4
- 169 00a8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 172              		.loc 1 51 0
+ 173 00aa 0122     		movs	r2, #1
+ 174 00ac 4FF48041 		mov	r1, #16384
+ 175 00b0 7748     		ldr	r0, .L15+8
+ 176 00b2 FFF7FEFF 		bl	HAL_GPIO_WritePin
   52:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
- 170              		.loc 1 52 0
- 171 00ac 0022     		movs	r2, #0
- 172 00ae 4FF40051 		mov	r1, #8192
- 173 00b2 6148     		ldr	r0, .L14+4
- 174 00b4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 177              		.loc 1 52 0
+ 178 00b6 0022     		movs	r2, #0
+ 179 00b8 4FF40051 		mov	r1, #8192
+ 180 00bc 7448     		ldr	r0, .L15+8
+ 181 00be FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /tmp/ccIHoMGM.s 			page 5
+
+
   53:Src/motor.c   **** 
   54:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
- 175              		.loc 1 54 0
- 176 00b8 0122     		movs	r2, #1
- 177 00ba 4FF40041 		mov	r1, #32768
- 178 00be 5E48     		ldr	r0, .L14+4
- 179 00c0 FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  /tmp/ccL05mal.s 			page 5
-
-
+ 182              		.loc 1 54 0
+ 183 00c2 0122     		movs	r2, #1
+ 184 00c4 4FF40041 		mov	r1, #32768
+ 185 00c8 7148     		ldr	r0, .L15+8
+ 186 00ca FFF7FEFF 		bl	HAL_GPIO_WritePin
   55:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
- 180              		.loc 1 55 0
- 181 00c4 0022     		movs	r2, #0
- 182 00c6 4FF48071 		mov	r1, #256
- 183 00ca 5C48     		ldr	r0, .L14+8
- 184 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 187              		.loc 1 55 0
+ 188 00ce 0022     		movs	r2, #0
+ 189 00d0 4FF48071 		mov	r1, #256
+ 190 00d4 6F48     		ldr	r0, .L15+12
+ 191 00d6 FFF7FEFF 		bl	HAL_GPIO_WritePin
   56:Src/motor.c   ****               phase ++;
- 185              		.loc 1 56 0
- 186 00d0 584B     		ldr	r3, .L14
- 187 00d2 1B68     		ldr	r3, [r3]
- 188 00d4 0133     		adds	r3, r3, #1
- 189 00d6 574A     		ldr	r2, .L14
- 190 00d8 1360     		str	r3, [r2]
- 191 00da 1EE0     		b	.L5
- 192              	.L8:
+ 192              		.loc 1 56 0
+ 193 00da 6C4B     		ldr	r3, .L15+4
+ 194 00dc 1B68     		ldr	r3, [r3]
+ 195 00de 0133     		adds	r3, r3, #1
+ 196 00e0 6A4A     		ldr	r2, .L15+4
+ 197 00e2 1360     		str	r3, [r2]
+ 198 00e4 1EE0     		b	.L5
+ 199              	.L8:
   57:Src/motor.c   **** 
   58:Src/motor.c   ****           }
   59:Src/motor.c   ****           else if(phase  == 4)
- 193              		.loc 1 59 0
- 194 00dc 554B     		ldr	r3, .L14
- 195 00de 1B68     		ldr	r3, [r3]
- 196 00e0 042B     		cmp	r3, #4
- 197 00e2 1AD1     		bne	.L5
+ 200              		.loc 1 59 0
+ 201 00e6 694B     		ldr	r3, .L15+4
+ 202 00e8 1B68     		ldr	r3, [r3]
+ 203 00ea 042B     		cmp	r3, #4
+ 204 00ec 1AD1     		bne	.L5
   60:Src/motor.c   ****           {
   61:Src/motor.c   **** 
   62:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
- 198              		.loc 1 62 0
- 199 00e4 0122     		movs	r2, #1
- 200 00e6 4FF48041 		mov	r1, #16384
- 201 00ea 5348     		ldr	r0, .L14+4
- 202 00ec FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 205              		.loc 1 62 0
+ 206 00ee 0122     		movs	r2, #1
+ 207 00f0 4FF48041 		mov	r1, #16384
+ 208 00f4 6648     		ldr	r0, .L15+8
+ 209 00f6 FFF7FEFF 		bl	HAL_GPIO_WritePin
   63:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
- 203              		.loc 1 63 0
- 204 00f0 0022     		movs	r2, #0
- 205 00f2 4FF40051 		mov	r1, #8192
- 206 00f6 5048     		ldr	r0, .L14+4
- 207 00f8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 210              		.loc 1 63 0
+ 211 00fa 0022     		movs	r2, #0
+ 212 00fc 4FF40051 		mov	r1, #8192
+ 213 0100 6348     		ldr	r0, .L15+8
+ 214 0102 FFF7FEFF 		bl	HAL_GPIO_WritePin
   64:Src/motor.c   **** 
   65:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
- 208              		.loc 1 65 0
- 209 00fc 0122     		movs	r2, #1
- 210 00fe 4FF48071 		mov	r1, #256
- 211 0102 4E48     		ldr	r0, .L14+8
- 212 0104 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 215              		.loc 1 65 0
+ 216 0106 0122     		movs	r2, #1
+ 217 0108 4FF48071 		mov	r1, #256
+ 218 010c 6148     		ldr	r0, .L15+12
+ 219 010e FFF7FEFF 		bl	HAL_GPIO_WritePin
   66:Src/motor.c   ****               HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
- 213              		.loc 1 66 0
- 214 0108 0022     		movs	r2, #0
- 215 010a 4FF40041 		mov	r1, #32768
- 216 010e 4A48     		ldr	r0, .L14+4
- 217 0110 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 220              		.loc 1 66 0
+ 221 0112 0022     		movs	r2, #0
+ 222 0114 4FF40041 		mov	r1, #32768
+ 223 0118 5D48     		ldr	r0, .L15+8
+ 224 011a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /tmp/ccIHoMGM.s 			page 6
+
+
   67:Src/motor.c   ****               phase  = 1;
- 218              		.loc 1 67 0
- 219 0114 474B     		ldr	r3, .L14
- 220 0116 0122     		movs	r2, #1
- 221 0118 1A60     		str	r2, [r3]
- 222              	.L5:
+ 225              		.loc 1 67 0
+ 226 011e 5B4B     		ldr	r3, .L15+4
+ 227 0120 0122     		movs	r2, #1
+ 228 0122 1A60     		str	r2, [r3]
+ 229              	.L5:
   68:Src/motor.c   **** 
-ARM GAS  /tmp/ccL05mal.s 			page 6
-
-
   69:Src/motor.c   ****           }
   70:Src/motor.c   **** 
   71:Src/motor.c   **** 
   72:Src/motor.c   ****     }
   73:Src/motor.c   **** 
   74:Src/motor.c   ****     if(Direction == BACKWARD)
- 223              		.loc 1 74 0
- 224 011a 7B68     		ldr	r3, [r7, #4]
- 225 011c 022B     		cmp	r3, #2
- 226 011e 40F08580 		bne	.L13
+ 230              		.loc 1 74 0
+ 231 0124 7B68     		ldr	r3, [r7, #4]
+ 232 0126 022B     		cmp	r3, #2
+ 233 0128 40F08A80 		bne	.L9
   75:Src/motor.c   ****     {
-  76:Src/motor.c   ****         if(phase  == 1)
- 227              		.loc 1 76 0
- 228 0122 444B     		ldr	r3, .L14
- 229 0124 1B68     		ldr	r3, [r3]
- 230 0126 012B     		cmp	r3, #1
- 231 0128 1DD1     		bne	.L10
-  77:Src/motor.c   ****         {
+  76:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP1_GPIO_Port, ENABLE_STEP1_PIN,GPIO_PIN_SET);
+ 234              		.loc 1 76 0
+ 235 012c 0122     		movs	r2, #1
+ 236 012e 1021     		movs	r1, #16
+ 237 0130 5548     		ldr	r0, .L15
+ 238 0132 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  77:Src/motor.c   **** 
   78:Src/motor.c   **** 
-  79:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
- 232              		.loc 1 79 0
- 233 012a 0122     		movs	r2, #1
- 234 012c 4FF48041 		mov	r1, #16384
- 235 0130 4148     		ldr	r0, .L14+4
- 236 0132 FFF7FEFF 		bl	HAL_GPIO_WritePin
-  80:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
- 237              		.loc 1 80 0
- 238 0136 0022     		movs	r2, #0
- 239 0138 4FF40051 		mov	r1, #8192
- 240 013c 3E48     		ldr	r0, .L14+4
- 241 013e FFF7FEFF 		bl	HAL_GPIO_WritePin
+  79:Src/motor.c   ****         if(phase  == 1)
+ 239              		.loc 1 79 0
+ 240 0136 554B     		ldr	r3, .L15+4
+ 241 0138 1B68     		ldr	r3, [r3]
+ 242 013a 012B     		cmp	r3, #1
+ 243 013c 1DD1     		bne	.L10
+  80:Src/motor.c   ****         {
   81:Src/motor.c   **** 
-  82:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
- 242              		.loc 1 82 0
- 243 0142 0122     		movs	r2, #1
- 244 0144 4FF48071 		mov	r1, #256
- 245 0148 3C48     		ldr	r0, .L14+8
- 246 014a FFF7FEFF 		bl	HAL_GPIO_WritePin
-  83:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
- 247              		.loc 1 83 0
- 248 014e 0022     		movs	r2, #0
- 249 0150 4FF40041 		mov	r1, #32768
- 250 0154 3848     		ldr	r0, .L14+4
- 251 0156 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  82:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+ 244              		.loc 1 82 0
+ 245 013e 0122     		movs	r2, #1
+ 246 0140 4FF48041 		mov	r1, #16384
+ 247 0144 5248     		ldr	r0, .L15+8
+ 248 0146 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  83:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+ 249              		.loc 1 83 0
+ 250 014a 0022     		movs	r2, #0
+ 251 014c 4FF40051 		mov	r1, #8192
+ 252 0150 4F48     		ldr	r0, .L15+8
+ 253 0152 FFF7FEFF 		bl	HAL_GPIO_WritePin
   84:Src/motor.c   **** 
-  85:Src/motor.c   **** 
-  86:Src/motor.c   ****             phase ++;
- 252              		.loc 1 86 0
- 253 015a 364B     		ldr	r3, .L14
- 254 015c 1B68     		ldr	r3, [r3]
- 255 015e 0133     		adds	r3, r3, #1
- 256 0160 344A     		ldr	r2, .L14
- 257 0162 1360     		str	r3, [r2]
+  85:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+ 254              		.loc 1 85 0
+ 255 0156 0122     		movs	r2, #1
+ 256 0158 4FF48071 		mov	r1, #256
+ 257 015c 4D48     		ldr	r0, .L15+12
+ 258 015e FFF7FEFF 		bl	HAL_GPIO_WritePin
+  86:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+ 259              		.loc 1 86 0
+ 260 0162 0022     		movs	r2, #0
+ 261 0164 4FF40041 		mov	r1, #32768
+ARM GAS  /tmp/ccIHoMGM.s 			page 7
+
+
+ 262 0168 4948     		ldr	r0, .L15+8
+ 263 016a FFF7FEFF 		bl	HAL_GPIO_WritePin
   87:Src/motor.c   **** 
-  88:Src/motor.c   ****         }
-  89:Src/motor.c   ****         else if(phase  == 2)
-  90:Src/motor.c   ****         {
-ARM GAS  /tmp/ccL05mal.s 			page 7
-
-
-  91:Src/motor.c   **** 
-  92:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
-  93:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+  88:Src/motor.c   **** 
+  89:Src/motor.c   ****             phase ++;
+ 264              		.loc 1 89 0
+ 265 016e 474B     		ldr	r3, .L15+4
+ 266 0170 1B68     		ldr	r3, [r3]
+ 267 0172 0133     		adds	r3, r3, #1
+ 268 0174 454A     		ldr	r2, .L15+4
+ 269 0176 1360     		str	r3, [r2]
+ 270 0178 62E0     		b	.L9
+ 271              	.L10:
+  90:Src/motor.c   **** 
+  91:Src/motor.c   ****         }
+  92:Src/motor.c   ****         else if(phase  == 2)
+ 272              		.loc 1 92 0
+ 273 017a 444B     		ldr	r3, .L15+4
+ 274 017c 1B68     		ldr	r3, [r3]
+ 275 017e 022B     		cmp	r3, #2
+ 276 0180 1DD1     		bne	.L11
+  93:Src/motor.c   ****         {
   94:Src/motor.c   **** 
-  95:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
-  96:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+  95:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_SET);
+ 277              		.loc 1 95 0
+ 278 0182 0122     		movs	r2, #1
+ 279 0184 4FF48041 		mov	r1, #16384
+ 280 0188 4148     		ldr	r0, .L15+8
+ 281 018a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  96:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+ 282              		.loc 1 96 0
+ 283 018e 0022     		movs	r2, #0
+ 284 0190 4FF40051 		mov	r1, #8192
+ 285 0194 3E48     		ldr	r0, .L15+8
+ 286 0196 FFF7FEFF 		bl	HAL_GPIO_WritePin
   97:Src/motor.c   **** 
-  98:Src/motor.c   **** 
-  99:Src/motor.c   ****             phase ++;
+  98:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
+ 287              		.loc 1 98 0
+ 288 019a 0122     		movs	r2, #1
+ 289 019c 4FF40041 		mov	r1, #32768
+ 290 01a0 3B48     		ldr	r0, .L15+8
+ 291 01a2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  99:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+ 292              		.loc 1 99 0
+ 293 01a6 0022     		movs	r2, #0
+ 294 01a8 4FF48071 		mov	r1, #256
+ 295 01ac 3948     		ldr	r0, .L15+12
+ 296 01ae FFF7FEFF 		bl	HAL_GPIO_WritePin
  100:Src/motor.c   **** 
- 101:Src/motor.c   ****         }
- 102:Src/motor.c   ****         else if(phase  == 3)
- 103:Src/motor.c   ****         {
- 104:Src/motor.c   **** 
- 105:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
- 106:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+ 101:Src/motor.c   **** 
+ 102:Src/motor.c   ****             phase ++;
+ 297              		.loc 1 102 0
+ 298 01b2 364B     		ldr	r3, .L15+4
+ 299 01b4 1B68     		ldr	r3, [r3]
+ 300 01b6 0133     		adds	r3, r3, #1
+ 301 01b8 344A     		ldr	r2, .L15+4
+ 302 01ba 1360     		str	r3, [r2]
+ARM GAS  /tmp/ccIHoMGM.s 			page 8
+
+
+ 303 01bc 40E0     		b	.L9
+ 304              	.L11:
+ 103:Src/motor.c   **** 
+ 104:Src/motor.c   ****         }
+ 105:Src/motor.c   ****         else if(phase  == 3)
+ 305              		.loc 1 105 0
+ 306 01be 334B     		ldr	r3, .L15+4
+ 307 01c0 1B68     		ldr	r3, [r3]
+ 308 01c2 032B     		cmp	r3, #3
+ 309 01c4 1DD1     		bne	.L12
+ 106:Src/motor.c   ****         {
  107:Src/motor.c   **** 
- 108:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
- 109:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
- 110:Src/motor.c   **** 
- 111:Src/motor.c   ****             phase ++;
- 112:Src/motor.c   **** 
- 113:Src/motor.c   ****         }
- 114:Src/motor.c   ****         else if(phase  == 4)
- 115:Src/motor.c   ****         {
- 116:Src/motor.c   **** 
- 117:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
- 118:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
- 119:Src/motor.c   **** 
- 120:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
- 121:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
- 122:Src/motor.c   ****             phase  = 1;
- 123:Src/motor.c   **** 
- 124:Src/motor.c   ****         }
- 125:Src/motor.c   **** 
- 126:Src/motor.c   ****     }
- 127:Src/motor.c   **** 
- 128:Src/motor.c   **** 
- 129:Src/motor.c   **** //    if(motor1.degree <= 0)
- 130:Src/motor.c   **** //    {
- 131:Src/motor.c   **** //        motor1.direction = STOP;
- 132:Src/motor.c   **** //        motor1.degree = 0;
- 133:Src/motor.c   **** 
- 134:Src/motor.c   **** //    }
- 135:Src/motor.c   **** }
- 258              		.loc 1 135 0
- 259 0164 62E0     		b	.L13
- 260              	.L10:
-  89:Src/motor.c   ****         {
- 261              		.loc 1 89 0
- 262 0166 334B     		ldr	r3, .L14
- 263 0168 1B68     		ldr	r3, [r3]
- 264 016a 022B     		cmp	r3, #2
- 265 016c 1DD1     		bne	.L11
-  92:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
- 266              		.loc 1 92 0
- 267 016e 0122     		movs	r2, #1
-ARM GAS  /tmp/ccL05mal.s 			page 8
-
-
- 268 0170 4FF48041 		mov	r1, #16384
- 269 0174 3048     		ldr	r0, .L14+4
- 270 0176 FFF7FEFF 		bl	HAL_GPIO_WritePin
-  93:Src/motor.c   **** 
- 271              		.loc 1 93 0
- 272 017a 0022     		movs	r2, #0
- 273 017c 4FF40051 		mov	r1, #8192
- 274 0180 2D48     		ldr	r0, .L14+4
- 275 0182 FFF7FEFF 		bl	HAL_GPIO_WritePin
-  95:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
- 276              		.loc 1 95 0
- 277 0186 0122     		movs	r2, #1
- 278 0188 4FF40041 		mov	r1, #32768
- 279 018c 2A48     		ldr	r0, .L14+4
- 280 018e FFF7FEFF 		bl	HAL_GPIO_WritePin
-  96:Src/motor.c   **** 
- 281              		.loc 1 96 0
- 282 0192 0022     		movs	r2, #0
- 283 0194 4FF48071 		mov	r1, #256
- 284 0198 2848     		ldr	r0, .L14+8
- 285 019a FFF7FEFF 		bl	HAL_GPIO_WritePin
-  99:Src/motor.c   **** 
- 286              		.loc 1 99 0
- 287 019e 254B     		ldr	r3, .L14
- 288 01a0 1B68     		ldr	r3, [r3]
- 289 01a2 0133     		adds	r3, r3, #1
- 290 01a4 234A     		ldr	r2, .L14
- 291 01a6 1360     		str	r3, [r2]
- 292              		.loc 1 135 0
- 293 01a8 40E0     		b	.L13
- 294              	.L11:
- 102:Src/motor.c   ****         {
- 295              		.loc 1 102 0
- 296 01aa 224B     		ldr	r3, .L14
- 297 01ac 1B68     		ldr	r3, [r3]
- 298 01ae 032B     		cmp	r3, #3
- 299 01b0 1DD1     		bne	.L12
- 105:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
- 300              		.loc 1 105 0
- 301 01b2 0122     		movs	r2, #1
- 302 01b4 4FF40051 		mov	r1, #8192
- 303 01b8 1F48     		ldr	r0, .L14+4
- 304 01ba FFF7FEFF 		bl	HAL_GPIO_WritePin
- 106:Src/motor.c   **** 
- 305              		.loc 1 106 0
- 306 01be 0022     		movs	r2, #0
- 307 01c0 4FF48041 		mov	r1, #16384
- 308 01c4 1C48     		ldr	r0, .L14+4
- 309 01c6 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 108:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+ 108:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
  310              		.loc 1 108 0
- 311 01ca 0122     		movs	r2, #1
- 312 01cc 4FF40041 		mov	r1, #32768
- 313 01d0 1948     		ldr	r0, .L14+4
- 314 01d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 109:Src/motor.c   **** 
+ 311 01c6 0122     		movs	r2, #1
+ 312 01c8 4FF40051 		mov	r1, #8192
+ 313 01cc 3048     		ldr	r0, .L15+8
+ 314 01ce FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 109:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
  315              		.loc 1 109 0
-ARM GAS  /tmp/ccL05mal.s 			page 9
-
-
- 316 01d6 0022     		movs	r2, #0
- 317 01d8 4FF48071 		mov	r1, #256
- 318 01dc 1748     		ldr	r0, .L14+8
- 319 01de FFF7FEFF 		bl	HAL_GPIO_WritePin
- 111:Src/motor.c   **** 
+ 316 01d2 0022     		movs	r2, #0
+ 317 01d4 4FF48041 		mov	r1, #16384
+ 318 01d8 2D48     		ldr	r0, .L15+8
+ 319 01da FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 110:Src/motor.c   **** 
+ 111:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_SET);
  320              		.loc 1 111 0
- 321 01e2 144B     		ldr	r3, .L14
- 322 01e4 1B68     		ldr	r3, [r3]
- 323 01e6 0133     		adds	r3, r3, #1
- 324 01e8 124A     		ldr	r2, .L14
- 325 01ea 1360     		str	r3, [r2]
- 326              		.loc 1 135 0
- 327 01ec 1EE0     		b	.L13
- 328              	.L12:
- 114:Src/motor.c   ****         {
- 329              		.loc 1 114 0
- 330 01ee 114B     		ldr	r3, .L14
- 331 01f0 1B68     		ldr	r3, [r3]
- 332 01f2 042B     		cmp	r3, #4
- 333 01f4 1AD1     		bne	.L13
- 117:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
- 334              		.loc 1 117 0
- 335 01f6 0122     		movs	r2, #1
- 336 01f8 4FF40051 		mov	r1, #8192
- 337 01fc 0E48     		ldr	r0, .L14+4
- 338 01fe FFF7FEFF 		bl	HAL_GPIO_WritePin
- 118:Src/motor.c   **** 
- 339              		.loc 1 118 0
- 340 0202 0022     		movs	r2, #0
- 341 0204 4FF48041 		mov	r1, #16384
- 342 0208 0B48     		ldr	r0, .L14+4
- 343 020a FFF7FEFF 		bl	HAL_GPIO_WritePin
- 120:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
- 344              		.loc 1 120 0
- 345 020e 0122     		movs	r2, #1
- 346 0210 4FF48071 		mov	r1, #256
- 347 0214 0948     		ldr	r0, .L14+8
- 348 0216 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 121:Src/motor.c   ****             phase  = 1;
- 349              		.loc 1 121 0
- 350 021a 0022     		movs	r2, #0
- 351 021c 4FF40041 		mov	r1, #32768
- 352 0220 0548     		ldr	r0, .L14+4
- 353 0222 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 321 01de 0122     		movs	r2, #1
+ 322 01e0 4FF40041 		mov	r1, #32768
+ 323 01e4 2A48     		ldr	r0, .L15+8
+ 324 01e6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 112:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+ 325              		.loc 1 112 0
+ 326 01ea 0022     		movs	r2, #0
+ 327 01ec 4FF48071 		mov	r1, #256
+ 328 01f0 2848     		ldr	r0, .L15+12
+ 329 01f2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 113:Src/motor.c   **** 
+ 114:Src/motor.c   ****             phase ++;
+ 330              		.loc 1 114 0
+ 331 01f6 254B     		ldr	r3, .L15+4
+ 332 01f8 1B68     		ldr	r3, [r3]
+ 333 01fa 0133     		adds	r3, r3, #1
+ 334 01fc 234A     		ldr	r2, .L15+4
+ 335 01fe 1360     		str	r3, [r2]
+ 336 0200 1EE0     		b	.L9
+ 337              	.L12:
+ 115:Src/motor.c   **** 
+ 116:Src/motor.c   ****         }
+ 117:Src/motor.c   ****         else if(phase  == 4)
+ 338              		.loc 1 117 0
+ 339 0202 224B     		ldr	r3, .L15+4
+ 340 0204 1B68     		ldr	r3, [r3]
+ 341 0206 042B     		cmp	r3, #4
+ 342 0208 1AD1     		bne	.L9
+ 118:Src/motor.c   ****         {
+ 119:Src/motor.c   **** 
+ARM GAS  /tmp/ccIHoMGM.s 			page 9
+
+
+ 120:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
+ 343              		.loc 1 120 0
+ 344 020a 0122     		movs	r2, #1
+ 345 020c 4FF40051 		mov	r1, #8192
+ 346 0210 1F48     		ldr	r0, .L15+8
+ 347 0212 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 121:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+ 348              		.loc 1 121 0
+ 349 0216 0022     		movs	r2, #0
+ 350 0218 4FF48041 		mov	r1, #16384
+ 351 021c 1C48     		ldr	r0, .L15+8
+ 352 021e FFF7FEFF 		bl	HAL_GPIO_WritePin
  122:Src/motor.c   **** 
- 354              		.loc 1 122 0
- 355 0226 034B     		ldr	r3, .L14
- 356 0228 0122     		movs	r2, #1
- 357 022a 1A60     		str	r2, [r3]
- 358              	.L13:
- 359              		.loc 1 135 0
- 360 022c 00BF     		nop
- 361 022e 0837     		adds	r7, r7, #8
- 362              	.LCFI5:
- 363              		.cfi_def_cfa_offset 8
- 364 0230 BD46     		mov	sp, r7
- 365              	.LCFI6:
-ARM GAS  /tmp/ccL05mal.s 			page 10
+ 123:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_SET);
+ 353              		.loc 1 123 0
+ 354 0222 0122     		movs	r2, #1
+ 355 0224 4FF48071 		mov	r1, #256
+ 356 0228 1A48     		ldr	r0, .L15+12
+ 357 022a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 124:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+ 358              		.loc 1 124 0
+ 359 022e 0022     		movs	r2, #0
+ 360 0230 4FF40041 		mov	r1, #32768
+ 361 0234 1648     		ldr	r0, .L15+8
+ 362 0236 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 125:Src/motor.c   ****             phase  = 1;
+ 363              		.loc 1 125 0
+ 364 023a 144B     		ldr	r3, .L15+4
+ 365 023c 0122     		movs	r2, #1
+ 366 023e 1A60     		str	r2, [r3]
+ 367              	.L9:
+ 126:Src/motor.c   **** 
+ 127:Src/motor.c   ****         }
+ 128:Src/motor.c   **** 
+ 129:Src/motor.c   ****     }
+ 130:Src/motor.c   **** 
+ 131:Src/motor.c   ****     if(Direction == STOP)
+ 368              		.loc 1 131 0
+ 369 0240 7B68     		ldr	r3, [r7, #4]
+ 370 0242 002B     		cmp	r3, #0
+ 371 0244 1CD1     		bne	.L14
+ 132:Src/motor.c   ****     {
+ 133:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP1_GPIO_Port, ENABLE_STEP1_PIN,GPIO_PIN_RESET);
+ 372              		.loc 1 133 0
+ 373 0246 0022     		movs	r2, #0
+ 374 0248 1021     		movs	r1, #16
+ 375 024a 0F48     		ldr	r0, .L15
+ 376 024c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 134:Src/motor.c   **** 
+ 135:Src/motor.c   ****         HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_RESET);
+ 377              		.loc 1 135 0
+ 378 0250 0022     		movs	r2, #0
+ 379 0252 4FF40051 		mov	r1, #8192
+ 380 0256 0E48     		ldr	r0, .L15+8
+ 381 0258 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 136:Src/motor.c   ****         HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
+ 382              		.loc 1 136 0
+ARM GAS  /tmp/ccIHoMGM.s 			page 10
 
 
- 366              		.cfi_def_cfa_register 13
- 367              		@ sp needed
- 368 0232 80BD     		pop	{r7, pc}
- 369              	.L15:
- 370              		.align	2
- 371              	.L14:
- 372 0234 00000000 		.word	phase.9801
- 373 0238 00040240 		.word	1073873920
- 374 023c 000C0240 		.word	1073875968
- 375              		.cfi_endproc
- 376              	.LFE137:
- 378              		.section	.text.motor2Drive,"ax",%progbits
- 379              		.align	1
- 380              		.global	motor2Drive
- 381              		.syntax unified
- 382              		.thumb
- 383              		.thumb_func
- 384              		.fpu fpv4-sp-d16
- 386              	motor2Drive:
- 387              	.LFB138:
- 136:Src/motor.c   **** 
- 137:Src/motor.c   **** void motor2Drive(int Direction)
- 138:Src/motor.c   **** {
- 388              		.loc 1 138 0
- 389              		.cfi_startproc
- 390              		@ args = 0, pretend = 0, frame = 8
- 391              		@ frame_needed = 1, uses_anonymous_args = 0
- 392 0000 80B5     		push	{r7, lr}
- 393              	.LCFI7:
- 394              		.cfi_def_cfa_offset 8
- 395              		.cfi_offset 7, -8
- 396              		.cfi_offset 14, -4
- 397 0002 82B0     		sub	sp, sp, #8
- 398              	.LCFI8:
- 399              		.cfi_def_cfa_offset 16
- 400 0004 00AF     		add	r7, sp, #0
- 401              	.LCFI9:
- 402              		.cfi_def_cfa_register 7
- 403 0006 7860     		str	r0, [r7, #4]
- 139:Src/motor.c   **** 
- 140:Src/motor.c   ****     static volatile int phase = 1;
+ 383 025c 0022     		movs	r2, #0
+ 384 025e 4FF48041 		mov	r1, #16384
+ 385 0262 0B48     		ldr	r0, .L15+8
+ 386 0264 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 137:Src/motor.c   **** 
+ 138:Src/motor.c   ****         HAL_GPIO_WritePin(STEP1_BI1_GPIO_Port, STEP1_BI1_Pin, GPIO_PIN_RESET);
+ 387              		.loc 1 138 0
+ 388 0268 0022     		movs	r2, #0
+ 389 026a 4FF48071 		mov	r1, #256
+ 390 026e 0948     		ldr	r0, .L15+12
+ 391 0270 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 139:Src/motor.c   ****         HAL_GPIO_WritePin(STEP1_BI2_GPIO_Port, STEP1_BI2_Pin, GPIO_PIN_RESET);
+ 392              		.loc 1 139 0
+ 393 0274 0022     		movs	r2, #0
+ 394 0276 4FF40041 		mov	r1, #32768
+ 395 027a 0548     		ldr	r0, .L15+8
+ 396 027c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 397              	.L14:
+ 140:Src/motor.c   ****     }
  141:Src/motor.c   **** 
- 142:Src/motor.c   ****     if(Direction == FORWARD)
- 404              		.loc 1 142 0
- 405 0008 7B68     		ldr	r3, [r7, #4]
- 406 000a 012B     		cmp	r3, #1
- 407 000c 40F08580 		bne	.L17
- 143:Src/motor.c   ****     {
+ 142:Src/motor.c   **** 
+ 143:Src/motor.c   **** }
+ 398              		.loc 1 143 0
+ 399 0280 00BF     		nop
+ 400 0282 0837     		adds	r7, r7, #8
+ 401              	.LCFI5:
+ 402              		.cfi_def_cfa_offset 8
+ 403 0284 BD46     		mov	sp, r7
+ 404              	.LCFI6:
+ 405              		.cfi_def_cfa_register 13
+ 406              		@ sp needed
+ 407 0286 80BD     		pop	{r7, pc}
+ 408              	.L16:
+ 409              		.align	2
+ 410              	.L15:
+ 411 0288 00080240 		.word	1073874944
+ 412 028c 00000000 		.word	phase.9802
+ 413 0290 00040240 		.word	1073873920
+ 414 0294 000C0240 		.word	1073875968
+ 415              		.cfi_endproc
+ 416              	.LFE137:
+ 418              		.section	.text.motor2Drive,"ax",%progbits
+ 419              		.align	1
+ 420              		.global	motor2Drive
+ 421              		.syntax unified
+ 422              		.thumb
+ 423              		.thumb_func
+ 424              		.fpu fpv4-sp-d16
+ 426              	motor2Drive:
+ 427              	.LFB138:
  144:Src/motor.c   **** 
- 145:Src/motor.c   **** //            motor2.degree--;
- 146:Src/motor.c   **** 
- 147:Src/motor.c   ****           if(phase  == 1)
- 408              		.loc 1 147 0
- 409 0010 884B     		ldr	r3, .L26
- 410 0012 1B68     		ldr	r3, [r3]
- 411 0014 012B     		cmp	r3, #1
- 412 0016 1DD1     		bne	.L18
-ARM GAS  /tmp/ccL05mal.s 			page 11
+ 145:Src/motor.c   **** void motor2Drive(int Direction)
+ 146:Src/motor.c   **** {
+ 428              		.loc 1 146 0
+ 429              		.cfi_startproc
+ 430              		@ args = 0, pretend = 0, frame = 8
+ 431              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  /tmp/ccIHoMGM.s 			page 11
 
 
- 148:Src/motor.c   ****           {
+ 432 0000 80B5     		push	{r7, lr}
+ 433              	.LCFI7:
+ 434              		.cfi_def_cfa_offset 8
+ 435              		.cfi_offset 7, -8
+ 436              		.cfi_offset 14, -4
+ 437 0002 82B0     		sub	sp, sp, #8
+ 438              	.LCFI8:
+ 439              		.cfi_def_cfa_offset 16
+ 440 0004 00AF     		add	r7, sp, #0
+ 441              	.LCFI9:
+ 442              		.cfi_def_cfa_register 7
+ 443 0006 7860     		str	r0, [r7, #4]
+ 147:Src/motor.c   **** 
+ 148:Src/motor.c   ****     static volatile int phase = 1;
  149:Src/motor.c   **** 
- 150:Src/motor.c   **** 
- 151:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
- 413              		.loc 1 151 0
- 414 0018 0122     		movs	r2, #1
- 415 001a 4FF48061 		mov	r1, #1024
- 416 001e 8648     		ldr	r0, .L26+4
- 417 0020 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 152:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 418              		.loc 1 152 0
- 419 0024 0022     		movs	r2, #0
- 420 0026 4FF40061 		mov	r1, #2048
- 421 002a 8348     		ldr	r0, .L26+4
- 422 002c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 153:Src/motor.c   **** 
- 154:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 423              		.loc 1 154 0
- 424 0030 0122     		movs	r2, #1
- 425 0032 4FF40051 		mov	r1, #8192
- 426 0036 8048     		ldr	r0, .L26+4
- 427 0038 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 155:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 428              		.loc 1 155 0
- 429 003c 0022     		movs	r2, #0
- 430 003e 4FF48051 		mov	r1, #4096
- 431 0042 7D48     		ldr	r0, .L26+4
- 432 0044 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 156:Src/motor.c   ****               phase ++;
- 433              		.loc 1 156 0
- 434 0048 7A4B     		ldr	r3, .L26
- 435 004a 1B68     		ldr	r3, [r3]
- 436 004c 0133     		adds	r3, r3, #1
- 437 004e 794A     		ldr	r2, .L26
- 438 0050 1360     		str	r3, [r2]
- 439 0052 62E0     		b	.L17
- 440              	.L18:
+ 150:Src/motor.c   ****     if(Direction == FORWARD)
+ 444              		.loc 1 150 0
+ 445 0008 7B68     		ldr	r3, [r7, #4]
+ 446 000a 012B     		cmp	r3, #1
+ 447 000c 40F08A80 		bne	.L18
+ 151:Src/motor.c   ****     {
+ 152:Src/motor.c   **** 
+ 153:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP2_GPIO_Port, ENABLE_STEP2_PIN,GPIO_PIN_SET);
+ 448              		.loc 1 153 0
+ 449 0010 0122     		movs	r2, #1
+ 450 0012 2021     		movs	r1, #32
+ 451 0014 9C48     		ldr	r0, .L28
+ 452 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 154:Src/motor.c   **** 
+ 155:Src/motor.c   ****           if(phase  == 1)
+ 453              		.loc 1 155 0
+ 454 001a 9C4B     		ldr	r3, .L28+4
+ 455 001c 1B68     		ldr	r3, [r3]
+ 456 001e 012B     		cmp	r3, #1
+ 457 0020 1DD1     		bne	.L19
+ 156:Src/motor.c   ****           {
  157:Src/motor.c   **** 
- 158:Src/motor.c   ****           }
- 159:Src/motor.c   ****           else if(phase  == 2)
- 441              		.loc 1 159 0
- 442 0054 774B     		ldr	r3, .L26
- 443 0056 1B68     		ldr	r3, [r3]
- 444 0058 022B     		cmp	r3, #2
- 445 005a 1DD1     		bne	.L19
- 160:Src/motor.c   ****           {
+ 158:Src/motor.c   **** 
+ 159:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+ 458              		.loc 1 159 0
+ 459 0022 0122     		movs	r2, #1
+ 460 0024 4FF48061 		mov	r1, #1024
+ 461 0028 9948     		ldr	r0, .L28+8
+ 462 002a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 160:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+ 463              		.loc 1 160 0
+ 464 002e 0022     		movs	r2, #0
+ 465 0030 4FF40061 		mov	r1, #2048
+ 466 0034 9648     		ldr	r0, .L28+8
+ 467 0036 FFF7FEFF 		bl	HAL_GPIO_WritePin
  161:Src/motor.c   **** 
- 162:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
- 446              		.loc 1 162 0
- 447 005c 0122     		movs	r2, #1
- 448 005e 4FF48061 		mov	r1, #1024
- 449 0062 7548     		ldr	r0, .L26+4
- 450 0064 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 163:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 451              		.loc 1 163 0
- 452 0068 0022     		movs	r2, #0
- 453 006a 4FF40061 		mov	r1, #2048
-ARM GAS  /tmp/ccL05mal.s 			page 12
+ 162:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+ 468              		.loc 1 162 0
+ 469 003a 0122     		movs	r2, #1
+ 470 003c 4FF40051 		mov	r1, #8192
+ 471 0040 9348     		ldr	r0, .L28+8
+ 472 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /tmp/ccIHoMGM.s 			page 12
 
 
- 454 006e 7248     		ldr	r0, .L26+4
- 455 0070 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 164:Src/motor.c   **** 
- 165:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 456              		.loc 1 165 0
- 457 0074 0122     		movs	r2, #1
- 458 0076 4FF48051 		mov	r1, #4096
- 459 007a 6F48     		ldr	r0, .L26+4
- 460 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 166:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 461              		.loc 1 166 0
- 462 0080 0022     		movs	r2, #0
- 463 0082 4FF40051 		mov	r1, #8192
- 464 0086 6C48     		ldr	r0, .L26+4
- 465 0088 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 167:Src/motor.c   ****               phase ++;
- 466              		.loc 1 167 0
- 467 008c 694B     		ldr	r3, .L26
- 468 008e 1B68     		ldr	r3, [r3]
- 469 0090 0133     		adds	r3, r3, #1
- 470 0092 684A     		ldr	r2, .L26
- 471 0094 1360     		str	r3, [r2]
- 472 0096 40E0     		b	.L17
- 473              	.L19:
- 168:Src/motor.c   **** 
- 169:Src/motor.c   ****           }
- 170:Src/motor.c   ****           else if(phase  == 3)
- 474              		.loc 1 170 0
- 475 0098 664B     		ldr	r3, .L26
- 476 009a 1B68     		ldr	r3, [r3]
- 477 009c 032B     		cmp	r3, #3
- 478 009e 1DD1     		bne	.L20
- 171:Src/motor.c   ****           {
+ 163:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+ 473              		.loc 1 163 0
+ 474 0046 0022     		movs	r2, #0
+ 475 0048 4FF48051 		mov	r1, #4096
+ 476 004c 9048     		ldr	r0, .L28+8
+ 477 004e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 164:Src/motor.c   ****               phase ++;
+ 478              		.loc 1 164 0
+ 479 0052 8E4B     		ldr	r3, .L28+4
+ 480 0054 1B68     		ldr	r3, [r3]
+ 481 0056 0133     		adds	r3, r3, #1
+ 482 0058 8C4A     		ldr	r2, .L28+4
+ 483 005a 1360     		str	r3, [r2]
+ 484 005c 62E0     		b	.L18
+ 485              	.L19:
+ 165:Src/motor.c   **** 
+ 166:Src/motor.c   ****           }
+ 167:Src/motor.c   ****           else if(phase  == 2)
+ 486              		.loc 1 167 0
+ 487 005e 8B4B     		ldr	r3, .L28+4
+ 488 0060 1B68     		ldr	r3, [r3]
+ 489 0062 022B     		cmp	r3, #2
+ 490 0064 1DD1     		bne	.L20
+ 168:Src/motor.c   ****           {
+ 169:Src/motor.c   **** 
+ 170:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+ 491              		.loc 1 170 0
+ 492 0066 0122     		movs	r2, #1
+ 493 0068 4FF48061 		mov	r1, #1024
+ 494 006c 8848     		ldr	r0, .L28+8
+ 495 006e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 171:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+ 496              		.loc 1 171 0
+ 497 0072 0022     		movs	r2, #0
+ 498 0074 4FF40061 		mov	r1, #2048
+ 499 0078 8548     		ldr	r0, .L28+8
+ 500 007a FFF7FEFF 		bl	HAL_GPIO_WritePin
  172:Src/motor.c   **** 
- 173:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 479              		.loc 1 173 0
- 480 00a0 0122     		movs	r2, #1
- 481 00a2 4FF40061 		mov	r1, #2048
- 482 00a6 6448     		ldr	r0, .L26+4
- 483 00a8 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 174:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 484              		.loc 1 174 0
- 485 00ac 0022     		movs	r2, #0
- 486 00ae 4FF48061 		mov	r1, #1024
- 487 00b2 6148     		ldr	r0, .L26+4
- 488 00b4 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 175:Src/motor.c   **** 
- 176:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 489              		.loc 1 176 0
- 490 00b8 0122     		movs	r2, #1
- 491 00ba 4FF48051 		mov	r1, #4096
- 492 00be 5E48     		ldr	r0, .L26+4
- 493 00c0 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 177:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 494              		.loc 1 177 0
- 495 00c4 0022     		movs	r2, #0
- 496 00c6 4FF40051 		mov	r1, #8192
-ARM GAS  /tmp/ccL05mal.s 			page 13
+ 173:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+ 501              		.loc 1 173 0
+ 502 007e 0122     		movs	r2, #1
+ 503 0080 4FF48051 		mov	r1, #4096
+ 504 0084 8248     		ldr	r0, .L28+8
+ 505 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 174:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 506              		.loc 1 174 0
+ 507 008a 0022     		movs	r2, #0
+ 508 008c 4FF40051 		mov	r1, #8192
+ 509 0090 7F48     		ldr	r0, .L28+8
+ 510 0092 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 175:Src/motor.c   ****               phase ++;
+ 511              		.loc 1 175 0
+ 512 0096 7D4B     		ldr	r3, .L28+4
+ 513 0098 1B68     		ldr	r3, [r3]
+ 514 009a 0133     		adds	r3, r3, #1
+ 515 009c 7B4A     		ldr	r2, .L28+4
+ 516 009e 1360     		str	r3, [r2]
+ARM GAS  /tmp/ccIHoMGM.s 			page 13
 
 
- 497 00ca 5B48     		ldr	r0, .L26+4
- 498 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
- 178:Src/motor.c   ****               phase ++;
- 499              		.loc 1 178 0
- 500 00d0 584B     		ldr	r3, .L26
- 501 00d2 1B68     		ldr	r3, [r3]
- 502 00d4 0133     		adds	r3, r3, #1
- 503 00d6 574A     		ldr	r2, .L26
- 504 00d8 1360     		str	r3, [r2]
- 505 00da 1EE0     		b	.L17
- 506              	.L20:
- 179:Src/motor.c   **** 
- 180:Src/motor.c   ****           }
- 181:Src/motor.c   ****           else if(phase  == 4)
- 507              		.loc 1 181 0
- 508 00dc 554B     		ldr	r3, .L26
- 509 00de 1B68     		ldr	r3, [r3]
- 510 00e0 042B     		cmp	r3, #4
- 511 00e2 1AD1     		bne	.L17
- 182:Src/motor.c   ****           {
+ 517 00a0 40E0     		b	.L18
+ 518              	.L20:
+ 176:Src/motor.c   **** 
+ 177:Src/motor.c   ****           }
+ 178:Src/motor.c   ****           else if(phase  == 3)
+ 519              		.loc 1 178 0
+ 520 00a2 7A4B     		ldr	r3, .L28+4
+ 521 00a4 1B68     		ldr	r3, [r3]
+ 522 00a6 032B     		cmp	r3, #3
+ 523 00a8 1DD1     		bne	.L21
+ 179:Src/motor.c   ****           {
+ 180:Src/motor.c   **** 
+ 181:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+ 524              		.loc 1 181 0
+ 525 00aa 0122     		movs	r2, #1
+ 526 00ac 4FF40061 		mov	r1, #2048
+ 527 00b0 7748     		ldr	r0, .L28+8
+ 528 00b2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 182:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+ 529              		.loc 1 182 0
+ 530 00b6 0022     		movs	r2, #0
+ 531 00b8 4FF48061 		mov	r1, #1024
+ 532 00bc 7448     		ldr	r0, .L28+8
+ 533 00be FFF7FEFF 		bl	HAL_GPIO_WritePin
  183:Src/motor.c   **** 
- 184:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 512              		.loc 1 184 0
- 513 00e4 0122     		movs	r2, #1
- 514 00e6 4FF40061 		mov	r1, #2048
- 515 00ea 5348     		ldr	r0, .L26+4
- 516 00ec FFF7FEFF 		bl	HAL_GPIO_WritePin
- 185:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 517              		.loc 1 185 0
- 518 00f0 0022     		movs	r2, #0
- 519 00f2 4FF48061 		mov	r1, #1024
- 520 00f6 5048     		ldr	r0, .L26+4
- 521 00f8 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 186:Src/motor.c   **** 
- 187:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 522              		.loc 1 187 0
- 523 00fc 0122     		movs	r2, #1
- 524 00fe 4FF40051 		mov	r1, #8192
- 525 0102 4D48     		ldr	r0, .L26+4
- 526 0104 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 188:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 527              		.loc 1 188 0
- 528 0108 0022     		movs	r2, #0
- 529 010a 4FF48051 		mov	r1, #4096
- 530 010e 4A48     		ldr	r0, .L26+4
- 531 0110 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 189:Src/motor.c   ****               phase  = 1;
- 532              		.loc 1 189 0
- 533 0114 474B     		ldr	r3, .L26
- 534 0116 0122     		movs	r2, #1
- 535 0118 1A60     		str	r2, [r3]
- 536              	.L17:
- 190:Src/motor.c   **** 
- 191:Src/motor.c   ****           }
- 192:Src/motor.c   **** 
- 193:Src/motor.c   **** 
- 194:Src/motor.c   ****     }
-ARM GAS  /tmp/ccL05mal.s 			page 14
+ 184:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+ 534              		.loc 1 184 0
+ 535 00c2 0122     		movs	r2, #1
+ 536 00c4 4FF48051 		mov	r1, #4096
+ 537 00c8 7148     		ldr	r0, .L28+8
+ 538 00ca FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 185:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 539              		.loc 1 185 0
+ 540 00ce 0022     		movs	r2, #0
+ 541 00d0 4FF40051 		mov	r1, #8192
+ 542 00d4 6E48     		ldr	r0, .L28+8
+ 543 00d6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 186:Src/motor.c   ****               phase ++;
+ 544              		.loc 1 186 0
+ 545 00da 6C4B     		ldr	r3, .L28+4
+ 546 00dc 1B68     		ldr	r3, [r3]
+ 547 00de 0133     		adds	r3, r3, #1
+ 548 00e0 6A4A     		ldr	r2, .L28+4
+ 549 00e2 1360     		str	r3, [r2]
+ 550 00e4 1EE0     		b	.L18
+ 551              	.L21:
+ 187:Src/motor.c   **** 
+ 188:Src/motor.c   ****           }
+ 189:Src/motor.c   ****           else if(phase  == 4)
+ 552              		.loc 1 189 0
+ 553 00e6 694B     		ldr	r3, .L28+4
+ 554 00e8 1B68     		ldr	r3, [r3]
+ 555 00ea 042B     		cmp	r3, #4
+ 556 00ec 1AD1     		bne	.L18
+ 190:Src/motor.c   ****           {
+ 191:Src/motor.c   **** 
+ 192:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+ARM GAS  /tmp/ccIHoMGM.s 			page 14
 
 
- 195:Src/motor.c   **** 
- 196:Src/motor.c   ****     if(Direction == BACKWARD)
- 537              		.loc 1 196 0
- 538 011a 7B68     		ldr	r3, [r7, #4]
- 539 011c 022B     		cmp	r3, #2
- 540 011e 40F08580 		bne	.L25
- 197:Src/motor.c   ****     {
- 198:Src/motor.c   ****         if(phase  == 1)
- 541              		.loc 1 198 0
- 542 0122 444B     		ldr	r3, .L26
- 543 0124 1B68     		ldr	r3, [r3]
- 544 0126 012B     		cmp	r3, #1
- 545 0128 1DD1     		bne	.L22
- 199:Src/motor.c   ****         {
+ 557              		.loc 1 192 0
+ 558 00ee 0122     		movs	r2, #1
+ 559 00f0 4FF40061 		mov	r1, #2048
+ 560 00f4 6648     		ldr	r0, .L28+8
+ 561 00f6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 193:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+ 562              		.loc 1 193 0
+ 563 00fa 0022     		movs	r2, #0
+ 564 00fc 4FF48061 		mov	r1, #1024
+ 565 0100 6348     		ldr	r0, .L28+8
+ 566 0102 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 194:Src/motor.c   **** 
+ 195:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+ 567              		.loc 1 195 0
+ 568 0106 0122     		movs	r2, #1
+ 569 0108 4FF40051 		mov	r1, #8192
+ 570 010c 6048     		ldr	r0, .L28+8
+ 571 010e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 196:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+ 572              		.loc 1 196 0
+ 573 0112 0022     		movs	r2, #0
+ 574 0114 4FF48051 		mov	r1, #4096
+ 575 0118 5D48     		ldr	r0, .L28+8
+ 576 011a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 197:Src/motor.c   ****               phase  = 1;
+ 577              		.loc 1 197 0
+ 578 011e 5B4B     		ldr	r3, .L28+4
+ 579 0120 0122     		movs	r2, #1
+ 580 0122 1A60     		str	r2, [r3]
+ 581              	.L18:
+ 198:Src/motor.c   **** 
+ 199:Src/motor.c   ****           }
  200:Src/motor.c   **** 
- 201:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 546              		.loc 1 201 0
- 547 012a 0122     		movs	r2, #1
- 548 012c 4FF40061 		mov	r1, #2048
- 549 0130 4148     		ldr	r0, .L26+4
- 550 0132 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 202:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 551              		.loc 1 202 0
- 552 0136 0022     		movs	r2, #0
- 553 0138 4FF48061 		mov	r1, #1024
- 554 013c 3E48     		ldr	r0, .L26+4
- 555 013e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 201:Src/motor.c   **** 
+ 202:Src/motor.c   ****     }
  203:Src/motor.c   **** 
- 204:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 556              		.loc 1 204 0
- 557 0142 0122     		movs	r2, #1
- 558 0144 4FF40051 		mov	r1, #8192
- 559 0148 3B48     		ldr	r0, .L26+4
- 560 014a FFF7FEFF 		bl	HAL_GPIO_WritePin
- 205:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 561              		.loc 1 205 0
- 562 014e 0022     		movs	r2, #0
- 563 0150 4FF48051 		mov	r1, #4096
- 564 0154 3848     		ldr	r0, .L26+4
- 565 0156 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 204:Src/motor.c   ****     if(Direction == BACKWARD)
+ 582              		.loc 1 204 0
+ 583 0124 7B68     		ldr	r3, [r7, #4]
+ 584 0126 022B     		cmp	r3, #2
+ 585 0128 40F08A80 		bne	.L22
+ 205:Src/motor.c   ****     {
  206:Src/motor.c   **** 
- 207:Src/motor.c   **** 
- 208:Src/motor.c   ****             phase ++;
- 566              		.loc 1 208 0
- 567 015a 364B     		ldr	r3, .L26
- 568 015c 1B68     		ldr	r3, [r3]
- 569 015e 0133     		adds	r3, r3, #1
- 570 0160 344A     		ldr	r2, .L26
- 571 0162 1360     		str	r3, [r2]
+ 207:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP2_GPIO_Port, ENABLE_STEP2_PIN,GPIO_PIN_SET);
+ 586              		.loc 1 207 0
+ 587 012c 0122     		movs	r2, #1
+ 588 012e 2021     		movs	r1, #32
+ 589 0130 5548     		ldr	r0, .L28
+ 590 0132 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 208:Src/motor.c   **** 
  209:Src/motor.c   **** 
- 210:Src/motor.c   ****         }
- 211:Src/motor.c   ****         else if(phase  == 2)
- 212:Src/motor.c   ****         {
- 213:Src/motor.c   **** 
- 214:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 215:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 216:Src/motor.c   **** 
-ARM GAS  /tmp/ccL05mal.s 			page 15
+ 210:Src/motor.c   ****         if(phase  == 1)
+ 591              		.loc 1 210 0
+ 592 0136 554B     		ldr	r3, .L28+4
+ 593 0138 1B68     		ldr	r3, [r3]
+ 594 013a 012B     		cmp	r3, #1
+ 595 013c 1DD1     		bne	.L23
+ARM GAS  /tmp/ccIHoMGM.s 			page 15
 
 
- 217:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 218:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 211:Src/motor.c   ****         {
+ 212:Src/motor.c   **** 
+ 213:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+ 596              		.loc 1 213 0
+ 597 013e 0122     		movs	r2, #1
+ 598 0140 4FF40061 		mov	r1, #2048
+ 599 0144 5248     		ldr	r0, .L28+8
+ 600 0146 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 214:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+ 601              		.loc 1 214 0
+ 602 014a 0022     		movs	r2, #0
+ 603 014c 4FF48061 		mov	r1, #1024
+ 604 0150 4F48     		ldr	r0, .L28+8
+ 605 0152 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 215:Src/motor.c   **** 
+ 216:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+ 606              		.loc 1 216 0
+ 607 0156 0122     		movs	r2, #1
+ 608 0158 4FF40051 		mov	r1, #8192
+ 609 015c 4C48     		ldr	r0, .L28+8
+ 610 015e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 217:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+ 611              		.loc 1 217 0
+ 612 0162 0022     		movs	r2, #0
+ 613 0164 4FF48051 		mov	r1, #4096
+ 614 0168 4948     		ldr	r0, .L28+8
+ 615 016a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 218:Src/motor.c   **** 
  219:Src/motor.c   **** 
- 220:Src/motor.c   **** 
- 221:Src/motor.c   ****             phase ++;
- 222:Src/motor.c   **** 
- 223:Src/motor.c   ****         }
- 224:Src/motor.c   ****         else if(phase  == 3)
- 225:Src/motor.c   ****         {
- 226:Src/motor.c   **** 
- 227:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
- 228:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 229:Src/motor.c   **** 
- 230:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 231:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 220:Src/motor.c   ****             phase ++;
+ 616              		.loc 1 220 0
+ 617 016e 474B     		ldr	r3, .L28+4
+ 618 0170 1B68     		ldr	r3, [r3]
+ 619 0172 0133     		adds	r3, r3, #1
+ 620 0174 454A     		ldr	r2, .L28+4
+ 621 0176 1360     		str	r3, [r2]
+ 622 0178 62E0     		b	.L22
+ 623              	.L23:
+ 221:Src/motor.c   **** 
+ 222:Src/motor.c   ****         }
+ 223:Src/motor.c   ****         else if(phase  == 2)
+ 624              		.loc 1 223 0
+ 625 017a 444B     		ldr	r3, .L28+4
+ 626 017c 1B68     		ldr	r3, [r3]
+ 627 017e 022B     		cmp	r3, #2
+ 628 0180 1DD1     		bne	.L24
+ 224:Src/motor.c   ****         {
+ 225:Src/motor.c   **** 
+ 226:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
+ 629              		.loc 1 226 0
+ 630 0182 0122     		movs	r2, #1
+ 631 0184 4FF40061 		mov	r1, #2048
+ 632 0188 4148     		ldr	r0, .L28+8
+ 633 018a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 227:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+ 634              		.loc 1 227 0
+ 635 018e 0022     		movs	r2, #0
+ARM GAS  /tmp/ccIHoMGM.s 			page 16
+
+
+ 636 0190 4FF48061 		mov	r1, #1024
+ 637 0194 3E48     		ldr	r0, .L28+8
+ 638 0196 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 228:Src/motor.c   **** 
+ 229:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+ 639              		.loc 1 229 0
+ 640 019a 0122     		movs	r2, #1
+ 641 019c 4FF48051 		mov	r1, #4096
+ 642 01a0 3B48     		ldr	r0, .L28+8
+ 643 01a2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 230:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 644              		.loc 1 230 0
+ 645 01a6 0022     		movs	r2, #0
+ 646 01a8 4FF40051 		mov	r1, #8192
+ 647 01ac 3848     		ldr	r0, .L28+8
+ 648 01ae FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 231:Src/motor.c   **** 
  232:Src/motor.c   **** 
  233:Src/motor.c   ****             phase ++;
+ 649              		.loc 1 233 0
+ 650 01b2 364B     		ldr	r3, .L28+4
+ 651 01b4 1B68     		ldr	r3, [r3]
+ 652 01b6 0133     		adds	r3, r3, #1
+ 653 01b8 344A     		ldr	r2, .L28+4
+ 654 01ba 1360     		str	r3, [r2]
+ 655 01bc 40E0     		b	.L22
+ 656              	.L24:
  234:Src/motor.c   **** 
  235:Src/motor.c   ****         }
- 236:Src/motor.c   ****         else if(phase  == 4)
+ 236:Src/motor.c   ****         else if(phase  == 3)
+ 657              		.loc 1 236 0
+ 658 01be 334B     		ldr	r3, .L28+4
+ 659 01c0 1B68     		ldr	r3, [r3]
+ 660 01c2 032B     		cmp	r3, #3
+ 661 01c4 1DD1     		bne	.L25
  237:Src/motor.c   ****         {
  238:Src/motor.c   **** 
  239:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+ 662              		.loc 1 239 0
+ 663 01c6 0122     		movs	r2, #1
+ 664 01c8 4FF48061 		mov	r1, #1024
+ 665 01cc 3048     		ldr	r0, .L28+8
+ 666 01ce FFF7FEFF 		bl	HAL_GPIO_WritePin
  240:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+ 667              		.loc 1 240 0
+ 668 01d2 0022     		movs	r2, #0
+ 669 01d4 4FF40061 		mov	r1, #2048
+ 670 01d8 2D48     		ldr	r0, .L28+8
+ 671 01da FFF7FEFF 		bl	HAL_GPIO_WritePin
  241:Src/motor.c   **** 
- 242:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 243:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 244:Src/motor.c   ****             phase  = 1;
- 245:Src/motor.c   **** 
- 246:Src/motor.c   ****         }
- 247:Src/motor.c   **** 
- 248:Src/motor.c   ****     }
- 249:Src/motor.c   **** 
- 250:Src/motor.c   **** }
- 572              		.loc 1 250 0
- 573 0164 62E0     		b	.L25
- 574              	.L22:
- 211:Src/motor.c   ****         {
- 575              		.loc 1 211 0
- 576 0166 334B     		ldr	r3, .L26
- 577 0168 1B68     		ldr	r3, [r3]
- 578 016a 022B     		cmp	r3, #2
- 579 016c 1DD1     		bne	.L23
- 214:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 580              		.loc 1 214 0
- 581 016e 0122     		movs	r2, #1
- 582 0170 4FF40061 		mov	r1, #2048
- 583 0174 3048     		ldr	r0, .L26+4
- 584 0176 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 215:Src/motor.c   **** 
- 585              		.loc 1 215 0
- 586 017a 0022     		movs	r2, #0
- 587 017c 4FF48061 		mov	r1, #1024
- 588 0180 2D48     		ldr	r0, .L26+4
- 589 0182 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 217:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 590              		.loc 1 217 0
-ARM GAS  /tmp/ccL05mal.s 			page 16
+ 242:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
+ 672              		.loc 1 242 0
+ 673 01de 0122     		movs	r2, #1
+ 674 01e0 4FF48051 		mov	r1, #4096
+ 675 01e4 2A48     		ldr	r0, .L28+8
+ 676 01e6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 243:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ARM GAS  /tmp/ccIHoMGM.s 			page 17
 
 
- 591 0186 0122     		movs	r2, #1
- 592 0188 4FF48051 		mov	r1, #4096
- 593 018c 2A48     		ldr	r0, .L26+4
- 594 018e FFF7FEFF 		bl	HAL_GPIO_WritePin
- 218:Src/motor.c   **** 
- 595              		.loc 1 218 0
- 596 0192 0022     		movs	r2, #0
- 597 0194 4FF40051 		mov	r1, #8192
- 598 0198 2748     		ldr	r0, .L26+4
- 599 019a FFF7FEFF 		bl	HAL_GPIO_WritePin
- 221:Src/motor.c   **** 
- 600              		.loc 1 221 0
- 601 019e 254B     		ldr	r3, .L26
- 602 01a0 1B68     		ldr	r3, [r3]
- 603 01a2 0133     		adds	r3, r3, #1
- 604 01a4 234A     		ldr	r2, .L26
- 605 01a6 1360     		str	r3, [r2]
- 606              		.loc 1 250 0
- 607 01a8 40E0     		b	.L25
- 608              	.L23:
- 224:Src/motor.c   ****         {
- 609              		.loc 1 224 0
- 610 01aa 224B     		ldr	r3, .L26
- 611 01ac 1B68     		ldr	r3, [r3]
- 612 01ae 032B     		cmp	r3, #3
- 613 01b0 1DD1     		bne	.L24
- 227:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 614              		.loc 1 227 0
- 615 01b2 0122     		movs	r2, #1
- 616 01b4 4FF48061 		mov	r1, #1024
- 617 01b8 1F48     		ldr	r0, .L26+4
- 618 01ba FFF7FEFF 		bl	HAL_GPIO_WritePin
- 228:Src/motor.c   **** 
- 619              		.loc 1 228 0
- 620 01be 0022     		movs	r2, #0
- 621 01c0 4FF40061 		mov	r1, #2048
- 622 01c4 1C48     		ldr	r0, .L26+4
- 623 01c6 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 230:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 624              		.loc 1 230 0
- 625 01ca 0122     		movs	r2, #1
- 626 01cc 4FF48051 		mov	r1, #4096
- 627 01d0 1948     		ldr	r0, .L26+4
- 628 01d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 231:Src/motor.c   **** 
- 629              		.loc 1 231 0
- 630 01d6 0022     		movs	r2, #0
- 631 01d8 4FF40051 		mov	r1, #8192
- 632 01dc 1648     		ldr	r0, .L26+4
- 633 01de FFF7FEFF 		bl	HAL_GPIO_WritePin
- 233:Src/motor.c   **** 
- 634              		.loc 1 233 0
- 635 01e2 144B     		ldr	r3, .L26
- 636 01e4 1B68     		ldr	r3, [r3]
- 637 01e6 0133     		adds	r3, r3, #1
- 638 01e8 124A     		ldr	r2, .L26
- 639 01ea 1360     		str	r3, [r2]
-ARM GAS  /tmp/ccL05mal.s 			page 17
-
-
- 640              		.loc 1 250 0
- 641 01ec 1EE0     		b	.L25
- 642              	.L24:
- 236:Src/motor.c   ****         {
- 643              		.loc 1 236 0
- 644 01ee 114B     		ldr	r3, .L26
- 645 01f0 1B68     		ldr	r3, [r3]
- 646 01f2 042B     		cmp	r3, #4
- 647 01f4 1AD1     		bne	.L25
- 239:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 648              		.loc 1 239 0
- 649 01f6 0122     		movs	r2, #1
- 650 01f8 4FF48061 		mov	r1, #1024
- 651 01fc 0E48     		ldr	r0, .L26+4
- 652 01fe FFF7FEFF 		bl	HAL_GPIO_WritePin
- 240:Src/motor.c   **** 
- 653              		.loc 1 240 0
- 654 0202 0022     		movs	r2, #0
- 655 0204 4FF40061 		mov	r1, #2048
- 656 0208 0B48     		ldr	r0, .L26+4
- 657 020a FFF7FEFF 		bl	HAL_GPIO_WritePin
- 242:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 658              		.loc 1 242 0
- 659 020e 0122     		movs	r2, #1
- 660 0210 4FF40051 		mov	r1, #8192
- 661 0214 0848     		ldr	r0, .L26+4
- 662 0216 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 243:Src/motor.c   ****             phase  = 1;
- 663              		.loc 1 243 0
- 664 021a 0022     		movs	r2, #0
- 665 021c 4FF48051 		mov	r1, #4096
- 666 0220 0548     		ldr	r0, .L26+4
- 667 0222 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 677              		.loc 1 243 0
+ 678 01ea 0022     		movs	r2, #0
+ 679 01ec 4FF40051 		mov	r1, #8192
+ 680 01f0 2748     		ldr	r0, .L28+8
+ 681 01f2 FFF7FEFF 		bl	HAL_GPIO_WritePin
  244:Src/motor.c   **** 
- 668              		.loc 1 244 0
- 669 0226 034B     		ldr	r3, .L26
- 670 0228 0122     		movs	r2, #1
- 671 022a 1A60     		str	r2, [r3]
- 672              	.L25:
- 673              		.loc 1 250 0
- 674 022c 00BF     		nop
- 675 022e 0837     		adds	r7, r7, #8
- 676              	.LCFI10:
- 677              		.cfi_def_cfa_offset 8
- 678 0230 BD46     		mov	sp, r7
- 679              	.LCFI11:
- 680              		.cfi_def_cfa_register 13
- 681              		@ sp needed
- 682 0232 80BD     		pop	{r7, pc}
- 683              	.L27:
- 684              		.align	2
- 685              	.L26:
- 686 0234 00000000 		.word	phase.9805
- 687 0238 000C0240 		.word	1073875968
- 688              		.cfi_endproc
- 689              	.LFE138:
- 691              		.section	.text.motor3Drive,"ax",%progbits
-ARM GAS  /tmp/ccL05mal.s 			page 18
+ 245:Src/motor.c   ****             phase ++;
+ 682              		.loc 1 245 0
+ 683 01f6 254B     		ldr	r3, .L28+4
+ 684 01f8 1B68     		ldr	r3, [r3]
+ 685 01fa 0133     		adds	r3, r3, #1
+ 686 01fc 234A     		ldr	r2, .L28+4
+ 687 01fe 1360     		str	r3, [r2]
+ 688 0200 1EE0     		b	.L22
+ 689              	.L25:
+ 246:Src/motor.c   **** 
+ 247:Src/motor.c   ****         }
+ 248:Src/motor.c   ****         else if(phase  == 4)
+ 690              		.loc 1 248 0
+ 691 0202 224B     		ldr	r3, .L28+4
+ 692 0204 1B68     		ldr	r3, [r3]
+ 693 0206 042B     		cmp	r3, #4
+ 694 0208 1AD1     		bne	.L22
+ 249:Src/motor.c   ****         {
+ 250:Src/motor.c   **** 
+ 251:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
+ 695              		.loc 1 251 0
+ 696 020a 0122     		movs	r2, #1
+ 697 020c 4FF48061 		mov	r1, #1024
+ 698 0210 1F48     		ldr	r0, .L28+8
+ 699 0212 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 252:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+ 700              		.loc 1 252 0
+ 701 0216 0022     		movs	r2, #0
+ 702 0218 4FF40061 		mov	r1, #2048
+ 703 021c 1C48     		ldr	r0, .L28+8
+ 704 021e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 253:Src/motor.c   **** 
+ 254:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
+ 705              		.loc 1 254 0
+ 706 0222 0122     		movs	r2, #1
+ 707 0224 4FF40051 		mov	r1, #8192
+ 708 0228 1948     		ldr	r0, .L28+8
+ 709 022a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 255:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+ 710              		.loc 1 255 0
+ 711 022e 0022     		movs	r2, #0
+ 712 0230 4FF48051 		mov	r1, #4096
+ 713 0234 1648     		ldr	r0, .L28+8
+ 714 0236 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 256:Src/motor.c   ****             phase  = 1;
+ 715              		.loc 1 256 0
+ 716 023a 144B     		ldr	r3, .L28+4
+ 717 023c 0122     		movs	r2, #1
+ 718 023e 1A60     		str	r2, [r3]
+ 719              	.L22:
+ 257:Src/motor.c   **** 
+ARM GAS  /tmp/ccIHoMGM.s 			page 18
 
 
- 692              		.align	1
- 693              		.global	motor3Drive
- 694              		.syntax unified
- 695              		.thumb
- 696              		.thumb_func
- 697              		.fpu fpv4-sp-d16
- 699              	motor3Drive:
- 700              	.LFB139:
- 251:Src/motor.c   **** 
- 252:Src/motor.c   **** 
- 253:Src/motor.c   **** void  motor3Drive()
- 254:Src/motor.c   **** {
- 701              		.loc 1 254 0
- 702              		.cfi_startproc
- 703              		@ args = 0, pretend = 0, frame = 0
- 704              		@ frame_needed = 1, uses_anonymous_args = 0
- 705 0000 80B5     		push	{r7, lr}
- 706              	.LCFI12:
- 707              		.cfi_def_cfa_offset 8
- 708              		.cfi_offset 7, -8
- 709              		.cfi_offset 14, -4
- 710 0002 00AF     		add	r7, sp, #0
- 711              	.LCFI13:
- 712              		.cfi_def_cfa_register 7
- 255:Src/motor.c   ****     static volatile int phase = 1;
- 256:Src/motor.c   **** 
- 257:Src/motor.c   **** //        if(motor2.direction == FORWARD && motor2.degree >= 0)
- 258:Src/motor.c   **** //        {
+ 258:Src/motor.c   ****         }
  259:Src/motor.c   **** 
- 260:Src/motor.c   **** //            motor2.degree--;
+ 260:Src/motor.c   ****     }
  261:Src/motor.c   **** 
- 262:Src/motor.c   ****               if(phase  == 1)
- 713              		.loc 1 262 0
- 714 0004 3F4B     		ldr	r3, .L34
- 715 0006 1B68     		ldr	r3, [r3]
- 716 0008 012B     		cmp	r3, #1
- 717 000a 1BD1     		bne	.L29
- 263:Src/motor.c   ****               {
- 264:Src/motor.c   **** 
+ 262:Src/motor.c   ****     if(Direction == STOP)
+ 720              		.loc 1 262 0
+ 721 0240 7B68     		ldr	r3, [r7, #4]
+ 722 0242 002B     		cmp	r3, #0
+ 723 0244 1CD1     		bne	.L27
+ 263:Src/motor.c   ****     {
+ 264:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP2_GPIO_Port, ENABLE_STEP2_PIN,GPIO_PIN_SET);
+ 724              		.loc 1 264 0
+ 725 0246 0122     		movs	r2, #1
+ 726 0248 2021     		movs	r1, #32
+ 727 024a 0F48     		ldr	r0, .L28
+ 728 024c FFF7FEFF 		bl	HAL_GPIO_WritePin
  265:Src/motor.c   **** 
- 266:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_SET);
- 718              		.loc 1 266 0
- 719 000c 0122     		movs	r2, #1
- 720 000e 0821     		movs	r1, #8
- 721 0010 3D48     		ldr	r0, .L34+4
- 722 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 267:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI2_GPIO_Port, STEP3_AI2_Pin, GPIO_PIN_RESET);
- 723              		.loc 1 267 0
- 724 0016 0022     		movs	r2, #0
- 725 0018 0421     		movs	r1, #4
- 726 001a 3B48     		ldr	r0, .L34+4
- 727 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 266:Src/motor.c   ****         HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
+ 729              		.loc 1 266 0
+ 730 0250 0022     		movs	r2, #0
+ 731 0252 4FF48061 		mov	r1, #1024
+ 732 0256 0E48     		ldr	r0, .L28+8
+ 733 0258 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 267:Src/motor.c   ****         HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
+ 734              		.loc 1 267 0
+ 735 025c 0022     		movs	r2, #0
+ 736 025e 4FF40061 		mov	r1, #2048
+ 737 0262 0B48     		ldr	r0, .L28+8
+ 738 0264 FFF7FEFF 		bl	HAL_GPIO_WritePin
  268:Src/motor.c   **** 
- 269:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_SET);
- 728              		.loc 1 269 0
- 729 0020 0122     		movs	r2, #1
- 730 0022 4FF40041 		mov	r1, #32768
-ARM GAS  /tmp/ccL05mal.s 			page 19
-
-
- 731 0026 3948     		ldr	r0, .L34+8
- 732 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 270:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI2_GPIO_Port, STEP3_BI2_Pin, GPIO_PIN_RESET);
- 733              		.loc 1 270 0
- 734 002c 0022     		movs	r2, #0
- 735 002e 4FF48041 		mov	r1, #16384
- 736 0032 3648     		ldr	r0, .L34+8
- 737 0034 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 271:Src/motor.c   ****                   phase ++;
- 738              		.loc 1 271 0
- 739 0038 324B     		ldr	r3, .L34
- 740 003a 1B68     		ldr	r3, [r3]
- 741 003c 0133     		adds	r3, r3, #1
- 742 003e 314A     		ldr	r2, .L34
- 743 0040 1360     		str	r3, [r2]
+ 269:Src/motor.c   ****         HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
+ 739              		.loc 1 269 0
+ 740 0268 0022     		movs	r2, #0
+ 741 026a 4FF40051 		mov	r1, #8192
+ 742 026e 0848     		ldr	r0, .L28+8
+ 743 0270 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 270:Src/motor.c   ****         HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
+ 744              		.loc 1 270 0
+ 745 0274 0022     		movs	r2, #0
+ 746 0276 4FF48051 		mov	r1, #4096
+ 747 027a 0548     		ldr	r0, .L28+8
+ 748 027c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 749              	.L27:
+ 271:Src/motor.c   ****     }
  272:Src/motor.c   **** 
- 273:Src/motor.c   ****               }
- 274:Src/motor.c   ****               else if(phase  == 2)
- 275:Src/motor.c   ****               {
- 276:Src/motor.c   **** 
- 277:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_SET);
- 278:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI2_GPIO_Port, STEP3_AI2_Pin, GPIO_PIN_RESET);
- 279:Src/motor.c   **** 
- 280:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI2_GPIO_Port, STEP3_BI2_Pin, GPIO_PIN_SET);
- 281:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_RESET);
- 282:Src/motor.c   ****                   phase ++;
- 283:Src/motor.c   **** 
- 284:Src/motor.c   ****               }
- 285:Src/motor.c   ****               else if(phase  == 3)
- 286:Src/motor.c   ****               {
- 287:Src/motor.c   **** 
- 288:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI2_GPIO_Port, STEP3_AI2_Pin, GPIO_PIN_SET);
- 289:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_RESET);
- 290:Src/motor.c   **** 
- 291:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI2_GPIO_Port, STEP3_BI2_Pin, GPIO_PIN_SET);
- 292:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_RESET);
- 293:Src/motor.c   ****                   phase ++;
- 294:Src/motor.c   **** 
- 295:Src/motor.c   ****               }
- 296:Src/motor.c   ****               else if(phase  == 4)
- 297:Src/motor.c   ****               {
- 298:Src/motor.c   **** 
- 299:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI2_GPIO_Port, STEP3_AI2_Pin, GPIO_PIN_SET);
- 300:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_RESET);
- 301:Src/motor.c   **** 
- 302:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_SET);
- 303:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI2_GPIO_Port, STEP3_BI2_Pin, GPIO_PIN_RESET);
- 304:Src/motor.c   ****                   phase  = 1;
- 305:Src/motor.c   **** 
- 306:Src/motor.c   ****               }
- 307:Src/motor.c   **** 
- 308:Src/motor.c   **** 
- 309:Src/motor.c   **** //        }
- 310:Src/motor.c   **** 
- 311:Src/motor.c   **** 
- 312:Src/motor.c   **** //    if(motor1.degree <= 0)
- 313:Src/motor.c   **** //    {
-ARM GAS  /tmp/ccL05mal.s 			page 20
+ 273:Src/motor.c   **** }
+ 750              		.loc 1 273 0
+ 751 0280 00BF     		nop
+ 752 0282 0837     		adds	r7, r7, #8
+ 753              	.LCFI10:
+ 754              		.cfi_def_cfa_offset 8
+ 755 0284 BD46     		mov	sp, r7
+ 756              	.LCFI11:
+ 757              		.cfi_def_cfa_register 13
+ 758              		@ sp needed
+ 759 0286 80BD     		pop	{r7, pc}
+ 760              	.L29:
+ARM GAS  /tmp/ccIHoMGM.s 			page 19
 
 
- 314:Src/motor.c   **** //        motor1.direction = STOP;
- 315:Src/motor.c   **** //        motor1.degree = 0;
- 316:Src/motor.c   **** 
- 317:Src/motor.c   **** //    }
- 318:Src/motor.c   **** }
- 744              		.loc 1 318 0
- 745 0042 5CE0     		b	.L33
- 746              	.L29:
- 274:Src/motor.c   ****               {
- 747              		.loc 1 274 0
- 748 0044 2F4B     		ldr	r3, .L34
- 749 0046 1B68     		ldr	r3, [r3]
- 750 0048 022B     		cmp	r3, #2
- 751 004a 1BD1     		bne	.L31
- 277:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI2_GPIO_Port, STEP3_AI2_Pin, GPIO_PIN_RESET);
- 752              		.loc 1 277 0
- 753 004c 0122     		movs	r2, #1
- 754 004e 0821     		movs	r1, #8
- 755 0050 2D48     		ldr	r0, .L34+4
- 756 0052 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 278:Src/motor.c   **** 
- 757              		.loc 1 278 0
- 758 0056 0022     		movs	r2, #0
- 759 0058 0421     		movs	r1, #4
- 760 005a 2B48     		ldr	r0, .L34+4
- 761 005c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 280:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_RESET);
- 762              		.loc 1 280 0
- 763 0060 0122     		movs	r2, #1
- 764 0062 4FF48041 		mov	r1, #16384
- 765 0066 2948     		ldr	r0, .L34+8
- 766 0068 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 281:Src/motor.c   ****                   phase ++;
- 767              		.loc 1 281 0
- 768 006c 0022     		movs	r2, #0
- 769 006e 4FF40041 		mov	r1, #32768
- 770 0072 2648     		ldr	r0, .L34+8
- 771 0074 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 282:Src/motor.c   **** 
- 772              		.loc 1 282 0
- 773 0078 224B     		ldr	r3, .L34
- 774 007a 1B68     		ldr	r3, [r3]
- 775 007c 0133     		adds	r3, r3, #1
- 776 007e 214A     		ldr	r2, .L34
- 777 0080 1360     		str	r3, [r2]
- 778              		.loc 1 318 0
- 779 0082 3CE0     		b	.L33
- 780              	.L31:
- 285:Src/motor.c   ****               {
- 781              		.loc 1 285 0
- 782 0084 1F4B     		ldr	r3, .L34
- 783 0086 1B68     		ldr	r3, [r3]
- 784 0088 032B     		cmp	r3, #3
- 785 008a 1BD1     		bne	.L32
- 288:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_RESET);
- 786              		.loc 1 288 0
- 787 008c 0122     		movs	r2, #1
-ARM GAS  /tmp/ccL05mal.s 			page 21
-
-
- 788 008e 0421     		movs	r1, #4
- 789 0090 1D48     		ldr	r0, .L34+4
- 790 0092 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 289:Src/motor.c   **** 
- 791              		.loc 1 289 0
- 792 0096 0022     		movs	r2, #0
- 793 0098 0821     		movs	r1, #8
- 794 009a 1B48     		ldr	r0, .L34+4
- 795 009c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 291:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI1_GPIO_Port, STEP3_BI1_Pin, GPIO_PIN_RESET);
- 796              		.loc 1 291 0
- 797 00a0 0122     		movs	r2, #1
- 798 00a2 4FF48041 		mov	r1, #16384
- 799 00a6 1948     		ldr	r0, .L34+8
- 800 00a8 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 292:Src/motor.c   ****                   phase ++;
- 801              		.loc 1 292 0
- 802 00ac 0022     		movs	r2, #0
- 803 00ae 4FF40041 		mov	r1, #32768
- 804 00b2 1648     		ldr	r0, .L34+8
- 805 00b4 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 293:Src/motor.c   **** 
- 806              		.loc 1 293 0
- 807 00b8 124B     		ldr	r3, .L34
- 808 00ba 1B68     		ldr	r3, [r3]
- 809 00bc 0133     		adds	r3, r3, #1
- 810 00be 114A     		ldr	r2, .L34
- 811 00c0 1360     		str	r3, [r2]
- 812              		.loc 1 318 0
- 813 00c2 1CE0     		b	.L33
- 814              	.L32:
- 296:Src/motor.c   ****               {
- 815              		.loc 1 296 0
- 816 00c4 0F4B     		ldr	r3, .L34
- 817 00c6 1B68     		ldr	r3, [r3]
- 818 00c8 042B     		cmp	r3, #4
- 819 00ca 18D1     		bne	.L33
- 299:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_AI1_GPIO_Port, STEP3_AI1_Pin, GPIO_PIN_RESET);
- 820              		.loc 1 299 0
- 821 00cc 0122     		movs	r2, #1
- 822 00ce 0421     		movs	r1, #4
- 823 00d0 0D48     		ldr	r0, .L34+4
- 824 00d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 300:Src/motor.c   **** 
- 825              		.loc 1 300 0
- 826 00d6 0022     		movs	r2, #0
- 827 00d8 0821     		movs	r1, #8
- 828 00da 0B48     		ldr	r0, .L34+4
- 829 00dc FFF7FEFF 		bl	HAL_GPIO_WritePin
- 302:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP3_BI2_GPIO_Port, STEP3_BI2_Pin, GPIO_PIN_RESET);
- 830              		.loc 1 302 0
- 831 00e0 0122     		movs	r2, #1
- 832 00e2 4FF40041 		mov	r1, #32768
- 833 00e6 0948     		ldr	r0, .L34+8
- 834 00e8 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 303:Src/motor.c   ****                   phase  = 1;
- 835              		.loc 1 303 0
-ARM GAS  /tmp/ccL05mal.s 			page 22
-
-
- 836 00ec 0022     		movs	r2, #0
- 837 00ee 4FF48041 		mov	r1, #16384
- 838 00f2 0648     		ldr	r0, .L34+8
- 839 00f4 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 304:Src/motor.c   **** 
- 840              		.loc 1 304 0
- 841 00f8 024B     		ldr	r3, .L34
- 842 00fa 0122     		movs	r2, #1
- 843 00fc 1A60     		str	r2, [r3]
- 844              	.L33:
- 845              		.loc 1 318 0
- 846 00fe 00BF     		nop
- 847 0100 80BD     		pop	{r7, pc}
- 848              	.L35:
- 849 0102 00BF     		.align	2
- 850              	.L34:
- 851 0104 00000000 		.word	phase.9808
- 852 0108 00180240 		.word	1073879040
- 853 010c 000C0240 		.word	1073875968
- 854              		.cfi_endproc
- 855              	.LFE139:
- 857              		.section	.text.motor4Drive,"ax",%progbits
- 858              		.align	1
- 859              		.global	motor4Drive
- 860              		.syntax unified
- 861              		.thumb
- 862              		.thumb_func
- 863              		.fpu fpv4-sp-d16
- 865              	motor4Drive:
- 866              	.LFB140:
- 319:Src/motor.c   **** 
- 320:Src/motor.c   **** 
- 321:Src/motor.c   **** void motor4Drive()
- 322:Src/motor.c   **** {
- 867              		.loc 1 322 0
- 868              		.cfi_startproc
- 869              		@ args = 0, pretend = 0, frame = 0
- 870              		@ frame_needed = 1, uses_anonymous_args = 0
- 871 0000 80B5     		push	{r7, lr}
- 872              	.LCFI14:
- 873              		.cfi_def_cfa_offset 8
- 874              		.cfi_offset 7, -8
- 875              		.cfi_offset 14, -4
- 876 0002 00AF     		add	r7, sp, #0
- 877              	.LCFI15:
- 878              		.cfi_def_cfa_register 7
- 323:Src/motor.c   ****     static volatile int phase = 1;
- 324:Src/motor.c   **** 
- 325:Src/motor.c   **** //        if(motor2.direction == FORWARD && motor2.degree >= 0)
- 326:Src/motor.c   **** //        {
- 327:Src/motor.c   **** 
- 328:Src/motor.c   **** //            motor2.degree--;
- 329:Src/motor.c   **** 
- 330:Src/motor.c   ****               if(phase  == 1)
- 879              		.loc 1 330 0
- 880 0004 3D4B     		ldr	r3, .L42
- 881 0006 1B68     		ldr	r3, [r3]
-ARM GAS  /tmp/ccL05mal.s 			page 23
-
-
- 882 0008 012B     		cmp	r3, #1
- 883 000a 1AD1     		bne	.L37
- 331:Src/motor.c   ****               {
- 332:Src/motor.c   **** 
- 333:Src/motor.c   **** 
- 334:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_SET);
- 884              		.loc 1 334 0
- 885 000c 0122     		movs	r2, #1
- 886 000e 2021     		movs	r1, #32
- 887 0010 3B48     		ldr	r0, .L42+4
- 888 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 335:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI2_GPIO_Port, STEP4_AI2_Pin, GPIO_PIN_RESET);
- 889              		.loc 1 335 0
- 890 0016 0022     		movs	r2, #0
- 891 0018 4021     		movs	r1, #64
- 892 001a 3948     		ldr	r0, .L42+4
- 893 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
- 336:Src/motor.c   **** 
- 337:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_SET);
- 894              		.loc 1 337 0
- 895 0020 0122     		movs	r2, #1
- 896 0022 4FF48071 		mov	r1, #256
- 897 0026 3648     		ldr	r0, .L42+4
- 898 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 338:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI2_GPIO_Port, STEP4_BI2_Pin, GPIO_PIN_RESET);
- 899              		.loc 1 338 0
- 900 002c 0022     		movs	r2, #0
- 901 002e 8021     		movs	r1, #128
- 902 0030 3348     		ldr	r0, .L42+4
- 903 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 339:Src/motor.c   ****                   phase ++;
- 904              		.loc 1 339 0
- 905 0036 314B     		ldr	r3, .L42
- 906 0038 1B68     		ldr	r3, [r3]
- 907 003a 0133     		adds	r3, r3, #1
- 908 003c 2F4A     		ldr	r2, .L42
- 909 003e 1360     		str	r3, [r2]
- 340:Src/motor.c   **** 
- 341:Src/motor.c   ****               }
- 342:Src/motor.c   ****               else if(phase  == 2)
- 343:Src/motor.c   ****               {
- 344:Src/motor.c   **** 
- 345:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_SET);
- 346:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI2_GPIO_Port, STEP4_AI2_Pin, GPIO_PIN_RESET);
- 347:Src/motor.c   **** 
- 348:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI2_GPIO_Port, STEP4_BI2_Pin, GPIO_PIN_SET);
- 349:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_RESET);
- 350:Src/motor.c   ****                   phase ++;
- 351:Src/motor.c   **** 
- 352:Src/motor.c   ****               }
- 353:Src/motor.c   ****               else if(phase  == 3)
- 354:Src/motor.c   ****               {
- 355:Src/motor.c   **** 
- 356:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI2_GPIO_Port, STEP4_AI2_Pin, GPIO_PIN_SET);
- 357:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_RESET);
- 358:Src/motor.c   **** 
- 359:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI2_GPIO_Port, STEP4_BI2_Pin, GPIO_PIN_SET);
-ARM GAS  /tmp/ccL05mal.s 			page 24
-
-
- 360:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_RESET);
- 361:Src/motor.c   ****                   phase ++;
- 362:Src/motor.c   **** 
- 363:Src/motor.c   ****               }
- 364:Src/motor.c   ****               else if(phase  == 4)
- 365:Src/motor.c   ****               {
- 366:Src/motor.c   **** 
- 367:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI2_GPIO_Port, STEP4_AI2_Pin, GPIO_PIN_SET);
- 368:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_RESET);
- 369:Src/motor.c   **** 
- 370:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_SET);
- 371:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI2_GPIO_Port, STEP4_BI2_Pin, GPIO_PIN_RESET);
- 372:Src/motor.c   ****                   phase  = 1;
- 373:Src/motor.c   **** 
- 374:Src/motor.c   ****               }
- 375:Src/motor.c   **** 
- 376:Src/motor.c   **** 
- 377:Src/motor.c   **** //        }
- 378:Src/motor.c   **** 
- 379:Src/motor.c   **** 
- 380:Src/motor.c   **** //    if(motor1.degree <= 0)
- 381:Src/motor.c   **** //    {
- 382:Src/motor.c   **** //        motor1.direction = STOP;
- 383:Src/motor.c   **** //        motor1.degree = 0;
- 384:Src/motor.c   **** 
- 385:Src/motor.c   **** //    }
- 386:Src/motor.c   **** }
- 910              		.loc 1 386 0
- 911 0040 59E0     		b	.L41
- 912              	.L37:
- 342:Src/motor.c   ****               {
- 913              		.loc 1 342 0
- 914 0042 2E4B     		ldr	r3, .L42
- 915 0044 1B68     		ldr	r3, [r3]
- 916 0046 022B     		cmp	r3, #2
- 917 0048 1AD1     		bne	.L39
- 345:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI2_GPIO_Port, STEP4_AI2_Pin, GPIO_PIN_RESET);
- 918              		.loc 1 345 0
- 919 004a 0122     		movs	r2, #1
- 920 004c 2021     		movs	r1, #32
- 921 004e 2C48     		ldr	r0, .L42+4
- 922 0050 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 346:Src/motor.c   **** 
- 923              		.loc 1 346 0
- 924 0054 0022     		movs	r2, #0
- 925 0056 4021     		movs	r1, #64
- 926 0058 2948     		ldr	r0, .L42+4
- 927 005a FFF7FEFF 		bl	HAL_GPIO_WritePin
- 348:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_RESET);
- 928              		.loc 1 348 0
- 929 005e 0122     		movs	r2, #1
- 930 0060 8021     		movs	r1, #128
- 931 0062 2748     		ldr	r0, .L42+4
- 932 0064 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 349:Src/motor.c   ****                   phase ++;
- 933              		.loc 1 349 0
- 934 0068 0022     		movs	r2, #0
-ARM GAS  /tmp/ccL05mal.s 			page 25
-
-
- 935 006a 4FF48071 		mov	r1, #256
- 936 006e 2448     		ldr	r0, .L42+4
- 937 0070 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 350:Src/motor.c   **** 
- 938              		.loc 1 350 0
- 939 0074 214B     		ldr	r3, .L42
- 940 0076 1B68     		ldr	r3, [r3]
- 941 0078 0133     		adds	r3, r3, #1
- 942 007a 204A     		ldr	r2, .L42
- 943 007c 1360     		str	r3, [r2]
- 944              		.loc 1 386 0
- 945 007e 3AE0     		b	.L41
- 946              	.L39:
- 353:Src/motor.c   ****               {
- 947              		.loc 1 353 0
- 948 0080 1E4B     		ldr	r3, .L42
- 949 0082 1B68     		ldr	r3, [r3]
- 950 0084 032B     		cmp	r3, #3
- 951 0086 1AD1     		bne	.L40
- 356:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_RESET);
- 952              		.loc 1 356 0
- 953 0088 0122     		movs	r2, #1
- 954 008a 4021     		movs	r1, #64
- 955 008c 1C48     		ldr	r0, .L42+4
- 956 008e FFF7FEFF 		bl	HAL_GPIO_WritePin
- 357:Src/motor.c   **** 
- 957              		.loc 1 357 0
- 958 0092 0022     		movs	r2, #0
- 959 0094 2021     		movs	r1, #32
- 960 0096 1A48     		ldr	r0, .L42+4
- 961 0098 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 359:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI1_GPIO_Port, STEP4_BI1_Pin, GPIO_PIN_RESET);
- 962              		.loc 1 359 0
- 963 009c 0122     		movs	r2, #1
- 964 009e 8021     		movs	r1, #128
- 965 00a0 1748     		ldr	r0, .L42+4
- 966 00a2 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 360:Src/motor.c   ****                   phase ++;
- 967              		.loc 1 360 0
- 968 00a6 0022     		movs	r2, #0
- 969 00a8 4FF48071 		mov	r1, #256
- 970 00ac 1448     		ldr	r0, .L42+4
- 971 00ae FFF7FEFF 		bl	HAL_GPIO_WritePin
- 361:Src/motor.c   **** 
- 972              		.loc 1 361 0
- 973 00b2 124B     		ldr	r3, .L42
- 974 00b4 1B68     		ldr	r3, [r3]
- 975 00b6 0133     		adds	r3, r3, #1
- 976 00b8 104A     		ldr	r2, .L42
- 977 00ba 1360     		str	r3, [r2]
- 978              		.loc 1 386 0
- 979 00bc 1BE0     		b	.L41
- 980              	.L40:
- 364:Src/motor.c   ****               {
- 981              		.loc 1 364 0
- 982 00be 0F4B     		ldr	r3, .L42
- 983 00c0 1B68     		ldr	r3, [r3]
-ARM GAS  /tmp/ccL05mal.s 			page 26
-
-
- 984 00c2 042B     		cmp	r3, #4
- 985 00c4 17D1     		bne	.L41
- 367:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_AI1_GPIO_Port, STEP4_AI1_Pin, GPIO_PIN_RESET);
- 986              		.loc 1 367 0
- 987 00c6 0122     		movs	r2, #1
- 988 00c8 4021     		movs	r1, #64
- 989 00ca 0D48     		ldr	r0, .L42+4
- 990 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
- 368:Src/motor.c   **** 
- 991              		.loc 1 368 0
- 992 00d0 0022     		movs	r2, #0
- 993 00d2 2021     		movs	r1, #32
- 994 00d4 0A48     		ldr	r0, .L42+4
- 995 00d6 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 370:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP4_BI2_GPIO_Port, STEP4_BI2_Pin, GPIO_PIN_RESET);
- 996              		.loc 1 370 0
- 997 00da 0122     		movs	r2, #1
- 998 00dc 4FF48071 		mov	r1, #256
- 999 00e0 0748     		ldr	r0, .L42+4
- 1000 00e2 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 371:Src/motor.c   ****                   phase  = 1;
- 1001              		.loc 1 371 0
- 1002 00e6 0022     		movs	r2, #0
- 1003 00e8 8021     		movs	r1, #128
- 1004 00ea 0548     		ldr	r0, .L42+4
- 1005 00ec FFF7FEFF 		bl	HAL_GPIO_WritePin
- 372:Src/motor.c   **** 
- 1006              		.loc 1 372 0
- 1007 00f0 024B     		ldr	r3, .L42
- 1008 00f2 0122     		movs	r2, #1
- 1009 00f4 1A60     		str	r2, [r3]
- 1010              	.L41:
- 1011              		.loc 1 386 0
- 1012 00f6 00BF     		nop
- 1013 00f8 80BD     		pop	{r7, pc}
- 1014              	.L43:
- 1015 00fa 00BF     		.align	2
- 1016              	.L42:
- 1017 00fc 00000000 		.word	phase.9811
- 1018 0100 00180240 		.word	1073879040
- 1019              		.cfi_endproc
- 1020              	.LFE140:
- 1022              		.section	.text.driveMotor,"ax",%progbits
- 1023              		.align	1
- 1024              		.global	driveMotor
- 1025              		.syntax unified
- 1026              		.thumb
- 1027              		.thumb_func
- 1028              		.fpu fpv4-sp-d16
- 1030              	driveMotor:
- 1031              	.LFB141:
- 387:Src/motor.c   **** 
- 388:Src/motor.c   **** 
- 389:Src/motor.c   **** 
- 390:Src/motor.c   **** void driveMotor()
- 391:Src/motor.c   **** {
- 1032              		.loc 1 391 0
-ARM GAS  /tmp/ccL05mal.s 			page 27
-
-
- 1033              		.cfi_startproc
- 1034              		@ args = 0, pretend = 0, frame = 0
- 1035              		@ frame_needed = 1, uses_anonymous_args = 0
- 1036              		@ link register save eliminated.
- 1037 0000 80B4     		push	{r7}
- 1038              	.LCFI16:
- 1039              		.cfi_def_cfa_offset 4
- 1040              		.cfi_offset 7, -4
- 1041 0002 00AF     		add	r7, sp, #0
- 1042              	.LCFI17:
- 1043              		.cfi_def_cfa_register 7
- 392:Src/motor.c   **** 
- 393:Src/motor.c   **** //    if(motor1.direction == FORWARD || motor1.direction == BACKWARD)
- 394:Src/motor.c   **** //       motor1Drive();
- 395:Src/motor.c   **** 
- 396:Src/motor.c   **** //    if(motor2.direction == FORWARD || motor2.direction == BACKWARD)
- 397:Src/motor.c   **** //       motor2Drive();
- 398:Src/motor.c   **** 
- 399:Src/motor.c   **** //    if(motor3.direction == FORWARD || motor3.direction == BACKWARD)
- 400:Src/motor.c   **** //       motor3Drive();
- 401:Src/motor.c   **** 
- 402:Src/motor.c   **** //    if(motor4.direction == FORWARD || motor4.direction == BACKWARD)
- 403:Src/motor.c   **** //       motor4Drive();
- 404:Src/motor.c   **** 
- 405:Src/motor.c   **** 
- 406:Src/motor.c   **** }
- 1044              		.loc 1 406 0
- 1045 0004 00BF     		nop
- 1046 0006 BD46     		mov	sp, r7
- 1047              	.LCFI18:
- 1048              		.cfi_def_cfa_register 13
- 1049              		@ sp needed
- 1050 0008 5DF8047B 		ldr	r7, [sp], #4
- 1051              	.LCFI19:
- 1052              		.cfi_restore 7
- 1053              		.cfi_def_cfa_offset 0
- 1054 000c 7047     		bx	lr
- 1055              		.cfi_endproc
- 1056              	.LFE141:
- 1058              		.section	.data.phase.9801,"aw",%progbits
- 1059              		.align	2
- 1062              	phase.9801:
- 1063 0000 01000000 		.word	1
- 1064              		.section	.data.phase.9805,"aw",%progbits
- 1065              		.align	2
- 1068              	phase.9805:
- 1069 0000 01000000 		.word	1
- 1070              		.section	.data.phase.9808,"aw",%progbits
- 1071              		.align	2
- 1074              	phase.9808:
- 1075 0000 01000000 		.word	1
- 1076              		.section	.data.phase.9811,"aw",%progbits
- 1077              		.align	2
- 1080              	phase.9811:
- 1081 0000 01000000 		.word	1
- 1082              		.text
- 1083              	.Letext0:
-ARM GAS  /tmp/ccL05mal.s 			page 28
-
-
- 1084              		.file 2 "/usr/include/newlib/machine/_default_types.h"
- 1085              		.file 3 "/usr/include/newlib/sys/lock.h"
- 1086              		.file 4 "/usr/include/newlib/sys/_types.h"
- 1087              		.file 5 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
- 1088              		.file 6 "/usr/include/newlib/sys/reent.h"
- 1089              		.file 7 "/usr/include/newlib/sys/_stdint.h"
- 1090              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
- 1091              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 1092              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 1093              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 1094              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
- 1095              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 1096              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 1097              		.file 15 "Inc/motor.h"
- 1098              		.file 16 "Inc/tim.h"
-ARM GAS  /tmp/ccL05mal.s 			page 29
+ 761              		.align	2
+ 762              	.L28:
+ 763 0288 00080240 		.word	1073874944
+ 764 028c 00000000 		.word	phase.9806
+ 765 0290 000C0240 		.word	1073875968
+ 766              		.cfi_endproc
+ 767              	.LFE138:
+ 769              		.section	.data.phase.9802,"aw",%progbits
+ 770              		.align	2
+ 773              	phase.9802:
+ 774 0000 01000000 		.word	1
+ 775              		.section	.data.phase.9806,"aw",%progbits
+ 776              		.align	2
+ 779              	phase.9806:
+ 780 0000 01000000 		.word	1
+ 781              		.text
+ 782              	.Letext0:
+ 783              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 784              		.file 3 "/usr/include/newlib/sys/lock.h"
+ 785              		.file 4 "/usr/include/newlib/sys/_types.h"
+ 786              		.file 5 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 787              		.file 6 "/usr/include/newlib/sys/reent.h"
+ 788              		.file 7 "/usr/include/newlib/sys/_stdint.h"
+ 789              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
+ 790              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 791              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 792              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 793              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 794              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 795              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 796              		.file 15 "Inc/motor.h"
+ 797              		.file 16 "Inc/tim.h"
+ARM GAS  /tmp/ccIHoMGM.s 			page 20
 
 
 DEFINED SYMBOLS
@@ -1645,33 +1122,23 @@ DEFINED SYMBOLS
                             *COM*:0000000000000008 motor2
                             *COM*:0000000000000008 motor3
                             *COM*:0000000000000008 motor4
-     /tmp/ccL05mal.s:26     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
-     /tmp/ccL05mal.s:23     .rodata.reductor_coefficient:0000000000000000 $d
-     /tmp/ccL05mal.s:29     .text.motorInit:0000000000000000 $t
-     /tmp/ccL05mal.s:36     .text.motorInit:0000000000000000 motorInit
-     /tmp/ccL05mal.s:60     .text.motorInit:0000000000000010 $d
-     /tmp/ccL05mal.s:65     .text.motor1Drive:0000000000000000 $t
-     /tmp/ccL05mal.s:72     .text.motor1Drive:0000000000000000 motor1Drive
-     /tmp/ccL05mal.s:372    .text.motor1Drive:0000000000000234 $d
-     /tmp/ccL05mal.s:1062   .data.phase.9801:0000000000000000 phase.9801
-     /tmp/ccL05mal.s:379    .text.motor2Drive:0000000000000000 $t
-     /tmp/ccL05mal.s:386    .text.motor2Drive:0000000000000000 motor2Drive
-     /tmp/ccL05mal.s:686    .text.motor2Drive:0000000000000234 $d
-     /tmp/ccL05mal.s:1068   .data.phase.9805:0000000000000000 phase.9805
-     /tmp/ccL05mal.s:692    .text.motor3Drive:0000000000000000 $t
-     /tmp/ccL05mal.s:699    .text.motor3Drive:0000000000000000 motor3Drive
-     /tmp/ccL05mal.s:851    .text.motor3Drive:0000000000000104 $d
-     /tmp/ccL05mal.s:1074   .data.phase.9808:0000000000000000 phase.9808
-     /tmp/ccL05mal.s:858    .text.motor4Drive:0000000000000000 $t
-     /tmp/ccL05mal.s:865    .text.motor4Drive:0000000000000000 motor4Drive
-     /tmp/ccL05mal.s:1017   .text.motor4Drive:00000000000000fc $d
-     /tmp/ccL05mal.s:1080   .data.phase.9811:0000000000000000 phase.9811
-     /tmp/ccL05mal.s:1023   .text.driveMotor:0000000000000000 $t
-     /tmp/ccL05mal.s:1030   .text.driveMotor:0000000000000000 driveMotor
-     /tmp/ccL05mal.s:1059   .data.phase.9801:0000000000000000 $d
-     /tmp/ccL05mal.s:1065   .data.phase.9805:0000000000000000 $d
-     /tmp/ccL05mal.s:1071   .data.phase.9808:0000000000000000 $d
-     /tmp/ccL05mal.s:1077   .data.phase.9811:0000000000000000 $d
+                            *COM*:0000000000000008 servo1
+                            *COM*:0000000000000008 servo2
+     /tmp/ccIHoMGM.s:28     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
+     /tmp/ccIHoMGM.s:25     .rodata.reductor_coefficient:0000000000000000 $d
+     /tmp/ccIHoMGM.s:31     .text.motorInit:0000000000000000 $t
+     /tmp/ccIHoMGM.s:38     .text.motorInit:0000000000000000 motorInit
+     /tmp/ccIHoMGM.s:62     .text.motorInit:0000000000000010 $d
+     /tmp/ccIHoMGM.s:67     .text.motor1Drive:0000000000000000 $t
+     /tmp/ccIHoMGM.s:74     .text.motor1Drive:0000000000000000 motor1Drive
+     /tmp/ccIHoMGM.s:411    .text.motor1Drive:0000000000000288 $d
+     /tmp/ccIHoMGM.s:773    .data.phase.9802:0000000000000000 phase.9802
+     /tmp/ccIHoMGM.s:419    .text.motor2Drive:0000000000000000 $t
+     /tmp/ccIHoMGM.s:426    .text.motor2Drive:0000000000000000 motor2Drive
+     /tmp/ccIHoMGM.s:763    .text.motor2Drive:0000000000000288 $d
+     /tmp/ccIHoMGM.s:779    .data.phase.9806:0000000000000000 phase.9806
+     /tmp/ccIHoMGM.s:770    .data.phase.9802:0000000000000000 $d
+     /tmp/ccIHoMGM.s:776    .data.phase.9806:0000000000000000 $d
                      .debug_frame:0000000000000010 $d
 
 UNDEFINED SYMBOLS

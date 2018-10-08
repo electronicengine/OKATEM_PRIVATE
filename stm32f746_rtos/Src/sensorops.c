@@ -7,29 +7,41 @@ void sensorOps(void const * argument)
 
   mprintf("sensorOps\r\n");
 
-  sensorInit();
+//  sensorInit();
 
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-
-
-
-
-//  calibrateCompass();
 
   while(1)
   {
-      readAllSensors();
 
 
-      xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+      if(calibration.available == 1)
+      {
+          mprintf("Sensor Calibration Started. \r\n");
 
-      EnvironmentData -> sensor_data.temperature = sensorValues.temperature;
-      EnvironmentData -> sensor_data.pressure = sensorValues.pressure;
-      EnvironmentData -> sensor_data.altitude = sensorValues.altitude;
-      EnvironmentData -> sensor_data.wheather_condition = sensorValues.wheather_condition;
-      EnvironmentData -> sensor_data.compass_degree = sensorValues.compass_degree;
+          calibration.available  = 0;
+          calibrateCompass();
+      }
+      else
+      {
 
-      xSemaphoreGive(spiMutexHandle);
+          readAllSensors();
+
+
+          xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+
+          EnvironmentData -> sensor_data.temperature = sensorValues.temperature;
+          EnvironmentData -> sensor_data.pressure = sensorValues.pressure;
+          EnvironmentData -> sensor_data.altitude = sensorValues.altitude;
+          EnvironmentData -> sensor_data.wheather_condition = sensorValues.wheather_condition;
+          EnvironmentData -> sensor_data.compass_degree = sensorValues.compass_degree;
+
+          xSemaphoreGive(spiMutexHandle);
+
+      }
+
+
+
+
 
 
 

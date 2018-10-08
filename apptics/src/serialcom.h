@@ -20,6 +20,7 @@
 #include <mutex>
 
 #include "globals.h"
+#include "queue.h"
 
 #define TIMEOUT 50
 
@@ -54,25 +55,34 @@ public:
     Status writeData(const TAIL&... ContainerPack)
     {
 
-
-        static std::vector<unsigned char> container_vector;
         std::string exploded_pack = serializer(ContainerPack...);
 
+        std::vector<char> container_vector(exploded_pack.c_str(), exploded_pack.c_str() + exploded_pack.length());
         int data_index = 0;
         int write_size = 0;
 
-        unsigned char data;
+
+        if(container_vector[container_vector.size() - 1] == ';')
+        {
+            container_vector.pop_back();
+            container_vector.push_back(0xff);
+            container_vector.push_back(0xff);
+            container_vector.push_back(0xff);
+
+        }
+
         if (gmFileDescriptor != -1)
         {
+
             do
             {
 
-                write_size = write(gmFileDescriptor, &(exploded_pack.c_str()[data_index]), sizeof(unsigned char));
+                write_size = write(gmFileDescriptor, &(container_vector[data_index]), sizeof(unsigned char));
 
                 if(write_size != -1)
                   data_index += write_size;
 
-            }while(data_index != exploded_pack.length());
+            }while(data_index != container_vector.size());
         }
         else
         {

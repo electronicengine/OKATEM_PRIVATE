@@ -13,7 +13,6 @@
 #include "sfpmonitor.h"
 
 
-
 #define TRANSMISSION_SIZE 64
 #define TRANSMISSION_TIMEOUT 10
 

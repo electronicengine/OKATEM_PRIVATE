@@ -24,6 +24,11 @@
  }motor1, motor2, motor3, motor4;
 
 
+ struct Servo_motor {
+   volatile int angle;
+   volatile int speed;
+ }servo1, servo2;
+
 
 void motorInit();
 
@@ -31,11 +36,6 @@ void driveMotor();
 
 void motor1Drive(int Direction);
 void motor2Drive(int Direction);
-void motor3Drive();
-void motor4Drive();
-
-int moveMotor(int Motor, int Degree, short int Direction);
-
 
 #ifdef __cplusplus
 }

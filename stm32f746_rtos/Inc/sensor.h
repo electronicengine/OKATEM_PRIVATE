@@ -27,6 +27,11 @@
 
  }sensorValues;
 
+ struct Calibration {
+   volatile int available;
+
+ }calibration;
+
 
  void sensorInit();
 

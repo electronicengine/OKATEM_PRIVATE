@@ -11,6 +11,9 @@
 #include <math.h>
 #include <mutex>
 
+#include "globals.h"
+#include "queue.h"
+
 
 // Text properties which is printed on debug
 #define TEXT_FONT cv::FONT_HERSHEY_COMPLEX_SMALL

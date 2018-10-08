@@ -1,9 +1,16 @@
 #include "lcdhmi.h"
 
 
+extern std::map<std::string, bool> CheckList;
 
 LcdHMI::LcdHMI()
 {
+
+    gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
+
+    gmControlData.servo_motor1_degree = 50;
+    gmControlData.servo_motor2_degree = 50;
+
     initHCM();
 }
 
@@ -35,51 +42,125 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
 Status LcdHMI::setHCMData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &EnvironmentData)
 {
 
+    gmMutex.lock();
+
+    gmSfpData = SfpData;
+    gmStmEnvironmentData = EnvironmentData;
+
+    gmMutex.unlock();
+
+    return Status::ok;
+
 }
 
-void LcdHMI::writeControlData(std::vector<unsigned char> &Data)
+void LcdHMI::callSensorPage(std::vector<unsigned char> &Data)
+{
+    if(Data[1] == CALLBACKTOKEN || Data[2] == PAGE_CHANGED)
+    {
+        gmMutex.lock();
+        sendEnvironmentInfo();
+
+        gmDataComing = false;
+        gmControlData.calibrate_sensor = 0;
+
+        gmMutex.unlock();
+    }
+    if(Data[1] == BUTTON_PRESSED)
+    {
+        if(Data[2] == CALIBRATE_BUTTON_ID)
+        {
+            gmMutex.lock();
+
+            printAll("Sensor Calibrate");
+
+            gmDataComing = true;
+
+            gmControlData.calibrate_sensor = 1;
+
+            gmMutex.unlock();
+        }
+    }else if(Data[1] == BUTTON_UNPRESSED)
+    {
+
+        gmDataComing = false;
+        gmMutex.lock();
+        gmControlData.calibrate_sensor = 0;
+        gmMutex.unlock();
+
+    }
+    else
+    {
+
+    }
+
+}
+
+void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
 {
 
+    int speed;
 
 
-    for(int i=0; i<Data.size(); i++)
-        printf("%02x-", Data[i]);
-
-    printf("\n");
-
+    gmMutex.lock();
 
     if(Data[1] == BUTTON_PRESSED)
     {
-
 
         gmDataComing = true;
         if(Data[2] == UP_BUTTON_ID)
         {
             printAll("up botton");
-            gmControlData.step_motor1_direction = FORWARD;
+            gmControlData.step_motor2_direction = FORWARD;
+
+            gmControlData.servo_motor1_degree = 0;
+            gmControlData.servo_motor2_degree = 0;
         }
 
         if(Data[2] == DOWN_BUTTON_ID)
         {
-            gmControlData.step_motor1_direction = BACKWARD;
+            printAll("down");
+            gmControlData.step_motor2_direction = BACKWARD;
+
+
+            gmControlData.servo_motor1_degree = 0;
+            gmControlData.servo_motor2_degree = 0;
         }
 
         if(Data[2] == RIGHT_BUTTON_ID)
         {
-            gmControlData.step_motor2_direction = FORWARD;
+            printAll("right");
+            gmControlData.step_motor1_direction = FORWARD;
+
+            gmControlData.servo_motor1_degree = 0;
+            gmControlData.servo_motor2_degree = 0;
         }
 
         if(Data[2] == LEFT_BUTTON_ID)
         {
-            gmControlData.step_motor2_direction = BACKWARD;
+            printAll("left");
+            gmControlData.step_motor1_direction = BACKWARD;
+
+
+            gmControlData.servo_motor1_degree = 0;
+            gmControlData.servo_motor2_degree = 0;
         }
 
+//        speed = 0;
+        printf("%d\r\n", Data[6]);
 
-        gmControlData.step_motor1_speed = (Data[3] % 20);
-        gmControlData.step_motor2_speed = (Data[3] % 20);
-        gmControlData.step_motor3_speed = (Data[3] % 20);
-        gmControlData.step_motor4_speed = (Data[3] % 20);
+        if(Data[6] == 0)
+            speed = 20;
+        else if(Data[6] == 100)
+            speed = 0;
+        else
+        {
+            speed = 20 - ((int)((double)Data[6] / 20) * 5);
+        }
 
+        gmControlData.step_motor1_speed = speed;
+        gmControlData.step_motor2_speed = speed;
+        gmControlData.step_motor3_speed = speed;
+        gmControlData.step_motor4_speed = speed;
     }
     else if(Data[1] == BUTTON_UNPRESSED)
     {
@@ -90,9 +171,148 @@ void LcdHMI::writeControlData(std::vector<unsigned char> &Data)
 
     }
 
+    gmMutex.unlock();
+
+}
+
+
+
+void LcdHMI::callAutoPage(std::vector<unsigned char> &Data)
+{
+
+   static bool enable = true;
+
+    if(Data[1] == BUTTON_PRESSED)
+    {
+
+        if(Data[2] == AUTOMODE_START && enable == true)
+        {
+            printAll("AutoMode Start button");
+
+            gmAutoModeEnable = true;
+            enable = false;
+            std::thread auto_mode(&LcdHMI::autoMode, this);
+            auto_mode.detach();
+
+        }
+
+        if(Data[2] == AUTOMODE_STOP)
+        {
+            gmAutoModeEnable = false;
+            enable = true;
+        }
+        if(Data[2] == AUTOMODE_PAUSE)
+        {
+            gmAutoModeEnable = false;
+            enable = true;
+        }
+
+
+
+    }
+
+}
+
+
+
+void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
+{
+
+    int sensitivity = 0;
+
+    gmMutex.lock();
+
+    if(Data[1] == BUTTON_PRESSED)
+    {
+
+        gmDataComing = true;
+
+        if(Data[2] == CAMERA1_UP_BUTTON_ID)
+        {
+
+            if(gmControlData.servo_motor1_degree <= 150)
+                gmControlData.servo_motor1_degree += Data[6];
+
+            if(gmControlData.servo_motor1_degree >= 150)
+                gmControlData.servo_motor1_degree = 150;
+
+            if(gmControlData.servo_motor1_degree <= 0)
+                gmControlData.servo_motor1_degree = 0;
+
+
+            gmSerial->writeData("t1.txt=\"", std::to_string(gmControlData.servo_motor1_degree), " Deg\";");
+
+            printf("Camera1 Up %d\r\n", gmControlData.servo_motor1_degree);
+        }
+
+        if(Data[2] == CAMERA1_DOWN_BUTTON_ID)
+        {
+            if(gmControlData.servo_motor1_degree >= 0)
+                gmControlData.servo_motor1_degree -= Data[6];
+
+            if(gmControlData.servo_motor1_degree >= 150)
+                gmControlData.servo_motor1_degree = 150;
+
+            if(gmControlData.servo_motor1_degree <= 0)
+                gmControlData.servo_motor1_degree = 0;
+
+            gmControlData.servo_motor2_degree = 0;
+
+            gmSerial->writeData("t1.txt=\"", std::to_string(gmControlData.servo_motor1_degree), " Deg\";");
+
+            printf("Camera1 Down %d\r\n", gmControlData.servo_motor1_degree);
+        }
+
+        if(Data[2] == CAMERA2_UP_BUTTON_ID)
+        {
+
+            if(gmControlData.servo_motor2_degree <= 150)
+                gmControlData.servo_motor2_degree += Data[6];
+
+            if(gmControlData.servo_motor2_degree >= 150)
+                gmControlData.servo_motor2_degree = 150;
+
+            if(gmControlData.servo_motor2_degree <= 0)
+                gmControlData.servo_motor2_degree = 0;
+
+            gmControlData.servo_motor1_degree = 0;
+
+            gmSerial->writeData("t2.txt=\"", std::to_string(gmControlData.servo_motor2_degree), " Deg\";");
+
+            printf("Camera2 Up %d\r\n", gmControlData.servo_motor2_degree);
+        }
+
+        if(Data[2] == CAMERA2_DOWN_BUTTON_ID)
+        {
+
+            if(gmControlData.servo_motor2_degree >= 0)
+                gmControlData.servo_motor2_degree -= Data[6];
+
+            if(gmControlData.servo_motor2_degree >= 150)
+                gmControlData.servo_motor2_degree = 150;
+
+            if(gmControlData.servo_motor2_degree <= 0)
+                gmControlData.servo_motor2_degree = 0;
+
+            gmSerial->writeData("t2.txt=\"", std::to_string(gmControlData.servo_motor2_degree), " Deg\";");
+
+            printf("Camera2 Down %d\r\n", gmControlData.servo_motor2_degree);
+        }
+
+    }
+
+    if(Data[1] == BUTTON_UNPRESSED)
+    {
+        gmDataComing = false;
+
+    }
+
+    gmMutex.unlock();
 
 
 }
+
+
 
 void LcdHMI::initHCM()
 {
@@ -100,50 +320,195 @@ void LcdHMI::initHCM()
     listen.detach();
 }
 
+
+
 void LcdHMI::listenHMI()
 {
 
-    SerialCom Serial("B9600", "/dev/ttyUSB0");
+
 
 
     Status status;
     std::vector<unsigned char> hcm_data;
-    const unsigned char header = 0x50;
-    const unsigned char footer = 0x51;
+
 
 
     printAll("listenHMI");
 
     while(1)
     {
-        status = Serial.readData(hcm_data, header, footer);
+        status = gmSerial->readData(hcm_data, HEADER, FOOTER);
 
         if(status == Status::ok)
         {
 
-
-
-            gmCurrentPage = hcm_data[0];
-
-            if(gmCurrentPage == MANUAL_PAGE_ID)
+            if(hcm_data.size() > 0)
             {
+                gmCurrentPage = hcm_data.data()[0];
+
+                if(gmCurrentPage == MANUAL_PAGE_ID)
+                {
+                    printAll("HMI Main Page");
+
+                    callManualPage(hcm_data);
+
+                }
+
+                if(gmCurrentPage == SENSORS_PAGE_ID)
+                {
+
+                   callSensorPage(hcm_data);
+                }
+
+                if(gmCurrentPage == AUTO_PAGE_ID)
+                {
+                   callAutoPage(hcm_data);
+                }
+                if(gmCurrentPage == CAMERA_PAGE_ID)
+                {
+                    callCameraPage(hcm_data);
+                }
 
 
-                gmMutex.lock();
-                writeControlData(hcm_data);
-                gmMutex.unlock();
+                hcm_data.clear();
             }
-
-
-
-
-            hcm_data.clear();
-
 
         }
 
     }
 
+}
+
+
+
+void LcdHMI::autoMode()
+{
+
+    sleep(1);
+
+//    gmAutoModeEnable = true;
+
+    while(1)
+    {
+
+        gmDataComing = true;
+
+        gmControlData.step_motor1_speed = 1;
+        gmControlData.step_motor2_speed = 1;
+
+
+        printAll("up");
+        gmControlData.step_motor2_direction = FORWARD;
+        gmControlData.step_motor1_direction = FORWARD;
+
+        sleep(10);
+
+        gmDataComing = false;
+
+        if(gmAutoModeEnable == false)
+            break;
+
+
+        sleep(1);
+
+        gmDataComing = true;
+
+        gmControlData.step_motor1_speed = 1;
+        gmControlData.step_motor2_speed = 1;
+
+        printAll("down");
+        gmControlData.step_motor2_direction = BACKWARD;
+        gmControlData.step_motor1_direction = BACKWARD;
+
+        sleep(10);
+
+        gmDataComing = false;
+
+        if(gmAutoModeEnable == false)
+            break;
+
+        sleep(1);
+
+
+        gmDataComing = true;
+
+        gmControlData.step_motor1_speed = 1;
+        gmControlData.step_motor2_speed = 1;
+
+        printAll("down");
+        gmControlData.step_motor2_direction = BACKWARD;
+        gmControlData.step_motor1_direction = FORWARD;
+
+        sleep(10);
+
+        gmDataComing = false;
+
+        if(gmAutoModeEnable == false)
+            break;
+
+        sleep(1);
+
+
+
+        gmDataComing = true;
+
+        gmControlData.step_motor1_speed = 1;
+        gmControlData.step_motor2_speed = 1;
+
+        printAll("down");
+        gmControlData.step_motor2_direction = FORWARD;
+        gmControlData.step_motor1_direction = BACKWARD;
+
+        sleep(10);
+
+        gmDataComing = false;
+
+        if(gmAutoModeEnable == false)
+            break;
+
+        sleep(1);
+
+
+
+    }
+
+    gmDataComing = false;
+
+}
+
+
+
+Status LcdHMI::sendEnvironmentInfo()
+{
+
+    std::string wheather;
+    std::string sfp_status;
+
+    if(gmSfpData.status == 1)
+        sfp_status = "Connected";
+    else
+        sfp_status = "Unconnected";
+
+    if(gmStmEnvironmentData.sensor_data.wheather_condition == 1)
+        wheather = "Sunny";
+    else if(gmStmEnvironmentData.sensor_data.wheather_condition == 2)
+        wheather = "Cloudy";
+    else if(gmStmEnvironmentData.sensor_data.wheather_condition == 3)
+        wheather = "Rainy";
+    else
+        wheather = "Undetermined";
+
+    gmSerial->writeData("stat.txt=\"Stat:", sfp_status, " \";");
+    usleep(100);
+    gmSerial->writeData("temp.txt=\"Temp: ", gmStmEnvironmentData.sensor_data.temperature," C\";");
+    usleep(100);
+    gmSerial->writeData("press.txt=\"Press: ", gmStmEnvironmentData.sensor_data.pressure," hm\";");
+    usleep(100);
+    gmSerial->writeData("comp.txt=\"Comp: ", gmStmEnvironmentData.sensor_data.compass_degree," d\";");
+    usleep(100);
+    gmSerial->writeData("alti.txt=\"Alttude: ", gmStmEnvironmentData.sensor_data.altitude," m\";");
+    usleep(100);
+    gmSerial->writeData("wheat.txt=\"Wheather: ", wheather," \";");
 
 }
 

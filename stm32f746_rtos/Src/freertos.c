@@ -128,6 +128,7 @@ void MX_FREERTOS_Init(void)
   SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
   SpiCheckData = malloc(sizeof(SPI_TRANSFER_FORMAT));
 
+  SensorCalibrationNeeded = malloc(sizeof(int));
 
 }
 

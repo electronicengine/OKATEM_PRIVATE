@@ -1,4 +1,4 @@
-﻿#include "spiops.h"
+#include "spiops.h"
 #include "stdlib.h"
 
 #define SECTOR6_ADDRESS 0x8080000
@@ -82,10 +82,18 @@ void spiComOps(void const * argument)
                         update_data_available = 1;
 
                     putUpdateDataResponse();
+
+
+                    motor1.direction = STOP;
+                    motor2.direction = STOP;
+                    servo1.angle = 0;
+                    servo2.angle = 0;
                 }
                 else
                 {
                     ret = checkIfControlData();
+
+
 
                     if(ret == HAL_OK)
                     {
@@ -98,6 +106,11 @@ void spiComOps(void const * argument)
                     else
                     {
                         putEnvironmentData();
+
+                        motor1.direction = STOP;
+                        motor2.direction = STOP;
+                        servo1.angle = 0;
+                        servo2.angle = 0;
                     }
 
 
@@ -405,39 +418,34 @@ void processControlData()
 {
 
 
-    if(ControlData -> step_motor1_direction == FORWARD)
+    motor1.direction = ControlData -> step_motor1_direction;
+    motor1.speed = ControlData -> step_motor1_speed;
+
+
+    motor2.direction = ControlData -> step_motor2_direction;;
+    motor2.speed = ControlData -> step_motor2_speed;
+
+
+//    if(ControlData -> servo_motor1_degree != 0)
+    servo1.angle = ControlData -> servo_motor1_degree;
+
+
+//    if(ControlData -> servo_motor2_degree != 0)
+    servo2.angle = ControlData -> servo_motor2_degree;
+
+
+    if(ControlData -> calibrate_sensor == 1)
     {
-        mprintf("1u\r\n");
-        motor1.direction = FORWARD;
-        motor1.speed = ControlData -> step_motor1_speed;
-    }
-    else if(ControlData -> step_motor1_direction == BACKWARD)
-    {
-        mprintf("1d\r\n");
-        motor1.direction = BACKWARD;
-        motor1.speed = ControlData -> step_motor1_speed;
-    }
-    else
-    {
+        mprintf("S\r\n");
+
+        calibration.available = 1;
+
         motor1.direction = STOP;
+        motor2.direction = STOP;
+
     }
 
-    if(ControlData -> step_motor2_direction == FORWARD)
-    {
-        mprintf("2u\r\n");
-        motor2.direction = FORWARD;
-        motor1.speed = ControlData -> step_motor2_speed;
-    }
-    else if(ControlData -> step_motor2_direction == BACKWARD)
-    {
-        mprintf("2d\r\n");
-        motor2.direction = BACKWARD;
-        motor1.speed = ControlData -> step_motor2_speed;
-    }
-    else
-    {
-        motor2.direction = STOP;
-    }
+
 
 
 }

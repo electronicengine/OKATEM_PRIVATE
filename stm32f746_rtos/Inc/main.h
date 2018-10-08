@@ -65,6 +65,17 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define STEP2_BREAK_Pin GPIO_PIN_15 //PE15 step motor1
+#define STEP2_BREAK_GPIO_Port GPIOE //PE15 step motor1
+
+#define STEP1_BREAK_Pin GPIO_PIN_1 //PC1 step motor1
+#define STEP1_BREAK_GPIO_Port GPIOC //PC1 step motor1
+
+#define ENABLE_STEP1_PIN GPIO_PIN_4 //PC4 step motor1
+#define ENABLE_STEP1_GPIO_Port GPIOC //PC4 step motor1
+#define ENABLE_STEP2_PIN GPIO_PIN_5 //PC4 step motor1
+#define ENABLE_STEP2_GPIO_Port GPIOC //PC4 step motor1
+
 #define WKUP_Pin GPIO_PIN_0
 #define WKUP_GPIO_Port GPIOA
 #define SFP_LOS_Pin GPIO_PIN_12
@@ -163,7 +174,10 @@ typedef struct
 {
 
 
-    uint8_t garbage1[46];
+    uint8_t garbage1[45];
+
+    uint8_t mode;
+
     uint32_t x_position;
     uint32_t y_position;
     uint32_t z_position;
@@ -182,7 +196,9 @@ typedef struct
     uint8_t servo_motor1_degree;
     uint8_t servo_motor2_degree;
 
-    uint8_t garbage2[46];
+    uint8_t calibrate_sensor;
+
+    uint8_t garbage2[45];
 
 
 }CONTROL_DATA_FORMAT;

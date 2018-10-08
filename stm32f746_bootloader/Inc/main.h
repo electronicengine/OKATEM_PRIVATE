@@ -44,6 +44,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
 
+
+#include <stdarg.h>
+#include <stdio.h>
+
+#include <stdlib.h>
+
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -101,6 +108,12 @@
 #define SP1_NSS_Pin GPIO_PIN_6
 #define SP1_NSS_GPIO_Port GPIOB
 
+
+#define SPI_ENTITY_SIZE 108
+#define SPI_TRANSFER_SIZE 120
+#define SPI_DATA_SIZE 116
+
+
 /* ########################## Assert Selection ############################## */
 /**
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
@@ -115,6 +128,27 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
+
+
+ typedef struct
+ {
+     uint16_t header;
+     unsigned char data[SPI_DATA_SIZE];
+     uint16_t checksum;
+
+ }SPI_TRANSFER_FORMAT;
+
+
+
+ typedef struct
+ {
+     uint32_t total_sequence_number;
+     uint32_t current_sequence_number;
+
+     unsigned char data[108];
+
+
+ }UPDATE_FILE_FORMAT;
 
 
 void _Error_Handler(char *, int);

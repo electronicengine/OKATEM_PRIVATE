@@ -50,6 +50,7 @@ ENVIRONMENT_DATA_FORMAT *EnvironmentData;
 CONTROL_DATA_FORMAT *ControlData;
 UPDATE_FILE_FORMAT *UpdateFile;
 
+int *SensorCalibrationNeeded;
 
 void MX_FREERTOS_Init(void);
 void mprintf(const char *fmt, ...);

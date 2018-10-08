@@ -41,6 +41,8 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
         {
             Data = gmData;
 
+            printf("servo2 degree: %d\r\n", Data.servo_motor2_degree);
+
         }
         else
         {
@@ -112,7 +114,7 @@ void UdpSocket::openPort()
     printAll("binding datagram socket\r\n");
     }
 
-    printf("Socket has port number %d\n\r", ntohs(name.sin_port));
+    printAll("Socket has port number ", ntohs(name.sin_port));
 
 
     std::thread listening_port(&UdpSocket::recieveData, this);

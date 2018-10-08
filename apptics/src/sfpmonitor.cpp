@@ -2,22 +2,27 @@
 
 
 
+extern std::map<std::string, bool> CheckList;
 
 
 SfpMonitor::SfpMonitor()
 {
+
     char filename[20];
     snprintf(filename, 19, "/dev/i2c-%d", ADAPTER_NUMBER);
     gmFileDescriptor = open(filename, O_RDWR);
+
     if (gmFileDescriptor < 0) {
         // TODO: Handle this
         printAll("I2C ports could not open");
+//        CheckList["SfpMonitor"] = false;
 
     }
 
     if (ioctl(gmFileDescriptor, I2C_SLAVE, SFP_I2C_DIAG_ADDRESS) < 0) {
         // TODO: Handle this
         printAll("I2C address could not write");
+//        CheckList["SfpMonitor"] = false;
     }
 
 
@@ -126,8 +131,10 @@ int SfpMonitor::readValues()
 {
     // TODO: Check type of the value, default is current value
     if (!this->readData())
+    {
+//        CheckList["SfpMonitor"] = false;
         return -1;
-
+    }
     gmSfpData.temperature = convertNumber((uint8_t *)&gmBuffer[96], 256, true);
     gmSfpData.vcc = convertNumber((uint8_t *)&gmBuffer[98], 10000, false);
     gmSfpData.tx_bias = convertNumber((uint8_t *)&gmBuffer[100], 500, false);

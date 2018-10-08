@@ -1,4 +1,10 @@
 #include "lorawan.h"
+#include "globals.h"
+
+
+extern std::map<const std::string, bool> CheckList;
+
+
 
 Status LoraWan::init()
 {
@@ -65,6 +71,17 @@ Status LoraWan::init()
     printAll("Lora radio set mod fsk ok");
     lora_return.clear();
 
+
+//    CheckListMutex.lock();
+    try{
+        CheckList["Lora"] = false;
+    }
+    catch(std::exception e)
+    {
+        printAll("e:", e.what());
+    }
+
+//    CheckListMutex.unlock();
 
     sleep(std::rand() % 10);
     

@@ -1,8 +1,12 @@
 #include "controller.h"
 #include "globals.h"
 
+extern std::map<const std::string, bool> CheckList;
+
 Controller::Controller()
 {
+
+    CheckList.insert(std::make_pair<std::string, bool>("Controller", true));
 
     std::thread communication(&Controller::communicationThread, this);
     communication.detach();
@@ -116,7 +120,6 @@ Status Controller::driveMotorUp()
 Status Controller::driveMotorDown()
 {
 
-
     gmControlData.step_motor1_direction = BACKWARD;
     gmControlData.step_motor1_speed = 5;
 
@@ -132,6 +135,7 @@ Status Controller::driveMotorDown()
 
 Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
 {
+
     gmMutex.lock();
 
     gmSpiTxData = Data;
@@ -139,6 +143,7 @@ Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
     gmMutex.unlock();
 
     return Status::ok;
+
 }
 
 
@@ -147,58 +152,62 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 {
 
     static int percent = 0;
-    static int last_percent;
+      static int last_percent;
 
 
-    if(gmIsTransmitted)
-    {
+      if(gmIsTransmitted)
+      {
 
-        gmMutex.lock();
+          gmMutex.lock();
 
-        if(gmDesiredPackageSequence >= gmCurrentPackageSequence)
-        {
+          if(gmDesiredPackageSequence >= gmCurrentPackageSequence)
+          {
 
-           gmUpdateFile = Data;
+             gmUpdateFile = Data;
 
-           gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
+             gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
-           gmSpiTxData = gmUpdateFile;
+             std::cout << "set" << std::endl;
 
-           gmIsTransmitted = false;
+             gmSpiTxData = gmUpdateFile;
 
-           gmMutex.unlock();
+             gmIsTransmitted = false;
 
-           percent = (int)(((double)gmUpdateFile.current_sequence_number/Data.total_sequence_number) * 100);
+             gmMutex.unlock();
 
-           if(percent != last_percent)
-            printAll("Update file %", percent, " is uploaded. ");
+             percent = (int)(((double)gmUpdateFile.current_sequence_number/Data.total_sequence_number) * 100);
 
-            last_percent = percent;
+             if(percent != last_percent)
+              printAll("Update file %", percent, " is uploaded. ");
+
+              last_percent = percent;
 
 
-           return Status::ok;
+             return Status::ok;
 
-        }
-        else
-        {
+          }
+          else
+          {
 
-            gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
+              gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
-            gmSpiTxData = gmUpdateFile;
+              gmSpiTxData = gmUpdateFile;
 
-            gmIsTransmitted = false;
+              gmIsTransmitted = false;
 
-            gmMutex.unlock();
+              gmMutex.unlock();
 
-            return Status::error;
+              return Status::error;
 
-        }
+          }
 
-    }
-    else
-    {
-        return Status::error;
-    }
+      }
+      else
+      {
+          return Status::error;
+      }
+
+
 
 
 }
@@ -230,6 +239,7 @@ void Controller::communicationThread()
 {
 
 
+    bool spi_is_working = false;
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
 
@@ -242,13 +252,11 @@ void Controller::communicationThread()
     while(true)
     {
 
-
         gmMutex.lock();
 
         spi_transfer_data = gmSpiTxData;
 
         status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
-
 
         if(status == Status::ok)
         {
@@ -261,37 +269,49 @@ void Controller::communicationThread()
                gmIsReceived = true;
 
             }
+            else if(status == Status::time_out)
+            {
+                gmIsTransmitted = false;
+                gmIsReceived = false;
+            }
             else
             {
                 status = checkIfEnvironmentData(gmSpiRxData);
                 if(status == Status::ok)
                 {
+
                     gmIsReceived = true;
                     gmIsTransmitted = true;
                 }
                 else
                 {
+
                     gmIsTransmitted = false;
                     gmIsReceived = false;
                 }
 
+                gmSpiTxData.clear();
 
             }
+
+
+            CheckList["Controller"] = true;
 
         }
         else
         {
+
+            gmSpiTxData.clear();
 
             gmSpiRxData.clear();
             gmSpiTxData.clear();
             gmIsTransmitted = false;
             gmIsReceived = false;
 
+            CheckList["Controller"] = false;
+
         }
 
-
-
-        gmSpiTxData.clear();
         gmMutex.unlock();
 
         usleep(wait_time);
@@ -318,25 +338,41 @@ Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
 
         if((gmDesiredPackageSequence < gmCurrentPackageSequence))
         {
+
+            printAll(gmDesiredPackageSequence, "<", gmCurrentPackageSequence);
+//             std::cout << gmDesiredPackageSequence << "<" << gmCurrentPackageSequence << std::endl;
+
             gmSpiTxData = gmBackupUpdateFile;
+
             gmCurrentPackageSequence = gmBackupUpdateFile.current_sequence_number;
+
+//            std::cout << gmDesiredPackageSequence << "<=" << gmCurrentPackageSequence << std::endl;
+
+            gmIsTransmitted = false;
 
             gmSpiRxData.clear();
 
-            return Status::error;
+            return Status::time_out;
 
 
         }
         else if((gmDesiredPackageSequence > gmCurrentPackageSequence))
         {
 
+            printAll(gmDesiredPackageSequence, ">", gmCurrentPackageSequence);
+//            std::cout << gmDesiredPackageSequence << ">" << gmCurrentPackageSequence << std::endl;
+
             gmSpiRxData.clear();
 
             return Status::ok;
 
 
-        }else if(((gmDesiredPackageSequence == gmCurrentPackageSequence)))
+        }
+        else if(((gmDesiredPackageSequence == gmCurrentPackageSequence)))
         {
+
+            printAll(gmDesiredPackageSequence, "==", gmCurrentPackageSequence);
+//             std::cout << gmDesiredPackageSequence << "==" << gmCurrentPackageSequence << std::endl;
 
             gmBackupUpdateFile = gmUpdateFile;
             gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
@@ -385,3 +421,5 @@ Status Controller::checkIfEnvironmentData(const SPI_TRANSFER_FORMAT &SpiData)
         return Status::error;
     }
 }
+
+

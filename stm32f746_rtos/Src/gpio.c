@@ -82,6 +82,8 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
+  HAL_GPIO_WritePin(GPIOC, ENABLE_STEP1_PIN|ENABLE_STEP2_PIN, GPIO_PIN_RESET);
+
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, LASER_EN_Pin|STEP4_AI1_Pin|STEP4_AI2_Pin|STEP4_BI2_Pin|STEP3_AI2_Pin|STEP3_AI1_Pin, GPIO_PIN_RESET);
 
@@ -104,6 +106,28 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SFP_LOS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : */
+
+  GPIO_InitStruct.Pin = ENABLE_STEP1_PIN|ENABLE_STEP2_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : */
+
+  GPIO_InitStruct.Pin = STEP1_BREAK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(STEP1_BREAK_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : */
+
+  GPIO_InitStruct.Pin = STEP2_BREAK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(STEP2_BREAK_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PGPin PGPin PGPin PGPin 
                            PGPin PGPin PGPin */

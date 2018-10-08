@@ -1,5 +1,8 @@
 #include "serialcom.h"
 
+
+extern std::map<std::string, bool> CheckList;
+
 Status SerialCom::readData(std::vector<unsigned char>& Container, unsigned char Header, unsigned char Footer)
 {
 
@@ -184,6 +187,12 @@ Status SerialCom::Init()
     {
             //ERROR - CAN'T OPEN SERIAL PORT
             printAll("Serial Port file can not opened");
+
+//            if(gmPort == "/dev/ttyUSB0")
+//                CheckList["SerialUSB"] = false;
+//            else
+//                CheckList["SerialS1"] = false;
+
             return Status::error;
     }
 
@@ -246,6 +255,12 @@ Status SerialCom::Init()
     else
     {
             printAll("Serial Port Baundrate is wrongly");
+
+//            if(gmPort == "/dev/ttyUSB0")
+//                CheckList["SerialUSB"] = false;
+//            else
+//                CheckList["SerialS1"] = false;
+
             Close();
             return Status::error;
     }
@@ -256,6 +271,10 @@ Status SerialCom::Init()
     tcflush(gmFileDescriptor, TCIFLUSH);
     tcsetattr(gmFileDescriptor, TCSANOW, &options);
 
+//    if(gmPort == "/dev/ttyUSB0")
+//        CheckList["SerialUSB"] = true;
+//    else
+//        CheckList["SerialS1"] = true;
 
     return Status::ok;
 
