@@ -40,9 +40,6 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
         if(gmData.header == 'C' | 'O' << 8)
         {
             Data = gmData;
-
-            printf("servo2 degree: %d\r\n", Data.servo_motor2_degree);
-
         }
         else
         {

@@ -199,6 +199,11 @@
                     document.getElementById("terminal_longnitude").innerHTML = obj.terminal_longnitude;
                     document.getElementById("terminal_we_indicator").innerHTML = obj.terminal_we_indicator;
 
+                    document.getElementById("servo_motor1_degree").innerHTML = obj.servo_motor1_degree;
+                    document.getElementById("servo_motor2_degree").innerHTML = obj.servo_motor2_degree;
+                    document.getElementById("step_motor1_position").innerHTML = obj.step_motor1_position;
+                    document.getElementById("step_motor2_position").innerHTML = obj.step_motor2_position;
+
                     document.getElementById("cpu_usage").innerHTML = obj.cpu_usage;
                     document.getElementById("memory_usage").innerHTML = obj.memory_usage;
 
@@ -276,7 +281,7 @@
 		$pass=$_GET['psw'];
 
 		if($user === "admin" && $pass == "1234") {
-      
+
 		}
 		else {
 	    echo "<script> alert('Wrong Password or Username');";
@@ -321,7 +326,7 @@
         <section id="content1">
             <!-- {% if connected %} -->
 
-            <div class="card" z-default=1 z-hover=1 no-height=1 style="height:300px">
+            <div class="card" z-default=1 z-hover=1 no-height=1 style="height:410px">
               <p style="float: left;"><img src="./img/laser.png" style="width:32px;height:32px;"></p><p id="terminalInfo">  &emsp; Terminal Information</p>
               <br>
               <br> Status: <span id="terminal_status"></span> <br>
@@ -332,6 +337,10 @@
               <br> SFP Tx Bias: <span id="sfp_tx_bias"></span> mA<br>
               <br> SFP Tx Power: <span id="sfp_tx_power"></span> dBM<br>
               <br> SFP Rx Power: <span id="sfp_rx_power"></span> dBM<br>
+              <br> Servo Motor1 Degree: <span id="servo_motor1_degree"></span> d<br>
+              <br> Servo Motor2 Degree: <span id="servo_motor2_degree"></span> d<br>
+              <br> Step Motor1 Position: <span id="step_motor1_position"></span> d<br>
+              <br> Step Motor2 Position: <span id="step_motor2_position"></span> d<br>
             </div>
 
             <div class="card" z-default=1 z-hover=1 no-height=1 style="height:190px">

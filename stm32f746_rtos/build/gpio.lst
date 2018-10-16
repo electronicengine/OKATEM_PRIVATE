@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccxqUE3r.s 			page 1
+ARM GAS  /tmp/ccb0XpTX.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
   29:Src/gpio.c    ****   *    microprocessor devices manufactured by or for STMicroelectronics.
   30:Src/gpio.c    ****   * 5. Redistribution and use of this software other than as permitted under 
   31:Src/gpio.c    ****   *    this license is void and will automatically terminate your rights under 
-ARM GAS  /tmp/ccxqUE3r.s 			page 2
+ARM GAS  /tmp/ccb0XpTX.s 			page 2
 
 
   32:Src/gpio.c    ****   *    this license. 
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
   42              		.cfi_def_cfa_register 7
   43              	.LBB2:
   72:Src/gpio.c    **** 
-ARM GAS  /tmp/ccxqUE3r.s 			page 3
+ARM GAS  /tmp/ccb0XpTX.s 			page 3
 
 
   73:Src/gpio.c    ****   GPIO_InitTypeDef GPIO_InitStruct;
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
   91 005e 03F00103 		and	r3, r3, #1
   92 0062 7B61     		str	r3, [r7, #20]
   93 0064 7B69     		ldr	r3, [r7, #20]
-ARM GAS  /tmp/ccxqUE3r.s 			page 4
+ARM GAS  /tmp/ccb0XpTX.s 			page 4
 
 
   94              	.LBE5:
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  144 00c2 7B60     		str	r3, [r7, #4]
  145 00c4 7B68     		ldr	r3, [r7, #4]
  146              	.LBE9:
-ARM GAS  /tmp/ccxqUE3r.s 			page 5
+ARM GAS  /tmp/ccb0XpTX.s 			page 5
 
 
   84:Src/gpio.c    **** 
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  104:Src/gpio.c    ****   /*Configure GPIO pin : PtPin */
  105:Src/gpio.c    ****   GPIO_InitStruct.Pin = SFP_LOS_Pin;
  181              		.loc 1 105 0
-ARM GAS  /tmp/ccxqUE3r.s 			page 6
+ARM GAS  /tmp/ccb0XpTX.s 			page 6
 
 
  182 010a 4FF48053 		mov	r3, #4096
@@ -347,31 +347,31 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  119:Src/gpio.c    **** 
  120:Src/gpio.c    ****   GPIO_InitStruct.Pin = STEP1_BREAK_Pin;
  212              		.loc 1 120 0
- 213 0140 0223     		movs	r3, #2
- 214 0142 7B62     		str	r3, [r7, #36]
+ 213 0140 4FF40043 		mov	r3, #32768
+ 214 0144 7B62     		str	r3, [r7, #36]
  121:Src/gpio.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
  215              		.loc 1 121 0
- 216 0144 0023     		movs	r3, #0
- 217 0146 BB62     		str	r3, [r7, #40]
+ 216 0146 0023     		movs	r3, #0
+ 217 0148 BB62     		str	r3, [r7, #40]
  122:Src/gpio.c    ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
  218              		.loc 1 122 0
- 219 0148 0023     		movs	r3, #0
- 220 014a FB62     		str	r3, [r7, #44]
+ 219 014a 0023     		movs	r3, #0
+ 220 014c FB62     		str	r3, [r7, #44]
  123:Src/gpio.c    ****   HAL_GPIO_Init(STEP1_BREAK_GPIO_Port, &GPIO_InitStruct);
-ARM GAS  /tmp/ccxqUE3r.s 			page 7
+ARM GAS  /tmp/ccb0XpTX.s 			page 7
 
 
  221              		.loc 1 123 0
- 222 014c 07F12403 		add	r3, r7, #36
- 223 0150 1946     		mov	r1, r3
- 224 0152 2D48     		ldr	r0, .L2+4
- 225 0154 FFF7FEFF 		bl	HAL_GPIO_Init
+ 222 014e 07F12403 		add	r3, r7, #36
+ 223 0152 1946     		mov	r1, r3
+ 224 0154 3248     		ldr	r0, .L2+28
+ 225 0156 FFF7FEFF 		bl	HAL_GPIO_Init
  124:Src/gpio.c    **** 
  125:Src/gpio.c    ****   /*Configure GPIO pins : */
  126:Src/gpio.c    **** 
  127:Src/gpio.c    ****   GPIO_InitStruct.Pin = STEP2_BREAK_Pin;
  226              		.loc 1 127 0
- 227 0158 4FF40043 		mov	r3, #32768
+ 227 015a 0223     		movs	r3, #2
  228 015c 7B62     		str	r3, [r7, #36]
  128:Src/gpio.c    ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
  229              		.loc 1 128 0
@@ -385,7 +385,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  235              		.loc 1 130 0
  236 0166 07F12403 		add	r3, r7, #36
  237 016a 1946     		mov	r1, r3
- 238 016c 2C48     		ldr	r0, .L2+28
+ 238 016c 2648     		ldr	r0, .L2+4
  239 016e FFF7FEFF 		bl	HAL_GPIO_Init
  131:Src/gpio.c    **** 
  132:Src/gpio.c    ****   /*Configure GPIO pins : PGPin PGPin PGPin PGPin 
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  142:Src/gpio.c    ****   GPIO_InitStruct.Pin = LED3_Pin|SP1_NSS_Pin|STEP1_BI2_Pin|STEP1_AI2_Pin|STEP1_AI1_Pin;
  257              		.loc 1 142 0
  258 0190 4FF24003 		movw	r3, #61504
-ARM GAS  /tmp/ccxqUE3r.s 			page 8
+ARM GAS  /tmp/ccb0XpTX.s 			page 8
 
 
  259 0194 7B62     		str	r3, [r7, #36]
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  295 01d0 0023     		movs	r3, #0
  296 01d2 FB62     		str	r3, [r7, #44]
  161:Src/gpio.c    ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-ARM GAS  /tmp/ccxqUE3r.s 			page 9
+ARM GAS  /tmp/ccb0XpTX.s 			page 9
 
 
  297              		.loc 1 161 0
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  343              		.text
  344              	.Letext0:
  345              		.file 2 "/usr/include/newlib/machine/_default_types.h"
-ARM GAS  /tmp/ccxqUE3r.s 			page 10
+ARM GAS  /tmp/ccb0XpTX.s 			page 10
 
 
  346              		.file 3 "/usr/include/newlib/sys/lock.h"
@@ -550,14 +550,14 @@ ARM GAS  /tmp/ccxqUE3r.s 			page 1
  352              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
  353              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
  354              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
-ARM GAS  /tmp/ccxqUE3r.s 			page 11
+ARM GAS  /tmp/ccb0XpTX.s 			page 11
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 gpio.c
-     /tmp/ccxqUE3r.s:18     .text.MX_GPIO_Init:0000000000000000 $t
-     /tmp/ccxqUE3r.s:25     .text.MX_GPIO_Init:0000000000000000 MX_GPIO_Init
-     /tmp/ccxqUE3r.s:332    .text.MX_GPIO_Init:0000000000000204 $d
+     /tmp/ccb0XpTX.s:18     .text.MX_GPIO_Init:0000000000000000 $t
+     /tmp/ccb0XpTX.s:25     .text.MX_GPIO_Init:0000000000000000 MX_GPIO_Init
+     /tmp/ccb0XpTX.s:332    .text.MX_GPIO_Init:0000000000000204 $d
                      .debug_frame:0000000000000010 $d
 
 UNDEFINED SYMBOLS

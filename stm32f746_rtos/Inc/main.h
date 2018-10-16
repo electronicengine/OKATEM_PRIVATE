@@ -65,11 +65,11 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define STEP2_BREAK_Pin GPIO_PIN_15 //PE15 step motor1
-#define STEP2_BREAK_GPIO_Port GPIOE //PE15 step motor1
+#define STEP1_BREAK_Pin GPIO_PIN_15 //PE15 step motor1
+#define STEP1_BREAK_GPIO_Port GPIOE //PE15 step motor1
 
-#define STEP1_BREAK_Pin GPIO_PIN_1 //PC1 step motor1
-#define STEP1_BREAK_GPIO_Port GPIOC //PC1 step motor1
+#define STEP2_BREAK_Pin GPIO_PIN_1 //PC1 step motor1
+#define STEP2_BREAK_GPIO_Port GPIOC //PC1 step motor1
 
 #define ENABLE_STEP1_PIN GPIO_PIN_4 //PC4 step motor1
 #define ENABLE_STEP1_GPIO_Port GPIOC //PC4 step motor1

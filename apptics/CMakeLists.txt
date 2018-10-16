@@ -102,7 +102,7 @@ add_executable(${PROJECT_NAME}
 #    )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.:/home/pi
-#  COMMAND sudo sshpass -p "bananapi" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.59:/home/pi
+  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.63:/home/pi
+  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.64:/home/pi
   COMMENT "Creating directory: "
 )

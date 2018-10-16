@@ -119,7 +119,7 @@ int LaserTracker::startTracking()
         drawFSOFace(red_circles);
 
         //show the frame
-//        cv::imshow("frame", gmFrame);
+        cv::imshow("frame", gmFrame);
 
         cv::waitKey(1); // needed
 

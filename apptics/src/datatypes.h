@@ -168,6 +168,7 @@ struct GPS_DATA
         return *this;
     }
 
+
 };
 
 
@@ -236,8 +237,10 @@ struct ENVIRONMENT_DATA_FORMAT
 
     ENVIRONMENT_DATA_FORMAT& operator = (SPI_TRANSFER_FORMAT& SpiData)
     {
+
         try
         {
+
             gps_string = std::string(&SpiData.data[0], &SpiData.data[98]);
 
             gps_data = gps_string;

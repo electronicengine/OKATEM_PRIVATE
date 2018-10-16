@@ -41,7 +41,6 @@ Status Controller::isReady()
 Status Controller::zoomInCamera()
 {
 
-
     gmControlData.servo_motor1_degree= 120;
     gmControlData.servo_motor1_direction = FORWARD;
 
@@ -221,12 +220,7 @@ ENVIRONMENT_DATA_FORMAT Controller::getStmEnvironment()
 
     gmMutex.lock();
 
-    if(gmIsReceived)
-    {
-
-        gmIsReceived = false;
-        data = gmEnvironmentData;
-    }
+    data = gmEnvironmentData;
 
     gmMutex.unlock();
 

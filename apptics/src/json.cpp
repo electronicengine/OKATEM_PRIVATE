@@ -3,9 +3,42 @@
 
 Json::Json()
 {
-//    std::thread postJson(&Json::writeJson, this);
-//    postJson.detach();
+
+    std::string json;
+
+    std::ifstream file;
+
+    rapidjson::Document document;
+
+    file.open("/var/www/html/json");
+
+    file >> json;
+
+    file.close();
+
+
+    document.Parse(json.c_str());
+
+
+
+     if(document.HasMember("servo_motor1_degree"))
+        gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
+
+     if(document.HasMember("servo_motor2_degree"))
+        gmServoMotor2Degree = document["servo_motor2_degree"].GetInt();
+
+
+    std::thread postJson(&Json::writeJson, this);
+    postJson.detach();
+
+
 }
+
+Json::Json(int Mode)
+{
+
+}
+
 
 Json::~Json()
 {
@@ -15,7 +48,11 @@ void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 {
     gmMutex.lock();
 
-    gmControlData = ControlData;
+    if(ControlData.servo_motor1_degree != 0)
+        gmServoMotor1Degree = ControlData.servo_motor1_degree;
+
+    if(ControlData.servo_motor2_degree != 0)
+        gmServoMotor2Degree = ControlData.servo_motor2_degree;
 
     gmMutex.unlock();
 
@@ -65,14 +102,18 @@ void Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
     rapidjson::Document document;
     document.Parse(json.c_str());
 
-    assert(document.HasMember("step_motor1_position"));
-    assert(document["step_motor1_position"].IsInt());
+    if(document.HasMember("servo_motor1_degree"))
+        gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
 
-    ControlData.step_motor1_direction= document["step_motor1_position"].GetInt();
-    ControlData.step_motor2_direction = document["step_motor2_position"].GetInt();
+    if(document.HasMember("step_motor1_position"))
+        gmStepMotor1Position = document["step_motor1_position"].GetInt();
 
-    ControlData.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
-    ControlData.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+    if(document.HasMember("servo_motor2_degree"))
+        gmStepMotor2Position = document["servo_motor2_degree"].GetInt();
+
+    if(document.HasMember("step_motor2_position"))
+        gmServoMotor2Degree = document["step_motor2_position"].GetInt();
+
 
 }
 
@@ -82,7 +123,12 @@ void Json::writeJson()
 {
 
 
+    while(1)
+    {
+        writeFile();
 
+        sleep(2);
+    }
 
 
 }
@@ -90,7 +136,6 @@ void Json::writeJson()
 
 void Json::writeFile()
 {
-
 
     float cpu_usage;
     float mem_usage;
@@ -156,18 +201,17 @@ void Json::writeFile()
     writer.Key("terminal_compass");
     writer.Uint(gmStmData.sensor_data.compass_degree);
 
-
     writer.Key("servo_motor1_degree");
-    writer.Uint(gmControlData.servo_motor1_degree);
+    writer.Uint(gmServoMotor1Degree);
 
     writer.Key("servo_motor2_degree");
-    writer.Uint(gmControlData.servo_motor2_degree);
+    writer.Uint(gmServoMotor2Degree);
 
     writer.Key("step_motor1_position");
-    writer.Uint(gmControlData.step_motor1_direction);
+    writer.Uint(gmStepMotor1Position);
 
     writer.Key("step_motor2_position");
-    writer.Uint(gmControlData.step_motor2_direction);
+    writer.Uint(gmStepMotor2Position);
 
     writer.Key("cpu_usage");
     writer.Double(cpu_usage);
@@ -236,6 +280,7 @@ void Json::writeFile()
 
 void Json::getPhysicalSourceUsage(float &MemUsage, float &CpuUsage)
 {
+
     size_t previous_idle_time=0, previous_total_time=0;
     size_t idle_time, total_time;
 
@@ -273,6 +318,7 @@ std::vector<size_t> Json::getCpuTick()
     std::vector<size_t> times;
     for (size_t time; proc_stat >> time; times.push_back(time));
     return times;
+
 }
 
 
@@ -287,11 +333,11 @@ bool Json::getCpuTime(size_t &idle_time, size_t &total_time)
     total_time = std::accumulate(cpu_times.begin(), cpu_times.end(), 0);
     return true;
 
-
 }
 
 float Json::getCpuUsage()
 {
+
     size_t previous_idle_time=0, previous_total_time=0;
     size_t idle_time, total_time;
 

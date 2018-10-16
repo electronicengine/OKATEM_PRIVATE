@@ -19,6 +19,7 @@
 #include "globals.h"
 #include "spicom.h"
 #include "queue.h"
+#include "json.h"
 
 
 

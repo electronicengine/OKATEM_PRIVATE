@@ -8,8 +8,9 @@ LcdHMI::LcdHMI()
 
     gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
 
-    gmControlData.servo_motor1_degree = 50;
-    gmControlData.servo_motor2_degree = 50;
+
+    servo_motor1_angle = 50;
+    servo_motor2_angle = 50;
 
     initHCM();
 }
@@ -36,6 +37,14 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
          data = false;
          return data;
      }
+
+}
+
+Status LcdHMI::setMotorPositions(CONTROL_DATA_FORMAT &SavedData)
+{
+
+    servo_motor1_angle = SavedData.servo_motor1_degree;
+    servo_motor2_angle = SavedData.servo_motor2_degree;
 
 }
 
@@ -220,6 +229,7 @@ void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
 
     int sensitivity = 0;
 
+
     gmMutex.lock();
 
     if(Data[1] == BUTTON_PRESSED)
@@ -230,73 +240,76 @@ void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
         if(Data[2] == CAMERA1_UP_BUTTON_ID)
         {
 
-            if(gmControlData.servo_motor1_degree <= 150)
-                gmControlData.servo_motor1_degree += Data[6];
+            if(servo_motor1_angle<= 150)
+                servo_motor1_angle += Data[6];
 
-            if(gmControlData.servo_motor1_degree >= 150)
-                gmControlData.servo_motor1_degree = 150;
+            if(servo_motor1_angle >= 150)
+                servo_motor1_angle = 150;
 
-            if(gmControlData.servo_motor1_degree <= 0)
-                gmControlData.servo_motor1_degree = 0;
+            if(servo_motor1_angle <= 0)
+                servo_motor1_angle = 0;
 
+            gmControlData.servo_motor1_degree = servo_motor1_angle;
 
-            gmSerial->writeData("t1.txt=\"", std::to_string(gmControlData.servo_motor1_degree), " Deg\";");
+            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
 
-            printf("Camera1 Up %d\r\n", gmControlData.servo_motor1_degree);
+            printf("Camera1 Up %d\r\n", servo_motor1_angle);
         }
 
         if(Data[2] == CAMERA1_DOWN_BUTTON_ID)
         {
-            if(gmControlData.servo_motor1_degree >= 0)
-                gmControlData.servo_motor1_degree -= Data[6];
+            if(servo_motor1_angle >= 0)
+                servo_motor1_angle -= Data[6];
 
-            if(gmControlData.servo_motor1_degree >= 150)
-                gmControlData.servo_motor1_degree = 150;
+            if(servo_motor1_angle >= 150)
+                servo_motor1_angle = 150;
 
-            if(gmControlData.servo_motor1_degree <= 0)
-                gmControlData.servo_motor1_degree = 0;
+            if(servo_motor1_angle <= 0)
+                servo_motor1_angle = 0;
 
-            gmControlData.servo_motor2_degree = 0;
+            gmControlData.servo_motor1_degree = servo_motor1_angle;
 
-            gmSerial->writeData("t1.txt=\"", std::to_string(gmControlData.servo_motor1_degree), " Deg\";");
+            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
 
-            printf("Camera1 Down %d\r\n", gmControlData.servo_motor1_degree);
+            printf("Camera1 Down %d\r\n", servo_motor1_angle);
         }
 
         if(Data[2] == CAMERA2_UP_BUTTON_ID)
         {
 
-            if(gmControlData.servo_motor2_degree <= 150)
-                gmControlData.servo_motor2_degree += Data[6];
+            if(servo_motor2_angle <= 150)
+                servo_motor2_angle += Data[6];
 
-            if(gmControlData.servo_motor2_degree >= 150)
-                gmControlData.servo_motor2_degree = 150;
+            if(servo_motor2_angle >= 150)
+                servo_motor2_angle = 150;
 
-            if(gmControlData.servo_motor2_degree <= 0)
-                gmControlData.servo_motor2_degree = 0;
+            if(servo_motor2_angle <= 0)
+                servo_motor2_angle = 0;
 
-            gmControlData.servo_motor1_degree = 0;
+            gmControlData.servo_motor2_degree = servo_motor2_angle;
 
-            gmSerial->writeData("t2.txt=\"", std::to_string(gmControlData.servo_motor2_degree), " Deg\";");
+            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
 
-            printf("Camera2 Up %d\r\n", gmControlData.servo_motor2_degree);
+            printf("Camera2 Up %d\r\n", servo_motor2_angle);
         }
 
         if(Data[2] == CAMERA2_DOWN_BUTTON_ID)
         {
 
-            if(gmControlData.servo_motor2_degree >= 0)
-                gmControlData.servo_motor2_degree -= Data[6];
+            if(servo_motor2_angle >= 0)
+                servo_motor2_angle -= Data[6];
 
-            if(gmControlData.servo_motor2_degree >= 150)
-                gmControlData.servo_motor2_degree = 150;
+            if(servo_motor2_angle >= 150)
+                servo_motor2_angle = 150;
 
-            if(gmControlData.servo_motor2_degree <= 0)
-                gmControlData.servo_motor2_degree = 0;
+            if(servo_motor2_angle <= 0)
+                servo_motor2_angle = 0;
 
-            gmSerial->writeData("t2.txt=\"", std::to_string(gmControlData.servo_motor2_degree), " Deg\";");
+            gmControlData.servo_motor2_degree = servo_motor2_angle;
 
-            printf("Camera2 Down %d\r\n", gmControlData.servo_motor2_degree);
+            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
+
+            printf("Camera2 Down %d\r\n", servo_motor2_angle);
         }
 
     }

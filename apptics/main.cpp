@@ -66,6 +66,11 @@ int main()
 
     Status update_file_status = Status::ok;
 
+    json.loadMotorPositions(lcd_control_data);
+    json.loadMotorPositions(udp_control_data);
+
+    lcd_hmi.setMotorPositions(lcd_control_data);
+
     tracker.runTracking();
 
     stm_data = controller.getStmEnvironment();
@@ -77,33 +82,17 @@ int main()
 
     lora.listen();
 
-
-//    for(int i=1; i<5; i++)
-//    {
-//        lcd_control_data.step_motor1_direction = FORWARD;
-//        lcd_control_data.step_motor2_direction = FORWARD;
-//        controller.setControlData(lcd_control_data);
-
-//    //    lcd_control_data.step_motor1_direction = BACKWARD;
-//    //    lcd_control_data.step_motor2_direction = BACKWARD;
-//    //    controller.setControlData(lcd_control_data);
-
-//        usleep(100000);
-
-//    }
-
-
-//    lcd_control_data.step_motor1_direction = STOP;
-//    lcd_control_data.step_motor2_direction = STOP;
+    sleep(1);
 
 
     while(1)
     {
 
         stm_data = controller.getStmEnvironment();
+
         sfp_data = sfp_monitor.getValues();
 
-//        json.saveEnvironmentData(stm_data, sfp_data); //
+        json.saveEnvironmentData(stm_data, sfp_data); //
 
         lora.setLoraData(sfp_data, stm_data);
 
@@ -111,15 +100,11 @@ int main()
 
         lora.getLoraData(lora_sfp_data, lora_stm_data);
 
-//        json.saveLoraData(lora_stm_data, lora_sfp_data);  //
-
+        json.saveLoraData(lora_stm_data, lora_sfp_data);  //
 
         udp_control_data = udp_socket.getSocketControlData();
 
         lcd_control_data = lcd_hmi.getHCMControlData();
-
-
-
 
         if(update_file_status == Status::ok)
             update_file = udp_socket.getSocketUpdateData();
@@ -131,15 +116,12 @@ int main()
         else if(udp_control_data == true)
         {
             controller.setControlData(udp_control_data);
+            json.saveMotorPositions(udp_control_data);
         }
         else if(lcd_control_data == true)
         {
-
-//            json.loadMotorPositions(lcd_control_data); //
-
             controller.setControlData(lcd_control_data);
-
-
+            json.saveMotorPositions(lcd_control_data);
         }
 
         udp_control_data.clear();
@@ -154,6 +136,8 @@ int main()
 
     }
 
+
+
     return 0;
 
 }
@@ -162,6 +146,7 @@ int main()
 
 void safeLog()
 {
+
 
     printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')), "\n"
              " - Temperature: ", (int)stm_data.sensor_data.temperature,
@@ -175,16 +160,16 @@ void safeLog()
     printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
     printAll("\n\n\n");
 
-//        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
-//        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
-//        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
-//        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
-//        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
-//        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
-//        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
+        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
+        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
+        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
+        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
+        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 
 
-//    printAll("\n\n\n");
+    printAll("\n\n\n");
 
 
 

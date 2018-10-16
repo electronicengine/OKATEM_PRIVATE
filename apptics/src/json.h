@@ -27,6 +27,7 @@ class Json
 public:
 
     Json();
+    Json(int Mode);
     ~Json();
 
 
@@ -49,6 +50,12 @@ private:
 
 
     CONTROL_DATA_FORMAT gmControlData;
+    uint8_t gmServoMotor2Degree;
+    uint8_t gmServoMotor1Degree;
+
+    int gmStepMotor1Position;
+    int gmStepMotor2Position;
+
 
     std::mutex gmMutex;
 

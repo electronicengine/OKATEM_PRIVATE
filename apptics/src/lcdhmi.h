@@ -50,6 +50,7 @@ public:
     LcdHMI();
 
     CONTROL_DATA_FORMAT getHCMControlData();
+    Status setMotorPositions(CONTROL_DATA_FORMAT &SavedData);
     Status setHCMData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& EnvironmentData);
 
 
@@ -58,6 +59,9 @@ private:
 
     bool gmDataComing = false;
     bool gmAutoModeEnable = false;
+
+    uint32_t servo_motor1_angle = 50;
+    uint32_t servo_motor2_angle = 50;
 
     SerialCom *gmSerial;
 
