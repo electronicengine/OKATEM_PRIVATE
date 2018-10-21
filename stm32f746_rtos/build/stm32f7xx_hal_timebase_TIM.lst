@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cc4JMtpC.s 			page 1
+ARM GAS  /tmp/ccCDz0pV.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -31,7 +31,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
   30              		.thumb_func
   31              		.fpu fpv4-sp-d16
   33              	HAL_InitTick:
-  34              	.LFB136:
+  34              	.LFB138:
   35              		.file 1 "Src/stm32f7xx_hal_timebase_TIM.c"
    1:Src/stm32f7xx_hal_timebase_TIM.c **** /**
    2:Src/stm32f7xx_hal_timebase_TIM.c ****   ******************************************************************************
@@ -58,7 +58,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
   23:Src/stm32f7xx_hal_timebase_TIM.c ****   * 3. Neither the name of STMicroelectronics nor the names of other 
   24:Src/stm32f7xx_hal_timebase_TIM.c ****   *    contributors to this software may be used to endorse or promote products 
   25:Src/stm32f7xx_hal_timebase_TIM.c ****   *    derived from this software without specific written permission.
-ARM GAS  /tmp/cc4JMtpC.s 			page 2
+ARM GAS  /tmp/ccCDz0pV.s 			page 2
 
 
   26:Src/stm32f7xx_hal_timebase_TIM.c ****   * 4. This software, including modifications and/or derivative works of this 
@@ -118,7 +118,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
   36              		.loc 1 79 0
   37              		.cfi_startproc
   38              		@ args = 0, pretend = 0, frame = 48
-ARM GAS  /tmp/cc4JMtpC.s 			page 3
+ARM GAS  /tmp/ccCDz0pV.s 			page 3
 
 
   39              		@ frame_needed = 1, uses_anonymous_args = 0
@@ -163,9 +163,9 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
   91:Src/stm32f7xx_hal_timebase_TIM.c ****   /* Enable TIM4 clock */
   92:Src/stm32f7xx_hal_timebase_TIM.c ****   __HAL_RCC_TIM4_CLK_ENABLE();
   67              		.loc 1 92 0
-  68 0020 1F4A     		ldr	r2, .L5
-  69 0022 1F4B     		ldr	r3, .L5
-  70 0024 1B6C     		ldr	r3, [r3, #64]
+  68 0020 1F4B     		ldr	r3, .L5
+  69 0022 1B6C     		ldr	r3, [r3, #64]
+  70 0024 1E4A     		ldr	r2, .L5
   71 0026 43F00403 		orr	r3, r3, #4
   72 002a 1364     		str	r3, [r2, #64]
   73 002c 1C4B     		ldr	r3, .L5
@@ -178,7 +178,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
   94:Src/stm32f7xx_hal_timebase_TIM.c ****   /* Get clock configuration */
   95:Src/stm32f7xx_hal_timebase_TIM.c ****   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
   79              		.loc 1 95 0
-ARM GAS  /tmp/cc4JMtpC.s 			page 4
+ARM GAS  /tmp/ccCDz0pV.s 			page 4
 
 
   80 0038 07F11002 		add	r2, r7, #16
@@ -238,7 +238,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  114 007a 0B4B     		ldr	r3, .L5+8
  115 007c 0022     		movs	r2, #0
  116 007e 9A60     		str	r2, [r3, #8]
-ARM GAS  /tmp/cc4JMtpC.s 			page 5
+ARM GAS  /tmp/ccCDz0pV.s 			page 5
 
 
  116:Src/stm32f7xx_hal_timebase_TIM.c ****   if(HAL_TIM_Base_Init(&htim4) == HAL_OK)
@@ -283,7 +283,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  147 00a8 00000000 		.word	htim4
  148 00ac 00080040 		.word	1073743872
  149              		.cfi_endproc
- 150              	.LFE136:
+ 150              	.LFE138:
  152              		.section	.text.HAL_SuspendTick,"ax",%progbits
  153              		.align	1
  154              		.global	HAL_SuspendTick
@@ -292,13 +292,13 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  157              		.thumb_func
  158              		.fpu fpv4-sp-d16
  160              	HAL_SuspendTick:
- 161              	.LFB137:
+ 161              	.LFB139:
  125:Src/stm32f7xx_hal_timebase_TIM.c **** 
  126:Src/stm32f7xx_hal_timebase_TIM.c **** /**
  127:Src/stm32f7xx_hal_timebase_TIM.c ****   * @brief  Suspend Tick increment.
  128:Src/stm32f7xx_hal_timebase_TIM.c ****   * @note   Disable the tick increment by disabling TIM4 update interrupt.
  129:Src/stm32f7xx_hal_timebase_TIM.c ****   * @param  None
-ARM GAS  /tmp/cc4JMtpC.s 			page 6
+ARM GAS  /tmp/ccCDz0pV.s 			page 6
 
 
  130:Src/stm32f7xx_hal_timebase_TIM.c ****   * @retval None
@@ -322,9 +322,9 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  174              		.loc 1 135 0
  175 0004 064B     		ldr	r3, .L8
  176 0006 1B68     		ldr	r3, [r3]
- 177 0008 054A     		ldr	r2, .L8
- 178 000a 1268     		ldr	r2, [r2]
- 179 000c D268     		ldr	r2, [r2, #12]
+ 177 0008 DA68     		ldr	r2, [r3, #12]
+ 178 000a 054B     		ldr	r3, .L8
+ 179 000c 1B68     		ldr	r3, [r3]
  180 000e 22F00102 		bic	r2, r2, #1
  181 0012 DA60     		str	r2, [r3, #12]
  136:Src/stm32f7xx_hal_timebase_TIM.c **** }
@@ -344,7 +344,7 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  195              	.L8:
  196 0020 00000000 		.word	htim4
  197              		.cfi_endproc
- 198              	.LFE137:
+ 198              	.LFE139:
  200              		.section	.text.HAL_ResumeTick,"ax",%progbits
  201              		.align	1
  202              		.global	HAL_ResumeTick
@@ -353,12 +353,12 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  205              		.thumb_func
  206              		.fpu fpv4-sp-d16
  208              	HAL_ResumeTick:
- 209              	.LFB138:
+ 209              	.LFB140:
  137:Src/stm32f7xx_hal_timebase_TIM.c **** 
  138:Src/stm32f7xx_hal_timebase_TIM.c **** /**
  139:Src/stm32f7xx_hal_timebase_TIM.c ****   * @brief  Resume Tick increment.
  140:Src/stm32f7xx_hal_timebase_TIM.c ****   * @note   Enable the tick increment by Enabling TIM4 update interrupt.
-ARM GAS  /tmp/cc4JMtpC.s 			page 7
+ARM GAS  /tmp/ccCDz0pV.s 			page 7
 
 
  141:Src/stm32f7xx_hal_timebase_TIM.c ****   * @param  None
@@ -383,9 +383,9 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  222              		.loc 1 147 0
  223 0004 064B     		ldr	r3, .L11
  224 0006 1B68     		ldr	r3, [r3]
- 225 0008 054A     		ldr	r2, .L11
- 226 000a 1268     		ldr	r2, [r2]
- 227 000c D268     		ldr	r2, [r2, #12]
+ 225 0008 DA68     		ldr	r2, [r3, #12]
+ 226 000a 054B     		ldr	r3, .L11
+ 227 000c 1B68     		ldr	r3, [r3]
  228 000e 42F00102 		orr	r2, r2, #1
  229 0012 DA60     		str	r2, [r3, #12]
  148:Src/stm32f7xx_hal_timebase_TIM.c **** }
@@ -405,43 +405,42 @@ ARM GAS  /tmp/cc4JMtpC.s 			page 1
  243              	.L11:
  244 0020 00000000 		.word	htim4
  245              		.cfi_endproc
- 246              	.LFE138:
+ 246              	.LFE140:
  248              		.text
  249              	.Letext0:
  250              		.file 2 "/usr/include/newlib/machine/_default_types.h"
  251              		.file 3 "/usr/include/newlib/sys/lock.h"
  252              		.file 4 "/usr/include/newlib/sys/_types.h"
- 253              		.file 5 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
+ 253              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
  254              		.file 6 "/usr/include/newlib/sys/reent.h"
  255              		.file 7 "/usr/include/newlib/sys/_stdint.h"
  256              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
  257              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
  258              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
  259              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
-ARM GAS  /tmp/cc4JMtpC.s 			page 8
+ARM GAS  /tmp/ccCDz0pV.s 			page 8
 
 
  260              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h"
  261              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
  262              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
-ARM GAS  /tmp/cc4JMtpC.s 			page 9
+ARM GAS  /tmp/ccCDz0pV.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 stm32f7xx_hal_timebase_TIM.c
                             *COM*:0000000000000040 htim4
-     /tmp/cc4JMtpC.s:23     .bss.uwIncrementState:0000000000000000 uwIncrementState
-     /tmp/cc4JMtpC.s:20     .bss.uwIncrementState:0000000000000000 $d
-     /tmp/cc4JMtpC.s:26     .text.HAL_InitTick:0000000000000000 $t
-     /tmp/cc4JMtpC.s:33     .text.HAL_InitTick:0000000000000000 HAL_InitTick
-     /tmp/cc4JMtpC.s:145    .text.HAL_InitTick:00000000000000a0 $d
-     /tmp/cc4JMtpC.s:153    .text.HAL_SuspendTick:0000000000000000 $t
-     /tmp/cc4JMtpC.s:160    .text.HAL_SuspendTick:0000000000000000 HAL_SuspendTick
-     /tmp/cc4JMtpC.s:196    .text.HAL_SuspendTick:0000000000000020 $d
-     /tmp/cc4JMtpC.s:201    .text.HAL_ResumeTick:0000000000000000 $t
-     /tmp/cc4JMtpC.s:208    .text.HAL_ResumeTick:0000000000000000 HAL_ResumeTick
-     /tmp/cc4JMtpC.s:244    .text.HAL_ResumeTick:0000000000000020 $d
-                     .debug_frame:0000000000000010 $d
+     /tmp/ccCDz0pV.s:23     .bss.uwIncrementState:0000000000000000 uwIncrementState
+     /tmp/ccCDz0pV.s:20     .bss.uwIncrementState:0000000000000000 $d
+     /tmp/ccCDz0pV.s:26     .text.HAL_InitTick:0000000000000000 $t
+     /tmp/ccCDz0pV.s:33     .text.HAL_InitTick:0000000000000000 HAL_InitTick
+     /tmp/ccCDz0pV.s:145    .text.HAL_InitTick:00000000000000a0 $d
+     /tmp/ccCDz0pV.s:153    .text.HAL_SuspendTick:0000000000000000 $t
+     /tmp/ccCDz0pV.s:160    .text.HAL_SuspendTick:0000000000000000 HAL_SuspendTick
+     /tmp/ccCDz0pV.s:196    .text.HAL_SuspendTick:0000000000000020 $d
+     /tmp/ccCDz0pV.s:201    .text.HAL_ResumeTick:0000000000000000 $t
+     /tmp/ccCDz0pV.s:208    .text.HAL_ResumeTick:0000000000000000 HAL_ResumeTick
+     /tmp/ccCDz0pV.s:244    .text.HAL_ResumeTick:0000000000000020 $d
 
 UNDEFINED SYMBOLS
 HAL_NVIC_SetPriority

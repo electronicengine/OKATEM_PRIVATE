@@ -3,14 +3,14 @@ build/timers.o: Middlewares/Third_Party/FreeRTOS/Source/timers.c \
  /usr/include/newlib/_ansi.h /usr/include/newlib/newlib.h \
  /usr/include/newlib/_newlib_version.h /usr/include/newlib/sys/config.h \
  /usr/include/newlib/sys/features.h \
- /usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h \
  /usr/include/newlib/sys/reent.h /usr/include/newlib/_ansi.h \
  /usr/include/newlib/sys/_types.h /usr/include/newlib/machine/_types.h \
  /usr/include/newlib/machine/_default_types.h \
  /usr/include/newlib/sys/lock.h /usr/include/newlib/sys/cdefs.h \
  /usr/include/newlib/machine/stdlib.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
- /usr/lib/gcc/arm-none-eabi/6.3.1/include/stdint.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
  /usr/include/newlib/stdint.h /usr/include/newlib/sys/_intsup.h \
  /usr/include/newlib/sys/_stdint.h Inc/FreeRTOSConfig.h Inc/main.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h \
@@ -25,9 +25,9 @@ build/timers.o: Middlewares/Third_Party/FreeRTOS/Source/timers.c \
  Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
  /usr/include/newlib/stdio.h \
- /usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h \
- /usr/include/newlib/sys/types.h /usr/include/newlib/machine/types.h \
- /usr/include/newlib/sys/stdio.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
+ /usr/include/newlib/sys/types.h /usr/include/newlib/sys/_pthreadtypes.h \
+ /usr/include/newlib/machine/types.h /usr/include/newlib/sys/stdio.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio_ex.h \
@@ -73,7 +73,7 @@ build/timers.o: Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 
 /usr/include/newlib/sys/features.h:
 
-/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h:
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h:
 
 /usr/include/newlib/sys/reent.h:
 
@@ -93,7 +93,7 @@ build/timers.o: Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 
 Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 
-/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdint.h:
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
 
 /usr/include/newlib/stdint.h:
 
@@ -133,9 +133,11 @@ Drivers/STM32F7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h:
 
 /usr/include/newlib/stdio.h:
 
-/usr/lib/gcc/arm-none-eabi/6.3.1/include/stdarg.h:
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
 
 /usr/include/newlib/sys/types.h:
+
+/usr/include/newlib/sys/_pthreadtypes.h:
 
 /usr/include/newlib/machine/types.h:
 

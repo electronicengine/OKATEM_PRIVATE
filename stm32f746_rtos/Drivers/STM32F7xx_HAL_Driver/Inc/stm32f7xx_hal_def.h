@@ -38,6 +38,7 @@
 #ifndef __STM32F7xx_HAL_DEF
 #define __STM32F7xx_HAL_DEF
 
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -121,6 +122,7 @@ typedef enum
                                       (__HANDLE__)->Lock = HAL_UNLOCKED;    \
                                     }while (0U)
 #endif /* USE_RTOS */
+
 
 #define __weak   __attribute__((weak))
 

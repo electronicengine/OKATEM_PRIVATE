@@ -23,10 +23,13 @@
 #include "controller.h"
 #include "queue.h"
 
-#define PORT 24000
+#define PORT            24000
 
-#define FORWARD 1
-#define BACKWARD 2
+#define FORWARD         1
+#define BACKWARD        2
+
+#define LISTENING_MODE  1
+#define NORMAL_MODE     2
 
 
 
@@ -45,12 +48,26 @@ public:
     volatile int gmIsRecieved = 0;
 
 
-    void sendData(SPI_TRANSFER_FORMAT Data, const std::string& IpAddress);
+
+
+    int sendData(SPI_TRANSFER_FORMAT &Data, const std::string IpAddress);
+    int sendData(unsigned char* Data, const std::string &IpAddress);
+    int sendData(int Data, const std::string &IpAddress);
+
+    std::vector<unsigned char> receiveData();
+
+    int openPort(int Port, int Mode);
+
 
 
 private:
 
     int gmSocket;
+    struct sockaddr_in gmClientAddr;
+    struct sockaddr_in gmServerAddr;
+
+    socklen_t gmClientLen = sizeof(gmServerAddr);
+    int gmPort;
 
 
     Queue<UPDATE_FILE_FORMAT> gmUpdateFileQueue;
@@ -58,11 +75,12 @@ private:
     std::mutex gmMutex;
     SPI_TRANSFER_FORMAT gmData;
 
-    void openPort();
     void closePort();
+    int openPort(int Port);
 
 
-    void recieveData();
+    void listenPort();
+
 
 
 };

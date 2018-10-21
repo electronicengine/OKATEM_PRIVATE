@@ -13,6 +13,7 @@
 
 #include "globals.h"
 #include "queue.h"
+#include "udpsocket.h"
 
 
 // Text properties which is printed on debug
@@ -23,9 +24,10 @@
 
 #define CAPTURE_RATE 30
 
-#define FRAME_WIDTH 320
-#define FRAME_HEIGHT 240
+#define FRAME_WIDTH 640
+#define FRAME_HEIGHT 480
 
+#define ENCODE_QUALITY 80
 
 #define LASER_POINTER_NUMBER 4
 
@@ -55,6 +57,7 @@ private:
 public:
 
         PERSPECTIVE_RATE gmPerspective;
+        UdpSocket gmUdpStreamSocket;
 
         LaserTracker(const std::string VideoLocation);
         LaserTracker(int Camera);
@@ -63,6 +66,8 @@ public:
         int runTracking();
         float getDiagonalRate();  // left/right
         float getEdgeRate();      //upper/bottom
+
+        void streamFrame(cv::Mat Frame);
 
 };
 

@@ -66,6 +66,10 @@ LaserTracker::~LaserTracker()
 
 int LaserTracker::runTracking()
 {
+
+    gmUdpStreamSocket.openPort(STREAM_PORT, NORMAL_MODE);
+
+
     std::thread tracking(&LaserTracker::startTracking, this);
     tracking.detach();
 
@@ -97,6 +101,50 @@ float LaserTracker::getEdgeRate()
 
 }
 
+void LaserTracker::streamFrame(cv::Mat Frame)
+{
+
+    cv::Mat stream_frame;
+    std::vector<unsigned char> encoded_frame;
+    unsigned char packed_frame[STREAM_SIZE];
+    std::vector < int > compression_params;
+
+    std::string stream_ip = "10.100.93.14";
+
+
+    cv::resize(Frame, stream_frame, cv::Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, cv::INTER_LINEAR);
+
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(ENCODE_QUALITY);
+
+    cv::imencode(".jpg", stream_frame, encoded_frame, compression_params);
+
+    int total_pack = 1 + (encoded_frame.size() - 1) / (STREAM_SIZE - 8);
+
+
+    for (int i = 0; i < total_pack; i++)
+    {
+        packed_frame[0] = total_pack & 0xff;
+        packed_frame[1] = total_pack >> 8  & 0xff;
+        packed_frame[2] = total_pack >> 16 & 0xff;
+        packed_frame[3] = total_pack >> 24 & 0xff;
+
+        packed_frame[4] = (i + 1) & 0xff;
+        packed_frame[5] = (i + 1) >> 8  & 0xff;
+        packed_frame[6] = (i + 1) >> 16 & 0xff;
+        packed_frame[7] = (i + 1) >> 24 & 0xff;
+
+        for(int k=0; k<STREAM_SIZE-8; k++)
+            packed_frame[8+k] = encoded_frame[i*(STREAM_SIZE-8) + k];
+
+        gmUdpStreamSocket.sendData(&packed_frame[0], stream_ip);
+
+    }
+
+
+
+}
+
 
 
 int LaserTracker::startTracking()
@@ -112,18 +160,20 @@ int LaserTracker::startTracking()
         if(!mVideoCapture->read(gmFrame))
             break;
 
-        gmScalarFrame = detectRed(gmFrame);
+//        gmScalarFrame = detectRed(gmFrame);
 
-        red_circles = detectCircle(gmScalarFrame);
+//        red_circles = detectCircle(gmScalarFrame);
 
-        drawFSOFace(red_circles);
+//        drawFSOFace(red_circles);
 
         //show the frame
-        cv::imshow("frame", gmFrame);
+//        cv::imshow("frame", gmFrame);
 
-        cv::waitKey(1); // needed
+        streamFrame(gmFrame);
 
-        CheckList["LaserTracker"] = true;
+//        cv::waitKey(1); // needed
+
+//        CheckList["LaserTracker"] = true;
 
     }
 

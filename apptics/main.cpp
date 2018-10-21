@@ -52,7 +52,7 @@ LoraWan lora;
 Controller controller;
 SfpMonitor sfp_monitor;
 LaserTracker tracker(0);
-UdpSocket udp_socket;
+UdpSocket udp_controller_socket;
 LcdHMI lcd_hmi;
 Json json;
 
@@ -84,6 +84,7 @@ int main()
 
     sleep(1);
 
+    udp_controller_socket.openPort(CONTROLLER_PORT, LISTENING_MODE);
 
     while(1)
     {
@@ -102,12 +103,12 @@ int main()
 
         json.saveLoraData(lora_stm_data, lora_sfp_data);  //
 
-        udp_control_data = udp_socket.getSocketControlData();
+        udp_control_data = udp_controller_socket.getSocketControlData();
 
         lcd_control_data = lcd_hmi.getHCMControlData();
 
         if(update_file_status == Status::ok)
-            update_file = udp_socket.getSocketUpdateData();
+            update_file = udp_controller_socket.getSocketUpdateData();
 
         if(update_file.is_available == true)
         {

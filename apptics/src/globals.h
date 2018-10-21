@@ -14,6 +14,8 @@
 
 #include "datatypes.h"
 
+#define CONTROLLER_PORT 24000
+#define STREAM_PORT     25000
 
 void removeLine(char* sourcefile, int line);
 int countLine(char* sourcefile);

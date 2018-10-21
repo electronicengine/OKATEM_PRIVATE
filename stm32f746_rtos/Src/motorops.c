@@ -13,6 +13,8 @@ void motorOps(void const * argument)
     int servo1_degree = 0;
 
     int speed = 0;
+    int pwm = 80;
+
 
     int step_motor1_last_direction;
     int step_motor2_last_direction;
@@ -26,6 +28,7 @@ void motorOps(void const * argument)
 
 
     mprintf("motorOps\r\n");
+//    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
     while(1)
     {
@@ -150,6 +153,17 @@ void motorOps(void const * argument)
         }
 
         osDelay(2 + speed);
+
+
+//        pwm++;
+
+//        __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int)((double)(pwm)*((double)(215-60)/150) + 60));
+
+
+//        if(pwm >= 120)
+//            pwm = 80;
+
+//        osDelay(100);
 
     }
 }
