@@ -8,9 +8,10 @@ UdpSocket::UdpSocket()
 
 UdpSocket::~UdpSocket()
 {
-
+    std::cout << "closing socket" << std::endl;
     close(gmSocket);
 }
+
 
 std::vector<unsigned char> UdpSocket::receiveData()
 {
@@ -18,14 +19,16 @@ std::vector<unsigned char> UdpSocket::receiveData()
     int package_size;
 
     std::vector<unsigned char> data_container;
-    unsigned char ethernet_data[ETHERNET_ENTITY_SIZE];
+    unsigned char ethernet_data[ETHERNET_TRANSFER_SIZE];
 
-    package_size = read(gmSocket, ethernet_data, ETHERNET_ENTITY_SIZE);
+    package_size = recv(gmSocket, ethernet_data, ETHERNET_TRANSFER_SIZE, 0);
 
-    if(package_size <= ETHERNET_ENTITY_SIZE)
+    if(package_size == ETHERNET_TRANSFER_SIZE)
     {
-       for(int i=0; i++; i<package_size)
+
+       for(int i=0; i<package_size; i++)
            data_container.push_back(ethernet_data[i]);
+
     }
 
     return data_container;
@@ -39,14 +42,12 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 
     if(gmIsRecieved == 1)
     {
-        if(gmSpiControlData.header == 'C' | 'O' << 8)
+        if(gmSpiControlData.header == (('C') | ('O' << 8)))
         {
             Data = gmSpiControlData;
-            Data.is_available = true;
         }
         else
         {
-            Data.is_available = false;
             Data = false;
         }
 
@@ -54,7 +55,6 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
     }
     else
     {
-        Data.is_available = false;
         Data = false;
     }
 
@@ -70,33 +70,33 @@ UPDATE_FILE_FORMAT UdpSocket::getSocketUpdateData()
 
     UPDATE_FILE_FORMAT Data;
 
-    gmMutex.lock();
+//    gmMutex.lock();
 
-    if(gmUpdateFileQueue.size() != 0)
-    {
+//    if(gmUpdateFileQueue.size() != 0)
+//    {
 
-        Data = gmUpdateFileQueue.pop_front();
+//        Data = gmUpdateFileQueue.pop_front();
 
-        Data.is_available = true;
+//        Data.is_available = true;
 
-        gmMutex.unlock();
+//        gmMutex.unlock();
 
-        return Data;
+//        return Data;
 
-    }
-    else
-    {
-        Data.is_available = false;
+//    }
+//    else
+//    {
+//        Data.clear();
+//        gmMutex.unlock();
 
-        Data.clear();
-        gmMutex.unlock();
+//        return Data;
+//    }
 
-        return Data;
-    }
+    return Data;
 
 }
 
-int UdpSocket::sendData(INFORMATION_DATA_FORMAT &InformationData, const std::string IpAddress)
+int UdpSocket::sendData(UDP_DATA_FORMAT &InformationData, const std::string IpAddress)
 {
 
     UDP_DATA_FORMAT udp_data;
@@ -108,9 +108,12 @@ int UdpSocket::sendData(INFORMATION_DATA_FORMAT &InformationData, const std::str
     raw_data = udp_data;
 
     gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
+
     sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
 
     delete raw_data;
+
+    return 0;
 
 }
 
@@ -128,18 +131,25 @@ int UdpSocket::sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAdd
     sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
 
     delete raw_data;
+
+    return 0;
 }
 
-int UdpSocket::saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
+int UdpSocket::sendData(SPI_TRANSFER_FORMAT SpiData, const std::string &IpAddress)
 {
+    UDP_DATA_FORMAT udp_data;
 
-    gmMutex.lock();
+    unsigned char *raw_data;
 
-    gmControlData = ControlData;
-    gmEnvironmentData = EnvironmentData;
-    gmSfpData = SfpData;
 
-    gmMutex.unlock();
+    udp_data = SpiData;
+
+    raw_data = udp_data;
+
+    gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
+    sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
+
+    delete raw_data;
 
     return 0;
 }
@@ -148,12 +158,15 @@ int UdpSocket::saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT
 int UdpSocket::openPort(int Port)
 {
 
+
+    struct timeval timeout;
+
     gmPort = Port;
 
     gmSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (gmSocket < 0)
     {
-        printAll("cannot Open datagram socket!!\r\n");
+        printf("cannot Open datagram socket!!\r\n");
         return FAIL;
     }
 
@@ -168,28 +181,29 @@ int UdpSocket::openPort(int Port)
     gmClientAddr.sin_family = AF_INET;
     gmClientAddr.sin_port = htons(gmPort);
 
-    socklen_t gmClientLen= sizeof(gmClientAddr);
 
 
     if (bind(gmSocket, (struct sockaddr *) &gmServerAddr, sizeof(gmServerAddr)))
     {
-        printAll("cannot bind datagram socket!!\r\n");
+        printf("cannot bind datagram socket!!\r\n");
         return FAIL;
     }
 
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    setsockopt(gmSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 
-    printAll("Socket has port number ", ntohs(gmServerAddr.sin_port));
+
+    printf("Socket has port number %d\r\n", ntohs(gmServerAddr.sin_port));
 
     return SUCCESS;
 
 }
 
 
-int UdpSocket::openPort(const std::string &IpAddress, int Port, int Mode)
+int UdpSocket::openPort(int Port, int Mode)
 {
     int ret;
-
-    gmIpAddress =IpAddress;
 
     ret = openPort(Port);
 
@@ -219,18 +233,19 @@ void UdpSocket::closePort()
 void UdpSocket::listenPort()
 {
 
-    int ret;
     int package_size;
 
+    SPI_TRANSFER_FORMAT spi_data;
     UDP_DATA_FORMAT udp_data;
     INFORMATION_DATA_FORMAT information_data;
-    SPI_TRANSFER_FORMAT spi_data;
 
     unsigned char *ethernet_data = new unsigned char[sizeof(UDP_DATA_FORMAT)];
 
 
+
     while(true)
     {
+
 
         package_size = read(gmSocket, ethernet_data, ETHERNET_TRANSFER_SIZE);
 
@@ -252,7 +267,7 @@ void UdpSocket::listenPort()
 
                     update_file = spi_data;
 
-                    gmUpdateFileQueue.push_back(update_file);
+//                    gmUpdateFileQueue.push_back(update_file);
 
                 }
 
@@ -267,16 +282,7 @@ void UdpSocket::listenPort()
             } else if(ethernet_data[0] == 'I' && ethernet_data[1] == 'N')
             {
 
-
-                INFORMATION_DATA_FORMAT information_data;
-
-                information_data.control_data = gmControlData;
-                information_data.sfp_data = gmSfpData;
-                information_data.environment_data = gmEnvironmentData;
-
-                sendData(information_data, gmIpAddress);
-
-
+                    //information data has been taken
 
             }else if(ethernet_data[0] == 'S' && ethernet_data[1] == 'T')
             {

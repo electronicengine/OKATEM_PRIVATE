@@ -64,6 +64,10 @@ private:
 
     std::mutex gmMutex;
 
+    int sendCommand(std::string Command);
+
+
+
     void callBack(std::string& CommingData);
     void collectData(std::string& Data);
     void listenChannel();

@@ -1,5 +1,4 @@
 
-
 #include "controller.h"
 #include "videostream.h"
 #include "datatypes.h"
@@ -22,6 +21,8 @@ int main()
 
     std::cout << "Enter Ip address to connect" << std::endl;
     std::cin >> ip_address;
+    std::cout << "Enter stream port" << std::endl;
+    std::cin >> stream_port;
 
 
     Controller controller(ip_address, controller_port);
@@ -76,7 +77,7 @@ int main()
                     break;
 
                 case 'v':
-                    controller.servo1Forward();
+                    controller.servo2Forward();
 
 
                     break;

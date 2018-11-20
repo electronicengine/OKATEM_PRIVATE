@@ -20,9 +20,9 @@
 #include <mutex>
 #include <vector>
 
-#include "controller.h"
-#include "queue.h"
+//#include "controller.h"
 #include "fstream"
+#include "datatypes.h"
 
 #define PORT            24000
 
@@ -39,26 +39,26 @@ class UdpSocket
 
 public:
     UdpSocket();
+
     ~UdpSocket();
 
-
-
     CONTROL_DATA_FORMAT getSocketControlData();
-
     UPDATE_FILE_FORMAT getSocketUpdateData();
+
 
     volatile int gmIsRecieved = 0;
 
 
 
 
-    int sendData(INFORMATION_DATA_FORMAT &InformationData, const std::string IpAddress);
+    int sendData(UDP_DATA_FORMAT &InformationData, const std::string IpAddress);
     int sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAddress);
-    int saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
+    int sendData(SPI_TRANSFER_FORMAT SpiData, const std::string &IpAddress);
+
 
     std::vector<unsigned char> receiveData();
 
-    int openPort(const std::string &IpAddress, int Port, int Mode);
+    int openPort(int Port, int Mode);
 
 
 
@@ -69,11 +69,8 @@ private:
     struct sockaddr_in gmServerAddr;
 
     socklen_t gmClientLen = sizeof(gmServerAddr);
-
-    std::string gmIpAddress;
     int gmPort;
 
-    Queue<UPDATE_FILE_FORMAT> gmUpdateFileQueue;
 
     std::mutex gmMutex;
     SPI_TRANSFER_FORMAT gmSpiControlData;
@@ -82,9 +79,6 @@ private:
     void closePort();
     int openPort(int Port);
 
-    CONTROL_DATA_FORMAT gmControlData;
-    ENVIRONMENT_DATA_FORMAT gmEnvironmentData;
-    SFP_DATA_FORMAT gmSfpData;
 
     void listenPort();
 

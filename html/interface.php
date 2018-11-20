@@ -36,13 +36,14 @@
       max-width: 1800px;
       padding: 50px;
       margin: 0 auto;
-      background: #fff;
+      background: #1d1f21;
     }
 
     section {
       display: none;
       padding: 20px 0 0;
       border-top: 1px solid #ddd;
+      color:#fff;
     }
 
     .hidden_input {
@@ -96,7 +97,8 @@
     #tab1:checked ~ #content1,
     #tab2:checked ~ #content2,
     #tab3:checked ~ #content3,
-    #tab4:checked ~ #content4 {
+    #tab4:checked ~ #content4,
+    #tab5:checked ~ #content5 {
       display: block;
     }
 
@@ -123,119 +125,171 @@
 
 <script>
 
-    function logoutFunc() {
-     /* window.location = "http://logout@" + window.location.host + "/logout";*/
-      // To invalidate a basic auth login:
-  //
-  //  1. Call this logout function.
-  //  2. It makes a GET request to an URL with false Basic Auth credentials
-  //  3. The URL returns a 401 Unauthorized
-  //  4. Forward to some "you-are-logged-out"-page
-  //  5. Done, the Basic Auth header is invalid now
 
-    jQuery.ajax({
-              type: "GET",
-              url: "/index.fcgi",
-              async: false,
-              username: "logmeout",
-              password: "123456",
-              headers: { "Authorization": "Basic xxx" }
-    })
-    .done(function(){
-        // If we don't get an error, we actually got an error as we expect an 401!
-    })
-    .fail(function(){
-        // We expect to get an 401 Unauthorized error! In this case we are successfully
-              // logged out and we redirect the user.
-        window.location = "/logout.html";
-      });
 
-      return false;
-    }
+    $(function(){
+        $('#save').click(function(){
+
+          var data = {
+
+            laser_diagonal: document.getElementById("laser_diagonal").innerHTML,
+            laser_edge: document.getElementById("laser_edge").innerHTML,
+            sfp_temp: document.getElementById("sfp_temp").innerHTML,
+            sfp_vcc: document.getElementById("sfp_vcc").innerHTML,
+            sfp_tx_bias: document.getElementById("sfp_tx_bias").innerHTML,
+            sfp_tx_power: document.getElementById("sfp_tx_power").innerHTML,
+            sfp_rx_power: document.getElementById("sfp_rx_power").innerHTML,
+
+
+            terminal_temperature: document.getElementById("terminal_temperature").innerHTML,
+            terminal_pressure: document.getElementById("terminal_pressure").innerHTML,
+            terminal_altitude: document.getElementById("terminal_altitude").innerHTML,
+            terminal_compass: document.getElementById("terminal_compass").innerHTML,
+            terminal_gps_string: document.getElementById("terminal_gps_string").innerHTML,
+            terminal_latitude: document.getElementById("terminal_latitude").innerHTML,
+            terminal_latitude: document.getElementById("terminal_latitude").innerHTML,
+            terminal_ns_indicator: document.getElementById("terminal_ns_indicator").innerHTML,
+            terminal_longnitude: document.getElementById("terminal_longnitude").innerHTML,
+            terminal_we_indicator: document.getElementById("terminal_we_indicator").innerHTML,
+
+            servo_motor1_degree: parseInt(document.getElementById("servo_motor1_degree").innerHTML),
+            servo_motor2_degree: parseInt(document.getElementById("servo_motor2_degree").innerHTML),
+            step_motor1_position: parseInt(document.getElementById("step_motor2_position").innerHTML),
+            step_motor2_position: parseInt(document.getElementById("step_motor2_position").innerHTML),
+
+            cpu_usage: document.getElementById("cpu_usage").innerHTML,
+            memory_usage: document.getElementById("memory_usage").innerHTML,
+
+            remote_terminal_status: document.getElementById("remote_terminal_status").innerHTML,
+            remote_sfp_temp: document.getElementById("remote_sfp_temp").innerHTML,
+            remote_sfp_vcc: document.getElementById("remote_sfp_vcc").innerHTML,
+            remote_sfp_tx_bias: document.getElementById("remote_sfp_tx_bias").innerHTML,
+            remote_sfp_tx_power: document.getElementById("remote_sfp_tx_power").innerHTML,
+            remote_sfp_rx_power: document.getElementById("remote_sfp_rx_power").innerHTML,
+
+            remote_terminal_temperature: document.getElementById("remote_terminal_temperature").innerHTML,
+            remote_terminal_pressure: document.getElementById("remote_terminal_pressure").innerHTML,
+            remote_terminal_altitude: document.getElementById("remote_terminal_altitude").innerHTML,
+            remote_terminal_compass: document.getElementById("remote_terminal_compass").innerHTML,
+            remote_terminal_gps_string: document.getElementById("remote_terminal_gps_string").innerHTML,
+            remote_terminal_latitude: parseInt(document.getElementById("remote_terminal_latitude").innerHTML),
+            remote_terminal_ns_indicator: document.getElementById("remote_terminal_ns_indicator").innerHTML,
+            remote_terminal_longnitude: parseInt(document.getElementById("remote_terminal_longnitude").innerHTML),
+            remote_terminal_we_indicator: document.getElementById("remote_terminal_we_indicator").innerHTML,
+            //
+            ip_address: document.getElementById("ip_address_input").value,
+            port_number: parseInt(document.getElementById("port_number_input").value),
+
+          };
+
+
+           var jsonData = JSON.stringify(data);
+
+
+        alert(jsonData);
+
+        <?php add(1,2); ?>
+
+        });
+
+    });
+
 
 
     $(document).ready(
      function() {
      setInterval(function() {
 
-     readInfoFile("json");
+     readInfoFile('/var/www/html/json');
 
-     readLogFile("log.txt");
+     readLogFile("/var/www/html/log.txt");
    }, 1000);  //Delay here = 5 seconds
     });
 
 
+    function save_content_to_file(content, filename){
+        var dlg = false;
+        with(document){
+         ir=createElement('iframe');
+         ir.id='ifr';
+         ir.location='about.blank';
+         ir.style.display='none';
+         body.appendChild(ir);
+          with(getElementById('ifr').contentWindow.document){
+               open("text/plain", "replace");
+               charset = "utf-8";
+               write(content);
+               close();
+               document.charset = "utf-8";
+               dlg = execCommand('SaveAs', false, filename);
+           }
+           body.removeChild(ir);
+         }
+        return dlg;
+    }
+
     function readInfoFile(file)
     {
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function ()
-        {
-            if(rawFile.readyState === 4)
-            {
-                if(rawFile.status === 200 || rawFile.status == 0)
-                {
-                    var allText = rawFile.responseText;
-
-                    obj = JSON.parse(allText);
-
-                    document.getElementById("terminal_status").innerHTML = obj.terminal_status;
-
-                    document.getElementById("laser_diagonal").innerHTML = obj.laser_diagonal;
-                    document.getElementById("laser_edge").innerHTML = obj.laser_diagonal;
-                    document.getElementById("sfp_temp").innerHTML = obj.sfp_temp;
-                    document.getElementById("sfp_vcc").innerHTML = obj.sfp_vcc;
-                    document.getElementById("sfp_tx_bias").innerHTML = obj.sfp_tx_bias;
-                    document.getElementById("sfp_tx_power").innerHTML = obj.sfp_tx_power;
-                    document.getElementById("sfp_rx_power").innerHTML = obj.sfp_rx_power;
-
-                    document.getElementById("terminal_temperature").innerHTML = obj.terminal_temperature;
-                    document.getElementById("terminal_pressure").innerHTML = obj.terminal_pressure;
-                    document.getElementById("terminal_altitude").innerHTML = obj.terminal_altitude;
-                    document.getElementById("terminal_compass").innerHTML = obj.terminal_compass;
-                    document.getElementById("terminal_gps_string").innerHTML = obj.terminal_gps_string;
-                    document.getElementById("terminal_latitude").innerHTML = obj.terminal_latitude;
-                    document.getElementById("terminal_ns_indicator").innerHTML = obj.terminal_ns_indicator;
-                    document.getElementById("terminal_longnitude").innerHTML = obj.terminal_longnitude;
-                    document.getElementById("terminal_we_indicator").innerHTML = obj.terminal_we_indicator;
-
-                    document.getElementById("servo_motor1_degree").innerHTML = obj.servo_motor1_degree;
-                    document.getElementById("servo_motor2_degree").innerHTML = obj.servo_motor2_degree;
-                    document.getElementById("step_motor1_position").innerHTML = obj.step_motor1_position;
-                    document.getElementById("step_motor2_position").innerHTML = obj.step_motor2_position;
-
-                    document.getElementById("cpu_usage").innerHTML = obj.cpu_usage;
-                    document.getElementById("memory_usage").innerHTML = obj.memory_usage;
-
-                    document.getElementById("remote_terminal_status").innerHTML = obj.remote_terminal_status;
-                    document.getElementById("remote_sfp_temp").innerHTML = obj.remote_sfp_temp;
-                    document.getElementById("remote_sfp_vcc").innerHTML = obj.remote_sfp_vcc;
-                    document.getElementById("remote_sfp_tx_bias").innerHTML = obj.remote_sfp_tx_bias;
-                    document.getElementById("remote_sfp_tx_power").innerHTML = obj.remote_sfp_tx_power;
-                    document.getElementById("remote_sfp_rx_power").innerHTML = obj.remote_sfp_rx_power;
-
-                    document.getElementById("remote_terminal_temperature").innerHTML = obj.remote_terminal_temperature;
-                    document.getElementById("remote_terminal_pressure").innerHTML = obj.remote_terminal_pressure;
-                    document.getElementById("remote_terminal_altitude").innerHTML = obj.remote_terminal_altitude;
-                    document.getElementById("remote_terminal_compass").innerHTML = obj.remote_terminal_compass;
-                    document.getElementById("remote_terminal_gps_string").innerHTML = obj.remote_terminal_gps_string;
-                    document.getElementById("remote_terminal_latitude").innerHTML = obj.remote_terminal_latitude;
-                    document.getElementById("remote_terminal_ns_indicator").innerHTML = obj.remote_terminal_ns_indicator;
-                    document.getElementById("remote_terminal_longnitude").innerHTML = obj.remote_terminal_longnitude;
-                    document.getElementById("remote_terminal_we_indicator").innerHTML = obj.remote_terminal_we_indicator;
-
-                    //
 
 
 
+        $.getJSON('json', function(data){
+          console.log(data);
 
-                    // alert(allText);s
-                }
-                else {
-                  // alert("text file busy");
-                }
-            }
-        }
+          document.getElementById("terminal_status").innerHTML = data.terminal_status;
+
+          document.getElementById("laser_diagonal").innerHTML = data.laser_diagonal;
+          document.getElementById("laser_edge").innerHTML = data.laser_diagonal;
+          document.getElementById("sfp_temp").innerHTML = data.sfp_temp;
+          document.getElementById("sfp_vcc").innerHTML = data.sfp_vcc;
+          document.getElementById("sfp_tx_bias").innerHTML = data.sfp_tx_bias;
+          document.getElementById("sfp_tx_power").innerHTML = data.sfp_tx_power;
+          document.getElementById("sfp_rx_power").innerHTML = data.sfp_rx_power;
+
+          document.getElementById("terminal_temperature").innerHTML = data.terminal_temperature;
+          document.getElementById("terminal_pressure").innerHTML = data.terminal_pressure;
+          document.getElementById("terminal_altitude").innerHTML = data.terminal_altitude;
+          document.getElementById("terminal_compass").innerHTML = data.terminal_compass;
+          document.getElementById("terminal_gps_string").innerHTML = data.terminal_gps_string;
+          document.getElementById("terminal_latitude").innerHTML = data.terminal_latitude;
+          document.getElementById("terminal_ns_indicator").innerHTML = data.terminal_ns_indicator;
+          document.getElementById("terminal_longnitude").innerHTML = data.terminal_longnitude;
+          document.getElementById("terminal_we_indicator").innerHTML = data.terminal_we_indicator;
+
+          document.getElementById("servo_motor1_degree").innerHTML = data.servo_motor1_degree;
+          document.getElementById("servo_motor2_degree").innerHTML = data.servo_motor2_degree;
+          document.getElementById("step_motor1_position").innerHTML = data.step_motor1_position;
+          document.getElementById("step_motor2_position").innerHTML = data.step_motor2_position;
+
+          document.getElementById("cpu_usage").innerHTML = data.cpu_usage;
+          document.getElementById("memory_usage").innerHTML = data.memory_usage;
+
+          document.getElementById("remote_terminal_status").innerHTML = data.remote_terminal_status;
+          document.getElementById("remote_sfp_temp").innerHTML = data.remote_sfp_temp;
+          document.getElementById("remote_sfp_vcc").innerHTML = data.remote_sfp_vcc;
+          document.getElementById("remote_sfp_tx_bias").innerHTML = data.remote_sfp_tx_bias;
+          document.getElementById("remote_sfp_tx_power").innerHTML = data.remote_sfp_tx_power;
+          document.getElementById("remote_sfp_rx_power").innerHTML = data.remote_sfp_rx_power;
+
+          document.getElementById("remote_terminal_temperature").innerHTML = data.remote_terminal_temperature;
+          document.getElementById("remote_terminal_pressure").innerHTML = data.remote_terminal_pressure;
+          document.getElementById("remote_terminal_altitude").innerHTML = data.remote_terminal_altitude;
+          document.getElementById("remote_terminal_compass").innerHTML = data.remote_terminal_compass;
+          document.getElementById("remote_terminal_gps_string").innerHTML = data.remote_terminal_gps_string;
+          document.getElementById("remote_terminal_latitude").innerHTML = data.remote_terminal_latitude;
+          document.getElementById("remote_terminal_ns_indicator").innerHTML = data.remote_terminal_ns_indicator;
+          document.getElementById("remote_terminal_longnitude").innerHTML = data.remote_terminal_longnitude;
+          document.getElementById("remote_terminal_we_indicator").innerHTML = data.remote_terminal_we_indicator;
+
+          document.getElementById("ip_address").innerHTML = data.stream_ip;
+          document.getElementById("port_number").innerHTML = data.stream_port;
+
+          data
+          data.terminal_altitude = 80;
+
+
+        });
+
         rawFile.send(null);
     }
 
@@ -288,6 +342,13 @@
       echo "window.location.href = 'index.php'; </script>";
 		}
 
+    function save($fname, $data) {
+      $myfile = fopen($fname, "w") or die("Unable to open file!");
+      $txt = "John Doe\n";
+      fwrite($myfile, $data);
+      fclose($myfile);
+    }
+
 
 ?>
 
@@ -300,9 +361,9 @@
 
   </head>
 
-    <body >
+    <body style="background-color: #1d1f21;">
 
-      <p align="center"> <img src="./img/hyperion.png" style="width:400px; align:center;"> </p>
+      <p align="center"> <img src="/img/hyperion.png" style="width:400px; align:center"> </p>
       <!-- <h1>FSO Web Application</h1> -->
 
       <main>
@@ -316,10 +377,9 @@
         <input id="tab3" type="radio" name="tabs" class="hidden_input">
         <label for="tab3">Log</label>
 
-        <input id="tab4" type="button" name="tabs" class="hidden_input">
-        <label for="tab4" id="LogoutLabel" onclick="logoutFunc()">Logout</label>
 
-
+        <input id="tab5" type="button" name="tabs" class="hidden_input">
+        <label for="tab5" id="LogoutLabel" onclick="logoutFunc()">Logout</label>
 
 
         <!-- <div class="section" id="content1"> -->
@@ -327,7 +387,7 @@
             <!-- {% if connected %} -->
 
             <div class="card" z-default=1 z-hover=1 no-height=1 style="height:410px">
-              <p style="float: left;"><img src="./img/laser.png" style="width:32px;height:32px;"></p><p id="terminalInfo">  &emsp; Terminal Information</p>
+              <p style="float: left;"><img src="/img/laser.png" style="width:32px;height:32px;"></p><p id="terminalInfo">  &emsp; Terminal Information</p>
               <br>
               <br> Status: <span id="terminal_status"></span> <br>
               <br> Image Diagonal Rate: <span id="laser_diagonal"></span> <br>
@@ -370,6 +430,31 @@
               <br> Cpu Usage: % <span id="cpu_usage"></span>  <br>
               <br> Memory Usage: % <span id="memory_usage"></span><br>
             </div>
+
+
+
+            <div class="card" z-default=1 z-hover=1 no-height=1 id="mydiv">
+                <p style="float: left;"><img src="./img/streaming.png" style="width:32px;height:32px;"></p><p id="streamingInfo"> &emsp; Streaming Information</p>
+              <br>
+
+              <br> Available Ip Address: <span id="ip_address"></span>  <br>
+              <br> Available Port Number: <span id="port_number"></span><br>
+
+              <br>
+                <input id="ip_address_input" type="text" placeholder="Enter Ip Address" name="ip" required>
+              <br>
+
+              <br>
+                <input id="port_number_input" type="text" placeholder="Enter Port" name="port" required>
+              <br>
+
+              <br>
+                <input type="button" value="Save Info" id="save" />
+              <br>
+
+            </div>
+
+
             <!-- {% endif %} -->
 
           <script type="text/javascript" src="./script/card-depth.js"></script>
@@ -411,10 +496,12 @@
 
            </div>
 
+
            <script type="text/javascript" src="./script/card-depth.js"></script>
            <script type="text/javascript" src="./script/page_updater.js"></script>
 
         </section>
+
 
         <section id="content3">
           <textarea id="textarea" cols="63" rows="27" readonly="readonly" style="width:98%; height:800px; font-family:'Courier New', Courier, mono; font-size:13px;background:#475A5F;color:#FFFFFF; white-space: pre-line; "  wrap="off">
@@ -424,6 +511,7 @@
             </script>
           </textarea>
         </section>
+
 
 
       </main>

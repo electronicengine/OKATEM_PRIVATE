@@ -6,26 +6,26 @@ Json::Json()
 
     std::string json;
 
-    std::ifstream file;
 
     rapidjson::Document document;
 
-    file.open("/var/www/html/json");
 
-    file >> json;
-
-    file.close();
+    json = readFile();
 
 
     document.Parse(json.c_str());
-
-
 
      if(document.HasMember("servo_motor1_degree"))
         gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
 
      if(document.HasMember("servo_motor2_degree"))
         gmServoMotor2Degree = document["servo_motor2_degree"].GetInt();
+
+     if(document.HasMember("stream_ip"))
+        gmStreamIp = document["stream_ip"].GetString();
+
+     if(document.HasMember("stream_port"))
+        gmStreamPort = document["stream_port"].GetInt();
 
 
     std::thread postJson(&Json::writeJson, this);
@@ -55,6 +55,27 @@ void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
         gmServoMotor2Degree = ControlData.servo_motor2_degree;
 
     gmMutex.unlock();
+
+}
+
+void Json::loadStreamInfo(std::string &StreamIp, int &StreamPort)
+{
+
+
+
+    std::string json_string;
+
+    json_string = readFile();
+
+
+    rapidjson::Document document;
+    document.Parse(json_string.c_str());
+
+    if(document.HasMember("stream_ip"))
+        StreamIp = document["stream_ip"].GetString();
+
+    if(document.HasMember("stream_port"))
+        StreamPort = document["stream_port"].GetInt();
 
 }
 
@@ -90,29 +111,24 @@ void Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 {
 
     std::string json;
-    std::ifstream myfile;
-
-    myfile.open ("/var/www/html/json");
-
-    myfile >> json;
-
-    myfile.close();
-
-
     rapidjson::Document document;
+
+
+    json = readFile();
+
     document.Parse(json.c_str());
 
     if(document.HasMember("servo_motor1_degree"))
-        gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
+        ControlData.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
 
     if(document.HasMember("step_motor1_position"))
-        gmStepMotor1Position = document["step_motor1_position"].GetInt();
+        ControlData.step_motor1_direction = document["step_motor1_position"].GetInt();
 
     if(document.HasMember("servo_motor2_degree"))
-        gmStepMotor2Position = document["servo_motor2_degree"].GetInt();
+        ControlData.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
 
     if(document.HasMember("step_motor2_position"))
-        gmServoMotor2Degree = document["step_motor2_position"].GetInt();
+        ControlData.step_motor2_direction = document["step_motor2_position"].GetInt();
 
 
 }
@@ -125,7 +141,143 @@ void Json::writeJson()
 
     while(1)
     {
-        writeFile();
+        float cpu_usage;
+        float mem_usage;
+
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+
+        getPhysicalSourceUsage(mem_usage, cpu_usage);
+
+        writer.StartObject();
+
+        writer.Key("terminal_status");
+        writer.String("Connected");
+
+        writer.Key("terminal_status");
+        writer.String((gmSfpData.status == 1) ? "Connected" : "Disconnected");
+
+    //    writer.Key("laser_diagonal");
+    //    writer.Double(tracker.getDiagonalRate());
+
+    //    writer.Key("laser_edge");
+    //    writer.Double(tracker.getDiagonalRate());
+
+        writer.Key("sfp_temp");
+        writer.Double(gmSfpData.temperature);
+
+        writer.Key("sfp_vcc");
+        writer.Uint(gmSfpData.vcc);
+
+        writer.Key("sfp_tx_bias");
+        writer.Double(gmSfpData.tx_bias);
+
+        writer.Key("sfp_tx_power");
+        writer.Double(gmSfpData.tx_power);
+
+        writer.Key("sfp_rx_power");
+        writer.Double(gmSfpData.rx_power);
+
+        writer.Key("terminal_gps_string");
+        writer.String(gmStmData.gps_string.c_str());
+
+        writer.Key("terminal_latitude");
+        writer.Double(gmStmData.gps_data.latitude);
+
+        writer.Key("terminal_ns_indicator");
+        writer.String((const char*)&gmStmData.gps_data.ns_indicator);
+
+        writer.Key("terminal_longnitude");
+        writer.Double(gmStmData.gps_data.longnitude);
+
+        writer.Key("terminal_we_indicator");
+        writer.String((const char*)&gmStmData.gps_data.we_indicator);
+
+        writer.Key("terminal_temperature");
+        writer.Uint(gmStmData.sensor_data.temperature);
+
+        writer.Key("terminal_pressure");
+        writer.Uint(gmStmData.sensor_data.pressure);
+
+        writer.Key("terminal_altitude");
+        writer.Uint(gmStmData.sensor_data.altitude);
+
+        writer.Key("terminal_compass");
+        writer.Uint(gmStmData.sensor_data.compass_degree);
+
+        writer.Key("servo_motor1_degree");
+        writer.Uint(gmServoMotor1Degree);
+
+        writer.Key("servo_motor2_degree");
+        writer.Uint(gmServoMotor2Degree);
+
+        writer.Key("step_motor1_position");
+        writer.Uint(gmStepMotor1Position);
+
+        writer.Key("step_motor2_position");
+        writer.Uint(gmStepMotor2Position);
+
+        writer.Key("cpu_usage");
+        writer.Double(cpu_usage);
+
+        writer.Key("memory_usage");
+        writer.Double(mem_usage);
+
+
+        writer.Key("remote_terminal_status");
+        writer.String((gmLoraSfpData.status == 1) ? "Connected" : "Disconnected");
+
+        writer.Key("remote_sfp_temp");
+        writer.Double(gmLoraSfpData.temperature);
+
+        writer.Key("remote_sfp_vcc");
+        writer.Uint(gmLoraSfpData.vcc);
+
+        writer.Key("remote_sfp_tx_bias");
+        writer.Double(gmLoraSfpData.tx_bias);
+
+        writer.Key("remote_sfp_tx_power");
+        writer.Double(gmLoraSfpData.tx_power);
+
+        writer.Key("remote_sfp_rx_power");
+        writer.Double(gmLoraSfpData.rx_power);
+
+        writer.Key("remote_terminal_gps_string");
+        writer.String(gmLoraStmData.gps_string.c_str());
+
+        writer.Key("remote_terminal_latitude");
+        writer.Double(gmLoraStmData.gps_data.latitude);
+
+        writer.Key("remote_terminal_ns_indicator");
+        writer.String((const char*)&gmLoraStmData.gps_data.ns_indicator);
+
+        writer.Key("remote_terminal_longnitude");
+        writer.Double(gmLoraStmData.gps_data.longnitude);
+
+        writer.Key("remote_terminal_we_indicator");
+        writer.String((const char*)&gmLoraStmData.gps_data.we_indicator);
+
+        writer.Key("remote_terminal_temperature");
+        writer.Uint(gmLoraStmData.sensor_data.temperature);
+
+        writer.Key("remote_terminal_pressure");
+        writer.Uint(gmLoraStmData.sensor_data.pressure);
+
+        writer.Key("remote_terminal_altitude");
+        writer.Uint(gmLoraStmData.sensor_data.altitude);
+
+        writer.Key("remote_terminal_compass");
+        writer.Uint(gmLoraStmData.sensor_data.compass_degree);
+
+        writer.Key("stream_ip");
+        writer.String(gmStreamIp.c_str());
+
+        writer.Key("stream_port");
+        writer.Uint(gmStreamPort);
+
+        writer.EndObject();
+
+        writeFile(s.GetString());
 
         sleep(2);
     }
@@ -134,145 +286,31 @@ void Json::writeJson()
 }
 
 
-void Json::writeFile()
+int Json::writeFile(const std::string &Content)
 {
 
-    float cpu_usage;
-    float mem_usage;
-
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-
-    getPhysicalSourceUsage(mem_usage, cpu_usage);
-
-    writer.StartObject();
-
-    writer.Key("terminal_status");
-    writer.String("Connected");
-
-    writer.Key("terminal_status");
-    writer.String((gmSfpData.status == 1) ? "Connected" : "Disconnected");
-
-//    writer.Key("laser_diagonal");
-//    writer.Double(tracker.getDiagonalRate());
-
-//    writer.Key("laser_edge");
-//    writer.Double(tracker.getDiagonalRate());
-
-    writer.Key("sfp_temp");
-    writer.Double(gmSfpData.temperature);
-
-    writer.Key("sfp_vcc");
-    writer.Uint(gmSfpData.vcc);
-
-    writer.Key("sfp_tx_bias");
-    writer.Double(gmSfpData.tx_bias);
-
-    writer.Key("sfp_tx_power");
-    writer.Double(gmSfpData.tx_power);
-
-    writer.Key("sfp_rx_power");
-    writer.Double(gmSfpData.rx_power);
-
-    writer.Key("terminal_gps_string");
-    writer.String(gmStmData.gps_string.c_str());
-
-    writer.Key("terminal_latitude");
-    writer.Double(gmStmData.gps_data.latitude);
-
-    writer.Key("terminal_ns_indicator");
-    writer.String((const char*)&gmStmData.gps_data.ns_indicator);
-
-    writer.Key("terminal_longnitude");
-    writer.Double(gmStmData.gps_data.longnitude);
-
-    writer.Key("terminal_we_indicator");
-    writer.String((const char*)&gmStmData.gps_data.we_indicator);
-
-    writer.Key("terminal_temperature");
-    writer.Uint(gmStmData.sensor_data.temperature);
-
-    writer.Key("terminal_pressure");
-    writer.Uint(gmStmData.sensor_data.pressure);
-
-    writer.Key("terminal_altitude");
-    writer.Uint(gmStmData.sensor_data.altitude);
-
-    writer.Key("terminal_compass");
-    writer.Uint(gmStmData.sensor_data.compass_degree);
-
-    writer.Key("servo_motor1_degree");
-    writer.Uint(gmServoMotor1Degree);
-
-    writer.Key("servo_motor2_degree");
-    writer.Uint(gmServoMotor2Degree);
-
-    writer.Key("step_motor1_position");
-    writer.Uint(gmStepMotor1Position);
-
-    writer.Key("step_motor2_position");
-    writer.Uint(gmStepMotor2Position);
-
-    writer.Key("cpu_usage");
-    writer.Double(cpu_usage);
-
-    writer.Key("memory_usage");
-    writer.Double(mem_usage);
-
-
-    writer.Key("remote_terminal_status");
-    writer.String((gmLoraSfpData.status == 1) ? "Connected" : "Disconnected");
-
-    writer.Key("remote_sfp_temp");
-    writer.Double(gmLoraSfpData.temperature);
-
-    writer.Key("remote_sfp_vcc");
-    writer.Uint(gmLoraSfpData.vcc);
-
-    writer.Key("remote_sfp_tx_bias");
-    writer.Double(gmLoraSfpData.tx_bias);
-
-    writer.Key("remote_sfp_tx_power");
-    writer.Double(gmLoraSfpData.tx_power);
-
-    writer.Key("remote_sfp_rx_power");
-    writer.Double(gmLoraSfpData.rx_power);
-
-    writer.Key("remote_terminal_gps_string");
-    writer.String(gmLoraStmData.gps_string.c_str());
-
-    writer.Key("remote_terminal_latitude");
-    writer.Double(gmLoraStmData.gps_data.latitude);
-
-    writer.Key("remote_terminal_ns_indicator");
-    writer.String((const char*)&gmLoraStmData.gps_data.ns_indicator);
-
-    writer.Key("remote_terminal_longnitude");
-    writer.Double(gmLoraStmData.gps_data.longnitude);
-
-    writer.Key("remote_terminal_we_indicator");
-    writer.String((const char*)&gmLoraStmData.gps_data.we_indicator);
-
-    writer.Key("remote_terminal_temperature");
-    writer.Uint(gmLoraStmData.sensor_data.temperature);
-
-    writer.Key("remote_terminal_pressure");
-    writer.Uint(gmLoraStmData.sensor_data.pressure);
-
-    writer.Key("remote_terminal_altitude");
-    writer.Uint(gmLoraStmData.sensor_data.altitude);
-
-    writer.Key("remote_terminal_compass");
-    writer.Uint(gmLoraStmData.sensor_data.compass_degree);
-
-    writer.EndObject();
-
-
     std::ofstream myfile;
-    myfile.open ("/var/www/html/json");
-    myfile << s.GetString();
+    myfile.open ("/var/www/html/json.save");
+    myfile << Content;
     myfile.close();
 
+    system("mv /var/www/html/json.save /var/www/html/json");
+
+}
+
+std::string Json::readFile()
+{
+
+    std::string content;
+    std::ifstream myfile;
+
+    myfile.open ("/var/www/html/json");
+
+    myfile >> content;
+
+    myfile.close();
+
+    return content;
 
 }
 

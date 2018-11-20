@@ -37,6 +37,8 @@ public:
     void loadMotorPositions(CONTROL_DATA_FORMAT &ControlData);
     void saveMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
+    void loadStreamInfo(std::string &StreamIp, int &StreamPort);
+
 private:
 
 //    rapidjson::StringBuffer gmStringBuffer;
@@ -50,17 +52,22 @@ private:
 
 
     CONTROL_DATA_FORMAT gmControlData;
+
     uint8_t gmServoMotor2Degree;
     uint8_t gmServoMotor1Degree;
 
     int gmStepMotor1Position;
     int gmStepMotor2Position;
 
+    std::string gmStreamIp;
+    int gmStreamPort;
 
     std::mutex gmMutex;
 
     void writeJson();
-    void writeFile();
+    int writeFile(const std::string &Content);
+    std::string readFile();
+
 
     void getPhysicalSourceUsage(float &MemUsage, float &CpuUsage);
     std::vector<size_t> getCpuTick();

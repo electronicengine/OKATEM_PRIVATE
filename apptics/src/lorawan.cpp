@@ -9,91 +9,85 @@ extern std::map<const std::string, bool> CheckList;
 Status LoraWan::init()
 {
 
-    printAll("Lora Inıtializing... ");
-
     std::vector<unsigned char> lora_return;
     int return_size;
+    int ret = 0;
 
 
-        gmSerial.writeData("sys reset\r\n");
-        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-
-        lora_return.clear();
-        usleep(1);
-
-
-    do
-    {
-        gmSerial.writeData("radio set pwr ", 14, "\r\n");
-        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-        usleep(1);
-
-    }while( std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
-
-    printAll("Lora radio set pwr 14 : ok");
-    lora_return.clear();
-
-    gmSerial.writeData("mac pause\r\n");
+    gmSerial.writeData("sys reset\r\n");
     gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
-    printAll("Lora mac pause :", std::string(lora_return.begin(), lora_return.end()));
-    lora_return.clear();
+    usleep(1);
 
-    do
-    {
-        gmSerial.writeData("radio set wdt ", 0, "\r\n" );
-        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-        usleep(TRANSMISSION_TIMEOUT);
-    }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
+    ret = sendCommand("radio set pwr 14\r\n");
+        if(ret == FAIL)
+            return Status::error;
 
-    printAll("Lora radio set wdt 0: ok");
-    lora_return.clear();
+    ret = sendCommand("mac pause\r\n");
+        if(ret == FAIL)
+            return Status::error;
 
-    do
-    {
-        gmSerial.writeData("radio set freq ", gmFrequency, "\r\n" );
-        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-        usleep(TRANSMISSION_TIMEOUT);
+    ret = sendCommand("radio set freq " + gmFrequency + "\r\n");
+        if(ret == FAIL)
+            return Status::error;
 
-    }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
+    ret = sendCommand("radio set wdt 0\r\n" );
+        if(ret == FAIL)
+            return Status::error;
 
-    printAll("Lora radio set freq ", gmFrequency, " : ok");
-    lora_return.clear();
-
-    do
-    {
-
-        gmSerial.writeData("radio set mod fsk\r\n" );
-        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
-        usleep(TRANSMISSION_TIMEOUT);
-    }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n");
-
-    printAll("Lora radio set mod fsk ok");
-    lora_return.clear();
+    ret = sendCommand("radio set mod fsk\r\n");
+        if(ret == FAIL)
+            return Status::error;
 
 
-//    CheckListMutex.lock();
-    try{
-        CheckList["Lora"] = false;
-    }
-    catch(std::exception e)
-    {
-        printAll("e:", e.what());
-    }
-
-//    CheckListMutex.unlock();
 
     sleep(std::rand() % 10);
+
+    return Status::ok;
     
 }
 
+
+
+int LoraWan::sendCommand(std::string Command)
+{
+    int counter = 0;
+    std::vector<unsigned char> lora_return;
+    int return_size;
+
+    do
+    {
+        counter++;
+
+        gmSerial.writeData(Command);
+        gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
+        usleep(TRANSMISSION_TIMEOUT);
+
+        if(counter >= 4)
+            break;
+
+    }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n" &&
+           std::string(lora_return.begin(), lora_return.end()) != "4294967245\r\n");
+
+    if(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n" &&
+            std::string(lora_return.begin(), lora_return.end()) != "4294967245\r\n")
+    {
+        printAll(Command, ": ", "fail ");
+        return FAIL;
+    }
+    else
+    {
+         printAll(Command, ": ", "ok");
+         return SUCCESS;
+    }
+}
 
 
 Status LoraWan::sendBeacon()
 {
 
     std::string Data = prepareData();
-
+    int counter = 0;
 
     int return_size;
     int size = Data.length();
@@ -133,6 +127,8 @@ Status LoraWan::sendBeacon()
 
             do{
 
+                counter++;
+
                 printAll("Lora Partial Data", partial_data);
 
                 gmSerial.writeData(partial_data);
@@ -140,8 +136,16 @@ Status LoraWan::sendBeacon()
                 lora_return.clear();
                 gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
+                if(counter >= 4)
+                {
+                    printAll("Lara Data sent error!");
+                    break;
+                }
+
             }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\nradio_tx_ok\r\n");
 
+
+            counter = 0;
 
         usleep(100000);
 
@@ -210,9 +214,11 @@ void LoraWan::listenChannel()
 
     }
 
-    resetChannel();
 
     printAll("Lora Timeout!");
+
+    resetChannel();
+
 
 }
 
@@ -221,15 +227,25 @@ void LoraWan::listenChannel()
 void LoraWan::resetChannel()
 {
     std::string beacon = "hello";
-
+    Status status;
 
     printAll("Lora Restarting...!");
 
-    init();
+    status = init();
 
-    sendBeacon();
+    if(status == Status::ok)
+    {
 
-    listen();
+        sendBeacon();
+
+        listen();
+
+    }else
+    {
+        sleep(1);
+        resetChannel();
+    }
+
 
 }
 
@@ -337,6 +353,7 @@ void LoraWan::listen()
 
 
 
+
 void LoraWan::setLoraData(const SFP_DATA_FORMAT &SfpData, const ENVIRONMENT_DATA_FORMAT &StmData)
 {
 
@@ -440,16 +457,13 @@ void LoraWan::callBack(std::string& CommingData)
 
 LoraWan::LoraWan() : gmBaundRate("B57600"), gmFrequency("433100000")
 {
-    init();
 }
 
 LoraWan::LoraWan(std::string BaundRate) : gmBaundRate(BaundRate), gmFrequency("433100000")
 {
-    init();
 }
 
 LoraWan::LoraWan(std::string BaundRate, std::string Freqency) : gmBaundRate(BaundRate), gmFrequency(Freqency)
 {
-    init();
 }
 

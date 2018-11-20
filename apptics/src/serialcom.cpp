@@ -268,6 +268,9 @@ Status SerialCom::Init()
     options.c_iflag = IGNPAR;
     options.c_oflag = 0;
     options.c_lflag = 0;
+    options.c_cc[VTIME] = 1000;   /* inter-character timer unused */
+    options.c_cc[VMIN] = 1;   /* blocking read until 5 chars received */
+
     tcflush(gmFileDescriptor, TCIFLUSH);
     tcsetattr(gmFileDescriptor, TCSANOW, &options);
 

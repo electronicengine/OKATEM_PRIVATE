@@ -1,5 +1,6 @@
 #include "videostream.h"
 #include <opencv2/opencv.hpp>
+#include <string.h>
 
 VideoStream::VideoStream()
 {
@@ -19,7 +20,6 @@ void VideoStream::start(const std::string &IpAddress, int Port)
 void VideoStream::playStream()
 {
 
-
     std::vector<unsigned char> socket_message; // Size of received message
     unsigned char *frame_data;
 
@@ -29,7 +29,6 @@ void VideoStream::playStream()
 
     while (1)
     {
-
 
         socket_message = gmSocket.receiveData();
 
@@ -50,7 +49,6 @@ void VideoStream::playStream()
             if(sequence_number == total_pack)
             {
 
-
                cv::Mat rawData = cv::Mat(1, (STREAM_SIZE -8) * total_pack, CV_8UC1, frame_data);
                cv::Mat frame = cv::imdecode(rawData, CV_LOAD_IMAGE_COLOR);
                if (frame.size().width == 0) {
@@ -58,20 +56,14 @@ void VideoStream::playStream()
                    continue;
                }
 
-               cv::imshow("recv", frame);
+               std::string as = "hello";
+
+               cv::imshow(as.c_str(), frame);
                free(frame_data);
 
                cv::waitKey(1);
             }
-
-
         }
-
-
-
-
-
-
 
     }
 

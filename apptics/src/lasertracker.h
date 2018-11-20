@@ -56,6 +56,8 @@ private:
         int calculatePerspective(std::vector<cv::Point>& Points);
 public:
 
+        std::string gmStreamIp;
+
         PERSPECTIVE_RATE gmPerspective;
         UdpSocket gmUdpStreamSocket;
 
@@ -63,7 +65,7 @@ public:
         LaserTracker(int Camera);
         ~LaserTracker();
         int startTracking();
-        int runTracking();
+        int runTracking(std::string StreamIp, int StreamPort);
         float getDiagonalRate();  // left/right
         float getEdgeRate();      //upper/bottom
 

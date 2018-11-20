@@ -12,7 +12,6 @@
 #include <memory.h>
 #include <map>
 
-
 #define SUCCESS 1
 #define FAIL 2
 
@@ -72,6 +71,7 @@ struct SFP_DATA_FORMAT
         temp_temperature |= (Data[index++] << 16);
         temp_temperature |= (Data[index++] << 24);
 
+
         temp_vcc = (Data[index++]);
         temp_vcc |= (Data[index++] << 8);
         temp_vcc |= (Data[index++] << 16);
@@ -104,6 +104,8 @@ struct SFP_DATA_FORMAT
         tx_power = (float)temp_tx_power / 100000;
         rx_power = (float)temp_rx_power / 100000;
 
+        printf("tx_power: %d\n", temp_vcc);
+
         return *this;
 
     }
@@ -112,13 +114,13 @@ struct SFP_DATA_FORMAT
 
     operator unsigned char *()
     {
-        unsigned char *data = new unsigned char[SFP_DATA_SIZE];
+        unsigned char *data = new unsigned char[24];
         int index = 0;
-        u_int32_t temp_temperature = (u_int32_t)(temperature * 100000);
-        u_int32_t temp_vcc = (u_int32_t)(vcc * 100000);
-        u_int32_t temp_tx_bias = (u_int32_t)(tx_bias * 100000);
-        u_int32_t temp_tx_power = (u_int32_t)(tx_power * 100000);
-        u_int32_t temp_rx_power = (u_int32_t)(rx_power * 100000);
+        int temp_temperature = temperature * 100000;
+        int temp_vcc = vcc * 100000;
+        int temp_tx_bias = tx_bias * 100000;
+        int temp_tx_power = tx_power * 100000;
+        int temp_rx_power = rx_power * 100000;
 
 
         data[index++] = temp_temperature & 0xff;
@@ -130,7 +132,6 @@ struct SFP_DATA_FORMAT
         data[index++] = (temp_vcc >> 8) & 0xff;
         data[index++] = (temp_vcc >> 16) & 0xff;
         data[index++] = (temp_vcc >> 24) & 0xff;
-
 
         data[index++] = temp_tx_bias & 0xff;
         data[index++] = (temp_tx_bias >> 8) & 0xff;
@@ -153,11 +154,12 @@ struct SFP_DATA_FORMAT
         data[index++] = (status >> 24) & 0xff;
 
 
+        printf("tx_power: %d\n", temp_tx_power);
+
         return data;
     }
 
 };
-
 
 
 struct SENSOR_DATA
@@ -256,7 +258,6 @@ struct GPS_DATA
     GPS_DATA& operator =(std::string GpsString)
     {
 
-        int index = 0;
         int i = 0;
         std::size_t pos;
 
@@ -288,60 +289,40 @@ struct GPS_DATA
 
             i=0;
 
-            index++;
+            if(!token[1].empty())
+                utc_time = (double)std::atof(token[1].c_str());
 
-            if(!token[index].empty())
-                utc_time = (double)std::atof(token[index].c_str());
+            if(!token[2].empty())
+                status = (unsigned char)*token[2].c_str();
 
-            index++;
-
-            if(!token[index].empty())
-                status = (unsigned char)*token[index].c_str();
-
-            index++;
-
-            if(!token[index].empty())
+            if(!token[3].empty())
             {
-                degrees = (double)std::atof(token[index].substr(0, 2).c_str());
-                minutes = (double)std::atof(token[index].substr(2, 7).c_str());
+                degrees = (double)std::atof(token[3].substr(0, 2).c_str());
+                minutes = (double)std::atof(token[3].substr(2, 7).c_str());
                 latitude =  degrees + (minutes / 60);
             }
 
-            index++;
-
-            if(!token[index].empty())
+            if(!token[4].empty())
                 ns_indicator = (unsigned char)*token[4].c_str();
 
-            index++;
-
-            if(!token[index].empty())
+            if(!token[5].empty())
             {
-                degrees = (double)std::atof(token[index].substr(0, 3).c_str());
-                minutes = (double)std::atof(token[index].substr(3, 7).c_str());
+                degrees = (double)std::atof(token[5].substr(0, 3).c_str());
+                minutes = (double)std::atof(token[5].substr(3, 7).c_str());
                 longnitude = degrees + (minutes / 60);
             }
 
-            index++;
+            if(!token[6].empty())
+                we_indicator = (unsigned char)*token[6].c_str();
 
-            if(!token[index].empty())
-                we_indicator = (unsigned char)*token[index].c_str();
+            if(!token[7].empty())
+                speed_over_ground = (double)std::atof(token[7].c_str());
 
-            index++;
+            if(!token[8].empty())
+                course_over_ground =(double)std::atof(token[8].c_str());
 
-            if(!token[index].empty())
-                speed_over_ground = (double)std::atof(token[index].c_str());
-
-            index++;
-
-            if(!token[index].empty())
-                course_over_ground =(double)std::atof(token[index].c_str());
-
-            index++;
-
-            if(!token[index].empty())
-                date = token[index];
-
-            index++;
+            if(!token[9].empty())
+                date = token[9];
 
         }
         catch(std::exception& ex)
@@ -474,25 +455,19 @@ struct ENVIRONMENT_DATA_FORMAT
         unsigned char * sensor_data_pointer;
 
         spi_data.header = 'E';
-        spi_data.header |= 'N' << 8;
-
-
+        spi_data.header |= 'N';
 
         for(int i = 0; i<99; i++)
-            spi_data.data[i + index] = gps_string.c_str()[i];
+            spi_data.data[i] = gps_string.c_str()[i + index];
 
         index += 99;
 
         sensor_data_pointer = sensor_data;
-
-        memcpy(&spi_data.data[index], sensor_data_pointer, sizeof(SENSOR_DATA));
+        memcpy(&spi_data[index], sensor_data_pointer, sizeof(SENSOR_DATA));
 
         index += sizeof(SENSOR_DATA);
 
-        spi_data.checksum = 0;
-
         delete sensor_data_pointer;
-
 
         return spi_data;
 
@@ -544,7 +519,6 @@ struct UPDATE_FILE_FORMAT
     operator SPI_TRANSFER_FORMAT()
     {
         int checksum = 0;
-        int index = 0;
 
         SPI_TRANSFER_FORMAT spi_transfer_format;
 
@@ -552,20 +526,18 @@ struct UPDATE_FILE_FORMAT
         spi_transfer_format.header =  'U' | 'P' << 8;
 
 
-        spi_transfer_format.data[index++] = (total_sequence_number) & 0xff;
-        spi_transfer_format.data[index++] = (total_sequence_number >> 8) & 0xff;
-        spi_transfer_format.data[index++] = (total_sequence_number >> 16) & 0xff;
-        spi_transfer_format.data[index++] = (total_sequence_number >> 24) & 0xff;
+        spi_transfer_format.data[0] = (total_sequence_number) & 0xff;
+        spi_transfer_format.data[1] = (total_sequence_number >> 8) & 0xff;
+        spi_transfer_format.data[2] = (total_sequence_number >> 16) & 0xff;
+        spi_transfer_format.data[3] = (total_sequence_number >> 24) & 0xff;
 
-        spi_transfer_format.data[index++] = (current_sequence_number) & 0xff;
-        spi_transfer_format.data[index++] = (current_sequence_number >> 8) & 0xff;
-        spi_transfer_format.data[index++] = (current_sequence_number >> 16) & 0xff;
-        spi_transfer_format.data[index++] = (current_sequence_number >> 24) & 0xff;
+        spi_transfer_format.data[4] = (current_sequence_number) & 0xff;
+        spi_transfer_format.data[5] = (current_sequence_number >> 8) & 0xff;
+        spi_transfer_format.data[6] = (current_sequence_number >> 16) & 0xff;
+        spi_transfer_format.data[7] = (current_sequence_number >> 24) & 0xff;
 
-        for(int i=0; i<SPI_ENTITY_SIZE; i++)
-          spi_transfer_format.data[i + index] = data[i];
-
-        index += SPI_ENTITY_SIZE;
+        for(int i=8; i<SPI_ENTITY_SIZE + 8; i++)
+          spi_transfer_format.data[i] = data[i - 8];
 
         for(int i=0; i<SPI_ENTITY_SIZE; i++)
             checksum += data[i];
@@ -580,22 +552,12 @@ struct UPDATE_FILE_FORMAT
     UPDATE_FILE_FORMAT& operator =(const SPI_TRANSFER_FORMAT& SpiData)
     {
 
-        int index = 0;
 
-        total_sequence_number = (SpiData.data[index++]);
-        total_sequence_number |= (SpiData.data[index++] << 8);
-        total_sequence_number |= (SpiData.data[index++] << 16);
-        total_sequence_number |= (SpiData.data[index++] << 24);
+        total_sequence_number = (SpiData.data[0]) | (SpiData.data[1] << 8) | (SpiData.data[2] << 16) | (SpiData.data[3] << 24);
+        current_sequence_number = (SpiData.data[4]) | (SpiData.data[5] << 8) | (SpiData.data[6] << 16) | (SpiData.data[7] << 24);
 
-        current_sequence_number = (SpiData.data[index++]);
-        current_sequence_number |= (SpiData.data[index++] << 8);
-        current_sequence_number |= (SpiData.data[index++] << 16);
-        current_sequence_number |= (SpiData.data[index++] << 24);
-
-        for(int i=0; i<SPI_ENTITY_SIZE; i++)
-            data[i] = SpiData.data[i + index];
-
-        index += SPI_ENTITY_SIZE;
+        for(int i=8; i<SPI_ENTITY_SIZE + 8; i++)
+            data[i - 8] = SpiData.data[i];
 
         return *this;
 
@@ -646,7 +608,6 @@ struct CONTROL_DATA_FORMAT
     uint8_t garbage2[45]; //footer
 
     volatile bool is_transmitted;
-    volatile bool is_available;
 
     operator bool()
     {
@@ -864,6 +825,28 @@ struct UDP_DATA_FORMAT
     uint16_t checksum;
 
 
+//    operator SPI_TRANSFER_FORMAT()
+//    {
+//        SPI_TRANSFER_FORMAT spi_data;
+
+//        int index = 0;
+
+//        spi_data.header = data[index++];
+//        spi_data.header |= data[index++] << 8;
+
+//        for(int i = 0; i<SPI_DATA_SIZE; i++ )
+//            spi_data.data[i] = data[i + index];
+
+//        index += SPI_DATA_SIZE;
+
+//        spi_data.checksum = data[index++];
+//        spi_data.checksum |= data[index++];
+
+//        return spi_data;
+
+
+//    }
+
     UDP_DATA_FORMAT& operator = (SPI_TRANSFER_FORMAT &SpiData)
     {
 
@@ -999,7 +982,6 @@ struct INFORMATION_DATA_FORMAT
     {
         UDP_DATA_FORMAT udp_data;
 
-
         int index = 0;
         unsigned char *controldata_bytes = (unsigned char *)(SPI_TRANSFER_FORMAT)control_data;
         unsigned char *environmentdata_bytes = (unsigned char *)(SPI_TRANSFER_FORMAT)environment_data;
@@ -1023,9 +1005,8 @@ struct INFORMATION_DATA_FORMAT
         for(int i = 0; i<SFP_DATA_SIZE; i++)
             udp_data.data[i + index] = sfpdata_bytes[i];
 
-        u_int32_t tem;
-
         index += SFP_DATA_SIZE;
+
 
 
         udp_data.checksum = 2;

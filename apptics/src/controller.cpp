@@ -306,7 +306,10 @@ void Controller::communicationThread()
 
         }
 
+
         gmMutex.unlock();
+
+        delete spi_transfer_data;
 
         usleep(wait_time);
 

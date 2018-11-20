@@ -40,7 +40,7 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
 
 }
 
-Status LcdHMI::setMotorPositions(CONTROL_DATA_FORMAT &SavedData)
+Status LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
 {
 
     servo_motor1_angle = SavedData.servo_motor1_degree;
@@ -366,13 +366,11 @@ void LcdHMI::listenHMI()
                     callManualPage(hcm_data);
 
                 }
-
                 if(gmCurrentPage == SENSORS_PAGE_ID)
                 {
 
                    callSensorPage(hcm_data);
                 }
-
                 if(gmCurrentPage == AUTO_PAGE_ID)
                 {
                    callAutoPage(hcm_data);
@@ -381,7 +379,6 @@ void LcdHMI::listenHMI()
                 {
                     callCameraPage(hcm_data);
                 }
-
 
                 hcm_data.clear();
             }

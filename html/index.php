@@ -3,8 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {font-family: Arial, Helvetica, sans-serif;}
-form {border: 3px solid #f1f1f1;}
 
 input[type=text], input[type=password] {
     width: 100%;
@@ -66,16 +64,17 @@ span.psw {
 }
 </style>
 </head>
-<body>
+<body style="background-color: #1d1f21; color: #fff;">
 
 <h2 align="center"> &emsp; WELCOME FSO WEB TERMINAL</h2>
 
-<form action="interface.php">
-  <div class="imgcontainer">
+<form action="interface.php" method="get" style="background-color: #1d1f21;">
+
+  <div class="imgcontainer" style="background-color: #1d1f21;">
     <img src="/img/hyperion.png" alt="Avatar" class="avatar">
   </div>
 
-  <div class="container">
+  <div class="container" style="background-color: #1d1f21;">
     <label for="uname"><b>Username</b></label>
     <input type="text" placeholder="Enter Username" name="uname" required>
 
@@ -88,9 +87,10 @@ span.psw {
     </label>
   </div>
 
-  <div class="container" style="background-color:#f1f1f1">
+  <div style="background-color:#f1f1f1">
     <span class="psw">Forgot <a href="#">password?</a></span>
   </div>
+
 </form>
 
 </body>
