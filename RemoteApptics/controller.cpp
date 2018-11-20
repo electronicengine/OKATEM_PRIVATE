@@ -9,6 +9,8 @@ Controller::Controller()
 
 }
 
+
+
 int Controller::start(const std::string &IpAddress, int Port)
 {
     int ret;
@@ -20,6 +22,7 @@ int Controller::start(const std::string &IpAddress, int Port)
 
     return ret;
 }
+
 
 
 std::vector<unsigned char> Controller::readFile(const std::string &FileName)
@@ -59,6 +62,7 @@ std::vector<unsigned char> Controller::readFile(const std::string &FileName)
 
     return container;
 }
+
 
 
 void Controller::parseAndSendData(std::vector<unsigned char> &Container, const std::string &IpAddress)
@@ -116,6 +120,7 @@ void Controller::parseAndSendData(std::vector<unsigned char> &Container, const s
 }
 
 
+
 void Controller::servo1SetValue(int Value)
 {
 
@@ -127,6 +132,8 @@ void Controller::servo1SetValue(int Value)
     printf("Servo1 setting value %d\r\n", gmServoMotor1Degree);
 
 }
+
+
 
 void Controller::servo2SetValue(int Value)
 {
@@ -160,6 +167,8 @@ void Controller::servo1Forward()
 
 }
 
+
+
 void Controller::servo2Forward()
 {
 
@@ -176,6 +185,8 @@ void Controller::servo2Forward()
     printf("Servo2 Forward %d\r\n",gmServoMotor2Degree);
 
 }
+
+
 
 void Controller::servo1Backward()
 {
@@ -194,6 +205,8 @@ void Controller::servo1Backward()
 
 }
 
+
+
 void Controller::servo2Backward()
 {
     gmTxData.clear();
@@ -208,6 +221,8 @@ void Controller::servo2Backward()
     printf("Servo2 Down %d\r\n",gmServoMotor2Degree);
 
 }
+
+
 
 void Controller::turnLeft()
 {
@@ -227,6 +242,8 @@ void Controller::turnLeft()
 
 }
 
+
+
 void Controller::turnRight()
 {
 
@@ -244,6 +261,8 @@ void Controller::turnRight()
     printf("RIGHT\r\n");
 
 }
+
+
 
 void Controller::turnUp()
 {
@@ -264,6 +283,8 @@ void Controller::turnUp()
 
 }
 
+
+
 void Controller::turnDown()
 {
 
@@ -283,6 +304,8 @@ void Controller::turnDown()
 
 }
 
+
+
 void Controller::increaseSpeed()
 {
     gmSpeed++;
@@ -293,6 +316,8 @@ void Controller::increaseSpeed()
     printf("Speed: %d\r\n", MAX_SPEED - gmSpeed);
 
 }
+
+
 
 void Controller::decreaseSpeed()
 {
@@ -307,6 +332,8 @@ void Controller::decreaseSpeed()
 
 }
 
+
+
 void Controller::setSpeed(int value)
 {
     if(value == 20)
@@ -319,6 +346,7 @@ void Controller::setSpeed(int value)
 }
 
 
+
 void Controller::updateFirmware(const std::string &FileName)
 {
 
@@ -327,7 +355,10 @@ void Controller::updateFirmware(const std::string &FileName)
     data = readFile(FileName);
     parseAndSendData(data, gmIpAddress);
     data.clear();
+
 }
+
+
 
 int Controller::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
 {
@@ -360,7 +391,6 @@ int Controller::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT
     ControlData = info_package.control_data;
     EnvironmentData = info_package.environment_data;
     SfpData = info_package.sfp_data;
-
 
     return SUCCESS;
 

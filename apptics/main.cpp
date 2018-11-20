@@ -98,11 +98,7 @@ int main()
             safeLog();
             last = now;
         }
-
-
     }
-
-
 
     return 0;
 
@@ -193,7 +189,7 @@ void initLora()
     stm_data = controller.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
 
-    if(lora.init() == Status::ok)
+    if(status == Status::ok)
     {
 
         lora.setLoraData(sfp_data, stm_data);

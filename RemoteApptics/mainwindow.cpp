@@ -60,7 +60,7 @@ void MainWindow::on_actionUpdate_Firmware_triggered()
     QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace");
     std::cout << file_name.toStdString() << std::endl;
 
-//    gpController->updateFirmware(file_name.toStdString());
+    gpController->updateFirmware(file_name.toStdString());
 
 }
 

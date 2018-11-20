@@ -119,16 +119,18 @@ void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
         if(Data[2] == UP_BUTTON_ID)
         {
             printAll("up botton");
-            gmControlData.step_motor2_direction = FORWARD;
+            gmControlData.step_motor1_direction = FORWARD;
+
 
             gmControlData.servo_motor1_degree = 0;
             gmControlData.servo_motor2_degree = 0;
+
         }
 
         if(Data[2] == DOWN_BUTTON_ID)
         {
             printAll("down");
-            gmControlData.step_motor2_direction = BACKWARD;
+            gmControlData.step_motor1_direction = BACKWARD;
 
 
             gmControlData.servo_motor1_degree = 0;
@@ -138,7 +140,7 @@ void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
         if(Data[2] == RIGHT_BUTTON_ID)
         {
             printAll("right");
-            gmControlData.step_motor1_direction = FORWARD;
+            gmControlData.step_motor2_direction = FORWARD;
 
             gmControlData.servo_motor1_degree = 0;
             gmControlData.servo_motor2_degree = 0;
@@ -147,7 +149,7 @@ void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
         if(Data[2] == LEFT_BUTTON_ID)
         {
             printAll("left");
-            gmControlData.step_motor1_direction = BACKWARD;
+            gmControlData.step_motor2_direction = BACKWARD;
 
 
             gmControlData.servo_motor1_degree = 0;
@@ -166,10 +168,10 @@ void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
             speed = 20 - ((int)((double)Data[6] / 20) * 5);
         }
 
-        gmControlData.step_motor1_speed = speed;
-        gmControlData.step_motor2_speed = speed;
-        gmControlData.step_motor3_speed = speed;
-        gmControlData.step_motor4_speed = speed;
+        gmControlData.step_motor1_speed = 1;
+        gmControlData.step_motor2_speed = 1;
+        gmControlData.step_motor3_speed = 1;
+        gmControlData.step_motor4_speed = 1;
     }
     else if(Data[1] == BUTTON_UNPRESSED)
     {
@@ -227,10 +229,7 @@ void LcdHMI::callAutoPage(std::vector<unsigned char> &Data)
 void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
 {
 
-    int sensitivity = 0;
-
-
-    gmMutex.lock();
+   gmMutex.lock();
 
     if(Data[1] == BUTTON_PRESSED)
     {
