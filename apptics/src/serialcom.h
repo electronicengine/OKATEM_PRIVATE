@@ -97,6 +97,7 @@ public:
     Status readData(std::vector<unsigned char>& Container, int &Size, int Timeout);
     Status readData(std::vector<unsigned char>& Container, unsigned char Header, unsigned char Footer);
 
+    Status Init();
 
 
 private:
@@ -108,7 +109,6 @@ private:
     volatile short int gmTimeOutFlag = 0;
     volatile short int gmSetTime = 0;
 
-    Status Init();
     void setTimeout(int TimeOut);
     Status Close();
 

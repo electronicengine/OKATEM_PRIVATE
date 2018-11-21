@@ -158,9 +158,9 @@ int UdpSocket::sendData(SPI_TRANSFER_FORMAT SpiData, const std::string &IpAddres
 int UdpSocket::openPort(int Port)
 {
 
-
+    int ret;
     struct timeval timeout;
-
+    int optval = 1;
     gmPort = Port;
 
     gmSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -181,17 +181,19 @@ int UdpSocket::openPort(int Port)
     gmClientAddr.sin_family = AF_INET;
     gmClientAddr.sin_port = htons(gmPort);
 
-
-
-    if (bind(gmSocket, (struct sockaddr *) &gmServerAddr, sizeof(gmServerAddr)))
-    {
-        printf("cannot bind datagram socket!!\r\n");
-        return FAIL;
-    }
-
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
+
     setsockopt(gmSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
+    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+
+    ret = bind(gmSocket, (struct sockaddr *) &gmServerAddr, sizeof(gmServerAddr));
+    if (ret)
+    {
+        printf("cannot bind datagram socket!! %d\r\n", ret);
+        return FAIL;
+    }
 
 
     printf("Socket has port number %d\r\n", ntohs(gmServerAddr.sin_port));

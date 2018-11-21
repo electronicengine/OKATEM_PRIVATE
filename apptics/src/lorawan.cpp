@@ -6,12 +6,24 @@ extern std::map<const std::string, bool> CheckList;
 
 
 
-Status LoraWan::init()
+int LoraWan::init()
 {
 
     std::vector<unsigned char> lora_return;
     int return_size;
     int ret = 0;
+
+    Status status;
+
+    status = gmSerial.Init();
+
+    if(status == Status::ok)
+        printAll("LoraWan Serial Port Succesfully Opened");
+    else
+    {
+        printAll("LoraWan Serial Port Can Not Opened");
+        return FAIL;
+    }
 
 
     gmSerial.writeData("sys reset\r\n");
@@ -21,29 +33,29 @@ Status LoraWan::init()
 
     ret = sendCommand("radio set pwr 14\r\n");
         if(ret == FAIL)
-            return Status::error;
+            return FAIL;
 
     ret = sendCommand("mac pause\r\n");
         if(ret == FAIL)
-            return Status::error;
+            return FAIL;
 
     ret = sendCommand("radio set freq " + gmFrequency + "\r\n");
         if(ret == FAIL)
-            return Status::error;
+            return FAIL;
 
     ret = sendCommand("radio set wdt 0\r\n" );
         if(ret == FAIL)
-            return Status::error;
+            return FAIL;
 
     ret = sendCommand("radio set mod fsk\r\n");
         if(ret == FAIL)
-            return Status::error;
+            return FAIL;
 
 
 
     sleep(std::rand() % 10);
 
-    return Status::ok;
+    return SUCCESS;
     
 }
 
@@ -176,9 +188,11 @@ void LoraWan::listenChannel()
             {
 
                 lora_return.clear();
-                gmSerial.writeData("radio rx 0\r\n");
-                status = gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
+                gmSerial.writeData("radio rx 0\r\n");
+                printAll("radio rx 0");
+
+                status = gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
                 printAll("Lora Incomming Data: ", std::string(lora_return.begin(), lora_return.end()));
 
             }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n" &&
@@ -186,6 +200,7 @@ void LoraWan::listenChannel()
             lora_return.clear();
 
             status = gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
+            printAll(std::string(lora_return.begin(), lora_return.end()));
 
 
             if(status == Status::time_out)
@@ -227,13 +242,13 @@ void LoraWan::listenChannel()
 void LoraWan::resetChannel()
 {
     std::string beacon = "hello";
-    Status status;
+    int status;
 
     printAll("Lora Restarting...!");
 
     status = init();
 
-    if(status == Status::ok)
+    if(status == SUCCESS)
     {
 
         sendBeacon();

@@ -48,12 +48,14 @@ class LcdHMI
 public:
 
     LcdHMI();
+    ~LcdHMI();
 
     CONTROL_DATA_FORMAT getHCMControlData();
     Status setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData);
     Status setHCMData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& EnvironmentData);
 
 
+    int init();
 
 private:
 
@@ -77,7 +79,6 @@ private:
     void callAutoPage(std::vector<unsigned char>& Data);
     void callCameraPage(std::vector<unsigned char>& Data);
 
-    void initHCM();
     void listenHMI();
     void autoMode();
     Status sendEnvironmentInfo();

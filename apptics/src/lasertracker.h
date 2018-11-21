@@ -1,4 +1,4 @@
-﻿#ifndef LASERTRACKER_H
+#ifndef LASERTRACKER_H
 #define LASERTRACKER_H
 
 #include <opencv2/opencv.hpp>
@@ -62,7 +62,7 @@ public:
         UdpSocket gmUdpStreamSocket;
 
         LaserTracker(const std::string VideoLocation);
-        LaserTracker(int Camera);
+        LaserTracker();
         ~LaserTracker();
         int startTracking();
         int runTracking(std::string StreamIp, int StreamPort);
@@ -70,6 +70,8 @@ public:
         float getEdgeRate();      //upper/bottom
 
         void streamFrame(cv::Mat Frame);
+
+        int init(int Camera);
 
 };
 

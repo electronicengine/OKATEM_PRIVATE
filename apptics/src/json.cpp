@@ -4,33 +4,6 @@
 Json::Json()
 {
 
-    std::string json;
-
-
-    rapidjson::Document document;
-
-
-    json = readFile();
-
-
-    document.Parse(json.c_str());
-
-     if(document.HasMember("servo_motor1_degree"))
-        gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
-
-     if(document.HasMember("servo_motor2_degree"))
-        gmServoMotor2Degree = document["servo_motor2_degree"].GetInt();
-
-     if(document.HasMember("stream_ip"))
-        gmStreamIp = document["stream_ip"].GetString();
-
-     if(document.HasMember("stream_port"))
-        gmStreamPort = document["stream_port"].GetInt();
-
-
-    std::thread postJson(&Json::writeJson, this);
-    postJson.detach();
-
 
 }
 
@@ -42,6 +15,64 @@ Json::Json(int Mode)
 
 Json::~Json()
 {
+}
+
+int Json::init()
+{
+
+
+    std::string json;
+
+    int counter = 0;
+
+    rapidjson::Document document;
+
+
+    json = readFile();
+
+    do
+    {
+        counter++;
+
+        document.Parse(json.c_str());
+
+        if(document.IsObject())
+        {
+            if(document.HasMember("servo_motor1_degree"))
+                gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
+
+            if(document.HasMember("servo_motor2_degree"))
+                gmServoMotor2Degree = document["servo_motor2_degree"].GetInt();
+
+            if(document.HasMember("stream_ip"))
+                gmStreamIp = document["stream_ip"].GetString();
+
+            if(document.HasMember("stream_port"))
+                gmStreamPort = document["stream_port"].GetInt();
+
+        }
+
+        if(counter >= 3)
+            break;
+
+
+    }while(!document.IsObject() && counter++ <= 3);
+
+    if(!document.IsObject())
+    {
+        printAll("json informations have not loaded into buffer! Check Json Object");
+
+        return FAIL;
+    }
+    else
+    {
+        std::thread postJson(&Json::writeJson, this);
+        postJson.detach();
+
+        return SUCCESS;
+
+    }
+
 }
 
 void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
@@ -58,24 +89,47 @@ void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 
 }
 
-void Json::loadStreamInfo(std::string &StreamIp, int &StreamPort)
+int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort)
 {
 
 
+    int counter = 0;
 
     std::string json_string;
 
     json_string = readFile();
 
-
     rapidjson::Document document;
-    document.Parse(json_string.c_str());
 
-    if(document.HasMember("stream_ip"))
-        StreamIp = document["stream_ip"].GetString();
+    do{
 
-    if(document.HasMember("stream_port"))
-        StreamPort = document["stream_port"].GetInt();
+        counter++;
+
+        document.Parse(json_string.c_str());
+
+        if(document.IsObject())
+        {
+            if(document.HasMember("stream_ip"))
+                StreamIp = document["stream_ip"].GetString();
+
+            if(document.HasMember("stream_port"))
+                StreamPort = document["stream_port"].GetInt();
+        }
+
+        if(counter >= 3)
+            break;
+
+    }while(!document.IsObject() && counter++ <= 4);
+
+    if(!document.IsObject())
+    {
+        printAll("Stream Info have not loaded! Check Json Object");
+        return FAIL;
+    }
+    else
+    {
+        return SUCCESS;
+    }
 
 }
 
@@ -107,28 +161,53 @@ void Json::saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &L
 
 
 
-void Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
+int Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 {
 
     std::string json;
     rapidjson::Document document;
-
+    int counter;
 
     json = readFile();
 
-    document.Parse(json.c_str());
+    do{
+        document.Parse(json.c_str());
 
-    if(document.HasMember("servo_motor1_degree"))
-        ControlData.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
+        counter++;
 
-    if(document.HasMember("step_motor1_position"))
-        ControlData.step_motor1_direction = document["step_motor1_position"].GetInt();
+        if(document.IsObject())
+        {
 
-    if(document.HasMember("servo_motor2_degree"))
-        ControlData.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+            if(document.HasMember("servo_motor1_degree"))
+                ControlData.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
 
-    if(document.HasMember("step_motor2_position"))
-        ControlData.step_motor2_direction = document["step_motor2_position"].GetInt();
+            if(document.HasMember("step_motor1_position"))
+                ControlData.step_motor1_direction = document["step_motor1_position"].GetInt();
+
+            if(document.HasMember("servo_motor2_degree"))
+                ControlData.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+
+            if(document.HasMember("step_motor2_position"))
+                ControlData.step_motor2_direction = document["step_motor2_position"].GetInt();
+
+        }
+
+        if(counter >= 3)
+            break;
+
+
+    }while(!document.IsObject());
+
+    if(!document.IsObject())
+    {
+        printAll("Motor Positions have not loaded into buffer! Check Json Object");
+        return FAIL;
+    }
+    else
+    {
+        return SUCCESS;
+    }
+
 
 
 }
@@ -279,7 +358,7 @@ void Json::writeJson()
 
         writeFile(s.GetString());
 
-        sleep(2);
+        sleep(1);
     }
 
 
@@ -293,6 +372,9 @@ int Json::writeFile(const std::string &Content)
     myfile.open ("/var/www/html/json.save");
     myfile << Content;
     myfile.close();
+
+    usleep(50000);
+
 
     system("mv /var/www/html/json.save /var/www/html/json");
 

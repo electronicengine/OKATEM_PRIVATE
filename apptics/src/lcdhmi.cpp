@@ -6,13 +6,11 @@ extern std::map<std::string, bool> CheckList;
 LcdHMI::LcdHMI()
 {
 
-    gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
+}
 
-
-    servo_motor1_angle = 50;
-    servo_motor2_angle = 50;
-
-    initHCM();
+LcdHMI::~LcdHMI()
+{
+    delete gmSerial;
 }
 
 CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
@@ -326,10 +324,33 @@ void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
 
 
 
-void LcdHMI::initHCM()
+int LcdHMI::init()
 {
-    std::thread listen(&LcdHMI::listenHMI, this);
-    listen.detach();
+
+    Status status;
+
+    gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
+
+    status = gmSerial->Init();
+
+    if(status == Status::ok)
+    {
+        printAll("LcdHMI Serial Port Succesfully Openned");
+
+        servo_motor1_angle = 50;
+        servo_motor2_angle = 50;
+
+        std::thread listen(&LcdHMI::listenHMI, this);
+        listen.detach();
+
+        return SUCCESS;
+    }
+    else
+    {
+        return FAIL;
+    }
+
+
 }
 
 

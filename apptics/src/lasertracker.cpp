@@ -31,25 +31,10 @@ LaserTracker::LaserTracker(const std::string VideoLocation)
 
 
 
-LaserTracker::LaserTracker(int Camera)
+LaserTracker::LaserTracker()
 {
 
-    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
 
-    mVideoCapture = new cv::VideoCapture(Camera);
-
-    mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
-    if (!mVideoCapture->isOpened())
-    {
-        printAll("LaserTracker init is Failed");
-
-        CheckList["LaserTracker"] = false;
-    }
-    else
-    {
-        CheckList["LaserTracker"] = true;
-
-    }
 
 }
 
@@ -141,6 +126,27 @@ void LaserTracker::streamFrame(cv::Mat Frame)
 
 
 
+}
+
+int LaserTracker::init(int Camera)
+{
+    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
+
+    mVideoCapture = new cv::VideoCapture(Camera);
+
+    mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
+    if (!mVideoCapture->isOpened())
+    {
+        printAll("LaserTracker init is Failed");
+
+        return FAIL;
+    }
+    else
+    {
+        CheckList["LaserTracker"] = true;
+        return SUCCESS;
+
+    }
 }
 
 

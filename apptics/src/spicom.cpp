@@ -72,6 +72,7 @@ Status SpiCom::init()
     if (gmSpiFileDescriptor < 0)
     {
         printAll("Error - Could not open SPI device");
+        return Status::error;
 
     }
     else
@@ -137,12 +138,10 @@ Status SpiCom::init()
 
 SpiCom::SpiCom() : gmSpiDevice(0), gmSpiFile("/dev/spidev32766.0"), gmSpiMode(SPI_MODE_0), gmSpiPerWords(8), gmSpiSpeed(500000)
 {
-    init();
 }
 
 SpiCom::SpiCom(const std::string& SpiFile, int SpiSpeed) : gmSpiDevice(0), gmSpiFile(SpiFile), gmSpiMode(SPI_MODE_0), gmSpiPerWords(8), gmSpiSpeed(SpiSpeed)
 {
-    init();
 }
 
 

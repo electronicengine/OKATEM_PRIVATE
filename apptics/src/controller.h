@@ -34,6 +34,8 @@ public:
     Controller();
     ~Controller();
 
+    int init();
+
     Status isReady();
 
     Status zoomInCamera();

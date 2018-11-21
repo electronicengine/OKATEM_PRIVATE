@@ -219,51 +219,53 @@ void MainWindow::connectionAccepted(std::string IpAddress, int Port)
     if(ret == FAIL)
     {
         QMessageBox::critical(this, "Error", "Controller Connection Failed");
-
-
-        std::cout << "Controller Connection Failed"<<std::endl;
-    }
-
-    ret = gpController->getFsoInformations(gmControlInfo, gmEnvironmentInfo, gmSfpInfo);
-    if(ret == FAIL)
-    {
-
-        QMessageBox::critical(this, "Error", "Connection Failed");
-        std::cout << "Connection Failed"<<std::endl;
-
-        delete gpController;
+        std::cout << "Controller Connection Failed: "<< gmIpAddress << std::endl;
     }
     else
     {
-        QMessageBox::information(this, "Info", "Connection Established");
-        std::cout << "Connection Established "<<std::endl;
-
-        ret = gpStream->start(gmIpAddress, gmPort, this);
+        ret = gpController->getFsoInformations(gmControlInfo, gmEnvironmentInfo, gmSfpInfo);
         if(ret == FAIL)
         {
-            QMessageBox::critical(this, "Error", "Streaming Connection Failed");
-            std::cout << "Streaming Connection Failed "<<std::endl;
+
+            QMessageBox::critical(this, "Error", "Connection Failed");
+            std::cout << "Connection Failed"<<std::endl;
+
+            delete gpController;
+        }
+        else
+        {
+            QMessageBox::information(this, "Info", "Connection Established");
+            std::cout << "Connection Established "<<std::endl;
+
+            ret = gpStream->start(gmIpAddress, gmPort, this);
+            if(ret == FAIL)
+            {
+                QMessageBox::critical(this, "Error", "Streaming Connection Failed");
+                std::cout << "Streaming Connection Failed "<<std::endl;
+            }
+
+            setTitle();
+
+            gmControllerConnectionEstablished = 1;
+
+            ui->servo1_pos_label->setText(QString::number(gmControlInfo.servo_motor1_degree));
+            ui->servo2_pos_label->setText(QString::number(gmControlInfo.servo_motor2_degree));
+            ui->step1_pos_label->setText(QString::number(gmControlInfo.step_motor1_direction));
+            ui->step2_pos_label->setText(QString::number(gmControlInfo.step_motor2_direction));
+
+            ui->servo1_slider->setValue(gmControlInfo.servo_motor1_degree);
+            gmServo1SliderValue = gmControlInfo.servo_motor1_degree;
+
+            ui->servo2_slider->setValue(gmControlInfo.servo_motor2_degree);
+            gmServo2SliderValue = gmControlInfo.servo_motor2_degree;
+
+            deployPanel();
+
+            gpConnectionBox->ui->buttonBox->hide();
         }
 
-        setTitle();
-
-        gmControllerConnectionEstablished = 1;
-
-        ui->servo1_pos_label->setText(QString::number(gmControlInfo.servo_motor1_degree));
-        ui->servo2_pos_label->setText(QString::number(gmControlInfo.servo_motor2_degree));
-        ui->step1_pos_label->setText(QString::number(gmControlInfo.step_motor1_direction));
-        ui->step2_pos_label->setText(QString::number(gmControlInfo.step_motor2_direction));
-
-        ui->servo1_slider->setValue(gmControlInfo.servo_motor1_degree);
-        gmServo1SliderValue = gmControlInfo.servo_motor1_degree;
-
-        ui->servo2_slider->setValue(gmControlInfo.servo_motor2_degree);
-        gmServo2SliderValue = gmControlInfo.servo_motor2_degree;
-
-        deployPanel();
-
-        gpConnectionBox->ui->buttonBox->hide();
     }
+
 
 }
 

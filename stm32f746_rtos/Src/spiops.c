@@ -93,8 +93,6 @@ void spiComOps(void const * argument)
                 {
                     ret = checkIfControlData();
 
-
-
                     if(ret == HAL_OK)
                     {
 
@@ -121,8 +119,6 @@ void spiComOps(void const * argument)
             HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SIZE);
 
         }
-
-
 
 
         if(update_data_available == 1)

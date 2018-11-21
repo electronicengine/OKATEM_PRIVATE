@@ -6,10 +6,6 @@ extern std::map<const std::string, bool> CheckList;
 Controller::Controller()
 {
 
-    CheckList.insert(std::make_pair<std::string, bool>("Controller", true));
-
-    std::thread communication(&Controller::communicationThread, this);
-    communication.detach();
 
 }
 
@@ -17,6 +13,31 @@ Controller::Controller()
 
 Controller::~Controller()
 {
+
+}
+
+int Controller::init()
+{
+
+    Status status;
+
+
+    status = gmSpi.init();
+
+    if(status == Status::ok)
+    {
+        std::thread communication(&Controller::communicationThread, this);
+        communication.detach();
+
+        return SUCCESS;
+
+    }
+    else
+    {
+        return FAIL;
+    }
+
+
 
 }
 

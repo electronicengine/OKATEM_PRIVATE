@@ -48,7 +48,7 @@ SFP_DATA_FORMAT lora_sfp_data;
 LoraWan lora;
 Controller controller;
 SfpMonitor sfp_monitor;
-LaserTracker tracker(0);
+LaserTracker tracker;
 UdpSocket udp_controller_socket;
 LcdHMI lcd_hmi;
 Json json;
@@ -57,27 +57,39 @@ Json json;
 Status update_file_seq_is_sent  = Status::ok;
 
 
-void safeLog();
-void initUdpSocket();
-void initConfig();
-void initCamera();
-void initLora();
 
+void safeLog();
+
+int init();
+int initUdpSocket();
+int initConfig();
+int initCamera();
+int initLora();
+int initController();
+int initSfpMonitor();
+int initLcd();
 void getEnvironment();
 void shareEnvironment();
 
+
 int checkIfUdpData();
 int checkIfLcdData();
+
+
 
 int main()
 {
 
     int ret;
 
-    initConfig();
-    initCamera();
-    initLora();
-    initUdpSocket();
+
+    ret = init();
+
+    if(ret == FAIL)
+    {
+        printAll("Device Initialize has been Faild. Process will terminate");
+        return 0;
+    }
 
     while(1)
     {
@@ -98,10 +110,83 @@ int main()
             safeLog();
             last = now;
         }
+
     }
 
     return 0;
 
+}
+
+
+
+int init()
+{
+
+    int ret;
+
+    ret = json.init();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initConfig();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initLora();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initController();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initSfpMonitor();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initCamera();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initUdpSocket();
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = initLcd();
+    if(ret == FAIL)
+        return FAIL;
+
+
+    return SUCCESS;
+
+}
+
+
+
+int initLcd()
+{
+    return lcd_hmi.init();
+}
+
+
+
+int initSfpMonitor()
+{
+    return sfp_monitor.init();
+}
+
+
+
+int initController()
+{
+    return controller.init();
 }
 
 
@@ -170,27 +255,40 @@ void getEnvironment()
 
 
 
-void initUdpSocket()
+int initUdpSocket()
 {
-    udp_controller_socket.openPort(stream_ip, CONTROLLER_PORT, LISTENING_MODE);
-    udp_controller_socket.saveInformationData(udp_control_data, stm_data ,sfp_data);
+    int ret;
+
+    ret = udp_controller_socket.openPort(stream_ip, CONTROLLER_PORT, LISTENING_MODE);
+
+    if(ret == SUCCESS)
+    {
+         udp_controller_socket.saveInformationData(udp_control_data, stm_data ,sfp_data);
+         return SUCCESS;
+    }
+    else
+    {
+        return FAIL;
+    }
+
 }
 
 
 
-void initLora()
+int initLora()
 {
 
-    Status status;
+    int ret;
 
-    status = lora.init();
+    ret = lora.init();
 
 
-    stm_data = controller.getStmEnvironment();
-    sfp_data = sfp_monitor.getValues();
-
-    if(status == Status::ok)
+    if(ret == SUCCESS)
     {
+
+
+        stm_data = controller.getStmEnvironment();
+        sfp_data = sfp_monitor.getValues();
 
         lora.setLoraData(sfp_data, stm_data);
 
@@ -198,32 +296,60 @@ void initLora()
 
         lora.listen();
 
+        return SUCCESS;
+
     }
     else
     {
         printAll("Lora Init Error!!");
+
+        return FAIL;
     }
 
 }
 
 
 
-void initCamera()
+int initCamera()
 {
-    tracker.runTracking(stream_ip, stream_port);
+    int ret;
+
+    ret = tracker.init(0);
+
+    if(ret == SUCCESS)
+    {
+        tracker.runTracking(stream_ip, stream_port);
+
+        return SUCCESS;
+    }
+    else
+    {
+        return FAIL;
+    }
+
 }
 
 
 
-void initConfig()
+int initConfig()
 {
 
-    json.loadMotorPositions(lcd_control_data);
-    json.loadMotorPositions(udp_control_data);
+    int ret;
 
-    json.loadStreamInfo(stream_ip, stream_port);
+    ret = json.loadMotorPositions(lcd_control_data);
+    ret = json.loadMotorPositions(udp_control_data);
+
+    if(ret == FAIL)
+        return FAIL;
+
+    ret = json.loadStreamInfo(stream_ip, stream_port);
+
+    if(ret == FAIL)
+        return FAIL;
 
     lcd_hmi.setInitialMotorPositions(lcd_control_data);
+
+    return SUCCESS;
 
 
 }
@@ -265,10 +391,4 @@ void safeLog()
 
 
 }
-
-
-
-
-
-
 

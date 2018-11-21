@@ -30,14 +30,15 @@ public:
     Json(int Mode);
     ~Json();
 
+    int init();
 
     void saveEnvironmentData(ENVIRONMENT_DATA_FORMAT &StmData, SFP_DATA_FORMAT &SfpData);
     void saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &LoraSfpData);
 
-    void loadMotorPositions(CONTROL_DATA_FORMAT &ControlData);
+    int loadMotorPositions(CONTROL_DATA_FORMAT &ControlData);
     void saveMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
-    void loadStreamInfo(std::string &StreamIp, int &StreamPort);
+    int loadStreamInfo(std::string &StreamIp, int &StreamPort);
 
 private:
 

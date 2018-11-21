@@ -33,6 +33,7 @@ public:
     ~SfpMonitor();
 
 
+    int init();
     SFP_DATA_FORMAT getValues();
     float getTemperature();
     float getVcc();

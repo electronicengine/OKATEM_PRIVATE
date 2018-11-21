@@ -268,7 +268,7 @@ Status SerialCom::Init()
     options.c_iflag = IGNPAR;
     options.c_oflag = 0;
     options.c_lflag = 0;
-    options.c_cc[VTIME] = 1000;   /* inter-character timer unused */
+    options.c_cc[VTIME] = 255;   /* inter-character timer unused */
     options.c_cc[VMIN] = 1;   /* blocking read until 5 chars received */
 
     tcflush(gmFileDescriptor, TCIFLUSH);
@@ -287,40 +287,21 @@ Status SerialCom::Init()
 
 SerialCom::SerialCom() : gmBaundRate("B57600"), gmPort("/dev/ttyS2")
 {
-    Status status;
 
-    status = Init();
-
-    if(status == Status::ok)
-        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
-    else
-        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
 
 
 
 SerialCom::SerialCom(const std::string& BaundRate) : gmBaundRate(BaundRate), gmPort("/dev/ttyS2")
 {
-    Status status;
 
-    status = Init();
-    if(status == Status::ok)
-        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
-    else
-        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
 
 
 
 SerialCom::SerialCom(const std::string& BaundRate, const std::string& Port) : gmBaundRate(BaundRate), gmPort(Port)
 {
-    Status status;
 
-    status = Init();
-    if(status == Status::ok)
-        printAll("Serial Port ", gmPort, " ", gmBaundRate, " Succesfully Opened");
-    else
-        printAll("Serial Port", gmPort, " ", gmBaundRate, " Can Not Opened");
 }
 
 

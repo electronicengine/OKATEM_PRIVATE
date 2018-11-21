@@ -36,8 +36,8 @@ public:
 
     Status scanArea();
     Status sendBeacon();
-    Status init();
 
+    int init();
     void setLoraData(const SFP_DATA_FORMAT& SfpData, const ENVIRONMENT_DATA_FORMAT& StmData);
     void getLoraData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& StmData);
     void listen();

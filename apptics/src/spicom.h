@@ -24,6 +24,9 @@ public:
     Status spiClosePort();
 
 
+    Status init();
+
+
 private:
     int gmSpiSpeed;
     int gmSpiDevice;
@@ -33,8 +36,6 @@ private:
 
     unsigned char gmSpiMode;
     unsigned char gmSpiPerWords;
-
-    Status init();
 
 };
 
