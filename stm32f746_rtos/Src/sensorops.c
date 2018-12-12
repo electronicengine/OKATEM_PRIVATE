@@ -7,25 +7,24 @@ void sensorOps(void const * argument)
 
   mprintf("sensorOps\r\n");
 
-//  sensorInit();
-
+  sensorInit();
 
   while(1)
   {
-
 
       if(calibration.available == 1)
       {
           mprintf("Sensor Calibration Started. \r\n");
 
-          calibration.available  = 0;
+          calibration.available = 0;
           calibrateCompass();
       }
       else
       {
 
+          printf("hello all \n");
+          // brada herhangi bir sıkıntıyla karşılaştığınızda nasıl bir önlem alacağınızı şu an biliyor olmalısınız ama nasıl bir yöntem izleyeceğiniz
           readAllSensors();
-
 
           xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
 
@@ -38,13 +37,6 @@ void sensorOps(void const * argument)
           xSemaphoreGive(spiMutexHandle);
 
       }
-
-
-
-
-
-
-
 
   }
 

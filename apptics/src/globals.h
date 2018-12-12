@@ -93,7 +93,7 @@ void writeLog(const T& Log)
         num_lines = 0;
 
 
-         while ( std::getline(logfile, unused, '\n') )
+         while(std::getline(logfile, unused, '\n'))
          {
              if(num_lines > deleted_lines - 1)
                 tempfile << unused << std::endl;
@@ -105,7 +105,6 @@ void writeLog(const T& Log)
          logfile.close();
          tempfile.close();
 
-        system("sudo rm /var/www/html/log.txt");
         system("sudo mv /var/www/html/temp.txt /var/www/html/log.txt");
 
     }

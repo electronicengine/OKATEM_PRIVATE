@@ -37,6 +37,7 @@
 #define STOP 0
 
 
+
 enum class Status
 {
 
@@ -45,6 +46,7 @@ enum class Status
     ok
 
 };
+
 
 
 struct SFP_DATA_FORMAT
@@ -237,6 +239,7 @@ struct SENSOR_DATA
 };
 
 
+
 struct GPS_DATA
 {
     double utc_time;
@@ -354,6 +357,7 @@ struct GPS_DATA
 };
 
 
+
 struct SPI_TRANSFER_FORMAT
 {
     uint16_t header;
@@ -432,6 +436,7 @@ struct SPI_TRANSFER_FORMAT
         checksum = 0;
     }
 };
+
 
 
 struct ENVIRONMENT_DATA_FORMAT
@@ -520,6 +525,7 @@ struct ENVIRONMENT_DATA_FORMAT
     }
 
 };
+
 
 
 struct UPDATE_FILE_FORMAT
@@ -613,6 +619,7 @@ struct UPDATE_FILE_FORMAT
     }
 
 };
+
 
 
 struct CONTROL_DATA_FORMAT
@@ -857,6 +864,7 @@ struct CONTROL_DATA_FORMAT
 };
 
 
+
 struct UDP_DATA_FORMAT
 {
     uint16_t header;
@@ -933,6 +941,7 @@ struct UDP_DATA_FORMAT
 };
 
 
+
 struct STREAM_DATA_FORMAT
 {
     int total_pack;
@@ -986,6 +995,7 @@ struct STREAM_DATA_FORMAT
         return udp_data;
     }
 };
+
 
 
 struct INFORMATION_DATA_FORMAT
@@ -1060,5 +1070,7 @@ struct INFORMATION_DATA_FORMAT
 
 
 };
+
+
 
 #endif // DATATYPES_H

@@ -96,16 +96,13 @@ UPDATE_FILE_FORMAT UdpSocket::getSocketUpdateData()
 
 }
 
-int UdpSocket::sendData(UDP_DATA_FORMAT &InformationData, const std::string IpAddress)
+int UdpSocket::sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress)
 {
 
-    UDP_DATA_FORMAT udp_data;
 
     unsigned char *raw_data;
 
-    udp_data = InformationData;
-
-    raw_data = udp_data;
+    raw_data = UdpData;
 
     gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
 
@@ -114,6 +111,7 @@ int UdpSocket::sendData(UDP_DATA_FORMAT &InformationData, const std::string IpAd
     delete raw_data;
 
     return 0;
+
 
 }
 
@@ -226,10 +224,13 @@ int UdpSocket::openPort(int Port, int Mode)
 
 }
 
-void UdpSocket::closePort()
+int UdpSocket::closePort()
 {
+    close(gmSocket);
 
+    return SUCCESS;
 }
+
 
 
 void UdpSocket::listenPort()

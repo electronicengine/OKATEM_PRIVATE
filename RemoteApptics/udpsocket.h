@@ -51,7 +51,7 @@ public:
 
 
 
-    int sendData(UDP_DATA_FORMAT &InformationData, const std::string IpAddress);
+    int sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress);
     int sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAddress);
     int sendData(SPI_TRANSFER_FORMAT SpiData, const std::string &IpAddress);
 
@@ -59,8 +59,7 @@ public:
     std::vector<unsigned char> receiveData();
 
     int openPort(int Port, int Mode);
-
-
+    int closePort();
 
 private:
 
@@ -76,7 +75,7 @@ private:
     SPI_TRANSFER_FORMAT gmSpiControlData;
     SPI_TRANSFER_FORMAT gmSpiUpdateData;
 
-    void closePort();
+
     int openPort(int Port);
 
 

@@ -66,6 +66,8 @@ private:
 
     int sendCommand(std::string Command);
 
+    bool gmSerialPortInit = false;
+
 
 
     void callBack(std::string& CommingData);

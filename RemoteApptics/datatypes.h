@@ -104,8 +104,6 @@ struct SFP_DATA_FORMAT
         tx_power = (float)temp_tx_power / 100000;
         rx_power = (float)temp_rx_power / 100000;
 
-        printf("tx_power: %d\n", temp_vcc);
-
         return *this;
 
     }
@@ -153,8 +151,6 @@ struct SFP_DATA_FORMAT
         data[index++] = (status >> 16) & 0xff;
         data[index++] = (status >> 24) & 0xff;
 
-
-        printf("tx_power: %d\n", temp_tx_power);
 
         return data;
     }
@@ -921,6 +917,8 @@ struct STREAM_DATA_FORMAT
     int total_pack;
     int current_pack;
     unsigned char data[STREAM_DATA_SIZE];
+
+    bool data_correct;
 
     STREAM_DATA_FORMAT& operator = (UDP_DATA_FORMAT Data)
     {

@@ -41,6 +41,21 @@ int Controller::init()
 
 }
 
+void Controller::resetStm()
+{
+    system("sudo echo \"mode 74 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+    system("sudo echo \"dir 74 1\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+    system("sudo echo \"out 74 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+
+    system("sudo echo \"mode 200 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+    system("sudo echo \"dir 200 1\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+    system("sudo echo \"out 200 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+
+    system("sudo echo \"out 74 1\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+    system("sudo echo \"out 200 1\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
+
+}
+
 
 
 Status Controller::isReady()
@@ -182,12 +197,12 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 
           if(gmDesiredPackageSequence >= gmCurrentPackageSequence)
           {
+              if(Data.current_sequence_number == 1)
+                  resetStm();
 
              gmUpdateFile = Data;
 
              gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
-
-             std::cout << "set" << std::endl;
 
              gmSpiTxData = gmUpdateFile;
 
@@ -208,6 +223,7 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
           }
           else
           {
+
 
               gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
@@ -301,8 +317,11 @@ void Controller::communicationThread()
                 else
                 {
 
-                    gmIsTransmitted = false;
-                    gmIsReceived = false;
+                    gmIsTransmitted = true;
+                    gmIsReceived = true;
+
+//                    gmIsTransmitted = false;
+//                    gmIsReceived = false;
                 }
 
                 gmSpiTxData.clear();
@@ -322,8 +341,6 @@ void Controller::communicationThread()
             gmSpiTxData.clear();
             gmIsTransmitted = false;
             gmIsReceived = false;
-
-            CheckList["Controller"] = false;
 
         }
 

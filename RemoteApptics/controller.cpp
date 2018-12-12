@@ -1,5 +1,5 @@
 ﻿#include "controller.h"
-
+//#include <mainwindow.h>
 
 Controller::Controller()
 {
@@ -83,6 +83,8 @@ void Controller::parseAndSendData(std::vector<unsigned char> &Container, const s
 
     parsed_file.total_sequence_number = sequence;
 
+    gmUpdateFileSequence = sequence;
+
     for(int i=0; i<sequence; i++)
     {
 
@@ -128,6 +130,13 @@ void Controller::servo1SetValue(int Value)
     gmTxData.servo_motor2_degree = 0;
 
 
+    gmTxData.step_motor1_direction = 0;
+    gmTxData.step_motor2_direction = 0;
+
+    gmTxData.step_motor1_speed = 0;
+    gmTxData.step_motor2_speed = 0;
+
+
     gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
     printf("Servo1 setting value %d\r\n", gmServoMotor1Degree);
 
@@ -140,6 +149,12 @@ void Controller::servo2SetValue(int Value)
 
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = Value;
+
+    gmTxData.step_motor1_direction = 0;
+    gmTxData.step_motor2_direction = 0;
+
+    gmTxData.step_motor1_speed = 0;
+    gmTxData.step_motor2_speed = 0;
 
 
     gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
@@ -350,11 +365,15 @@ void Controller::setSpeed(int value)
 void Controller::updateFirmware(const std::string &FileName)
 {
 
-    std::vector<unsigned char> data;
 
-    data = readFile(FileName);
-    parseAndSendData(data, gmIpAddress);
-    data.clear();
+    std::thread barthread(&Controller::progressBarThread, this);
+    barthread.detach();
+
+    std::cout << "update firmware" << std::endl;
+
+    std::thread update(&Controller::updateThread, this, FileName);
+    update.detach();
+
 
 }
 
@@ -368,32 +387,123 @@ int Controller::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT
     std::vector<unsigned char> ethernet_package;
     int counter = 0;
 
-    request_package.header = ('I' | ('N' << 8));
+    if(gmUploadingStart != true)
+    {
+        request_package.header = ('I' | ('N' << 8));
 
 
-    gmSocket.sendData(request_package, gmIpAddress);
+        gmSocket.sendData(request_package, gmIpAddress);
 
-    do{
-        counter ++;
-        if(counter >= 4)
+        do{
+            counter ++;
+            if(counter >= 3)
+                return FAIL;
+
+            ethernet_package = gmSocket.receiveData();
+
+        }while(ethernet_package.size() == !ETHERNET_TRANSFER_SIZE);
+
+        if(counter >= 3)
+            printf("Udp Timeout!\n");
+
+        request_package = ethernet_package.data();
+
+        if(ethernet_package[0] == 'I' && ethernet_package[1] == 'N')
+        {
+            info_package = request_package;
+            ControlData = info_package.control_data;
+            EnvironmentData = info_package.environment_data;
+            SfpData = info_package.sfp_data;
+
+            return SUCCESS;
+        }
+        else
+        {
             return FAIL;
+        }
+
+
+    }
+    else
+    {
+        return FALSE;
+    }
+
+
+
+}
+
+int Controller::getUpdatePercenrage()
+{
+    int percent;
+
+    gmMutex.lock();
+    percent = gmUpdatePercentage;
+    gmMutex.unlock();
+
+    return percent;
+}
+
+void Controller::progressBarThread()
+{
+    UDP_DATA_FORMAT feedback_package;
+    INFORMATION_DATA_FORMAT info_package;
+    std::vector<unsigned char> ethernet_package;
+    int counter = 0;
+    float percent = 0;
+
+    usleep(1000);
+
+    gmUploadingStart = true;
+
+    while(true)
+    {
 
         ethernet_package = gmSocket.receiveData();
 
-        printf("%d", counter);
+        if(ethernet_package.size() == ETHERNET_TRANSFER_SIZE)
+        {
+            feedback_package = ethernet_package.data();
 
-    }while(ethernet_package.size() == !ETHERNET_TRANSFER_SIZE);
-
-    request_package = ethernet_package.data();
-
-    info_package = request_package;
-
-    ControlData = info_package.control_data;
-    EnvironmentData = info_package.environment_data;
-    SfpData = info_package.sfp_data;
-
-    return SUCCESS;
+            if(ethernet_package[0] == 'F' && ethernet_package[1] == 'E')
+            {
+                info_package = feedback_package;
+                counter++;
+                percent = ((float)((float)counter / gmUpdateFileSequence)) * 100;
 
 
+                gmMutex.lock();
+                gmUpdatePercentage = percent;
+                gmMutex.unlock();
+
+                printf("%d/%d\n", counter, gmUpdateFileSequence);
+                printf("%d\n", gmUpdatePercentage);
+
+
+
+                if(counter >= gmUpdateFileSequence)
+                {
+                    gmUploadingStart = false;
+
+                    break;
+
+                }
+            }
+        }
+    }
+
+
+    gmUploadingStart = false;
+
+
+}
+
+void Controller::updateThread(const std::string &FileName)
+{
+
+    std::vector<unsigned char> data;
+
+    data = readFile(FileName);
+    parseAndSendData(data, gmIpAddress);
 
 }

@@ -37,532 +37,154 @@
   */
 /* Includes ------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include "main.h"
-#include "stm32f7xx_hal.h"
+
 #include "eth.h"
+#include "spi.h"
 #include "i2c.h"
 #include "rtc.h"
-#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 #include "motor.h"
 #include "sensor.h"
 #include "gps.h"
-
-#include <stdarg.h>
-#include <string.h>
-#include <inttypes.h>
-#include <stdlib.h>
-
-#define SUCCESS 0
-#define FAIL -1
-
-#define APPLICATION_ADDRESS        0x08010000
-#define UPDATE_FILE_ADRESS         0x08080000
+#include "flash.h"
+#include "spicom.h"
 
 typedef void (*pFunction)(void);
 
-void SystemClock_Config(void);
-void vprint(const char *fmt, va_list argp);
-void mprintf(const char *fmt, ...);
-void EnablePrivilegedMode (void);
-void bootRTOS();
-
-void writeFlash(uint8_t Data, long Address);
-uint8_t readFlash(int Address);
-HAL_StatusTypeDef confirmUpdateDataAccuracy();
-HAL_StatusTypeDef checkIfUpdateData();
-void putUpdateDataResponse();
-void loadUpdateFile();
-int checkUpdateFileInMemory();
-void processUpdateData();
-
-
-volatile int update_data_available = 0;
-
-SPI_TRANSFER_FORMAT *SpiTxData;
-SPI_TRANSFER_FORMAT *SpiRxData;
-
-UPDATE_FILE_FORMAT *UpdateFile;
-
 uint32_t now;
 uint32_t last;
-
-int NextUpdateDataPackage = 0;
-
-
-void SPI1_IRQHandler(void)
-{
-
-
-    HAL_StatusTypeDef ret;
-    HAL_SPI_StateTypeDef status;
-
-
-    status = HAL_SPI_GetState(&hspi1);
-
-    HAL_SPI_IRQHandler(&hspi1);
-
-
-
-    mprintf("%c-%c \r\n", SpiRxData[0], SpiRxData[1]);
-
-//      ret = checkIfUpdateData();
-
-//      if(ret == HAL_OK)
-//      {
-
-//          ret = confirmUpdateDataAccuracy();
-//          if(ret == HAL_OK)
-//              processUpdateData();
-
-//          putUpdateDataResponse();
-
-//      }
-
-
-
-    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SIZE);
-
-
-
-
-}
-
 
 
 int main(void)
 {
 
-//    int ret = 0;
+    Update_File update_file_describtor;
 
-//    SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
-//    SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
-//    UpdateFile = malloc(sizeof(UPDATE_FILE_FORMAT));
-
-//    HAL_Init();
-
-
-//    SystemClock_Config();
-
-//    MX_GPIO_Init();
-//    MX_I2C2_Init();
-//    MX_I2C4_Init();
-//    MX_SPI1_Init();
-//    MX_TIM3_Init();
-//    MX_UART4_Init();
-//    MX_USART1_UART_Init();
-//    MX_TIM2_Init();
-
-
-
-//    mprintf("Bootloader Initializing...\r\n");
-
-////    last = HAL_GetTick();
-
-
-////    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SIZE);
-
-
-//    ret = checkUpdateFileInMemory();
-
-//    if(ret == SUCCESS)
-//    {
-//        loadUpdateFile();
-//        HAL_Delay(1000);
-//        bootRTOS();
-//    }
-//    else
-//    {
-//        bootRTOS();
-//    }
-
-////    while(1)
-////    {
-
-////        now = HAL_GetTick();
-
-////        ret = checkUpdateFileInMemory();
-
-////        if(ret == SUCCESS)
-////        {
-////            loadUpdateFile();
-////            HAL_Delay(1000);
-////            bootRTOS();
-////        }
-////        else if(update_data_available == 1)
-////        {
-////            //do nothing
-////        }
-////        else if(now - last >= 10000)
-////        {
-////            bootRTOS();
-////        }
-////    }
-
-    int ret = 0;
-
-   HAL_Init();
-   SystemClock_Config();
-   MX_GPIO_Init();
-   MX_I2C2_Init();
-   MX_I2C4_Init();
-   MX_SPI1_Init();
-   MX_TIM3_Init();
-   MX_UART4_Init();
-   MX_USART1_UART_Init();
-   MX_TIM2_Init();
-
-   mprintf("Bootloader Initializing...\r\n");
-
-
-   HAL_Delay(5000);
-
-//    HAL_FLASH_Unlock();
-//    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
-//    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
-//    HAL_FLASH_Lock();
-
-
-   ret = checkUpdateFileInMemory();
-
-   if(ret == SUCCESS)
-   {
-       loadUpdateFile();
-       HAL_Delay(1000);
-       bootRTOS();
-   }
-   else
-   {
-       bootRTOS();
-   }
-
-
-}
-
-void processUpdateData()
-{
-
-
-    HAL_StatusTypeDef flash_status;
-
-    if(UpdateFile->current_sequence_number == 1)
-    {
-
-        uint32_t total_size = SPI_ENTITY_SIZE*UpdateFile->total_sequence_number;
-
-
-
-        HAL_FLASH_Unlock();
-
-        flash_status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, UPDATE_FILE_ADRESS, total_size & 0xff);
-
-        if(flash_status != HAL_OK)
-            mprintf("write error\r\n");
-
-        flash_status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, UPDATE_FILE_ADRESS + 1, (total_size >> 8) & 0xff);
-
-        if(flash_status != HAL_OK)
-            mprintf("write error\r\n");
-
-        flash_status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, UPDATE_FILE_ADRESS + 2, (total_size >> 16) & 0xff);
-
-        if(flash_status != HAL_OK)
-            mprintf("write error\r\n");
-
-        flash_status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, UPDATE_FILE_ADRESS + 3, (total_size >> 24) & 0xff);
-
-        if(flash_status != HAL_OK)
-            mprintf("write error\r\n");
-
-        HAL_FLASH_Lock();
-
-    }
-
-
-
-    HAL_FLASH_Unlock();
-
-    for(int i=0; i<SPI_ENTITY_SIZE; i++)
-    {
-        flash_status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, (UPDATE_FILE_ADRESS + i + 4) + (SPI_ENTITY_SIZE * (UpdateFile->current_sequence_number - 1)), (uint8_t)UpdateFile->data[i]);
-
-        if(flash_status != HAL_OK)
-            mprintf("write error\r\n");
-    }
-
-    HAL_FLASH_Lock();
-
-    if(UpdateFile->current_sequence_number == UpdateFile->total_sequence_number)
-    {
-
-
-        mprintf("Update file uploading has been finished.\r\n");
-
-        mprintf("Restarting...\r\n");
-
-        SpiRxData->header = 0;
-        SpiRxData->checksum = 0;
-        UpdateFile->current_sequence_number = 0;
-        UpdateFile->total_sequence_number = -1;
-
-
-        HAL_Delay(50);
-
-        HAL_NVIC_SystemReset();
-
-
-    }
-
-
-}
-
-
-
-void loadUpdateFile()
-{
+    unsigned char *file_buffer;
     uint32_t file_size;
-    unsigned char *data;
-    HAL_StatusTypeDef status;
+    int update_condition;
+    int ret;
+    uint32_t now, last;
 
-    file_size = readFlash(UPDATE_FILE_ADRESS) | readFlash(UPDATE_FILE_ADRESS + 1) << 8
-            | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
+    SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
+    SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
+    UpdateFile = malloc(sizeof(UPDATE_FILE_FORMAT));
 
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_I2C2_Init();
+    MX_I2C4_Init();
+    MX_SPI1_Init();
+    MX_TIM3_Init();
+    MX_UART4_Init();
+    MX_USART1_UART_Init();
+    MX_TIM2_Init();
 
-    mprintf("Update File Size : %d\r\n", file_size);
+    mprintf("Bootloader Initializing...\r\n");
 
-    data = malloc(file_size);
+    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t *)SpiTxData, (uint8_t *)SpiRxData,  SPI_TRANSFER_SIZE);
 
+    last = HAL_GetTick();
 
-    HAL_FLASH_Unlock();
-
-    FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
-    FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
-    FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
-    FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
-
-    HAL_Delay(50);
-
-    for(int i=0; i<file_size; i++)
+    while(1)
     {
-        data[i] = readFlash(UPDATE_FILE_ADRESS + 4 + i);
+
+       now = HAL_GetTick();
+
+
+
+       ret = checkDataAvailable();
+
+
+       if(ret)
+       {
+
+           last = HAL_GetTick();
+
+           setDataRecieved();
+
+           HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+
+           update_file_describtor = processUpdateData();
+
+           if(update_file_describtor.receive_complited == 1)
+           {
+               updateFinished();
+
+               mprintf("file_size: %d\r\n", update_file_describtor.file_size);
+
+               loadUpdateFile(update_file_describtor.file_pointer, update_file_describtor.file_size);
+
+               free(update_file_describtor.file_pointer);
+
+               bootRTOS();
+
+           }
+
+       }
+
+       if(now - last >= 5000 && (now - last) > 0 && (now - last ) < 10000) // timeout
+           bootRTOS();
+
     }
-
-    for(int i=0; i<file_size; i++)
-    {
-        status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, APPLICATION_ADDRESS + i , data[i]);
-
-        if(status != HAL_OK)
-            mprintf("Hal flash error\r\n");
-
-    }
-
-
-
-    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
-    HAL_Delay(1);
-    FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
-    HAL_Delay(1);
-
-    HAL_FLASH_Lock();
-
-
-    mprintf("UpdateFile has been writen on memory\r\n");
-
-    free(data);
 
 
 }
 
 
 
-void putUpdateDataResponse()
-{
-
-
-
-
-    SpiTxData->header = 'U' | 'P' << 8;
-    SpiTxData->data[4] = NextUpdateDataPackage & 0xff;
-    SpiTxData->data[5] = (NextUpdateDataPackage >>  8) & 0xff;
-    SpiTxData->data[6] = (NextUpdateDataPackage >> 16) & 0xff;
-    SpiTxData->data[7] = (NextUpdateDataPackage >> 24) & 0xff;
-
-
-}
-
-
-
-HAL_StatusTypeDef checkIfUpdateData()
-{
-
-
-
-
-    if((SpiRxData->header & 0xff) == 'U' && ((SpiRxData->header >> 8) & 0xff) == 'P')
-    {
-
-        memcpy(UpdateFile, SpiRxData->data, SPI_DATA_SIZE);
-
-        return HAL_OK;
-    }
-    else
-    {
-        return HAL_ERROR;
-    }
-
-}
-
-
-
-HAL_StatusTypeDef confirmUpdateDataAccuracy()
-{
-
-
-    uint16_t checksum = 0;
-    short int checksum_error = 0;
-    short int sequence_error = 0;
-
-
-    for(int i=0; i< SPI_ENTITY_SIZE; i++)
-        checksum += UpdateFile->data[i];
-
-    if(checksum != SpiRxData->checksum)
-        checksum_error = 1;
-
-    if(NextUpdateDataPackage != 1 && UpdateFile->current_sequence_number != NextUpdateDataPackage)
-    {
-        sequence_error = 1;
-    }
-    else
-    {
-        if(checksum_error == 0)
-           NextUpdateDataPackage = UpdateFile->current_sequence_number + 1;
-
-    }
-
-     if(sequence_error != 1 && checksum_error != 1)
-         return HAL_OK;
-     else
-         return HAL_ERROR;
-
-
-
-}
-
-
-
-void writeFlash(uint8_t Data, long Address)
-{
-
-     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
-
-}
-
-
-
-uint8_t readFlash(int Address)
-{
-
-    uint8_t flash_data;
-
-    flash_data = *(uint8_t *)Address;
-
-    return flash_data;
-
-}
-
-int checkUpdateFileInMemory()
-{
-
-    uint32_t data;
-
-//    mprintf("Checking Firmware Update File...\r\n");
-
-    data = readFlash(UPDATE_FILE_ADRESS) | (readFlash(UPDATE_FILE_ADRESS + 1) << 8)
-            | readFlash(UPDATE_FILE_ADRESS + 2) << 16 | readFlash(UPDATE_FILE_ADRESS + 3) << 24;
-
-
-
-    if(data == 0xffffffff)
-    {
-//        mprintf("There is no update file in the flash\r\n");
-        return FAIL;
-
-    }
-    else if(data > 512000 || data < 0)
-    {
-//        mprintf("There is no update file in the flash \r\n");
-
-        HAL_FLASH_Unlock();
-        FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
-        FLASH_Erase_Sector(FLASH_SECTOR_7, VOLTAGE_RANGE_3);
-        HAL_FLASH_Lock();
-
-        return FAIL;
-    }
-    else
-    {
-        mprintf("A Update file has been found in the flash");
-        return SUCCESS;
-    }
-
-}
 
 
 
 void bootRTOS()
 {
 
-
     pFunction appEntry;
     uint32_t appStack;
 
     mprintf("Booting...\r\n");
 
-//    EnablePrivilegedMode( ) ;
+    // Disable all interrupts
+    NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
+    NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
 
+    // Clear pendings
+    NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
+    NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
 
-//    // Disable all interrupts
-//    NVIC->ICER[ 0 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 1 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 2 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 3 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 4 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 5 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 6 ] = 0xFFFFFFFF ;
-//    NVIC->ICER[ 7 ] = 0xFFFFFFFF ;
+    // Stop sys tick
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL  = 0;
+    SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
 
+    // Disable individual fault handlers if the bootloader used them.
+    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk |
+                    SCB_SHCSR_BUSFAULTENA_Msk |
+                    SCB_SHCSR_MEMFAULTENA_Msk ) ;
 
-//    // Clear pendings
-//    NVIC->ICPR[ 0 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 1 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 2 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 3 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 4 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 5 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 6 ] = 0xFFFFFFFF ;
-//    NVIC->ICPR[ 7 ] = 0xFFFFFFFF ;
+    HAL_DeInit();
+    HAL_RCC_DeInit();
+    HAL_SPI_DeInit(&hspi1);
+    HAL_I2C_DeInit(&hi2c4);
+    HAL_I2C_DeInit(&hi2c2);
 
-
-//    // Stop sys tick
-//    SysTick->CTRL = 0 ;
-//    SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk ;
-
-//    // Disable individual fault handlers if the bootloader used them.
-//    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk |
-//                    SCB_SHCSR_BUSFAULTENA_Msk |
-//                    SCB_SHCSR_MEMFAULTENA_Msk ) ;
-
-//    // Activate the MSP, if the core is found to currently run with the PSP.
-//    if( CONTROL_SPSEL_Msk & __get_CONTROL( ) )
-//    {  /* MSP is not active */
-//     __set_CONTROL( __get_CONTROL( ) & ~CONTROL_SPSEL_Msk ) ;
-//    }
-
-//    __set_CONTROL(0);
+    SCB->VTOR = (unsigned long)APPLICATION_ADDRESS;
 
     /* Get the application stack pointer (First entry in the application vector table) */
     appStack = (uint32_t) *((__IO uint32_t*)APPLICATION_ADDRESS);
@@ -570,27 +192,12 @@ void bootRTOS()
     /* Get the application entry point (Second entry in the application vector table) */
     appEntry = (pFunction) *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
 
-//    /* Set the application stack pointer */
-//    SYSCFG->MEMRMP = 0x01;
-
-//    SCB->SHCSR &= ~( SCB_SHCSR_USGFAULTENA_Msk |
-//                     SCB_SHCSR_BUSFAULTENA_Msk |
-//                     SCB_SHCSR_MEMFAULTENA_Msk ) ;
-
+    /* Set the application stack pointer */
     __set_MSP(appStack);
 
     /* Start the application */
     appEntry();
 
-}
-
-
-
-
-void EnablePrivilegedMode (void){
-        __disable_irq();
-        __set_CONTROL((__get_CONTROL( ))& 0xFFFFFFFE);  // enter priv mode
-        __enable_irq();
 }
 
 

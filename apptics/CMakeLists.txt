@@ -101,8 +101,9 @@ add_executable(${PROJECT_NAME}
 #    opencv_videostab
 #    )
 
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.32:/home/pi
-  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.16:/home/pi
+  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
+#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
   COMMENT "Creating directory: "
 )

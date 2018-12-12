@@ -51,9 +51,11 @@ private:
         cv::Mat gmFrame;
         cv::Mat gmScalarFrame;
 
+        int drawtargetLines(const cv::Mat &Frame);
         int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
         int orderpoints(std::vector<cv::Point>& Points);
         int calculatePerspective(std::vector<cv::Point>& Points);
+
 public:
 
         std::string gmStreamIp;

@@ -6,6 +6,10 @@
 void motorOps(void const * argument)
 {
 
+    //  (1/(108.000.000/(psc+1))*period) -> timer width
+
+
+
     int counter1 = 0;
     int counter2 = 0;
 
@@ -28,7 +32,6 @@ void motorOps(void const * argument)
 
 
     mprintf("motorOps\r\n");
-//    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
     while(1)
     {
@@ -122,7 +125,7 @@ void motorOps(void const * argument)
         if(counter2 <= 100)
         {
           counter2 ++;
-          __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, (int)((double)(servo2_degree)*((double)(215-60)/150) + 60));
+          __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, (servo2_degree)*((double)(215-60)/150) + 60); // (servo1_degree)*((double)(215-60)/150) + 60) and for own servo
         }
         else
         {
@@ -142,10 +145,11 @@ void motorOps(void const * argument)
 
 
 
+
         if(counter1 <= 100)
         {
           counter1 ++;
-          __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int)((double)(servo1_degree)*((double)(215-60)/150) + 60));
+          __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (servo1_degree)*((double)(215-60)/150) + 60) ; // (int)((double)(servo1_degree)*((double)(200-100)/150) + 100));and for own servo
         }
         else
         {

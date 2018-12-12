@@ -1,7 +1,6 @@
 ﻿#ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,9 +11,12 @@
 #include <string>
 #include <sstream>
 #include <thread>
+#include <mutex>
 
 #include "udpsocket.h"
 #include "datatypes.h"
+
+
 
 #define WIDTH 30
 #define HEIGHT 10
@@ -22,12 +24,12 @@
 #define MAX_SPEED 20
 
 
+
 class Controller
 {
 
 public:
     Controller();
-
 
     int start(const std::string &IpAddress, int Port);
 
@@ -57,9 +59,10 @@ public:
     void updateFirmware(const std::string &FileName);
 
     int getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
-
+    int getUpdatePercenrage();
 
 private:
+
 
 
     UdpSocket gmSocket;
@@ -67,11 +70,20 @@ private:
     int gmServoMotor1Degree = 50;
     int gmServoMotor2Degree = 50;
 
+    int gmUpdatePercentage = 0;
+
+    volatile bool gmUploadingStart = false;
+
+    int gmUpdateFileSequence;
     int gmSpeed = 1;
     std::string gmIpAddress;
     std::string gmPort;
-
     CONTROL_DATA_FORMAT gmTxData;
+
+    std::mutex gmMutex;
+
+    void progressBarThread();
+    void updateThread(const std::string &FileName);
 
 
 };

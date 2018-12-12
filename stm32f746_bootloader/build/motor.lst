@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccWIZWBG.s 			page 1
+ARM GAS  /tmp/ccCBFM80.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -17,25 +17,28 @@ ARM GAS  /tmp/ccWIZWBG.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.comm	motor1,8,4
-  18              		.comm	motor2,8,4
-  19              		.comm	motor3,8,4
-  20              		.comm	motor4,8,4
-  21              		.global	reductor_coefficient
-  22              		.section	.rodata.reductor_coefficient,"a",%progbits
-  23              		.align	2
-  26              	reductor_coefficient:
-  27 0000 01000000 		.word	1
-  28              		.section	.text.motorInit,"ax",%progbits
-  29              		.align	1
-  30              		.global	motorInit
-  31              		.syntax unified
-  32              		.thumb
-  33              		.thumb_func
-  34              		.fpu fpv4-sp-d16
-  36              	motorInit:
-  37              	.LFB136:
-  38              		.file 1 "Src/motor.c"
+  17              		.comm	SpiTxData,4,4
+  18              		.comm	SpiRxData,4,4
+  19              		.comm	UpdateFile,4,4
+  20              		.comm	motor1,8,4
+  21              		.comm	motor2,8,4
+  22              		.comm	motor3,8,4
+  23              		.comm	motor4,8,4
+  24              		.global	reductor_coefficient
+  25              		.section	.rodata.reductor_coefficient,"a",%progbits
+  26              		.align	2
+  29              	reductor_coefficient:
+  30 0000 01000000 		.word	1
+  31              		.section	.text.motorInit,"ax",%progbits
+  32              		.align	1
+  33              		.global	motorInit
+  34              		.syntax unified
+  35              		.thumb
+  36              		.thumb_func
+  37              		.fpu fpv4-sp-d16
+  39              	motorInit:
+  40              	.LFB138:
+  41              		.file 1 "Src/motor.c"
    1:Src/motor.c   **** 
    2:Src/motor.c   **** 
    3:Src/motor.c   **** #include "motor.h"
@@ -48,305 +51,305 @@ ARM GAS  /tmp/ccWIZWBG.s 			page 1
   10:Src/motor.c   **** 
   11:Src/motor.c   **** void motorInit()
   12:Src/motor.c   **** {
-  39              		.loc 1 12 0
-  40              		.cfi_startproc
-  41              		@ args = 0, pretend = 0, frame = 0
-  42              		@ frame_needed = 1, uses_anonymous_args = 0
-  43 0000 80B5     		push	{r7, lr}
-  44              	.LCFI0:
-  45              		.cfi_def_cfa_offset 8
-  46              		.cfi_offset 7, -8
-  47              		.cfi_offset 14, -4
-  48 0002 00AF     		add	r7, sp, #0
-ARM GAS  /tmp/ccWIZWBG.s 			page 2
+  42              		.loc 1 12 0
+  43              		.cfi_startproc
+  44              		@ args = 0, pretend = 0, frame = 0
+  45              		@ frame_needed = 1, uses_anonymous_args = 0
+  46 0000 80B5     		push	{r7, lr}
+  47              	.LCFI0:
+  48              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccCBFM80.s 			page 2
 
 
-  49              	.LCFI1:
-  50              		.cfi_def_cfa_register 7
+  49              		.cfi_offset 7, -8
+  50              		.cfi_offset 14, -4
+  51 0002 00AF     		add	r7, sp, #0
+  52              	.LCFI1:
+  53              		.cfi_def_cfa_register 7
   13:Src/motor.c   ****     HAL_TIM_Base_Start_IT(&htim2);
-  51              		.loc 1 13 0
-  52 0004 0248     		ldr	r0, .L2
-  53 0006 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+  54              		.loc 1 13 0
+  55 0004 0248     		ldr	r0, .L2
+  56 0006 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
   14:Src/motor.c   **** }
-  54              		.loc 1 14 0
-  55 000a 00BF     		nop
-  56 000c 80BD     		pop	{r7, pc}
-  57              	.L3:
-  58 000e 00BF     		.align	2
-  59              	.L2:
-  60 0010 00000000 		.word	htim2
-  61              		.cfi_endproc
-  62              	.LFE136:
-  64              		.section	.text.motor1Drive,"ax",%progbits
-  65              		.align	1
-  66              		.global	motor1Drive
-  67              		.syntax unified
-  68              		.thumb
-  69              		.thumb_func
-  70              		.fpu fpv4-sp-d16
-  72              	motor1Drive:
-  73              	.LFB137:
+  57              		.loc 1 14 0
+  58 000a 00BF     		nop
+  59 000c 80BD     		pop	{r7, pc}
+  60              	.L3:
+  61 000e 00BF     		.align	2
+  62              	.L2:
+  63 0010 00000000 		.word	htim2
+  64              		.cfi_endproc
+  65              	.LFE138:
+  67              		.section	.text.motor1Drive,"ax",%progbits
+  68              		.align	1
+  69              		.global	motor1Drive
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  73              		.fpu fpv4-sp-d16
+  75              	motor1Drive:
+  76              	.LFB139:
   15:Src/motor.c   **** 
   16:Src/motor.c   **** void  motor1Drive()
   17:Src/motor.c   **** {
-  74              		.loc 1 17 0
-  75              		.cfi_startproc
-  76              		@ args = 0, pretend = 0, frame = 0
-  77              		@ frame_needed = 1, uses_anonymous_args = 0
-  78              		@ link register save eliminated.
-  79 0000 80B4     		push	{r7}
-  80              	.LCFI2:
-  81              		.cfi_def_cfa_offset 4
-  82              		.cfi_offset 7, -4
-  83 0002 00AF     		add	r7, sp, #0
-  84              	.LCFI3:
-  85              		.cfi_def_cfa_register 7
+  77              		.loc 1 17 0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 1, uses_anonymous_args = 0
+  81              		@ link register save eliminated.
+  82 0000 80B4     		push	{r7}
+  83              	.LCFI2:
+  84              		.cfi_def_cfa_offset 4
+  85              		.cfi_offset 7, -4
+  86 0002 00AF     		add	r7, sp, #0
+  87              	.LCFI3:
+  88              		.cfi_def_cfa_register 7
   18:Src/motor.c   **** 
   19:Src/motor.c   **** }
-  86              		.loc 1 19 0
-  87 0004 00BF     		nop
-  88 0006 BD46     		mov	sp, r7
-  89              	.LCFI4:
-  90              		.cfi_def_cfa_register 13
-  91              		@ sp needed
-  92 0008 5DF8047B 		ldr	r7, [sp], #4
-  93              	.LCFI5:
-  94              		.cfi_restore 7
-  95              		.cfi_def_cfa_offset 0
-  96 000c 7047     		bx	lr
-  97              		.cfi_endproc
-  98              	.LFE137:
- 100              		.section	.text.motor2Drive,"ax",%progbits
- 101              		.align	1
-ARM GAS  /tmp/ccWIZWBG.s 			page 3
+  89              		.loc 1 19 0
+  90 0004 00BF     		nop
+  91 0006 BD46     		mov	sp, r7
+  92              	.LCFI4:
+  93              		.cfi_def_cfa_register 13
+  94              		@ sp needed
+  95 0008 5DF8047B 		ldr	r7, [sp], #4
+  96              	.LCFI5:
+  97              		.cfi_restore 7
+  98              		.cfi_def_cfa_offset 0
+  99 000c 7047     		bx	lr
+ 100              		.cfi_endproc
+ARM GAS  /tmp/ccCBFM80.s 			page 3
 
 
- 102              		.global	motor2Drive
- 103              		.syntax unified
- 104              		.thumb
- 105              		.thumb_func
- 106              		.fpu fpv4-sp-d16
- 108              	motor2Drive:
- 109              	.LFB138:
+ 101              	.LFE139:
+ 103              		.section	.text.motor2Drive,"ax",%progbits
+ 104              		.align	1
+ 105              		.global	motor2Drive
+ 106              		.syntax unified
+ 107              		.thumb
+ 108              		.thumb_func
+ 109              		.fpu fpv4-sp-d16
+ 111              	motor2Drive:
+ 112              	.LFB140:
   20:Src/motor.c   **** 
   21:Src/motor.c   **** void motor2Drive()
   22:Src/motor.c   **** {
- 110              		.loc 1 22 0
- 111              		.cfi_startproc
- 112              		@ args = 0, pretend = 0, frame = 0
- 113              		@ frame_needed = 1, uses_anonymous_args = 0
- 114 0000 80B5     		push	{r7, lr}
- 115              	.LCFI6:
- 116              		.cfi_def_cfa_offset 8
- 117              		.cfi_offset 7, -8
- 118              		.cfi_offset 14, -4
- 119 0002 00AF     		add	r7, sp, #0
- 120              	.LCFI7:
- 121              		.cfi_def_cfa_register 7
+ 113              		.loc 1 22 0
+ 114              		.cfi_startproc
+ 115              		@ args = 0, pretend = 0, frame = 0
+ 116              		@ frame_needed = 1, uses_anonymous_args = 0
+ 117 0000 80B5     		push	{r7, lr}
+ 118              	.LCFI6:
+ 119              		.cfi_def_cfa_offset 8
+ 120              		.cfi_offset 7, -8
+ 121              		.cfi_offset 14, -4
+ 122 0002 00AF     		add	r7, sp, #0
+ 123              	.LCFI7:
+ 124              		.cfi_def_cfa_register 7
   23:Src/motor.c   **** 
   24:Src/motor.c   ****     static volatile int phase = 1;
   25:Src/motor.c   **** 
   26:Src/motor.c   ****         if(motor2.direction == FORWARD && motor2.degree >= 0)
- 122              		.loc 1 26 0
- 123 0004 4F4B     		ldr	r3, .L12
- 124 0006 1B68     		ldr	r3, [r3]
- 125 0008 012B     		cmp	r3, #1
- 126 000a 40F08F80 		bne	.L6
- 127              		.loc 1 26 0 is_stmt 0 discriminator 1
- 128 000e 4D4B     		ldr	r3, .L12
- 129 0010 5B68     		ldr	r3, [r3, #4]
- 130 0012 002B     		cmp	r3, #0
- 131 0014 C0F28A80 		blt	.L6
+ 125              		.loc 1 26 0
+ 126 0004 4F4B     		ldr	r3, .L12
+ 127 0006 1B68     		ldr	r3, [r3]
+ 128 0008 012B     		cmp	r3, #1
+ 129 000a 40F08F80 		bne	.L6
+ 130              		.loc 1 26 0 is_stmt 0 discriminator 1
+ 131 000e 4D4B     		ldr	r3, .L12
+ 132 0010 5B68     		ldr	r3, [r3, #4]
+ 133 0012 002B     		cmp	r3, #0
+ 134 0014 C0F28A80 		blt	.L6
   27:Src/motor.c   ****         {
   28:Src/motor.c   **** 
   29:Src/motor.c   ****             motor2.degree--;
- 132              		.loc 1 29 0 is_stmt 1
- 133 0018 4A4B     		ldr	r3, .L12
- 134 001a 5B68     		ldr	r3, [r3, #4]
- 135 001c 013B     		subs	r3, r3, #1
- 136 001e 494A     		ldr	r2, .L12
- 137 0020 5360     		str	r3, [r2, #4]
+ 135              		.loc 1 29 0 is_stmt 1
+ 136 0018 4A4B     		ldr	r3, .L12
+ 137 001a 5B68     		ldr	r3, [r3, #4]
+ 138 001c 013B     		subs	r3, r3, #1
+ 139 001e 494A     		ldr	r2, .L12
+ 140 0020 5360     		str	r3, [r2, #4]
   30:Src/motor.c   **** 
   31:Src/motor.c   ****               if(phase  == 1)
- 138              		.loc 1 31 0
- 139 0022 494B     		ldr	r3, .L12+4
- 140 0024 1B68     		ldr	r3, [r3]
- 141 0026 012B     		cmp	r3, #1
- 142 0028 1DD1     		bne	.L7
+ 141              		.loc 1 31 0
+ 142 0022 494B     		ldr	r3, .L12+4
+ 143 0024 1B68     		ldr	r3, [r3]
+ 144 0026 012B     		cmp	r3, #1
+ 145 0028 1DD1     		bne	.L7
   32:Src/motor.c   ****               {
   33:Src/motor.c   **** 
+ARM GAS  /tmp/ccCBFM80.s 			page 4
+
+
   34:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
- 143              		.loc 1 34 0
- 144 002a 0122     		movs	r2, #1
-ARM GAS  /tmp/ccWIZWBG.s 			page 4
-
-
- 145 002c 4FF40051 		mov	r1, #8192
- 146 0030 4648     		ldr	r0, .L12+8
- 147 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 146              		.loc 1 34 0
+ 147 002a 0122     		movs	r2, #1
+ 148 002c 4FF40051 		mov	r1, #8192
+ 149 0030 4648     		ldr	r0, .L12+8
+ 150 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
   35:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 148              		.loc 1 35 0
- 149 0036 0022     		movs	r2, #0
- 150 0038 4FF48051 		mov	r1, #4096
- 151 003c 4348     		ldr	r0, .L12+8
- 152 003e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 151              		.loc 1 35 0
+ 152 0036 0022     		movs	r2, #0
+ 153 0038 4FF48051 		mov	r1, #4096
+ 154 003c 4348     		ldr	r0, .L12+8
+ 155 003e FFF7FEFF 		bl	HAL_GPIO_WritePin
   36:Src/motor.c   **** 
   37:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 153              		.loc 1 37 0
- 154 0042 0122     		movs	r2, #1
- 155 0044 4FF48061 		mov	r1, #1024
- 156 0048 4048     		ldr	r0, .L12+8
- 157 004a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 156              		.loc 1 37 0
+ 157 0042 0122     		movs	r2, #1
+ 158 0044 4FF48061 		mov	r1, #1024
+ 159 0048 4048     		ldr	r0, .L12+8
+ 160 004a FFF7FEFF 		bl	HAL_GPIO_WritePin
   38:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 158              		.loc 1 38 0
- 159 004e 0022     		movs	r2, #0
- 160 0050 4FF40061 		mov	r1, #2048
- 161 0054 3D48     		ldr	r0, .L12+8
- 162 0056 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 161              		.loc 1 38 0
+ 162 004e 0022     		movs	r2, #0
+ 163 0050 4FF40061 		mov	r1, #2048
+ 164 0054 3D48     		ldr	r0, .L12+8
+ 165 0056 FFF7FEFF 		bl	HAL_GPIO_WritePin
   39:Src/motor.c   ****                   phase ++;
- 163              		.loc 1 39 0
- 164 005a 3B4B     		ldr	r3, .L12+4
- 165 005c 1B68     		ldr	r3, [r3]
- 166 005e 0133     		adds	r3, r3, #1
- 167 0060 394A     		ldr	r2, .L12+4
- 168 0062 1360     		str	r3, [r2]
- 169 0064 62E0     		b	.L6
- 170              	.L7:
+ 166              		.loc 1 39 0
+ 167 005a 3B4B     		ldr	r3, .L12+4
+ 168 005c 1B68     		ldr	r3, [r3]
+ 169 005e 0133     		adds	r3, r3, #1
+ 170 0060 394A     		ldr	r2, .L12+4
+ 171 0062 1360     		str	r3, [r2]
+ 172 0064 62E0     		b	.L6
+ 173              	.L7:
   40:Src/motor.c   **** 
   41:Src/motor.c   ****               }
   42:Src/motor.c   ****               else if(phase  == 2)
- 171              		.loc 1 42 0
- 172 0066 384B     		ldr	r3, .L12+4
- 173 0068 1B68     		ldr	r3, [r3]
- 174 006a 022B     		cmp	r3, #2
- 175 006c 1DD1     		bne	.L8
+ 174              		.loc 1 42 0
+ 175 0066 384B     		ldr	r3, .L12+4
+ 176 0068 1B68     		ldr	r3, [r3]
+ 177 006a 022B     		cmp	r3, #2
+ 178 006c 1DD1     		bne	.L8
   43:Src/motor.c   ****               {
   44:Src/motor.c   **** 
   45:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_SET);
- 176              		.loc 1 45 0
- 177 006e 0122     		movs	r2, #1
- 178 0070 4FF40051 		mov	r1, #8192
- 179 0074 3548     		ldr	r0, .L12+8
- 180 0076 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 179              		.loc 1 45 0
+ 180 006e 0122     		movs	r2, #1
+ 181 0070 4FF40051 		mov	r1, #8192
+ 182 0074 3548     		ldr	r0, .L12+8
+ 183 0076 FFF7FEFF 		bl	HAL_GPIO_WritePin
   46:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_RESET);
- 181              		.loc 1 46 0
- 182 007a 0022     		movs	r2, #0
- 183 007c 4FF48051 		mov	r1, #4096
- 184 0080 3248     		ldr	r0, .L12+8
- 185 0082 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 184              		.loc 1 46 0
+ 185 007a 0022     		movs	r2, #0
+ 186 007c 4FF48051 		mov	r1, #4096
+ 187 0080 3248     		ldr	r0, .L12+8
+ 188 0082 FFF7FEFF 		bl	HAL_GPIO_WritePin
   47:Src/motor.c   **** 
+ARM GAS  /tmp/ccCBFM80.s 			page 5
+
+
   48:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 186              		.loc 1 48 0
- 187 0086 0122     		movs	r2, #1
-ARM GAS  /tmp/ccWIZWBG.s 			page 5
-
-
- 188 0088 4FF40061 		mov	r1, #2048
- 189 008c 2F48     		ldr	r0, .L12+8
- 190 008e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 189              		.loc 1 48 0
+ 190 0086 0122     		movs	r2, #1
+ 191 0088 4FF40061 		mov	r1, #2048
+ 192 008c 2F48     		ldr	r0, .L12+8
+ 193 008e FFF7FEFF 		bl	HAL_GPIO_WritePin
   49:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 191              		.loc 1 49 0
- 192 0092 0022     		movs	r2, #0
- 193 0094 4FF48061 		mov	r1, #1024
- 194 0098 2C48     		ldr	r0, .L12+8
- 195 009a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 194              		.loc 1 49 0
+ 195 0092 0022     		movs	r2, #0
+ 196 0094 4FF48061 		mov	r1, #1024
+ 197 0098 2C48     		ldr	r0, .L12+8
+ 198 009a FFF7FEFF 		bl	HAL_GPIO_WritePin
   50:Src/motor.c   ****                   phase ++;
- 196              		.loc 1 50 0
- 197 009e 2A4B     		ldr	r3, .L12+4
- 198 00a0 1B68     		ldr	r3, [r3]
- 199 00a2 0133     		adds	r3, r3, #1
- 200 00a4 284A     		ldr	r2, .L12+4
- 201 00a6 1360     		str	r3, [r2]
- 202 00a8 40E0     		b	.L6
- 203              	.L8:
+ 199              		.loc 1 50 0
+ 200 009e 2A4B     		ldr	r3, .L12+4
+ 201 00a0 1B68     		ldr	r3, [r3]
+ 202 00a2 0133     		adds	r3, r3, #1
+ 203 00a4 284A     		ldr	r2, .L12+4
+ 204 00a6 1360     		str	r3, [r2]
+ 205 00a8 40E0     		b	.L6
+ 206              	.L8:
   51:Src/motor.c   **** 
   52:Src/motor.c   ****               }
   53:Src/motor.c   ****               else if(phase  == 3)
- 204              		.loc 1 53 0
- 205 00aa 274B     		ldr	r3, .L12+4
- 206 00ac 1B68     		ldr	r3, [r3]
- 207 00ae 032B     		cmp	r3, #3
- 208 00b0 1DD1     		bne	.L9
+ 207              		.loc 1 53 0
+ 208 00aa 274B     		ldr	r3, .L12+4
+ 209 00ac 1B68     		ldr	r3, [r3]
+ 210 00ae 032B     		cmp	r3, #3
+ 211 00b0 1DD1     		bne	.L9
   54:Src/motor.c   ****               {
   55:Src/motor.c   **** 
   56:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 209              		.loc 1 56 0
- 210 00b2 0122     		movs	r2, #1
- 211 00b4 4FF48051 		mov	r1, #4096
- 212 00b8 2448     		ldr	r0, .L12+8
- 213 00ba FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 212              		.loc 1 56 0
+ 213 00b2 0122     		movs	r2, #1
+ 214 00b4 4FF48051 		mov	r1, #4096
+ 215 00b8 2448     		ldr	r0, .L12+8
+ 216 00ba FFF7FEFF 		bl	HAL_GPIO_WritePin
   57:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 214              		.loc 1 57 0
- 215 00be 0022     		movs	r2, #0
- 216 00c0 4FF40051 		mov	r1, #8192
- 217 00c4 2148     		ldr	r0, .L12+8
- 218 00c6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 217              		.loc 1 57 0
+ 218 00be 0022     		movs	r2, #0
+ 219 00c0 4FF40051 		mov	r1, #8192
+ 220 00c4 2148     		ldr	r0, .L12+8
+ 221 00c6 FFF7FEFF 		bl	HAL_GPIO_WritePin
   58:Src/motor.c   **** 
   59:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_SET);
- 219              		.loc 1 59 0
- 220 00ca 0122     		movs	r2, #1
- 221 00cc 4FF40061 		mov	r1, #2048
- 222 00d0 1E48     		ldr	r0, .L12+8
- 223 00d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 222              		.loc 1 59 0
+ 223 00ca 0122     		movs	r2, #1
+ 224 00cc 4FF40061 		mov	r1, #2048
+ 225 00d0 1E48     		ldr	r0, .L12+8
+ 226 00d2 FFF7FEFF 		bl	HAL_GPIO_WritePin
   60:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
- 224              		.loc 1 60 0
- 225 00d6 0022     		movs	r2, #0
- 226 00d8 4FF48061 		mov	r1, #1024
- 227 00dc 1B48     		ldr	r0, .L12+8
- 228 00de FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 227              		.loc 1 60 0
+ 228 00d6 0022     		movs	r2, #0
+ 229 00d8 4FF48061 		mov	r1, #1024
+ 230 00dc 1B48     		ldr	r0, .L12+8
+ 231 00de FFF7FEFF 		bl	HAL_GPIO_WritePin
   61:Src/motor.c   ****                   phase ++;
- 229              		.loc 1 61 0
- 230 00e2 194B     		ldr	r3, .L12+4
- 231 00e4 1B68     		ldr	r3, [r3]
-ARM GAS  /tmp/ccWIZWBG.s 			page 6
+ARM GAS  /tmp/ccCBFM80.s 			page 6
 
 
- 232 00e6 0133     		adds	r3, r3, #1
- 233 00e8 174A     		ldr	r2, .L12+4
- 234 00ea 1360     		str	r3, [r2]
- 235 00ec 1EE0     		b	.L6
- 236              	.L9:
+ 232              		.loc 1 61 0
+ 233 00e2 194B     		ldr	r3, .L12+4
+ 234 00e4 1B68     		ldr	r3, [r3]
+ 235 00e6 0133     		adds	r3, r3, #1
+ 236 00e8 174A     		ldr	r2, .L12+4
+ 237 00ea 1360     		str	r3, [r2]
+ 238 00ec 1EE0     		b	.L6
+ 239              	.L9:
   62:Src/motor.c   **** 
   63:Src/motor.c   ****               }
   64:Src/motor.c   ****               else if(phase  == 4)
- 237              		.loc 1 64 0
- 238 00ee 164B     		ldr	r3, .L12+4
- 239 00f0 1B68     		ldr	r3, [r3]
- 240 00f2 042B     		cmp	r3, #4
- 241 00f4 1AD1     		bne	.L6
+ 240              		.loc 1 64 0
+ 241 00ee 164B     		ldr	r3, .L12+4
+ 242 00f0 1B68     		ldr	r3, [r3]
+ 243 00f2 042B     		cmp	r3, #4
+ 244 00f4 1AD1     		bne	.L6
   65:Src/motor.c   ****               {
   66:Src/motor.c   **** 
   67:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
- 242              		.loc 1 67 0
- 243 00f6 0122     		movs	r2, #1
- 244 00f8 4FF48051 		mov	r1, #4096
- 245 00fc 1348     		ldr	r0, .L12+8
- 246 00fe FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 245              		.loc 1 67 0
+ 246 00f6 0122     		movs	r2, #1
+ 247 00f8 4FF48051 		mov	r1, #4096
+ 248 00fc 1348     		ldr	r0, .L12+8
+ 249 00fe FFF7FEFF 		bl	HAL_GPIO_WritePin
   68:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
- 247              		.loc 1 68 0
- 248 0102 0022     		movs	r2, #0
- 249 0104 4FF40051 		mov	r1, #8192
- 250 0108 1048     		ldr	r0, .L12+8
- 251 010a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 250              		.loc 1 68 0
+ 251 0102 0022     		movs	r2, #0
+ 252 0104 4FF40051 		mov	r1, #8192
+ 253 0108 1048     		ldr	r0, .L12+8
+ 254 010a FFF7FEFF 		bl	HAL_GPIO_WritePin
   69:Src/motor.c   **** 
   70:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_SET);
- 252              		.loc 1 70 0
- 253 010e 0122     		movs	r2, #1
- 254 0110 4FF48061 		mov	r1, #1024
- 255 0114 0D48     		ldr	r0, .L12+8
- 256 0116 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 255              		.loc 1 70 0
+ 256 010e 0122     		movs	r2, #1
+ 257 0110 4FF48061 		mov	r1, #1024
+ 258 0114 0D48     		ldr	r0, .L12+8
+ 259 0116 FFF7FEFF 		bl	HAL_GPIO_WritePin
   71:Src/motor.c   ****                   HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
- 257              		.loc 1 71 0
- 258 011a 0022     		movs	r2, #0
- 259 011c 4FF40061 		mov	r1, #2048
- 260 0120 0A48     		ldr	r0, .L12+8
- 261 0122 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 260              		.loc 1 71 0
+ 261 011a 0022     		movs	r2, #0
+ 262 011c 4FF40061 		mov	r1, #2048
+ 263 0120 0A48     		ldr	r0, .L12+8
+ 264 0122 FFF7FEFF 		bl	HAL_GPIO_WritePin
   72:Src/motor.c   ****                   phase  = 1;
- 262              		.loc 1 72 0
- 263 0126 084B     		ldr	r3, .L12+4
- 264 0128 0122     		movs	r2, #1
- 265 012a 1A60     		str	r2, [r3]
- 266              	.L6:
+ 265              		.loc 1 72 0
+ 266 0126 084B     		ldr	r3, .L12+4
+ 267 0128 0122     		movs	r2, #1
+ 268 012a 1A60     		str	r2, [r3]
+ 269              	.L6:
   73:Src/motor.c   **** 
   74:Src/motor.c   ****               }
   75:Src/motor.c   **** 
@@ -355,485 +358,488 @@ ARM GAS  /tmp/ccWIZWBG.s 			page 1
   78:Src/motor.c   **** 
   79:Src/motor.c   **** 
   80:Src/motor.c   ****     if(motor1.degree <= 0)
- 267              		.loc 1 80 0
- 268 012c 084B     		ldr	r3, .L12+12
- 269 012e 5B68     		ldr	r3, [r3, #4]
-ARM GAS  /tmp/ccWIZWBG.s 			page 7
+ARM GAS  /tmp/ccCBFM80.s 			page 7
 
 
- 270 0130 002B     		cmp	r3, #0
- 271 0132 05DC     		bgt	.L11
+ 270              		.loc 1 80 0
+ 271 012c 084B     		ldr	r3, .L12+12
+ 272 012e 5B68     		ldr	r3, [r3, #4]
+ 273 0130 002B     		cmp	r3, #0
+ 274 0132 05DC     		bgt	.L11
   81:Src/motor.c   ****     {
   82:Src/motor.c   ****         motor1.direction = STOP;
- 272              		.loc 1 82 0
- 273 0134 064B     		ldr	r3, .L12+12
- 274 0136 0022     		movs	r2, #0
- 275 0138 1A60     		str	r2, [r3]
+ 275              		.loc 1 82 0
+ 276 0134 064B     		ldr	r3, .L12+12
+ 277 0136 0022     		movs	r2, #0
+ 278 0138 1A60     		str	r2, [r3]
   83:Src/motor.c   ****         motor1.degree = 0;
- 276              		.loc 1 83 0
- 277 013a 054B     		ldr	r3, .L12+12
- 278 013c 0022     		movs	r2, #0
- 279 013e 5A60     		str	r2, [r3, #4]
- 280              	.L11:
+ 279              		.loc 1 83 0
+ 280 013a 054B     		ldr	r3, .L12+12
+ 281 013c 0022     		movs	r2, #0
+ 282 013e 5A60     		str	r2, [r3, #4]
+ 283              	.L11:
   84:Src/motor.c   **** 
   85:Src/motor.c   ****     }
   86:Src/motor.c   **** 
   87:Src/motor.c   **** }
- 281              		.loc 1 87 0
- 282 0140 00BF     		nop
- 283 0142 80BD     		pop	{r7, pc}
- 284              	.L13:
- 285              		.align	2
- 286              	.L12:
- 287 0144 00000000 		.word	motor2
- 288 0148 00000000 		.word	phase.9772
- 289 014c 000C0240 		.word	1073875968
- 290 0150 00000000 		.word	motor1
- 291              		.cfi_endproc
- 292              	.LFE138:
- 294              		.section	.text.motor3Drive,"ax",%progbits
- 295              		.align	1
- 296              		.global	motor3Drive
- 297              		.syntax unified
- 298              		.thumb
- 299              		.thumb_func
- 300              		.fpu fpv4-sp-d16
- 302              	motor3Drive:
- 303              	.LFB139:
+ 284              		.loc 1 87 0
+ 285 0140 00BF     		nop
+ 286 0142 80BD     		pop	{r7, pc}
+ 287              	.L13:
+ 288              		.align	2
+ 289              	.L12:
+ 290 0144 00000000 		.word	motor2
+ 291 0148 00000000 		.word	phase.10064
+ 292 014c 000C0240 		.word	1073875968
+ 293 0150 00000000 		.word	motor1
+ 294              		.cfi_endproc
+ 295              	.LFE140:
+ 297              		.section	.text.motor3Drive,"ax",%progbits
+ 298              		.align	1
+ 299              		.global	motor3Drive
+ 300              		.syntax unified
+ 301              		.thumb
+ 302              		.thumb_func
+ 303              		.fpu fpv4-sp-d16
+ 305              	motor3Drive:
+ 306              	.LFB141:
   88:Src/motor.c   **** 
   89:Src/motor.c   **** 
   90:Src/motor.c   **** void  motor3Drive()
   91:Src/motor.c   **** {
- 304              		.loc 1 91 0
- 305              		.cfi_startproc
- 306              		@ args = 0, pretend = 0, frame = 0
- 307              		@ frame_needed = 1, uses_anonymous_args = 0
- 308              		@ link register save eliminated.
- 309 0000 80B4     		push	{r7}
- 310              	.LCFI8:
- 311              		.cfi_def_cfa_offset 4
- 312              		.cfi_offset 7, -4
- 313 0002 00AF     		add	r7, sp, #0
- 314              	.LCFI9:
- 315              		.cfi_def_cfa_register 7
+ 307              		.loc 1 91 0
+ 308              		.cfi_startproc
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 1, uses_anonymous_args = 0
+ 311              		@ link register save eliminated.
+ 312 0000 80B4     		push	{r7}
+ 313              	.LCFI8:
+ 314              		.cfi_def_cfa_offset 4
+ 315              		.cfi_offset 7, -4
+ 316 0002 00AF     		add	r7, sp, #0
+ 317              	.LCFI9:
+ARM GAS  /tmp/ccCBFM80.s 			page 8
+
+
+ 318              		.cfi_def_cfa_register 7
   92:Src/motor.c   **** 
   93:Src/motor.c   **** }
-ARM GAS  /tmp/ccWIZWBG.s 			page 8
-
-
- 316              		.loc 1 93 0
- 317 0004 00BF     		nop
- 318 0006 BD46     		mov	sp, r7
- 319              	.LCFI10:
- 320              		.cfi_def_cfa_register 13
- 321              		@ sp needed
- 322 0008 5DF8047B 		ldr	r7, [sp], #4
- 323              	.LCFI11:
- 324              		.cfi_restore 7
- 325              		.cfi_def_cfa_offset 0
- 326 000c 7047     		bx	lr
- 327              		.cfi_endproc
- 328              	.LFE139:
- 330              		.section	.text.motor4Drive,"ax",%progbits
- 331              		.align	1
- 332              		.global	motor4Drive
- 333              		.syntax unified
- 334              		.thumb
- 335              		.thumb_func
- 336              		.fpu fpv4-sp-d16
- 338              	motor4Drive:
- 339              	.LFB140:
+ 319              		.loc 1 93 0
+ 320 0004 00BF     		nop
+ 321 0006 BD46     		mov	sp, r7
+ 322              	.LCFI10:
+ 323              		.cfi_def_cfa_register 13
+ 324              		@ sp needed
+ 325 0008 5DF8047B 		ldr	r7, [sp], #4
+ 326              	.LCFI11:
+ 327              		.cfi_restore 7
+ 328              		.cfi_def_cfa_offset 0
+ 329 000c 7047     		bx	lr
+ 330              		.cfi_endproc
+ 331              	.LFE141:
+ 333              		.section	.text.motor4Drive,"ax",%progbits
+ 334              		.align	1
+ 335              		.global	motor4Drive
+ 336              		.syntax unified
+ 337              		.thumb
+ 338              		.thumb_func
+ 339              		.fpu fpv4-sp-d16
+ 341              	motor4Drive:
+ 342              	.LFB142:
   94:Src/motor.c   **** 
   95:Src/motor.c   **** 
   96:Src/motor.c   **** void motor4Drive()
   97:Src/motor.c   **** {
- 340              		.loc 1 97 0
- 341              		.cfi_startproc
- 342              		@ args = 0, pretend = 0, frame = 0
- 343              		@ frame_needed = 1, uses_anonymous_args = 0
- 344              		@ link register save eliminated.
- 345 0000 80B4     		push	{r7}
- 346              	.LCFI12:
- 347              		.cfi_def_cfa_offset 4
- 348              		.cfi_offset 7, -4
- 349 0002 00AF     		add	r7, sp, #0
- 350              	.LCFI13:
- 351              		.cfi_def_cfa_register 7
+ 343              		.loc 1 97 0
+ 344              		.cfi_startproc
+ 345              		@ args = 0, pretend = 0, frame = 0
+ 346              		@ frame_needed = 1, uses_anonymous_args = 0
+ 347              		@ link register save eliminated.
+ 348 0000 80B4     		push	{r7}
+ 349              	.LCFI12:
+ 350              		.cfi_def_cfa_offset 4
+ 351              		.cfi_offset 7, -4
+ 352 0002 00AF     		add	r7, sp, #0
+ 353              	.LCFI13:
+ 354              		.cfi_def_cfa_register 7
   98:Src/motor.c   **** 
   99:Src/motor.c   **** }
- 352              		.loc 1 99 0
- 353 0004 00BF     		nop
- 354 0006 BD46     		mov	sp, r7
- 355              	.LCFI14:
- 356              		.cfi_def_cfa_register 13
- 357              		@ sp needed
- 358 0008 5DF8047B 		ldr	r7, [sp], #4
- 359              	.LCFI15:
- 360              		.cfi_restore 7
- 361              		.cfi_def_cfa_offset 0
- 362 000c 7047     		bx	lr
- 363              		.cfi_endproc
- 364              	.LFE140:
- 366              		.section	.text.driveMotor,"ax",%progbits
- 367              		.align	1
- 368              		.global	driveMotor
- 369              		.syntax unified
-ARM GAS  /tmp/ccWIZWBG.s 			page 9
+ 355              		.loc 1 99 0
+ 356 0004 00BF     		nop
+ 357 0006 BD46     		mov	sp, r7
+ 358              	.LCFI14:
+ 359              		.cfi_def_cfa_register 13
+ 360              		@ sp needed
+ 361 0008 5DF8047B 		ldr	r7, [sp], #4
+ 362              	.LCFI15:
+ 363              		.cfi_restore 7
+ 364              		.cfi_def_cfa_offset 0
+ 365 000c 7047     		bx	lr
+ 366              		.cfi_endproc
+ 367              	.LFE142:
+ 369              		.section	.text.driveMotor,"ax",%progbits
+ARM GAS  /tmp/ccCBFM80.s 			page 9
 
 
- 370              		.thumb
- 371              		.thumb_func
- 372              		.fpu fpv4-sp-d16
- 374              	driveMotor:
- 375              	.LFB141:
+ 370              		.align	1
+ 371              		.global	driveMotor
+ 372              		.syntax unified
+ 373              		.thumb
+ 374              		.thumb_func
+ 375              		.fpu fpv4-sp-d16
+ 377              	driveMotor:
+ 378              	.LFB143:
  100:Src/motor.c   **** 
  101:Src/motor.c   **** 
  102:Src/motor.c   **** 
  103:Src/motor.c   **** void driveMotor()
  104:Src/motor.c   **** {
- 376              		.loc 1 104 0
- 377              		.cfi_startproc
- 378              		@ args = 0, pretend = 0, frame = 0
- 379              		@ frame_needed = 1, uses_anonymous_args = 0
- 380 0000 80B5     		push	{r7, lr}
- 381              	.LCFI16:
- 382              		.cfi_def_cfa_offset 8
- 383              		.cfi_offset 7, -8
- 384              		.cfi_offset 14, -4
- 385 0002 00AF     		add	r7, sp, #0
- 386              	.LCFI17:
- 387              		.cfi_def_cfa_register 7
+ 379              		.loc 1 104 0
+ 380              		.cfi_startproc
+ 381              		@ args = 0, pretend = 0, frame = 0
+ 382              		@ frame_needed = 1, uses_anonymous_args = 0
+ 383 0000 80B5     		push	{r7, lr}
+ 384              	.LCFI16:
+ 385              		.cfi_def_cfa_offset 8
+ 386              		.cfi_offset 7, -8
+ 387              		.cfi_offset 14, -4
+ 388 0002 00AF     		add	r7, sp, #0
+ 389              	.LCFI17:
+ 390              		.cfi_def_cfa_register 7
  105:Src/motor.c   **** 
  106:Src/motor.c   ****     if(motor1.direction == FORWARD || motor1.direction == BACKWARD)
- 388              		.loc 1 106 0
- 389 0004 164B     		ldr	r3, .L26
- 390 0006 1B68     		ldr	r3, [r3]
- 391 0008 012B     		cmp	r3, #1
- 392 000a 04D0     		beq	.L17
- 393              		.loc 1 106 0 is_stmt 0 discriminator 1
- 394 000c 144B     		ldr	r3, .L26
- 395 000e 1B68     		ldr	r3, [r3]
- 396 0010 B3F1FF3F 		cmp	r3, #-1
- 397 0014 01D1     		bne	.L18
- 398              	.L17:
+ 391              		.loc 1 106 0
+ 392 0004 164B     		ldr	r3, .L26
+ 393 0006 1B68     		ldr	r3, [r3]
+ 394 0008 012B     		cmp	r3, #1
+ 395 000a 04D0     		beq	.L17
+ 396              		.loc 1 106 0 is_stmt 0 discriminator 1
+ 397 000c 144B     		ldr	r3, .L26
+ 398 000e 1B68     		ldr	r3, [r3]
+ 399 0010 B3F1FF3F 		cmp	r3, #-1
+ 400 0014 01D1     		bne	.L18
+ 401              	.L17:
  107:Src/motor.c   ****        motor1Drive();
- 399              		.loc 1 107 0 is_stmt 1
- 400 0016 FFF7FEFF 		bl	motor1Drive
- 401              	.L18:
+ 402              		.loc 1 107 0 is_stmt 1
+ 403 0016 FFF7FEFF 		bl	motor1Drive
+ 404              	.L18:
  108:Src/motor.c   **** 
  109:Src/motor.c   ****     if(motor2.direction == FORWARD || motor2.direction == BACKWARD)
- 402              		.loc 1 109 0
- 403 001a 124B     		ldr	r3, .L26+4
- 404 001c 1B68     		ldr	r3, [r3]
- 405 001e 012B     		cmp	r3, #1
- 406 0020 04D0     		beq	.L19
- 407              		.loc 1 109 0 is_stmt 0 discriminator 1
- 408 0022 104B     		ldr	r3, .L26+4
- 409 0024 1B68     		ldr	r3, [r3]
- 410 0026 B3F1FF3F 		cmp	r3, #-1
- 411 002a 01D1     		bne	.L20
- 412              	.L19:
+ 405              		.loc 1 109 0
+ 406 001a 124B     		ldr	r3, .L26+4
+ 407 001c 1B68     		ldr	r3, [r3]
+ 408 001e 012B     		cmp	r3, #1
+ 409 0020 04D0     		beq	.L19
+ 410              		.loc 1 109 0 is_stmt 0 discriminator 1
+ 411 0022 104B     		ldr	r3, .L26+4
+ 412 0024 1B68     		ldr	r3, [r3]
+ 413 0026 B3F1FF3F 		cmp	r3, #-1
+ 414 002a 01D1     		bne	.L20
+ 415              	.L19:
  110:Src/motor.c   ****        motor2Drive();
- 413              		.loc 1 110 0 is_stmt 1
- 414 002c FFF7FEFF 		bl	motor2Drive
- 415              	.L20:
+ 416              		.loc 1 110 0 is_stmt 1
+ARM GAS  /tmp/ccCBFM80.s 			page 10
+
+
+ 417 002c FFF7FEFF 		bl	motor2Drive
+ 418              	.L20:
  111:Src/motor.c   **** 
-ARM GAS  /tmp/ccWIZWBG.s 			page 10
-
-
  112:Src/motor.c   ****     if(motor3.direction == FORWARD || motor3.direction == BACKWARD)
- 416              		.loc 1 112 0
- 417 0030 0D4B     		ldr	r3, .L26+8
- 418 0032 1B68     		ldr	r3, [r3]
- 419 0034 012B     		cmp	r3, #1
- 420 0036 04D0     		beq	.L21
- 421              		.loc 1 112 0 is_stmt 0 discriminator 1
- 422 0038 0B4B     		ldr	r3, .L26+8
- 423 003a 1B68     		ldr	r3, [r3]
- 424 003c B3F1FF3F 		cmp	r3, #-1
- 425 0040 01D1     		bne	.L22
- 426              	.L21:
+ 419              		.loc 1 112 0
+ 420 0030 0D4B     		ldr	r3, .L26+8
+ 421 0032 1B68     		ldr	r3, [r3]
+ 422 0034 012B     		cmp	r3, #1
+ 423 0036 04D0     		beq	.L21
+ 424              		.loc 1 112 0 is_stmt 0 discriminator 1
+ 425 0038 0B4B     		ldr	r3, .L26+8
+ 426 003a 1B68     		ldr	r3, [r3]
+ 427 003c B3F1FF3F 		cmp	r3, #-1
+ 428 0040 01D1     		bne	.L22
+ 429              	.L21:
  113:Src/motor.c   ****        motor3Drive();
- 427              		.loc 1 113 0 is_stmt 1
- 428 0042 FFF7FEFF 		bl	motor3Drive
- 429              	.L22:
+ 430              		.loc 1 113 0 is_stmt 1
+ 431 0042 FFF7FEFF 		bl	motor3Drive
+ 432              	.L22:
  114:Src/motor.c   **** 
  115:Src/motor.c   ****     if(motor4.direction == FORWARD || motor4.direction == BACKWARD)
- 430              		.loc 1 115 0
- 431 0046 094B     		ldr	r3, .L26+12
- 432 0048 1B68     		ldr	r3, [r3]
- 433 004a 012B     		cmp	r3, #1
- 434 004c 04D0     		beq	.L23
- 435              		.loc 1 115 0 is_stmt 0 discriminator 1
- 436 004e 074B     		ldr	r3, .L26+12
- 437 0050 1B68     		ldr	r3, [r3]
- 438 0052 B3F1FF3F 		cmp	r3, #-1
- 439 0056 01D1     		bne	.L25
- 440              	.L23:
+ 433              		.loc 1 115 0
+ 434 0046 094B     		ldr	r3, .L26+12
+ 435 0048 1B68     		ldr	r3, [r3]
+ 436 004a 012B     		cmp	r3, #1
+ 437 004c 04D0     		beq	.L23
+ 438              		.loc 1 115 0 is_stmt 0 discriminator 1
+ 439 004e 074B     		ldr	r3, .L26+12
+ 440 0050 1B68     		ldr	r3, [r3]
+ 441 0052 B3F1FF3F 		cmp	r3, #-1
+ 442 0056 01D1     		bne	.L25
+ 443              	.L23:
  116:Src/motor.c   ****        motor4Drive();
- 441              		.loc 1 116 0 is_stmt 1
- 442 0058 FFF7FEFF 		bl	motor4Drive
- 443              	.L25:
+ 444              		.loc 1 116 0 is_stmt 1
+ 445 0058 FFF7FEFF 		bl	motor4Drive
+ 446              	.L25:
  117:Src/motor.c   **** 
  118:Src/motor.c   **** 
  119:Src/motor.c   **** }
- 444              		.loc 1 119 0
- 445 005c 00BF     		nop
- 446 005e 80BD     		pop	{r7, pc}
- 447              	.L27:
- 448              		.align	2
- 449              	.L26:
- 450 0060 00000000 		.word	motor1
- 451 0064 00000000 		.word	motor2
- 452 0068 00000000 		.word	motor3
- 453 006c 00000000 		.word	motor4
- 454              		.cfi_endproc
- 455              	.LFE141:
- 457              		.section	.text.moveMotor,"ax",%progbits
- 458              		.align	1
- 459              		.global	moveMotor
- 460              		.syntax unified
- 461              		.thumb
- 462              		.thumb_func
- 463              		.fpu fpv4-sp-d16
- 465              	moveMotor:
- 466              	.LFB142:
-ARM GAS  /tmp/ccWIZWBG.s 			page 11
+ 447              		.loc 1 119 0
+ 448 005c 00BF     		nop
+ 449 005e 80BD     		pop	{r7, pc}
+ 450              	.L27:
+ 451              		.align	2
+ 452              	.L26:
+ 453 0060 00000000 		.word	motor1
+ 454 0064 00000000 		.word	motor2
+ 455 0068 00000000 		.word	motor3
+ 456 006c 00000000 		.word	motor4
+ 457              		.cfi_endproc
+ 458              	.LFE143:
+ 460              		.section	.text.moveMotor,"ax",%progbits
+ 461              		.align	1
+ 462              		.global	moveMotor
+ 463              		.syntax unified
+ 464              		.thumb
+ 465              		.thumb_func
+ARM GAS  /tmp/ccCBFM80.s 			page 11
 
 
+ 466              		.fpu fpv4-sp-d16
+ 468              	moveMotor:
+ 469              	.LFB144:
  120:Src/motor.c   **** 
  121:Src/motor.c   **** 
  122:Src/motor.c   **** 
  123:Src/motor.c   **** int moveMotor(int Motor, int Degree, short int Direction)
  124:Src/motor.c   **** {
- 467              		.loc 1 124 0
- 468              		.cfi_startproc
- 469              		@ args = 0, pretend = 0, frame = 16
- 470              		@ frame_needed = 1, uses_anonymous_args = 0
- 471              		@ link register save eliminated.
- 472 0000 80B4     		push	{r7}
- 473              	.LCFI18:
- 474              		.cfi_def_cfa_offset 4
- 475              		.cfi_offset 7, -4
- 476 0002 85B0     		sub	sp, sp, #20
- 477              	.LCFI19:
- 478              		.cfi_def_cfa_offset 24
- 479 0004 00AF     		add	r7, sp, #0
- 480              	.LCFI20:
- 481              		.cfi_def_cfa_register 7
- 482 0006 F860     		str	r0, [r7, #12]
- 483 0008 B960     		str	r1, [r7, #8]
- 484 000a 1346     		mov	r3, r2
- 485 000c FB80     		strh	r3, [r7, #6]	@ movhi
+ 470              		.loc 1 124 0
+ 471              		.cfi_startproc
+ 472              		@ args = 0, pretend = 0, frame = 16
+ 473              		@ frame_needed = 1, uses_anonymous_args = 0
+ 474              		@ link register save eliminated.
+ 475 0000 80B4     		push	{r7}
+ 476              	.LCFI18:
+ 477              		.cfi_def_cfa_offset 4
+ 478              		.cfi_offset 7, -4
+ 479 0002 85B0     		sub	sp, sp, #20
+ 480              	.LCFI19:
+ 481              		.cfi_def_cfa_offset 24
+ 482 0004 00AF     		add	r7, sp, #0
+ 483              	.LCFI20:
+ 484              		.cfi_def_cfa_register 7
+ 485 0006 F860     		str	r0, [r7, #12]
+ 486 0008 B960     		str	r1, [r7, #8]
+ 487 000a 1346     		mov	r3, r2
+ 488 000c FB80     		strh	r3, [r7, #6]	@ movhi
  125:Src/motor.c   **** 
  126:Src/motor.c   **** 
  127:Src/motor.c   ****     if(motor1.direction == STOP)
- 486              		.loc 1 127 0
- 487 000e 244B     		ldr	r3, .L37
- 488 0010 1B68     		ldr	r3, [r3]
- 489 0012 002B     		cmp	r3, #0
- 490 0014 3CD1     		bne	.L29
+ 489              		.loc 1 127 0
+ 490 000e 244B     		ldr	r3, .L37
+ 491 0010 1B68     		ldr	r3, [r3]
+ 492 0012 002B     		cmp	r3, #0
+ 493 0014 3CD1     		bne	.L29
  128:Src/motor.c   ****     {
  129:Src/motor.c   ****         switch(Motor)
- 491              		.loc 1 129 0
- 492 0016 FB68     		ldr	r3, [r7, #12]
- 493 0018 013B     		subs	r3, r3, #1
- 494 001a 032B     		cmp	r3, #3
- 495 001c 36D8     		bhi	.L30
- 496 001e 01A2     		adr	r2, .L32
- 497 0020 52F823F0 		ldr	pc, [r2, r3, lsl #2]
- 498              		.p2align 2
- 499              	.L32:
- 500 0024 35000000 		.word	.L31+1
- 501 0028 4B000000 		.word	.L33+1
- 502 002c 61000000 		.word	.L34+1
- 503 0030 77000000 		.word	.L35+1
- 504              		.p2align 1
- 505              	.L31:
+ 494              		.loc 1 129 0
+ 495 0016 FB68     		ldr	r3, [r7, #12]
+ 496 0018 013B     		subs	r3, r3, #1
+ 497 001a 032B     		cmp	r3, #3
+ 498 001c 36D8     		bhi	.L30
+ 499 001e 01A2     		adr	r2, .L32
+ 500 0020 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 501              		.p2align 2
+ 502              	.L32:
+ 503 0024 35000000 		.word	.L31+1
+ 504 0028 4B000000 		.word	.L33+1
+ 505 002c 61000000 		.word	.L34+1
+ 506 0030 77000000 		.word	.L35+1
+ 507              		.p2align 1
+ 508              	.L31:
  130:Src/motor.c   ****         {
  131:Src/motor.c   **** 
  132:Src/motor.c   ****             case MOTOR1:
  133:Src/motor.c   ****                 motor1.degree = reductor_coefficient * Degree;
- 506              		.loc 1 133 0
- 507 0034 0122     		movs	r2, #1
- 508 0036 BB68     		ldr	r3, [r7, #8]
- 509 0038 03FB02F3 		mul	r3, r3, r2
-ARM GAS  /tmp/ccWIZWBG.s 			page 12
+ 509              		.loc 1 133 0
+ARM GAS  /tmp/ccCBFM80.s 			page 12
 
 
- 510 003c 184A     		ldr	r2, .L37
- 511 003e 5360     		str	r3, [r2, #4]
+ 510 0034 0122     		movs	r2, #1
+ 511 0036 BB68     		ldr	r3, [r7, #8]
+ 512 0038 03FB02F3 		mul	r3, r3, r2
+ 513 003c 184A     		ldr	r2, .L37
+ 514 003e 5360     		str	r3, [r2, #4]
  134:Src/motor.c   ****                 motor1.direction = Direction;
- 512              		.loc 1 134 0
- 513 0040 B7F90630 		ldrsh	r3, [r7, #6]
- 514 0044 164A     		ldr	r2, .L37
- 515 0046 1360     		str	r3, [r2]
+ 515              		.loc 1 134 0
+ 516 0040 B7F90630 		ldrsh	r3, [r7, #6]
+ 517 0044 164A     		ldr	r2, .L37
+ 518 0046 1360     		str	r3, [r2]
  135:Src/motor.c   **** 
  136:Src/motor.c   ****                 break;
- 516              		.loc 1 136 0
- 517 0048 20E0     		b	.L30
- 518              	.L33:
+ 519              		.loc 1 136 0
+ 520 0048 20E0     		b	.L30
+ 521              	.L33:
  137:Src/motor.c   **** 
  138:Src/motor.c   ****             case MOTOR2:
  139:Src/motor.c   ****                 motor2.degree = reductor_coefficient * Degree;
- 519              		.loc 1 139 0
- 520 004a 0122     		movs	r2, #1
- 521 004c BB68     		ldr	r3, [r7, #8]
- 522 004e 03FB02F3 		mul	r3, r3, r2
- 523 0052 144A     		ldr	r2, .L37+4
- 524 0054 5360     		str	r3, [r2, #4]
+ 522              		.loc 1 139 0
+ 523 004a 0122     		movs	r2, #1
+ 524 004c BB68     		ldr	r3, [r7, #8]
+ 525 004e 03FB02F3 		mul	r3, r3, r2
+ 526 0052 144A     		ldr	r2, .L37+4
+ 527 0054 5360     		str	r3, [r2, #4]
  140:Src/motor.c   ****                 motor2.direction = Direction;
- 525              		.loc 1 140 0
- 526 0056 B7F90630 		ldrsh	r3, [r7, #6]
- 527 005a 124A     		ldr	r2, .L37+4
- 528 005c 1360     		str	r3, [r2]
+ 528              		.loc 1 140 0
+ 529 0056 B7F90630 		ldrsh	r3, [r7, #6]
+ 530 005a 124A     		ldr	r2, .L37+4
+ 531 005c 1360     		str	r3, [r2]
  141:Src/motor.c   **** 
  142:Src/motor.c   ****                 break;
- 529              		.loc 1 142 0
- 530 005e 15E0     		b	.L30
- 531              	.L34:
+ 532              		.loc 1 142 0
+ 533 005e 15E0     		b	.L30
+ 534              	.L34:
  143:Src/motor.c   **** 
  144:Src/motor.c   ****             case MOTOR3:
  145:Src/motor.c   ****                 motor3.degree = reductor_coefficient * Degree;
- 532              		.loc 1 145 0
- 533 0060 0122     		movs	r2, #1
- 534 0062 BB68     		ldr	r3, [r7, #8]
- 535 0064 03FB02F3 		mul	r3, r3, r2
- 536 0068 0F4A     		ldr	r2, .L37+8
- 537 006a 5360     		str	r3, [r2, #4]
+ 535              		.loc 1 145 0
+ 536 0060 0122     		movs	r2, #1
+ 537 0062 BB68     		ldr	r3, [r7, #8]
+ 538 0064 03FB02F3 		mul	r3, r3, r2
+ 539 0068 0F4A     		ldr	r2, .L37+8
+ 540 006a 5360     		str	r3, [r2, #4]
  146:Src/motor.c   ****                 motor3.direction = Direction;
- 538              		.loc 1 146 0
- 539 006c B7F90630 		ldrsh	r3, [r7, #6]
- 540 0070 0D4A     		ldr	r2, .L37+8
- 541 0072 1360     		str	r3, [r2]
+ 541              		.loc 1 146 0
+ 542 006c B7F90630 		ldrsh	r3, [r7, #6]
+ 543 0070 0D4A     		ldr	r2, .L37+8
+ 544 0072 1360     		str	r3, [r2]
  147:Src/motor.c   **** 
  148:Src/motor.c   ****                 break;
- 542              		.loc 1 148 0
- 543 0074 0AE0     		b	.L30
- 544              	.L35:
+ 545              		.loc 1 148 0
+ 546 0074 0AE0     		b	.L30
+ 547              	.L35:
  149:Src/motor.c   **** 
  150:Src/motor.c   **** 
  151:Src/motor.c   ****             case MOTOR4:
  152:Src/motor.c   ****                 motor4.degree = reductor_coefficient * Degree;
- 545              		.loc 1 152 0
- 546 0076 0122     		movs	r2, #1
- 547 0078 BB68     		ldr	r3, [r7, #8]
-ARM GAS  /tmp/ccWIZWBG.s 			page 13
+ARM GAS  /tmp/ccCBFM80.s 			page 13
 
 
- 548 007a 03FB02F3 		mul	r3, r3, r2
- 549 007e 0B4A     		ldr	r2, .L37+12
- 550 0080 5360     		str	r3, [r2, #4]
+ 548              		.loc 1 152 0
+ 549 0076 0122     		movs	r2, #1
+ 550 0078 BB68     		ldr	r3, [r7, #8]
+ 551 007a 03FB02F3 		mul	r3, r3, r2
+ 552 007e 0B4A     		ldr	r2, .L37+12
+ 553 0080 5360     		str	r3, [r2, #4]
  153:Src/motor.c   ****                 motor4.direction = Direction;
- 551              		.loc 1 153 0
- 552 0082 B7F90630 		ldrsh	r3, [r7, #6]
- 553 0086 094A     		ldr	r2, .L37+12
- 554 0088 1360     		str	r3, [r2]
+ 554              		.loc 1 153 0
+ 555 0082 B7F90630 		ldrsh	r3, [r7, #6]
+ 556 0086 094A     		ldr	r2, .L37+12
+ 557 0088 1360     		str	r3, [r2]
  154:Src/motor.c   **** 
  155:Src/motor.c   ****                 break;
- 555              		.loc 1 155 0
- 556 008a 00BF     		nop
- 557              	.L30:
+ 558              		.loc 1 155 0
+ 559 008a 00BF     		nop
+ 560              	.L30:
  156:Src/motor.c   ****         }
  157:Src/motor.c   **** 
  158:Src/motor.c   ****         return SUCCESS;
- 558              		.loc 1 158 0
- 559 008c 0123     		movs	r3, #1
- 560 008e 00E0     		b	.L36
- 561              	.L29:
+ 561              		.loc 1 158 0
+ 562 008c 0123     		movs	r3, #1
+ 563 008e 00E0     		b	.L36
+ 564              	.L29:
  159:Src/motor.c   ****     }
  160:Src/motor.c   ****     else
  161:Src/motor.c   ****     {
  162:Src/motor.c   **** 
  163:Src/motor.c   ****         return ERROR;
- 562              		.loc 1 163 0
- 563 0090 0023     		movs	r3, #0
- 564              	.L36:
+ 565              		.loc 1 163 0
+ 566 0090 0023     		movs	r3, #0
+ 567              	.L36:
  164:Src/motor.c   ****     }
  165:Src/motor.c   **** 
  166:Src/motor.c   **** }
- 565              		.loc 1 166 0
- 566 0092 1846     		mov	r0, r3
- 567 0094 1437     		adds	r7, r7, #20
- 568              	.LCFI21:
- 569              		.cfi_def_cfa_offset 4
- 570 0096 BD46     		mov	sp, r7
- 571              	.LCFI22:
- 572              		.cfi_def_cfa_register 13
- 573              		@ sp needed
- 574 0098 5DF8047B 		ldr	r7, [sp], #4
- 575              	.LCFI23:
- 576              		.cfi_restore 7
- 577              		.cfi_def_cfa_offset 0
- 578 009c 7047     		bx	lr
- 579              	.L38:
- 580 009e 00BF     		.align	2
- 581              	.L37:
- 582 00a0 00000000 		.word	motor1
- 583 00a4 00000000 		.word	motor2
- 584 00a8 00000000 		.word	motor3
- 585 00ac 00000000 		.word	motor4
- 586              		.cfi_endproc
- 587              	.LFE142:
- 589              		.section	.data.phase.9772,"aw",%progbits
- 590              		.align	2
- 593              	phase.9772:
-ARM GAS  /tmp/ccWIZWBG.s 			page 14
+ 568              		.loc 1 166 0
+ 569 0092 1846     		mov	r0, r3
+ 570 0094 1437     		adds	r7, r7, #20
+ 571              	.LCFI21:
+ 572              		.cfi_def_cfa_offset 4
+ 573 0096 BD46     		mov	sp, r7
+ 574              	.LCFI22:
+ 575              		.cfi_def_cfa_register 13
+ 576              		@ sp needed
+ 577 0098 5DF8047B 		ldr	r7, [sp], #4
+ 578              	.LCFI23:
+ 579              		.cfi_restore 7
+ 580              		.cfi_def_cfa_offset 0
+ 581 009c 7047     		bx	lr
+ 582              	.L38:
+ 583 009e 00BF     		.align	2
+ 584              	.L37:
+ 585 00a0 00000000 		.word	motor1
+ 586 00a4 00000000 		.word	motor2
+ 587 00a8 00000000 		.word	motor3
+ 588 00ac 00000000 		.word	motor4
+ 589              		.cfi_endproc
+ 590              	.LFE144:
+ARM GAS  /tmp/ccCBFM80.s 			page 14
 
 
- 594 0000 01000000 		.word	1
- 595              		.text
- 596              	.Letext0:
- 597              		.file 2 "/usr/include/newlib/machine/_default_types.h"
- 598              		.file 3 "/usr/include/newlib/sys/lock.h"
- 599              		.file 4 "/usr/include/newlib/sys/_types.h"
- 600              		.file 5 "/usr/lib/gcc/arm-none-eabi/6.3.1/include/stddef.h"
- 601              		.file 6 "/usr/include/newlib/sys/reent.h"
- 602              		.file 7 "/usr/include/newlib/sys/_stdint.h"
- 603              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
- 604              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 605              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 606              		.file 11 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h"
- 607              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 608              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
- 609              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 610              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 611              		.file 16 "Inc/motor.h"
- 612              		.file 17 "Inc/tim.h"
-ARM GAS  /tmp/ccWIZWBG.s 			page 15
+ 592              		.section	.data.phase.10064,"aw",%progbits
+ 593              		.align	2
+ 596              	phase.10064:
+ 597 0000 01000000 		.word	1
+ 598              		.text
+ 599              	.Letext0:
+ 600              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 601              		.file 3 "/usr/include/newlib/sys/lock.h"
+ 602              		.file 4 "/usr/include/newlib/sys/_types.h"
+ 603              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 604              		.file 6 "/usr/include/newlib/sys/reent.h"
+ 605              		.file 7 "/usr/include/newlib/sys/_stdint.h"
+ 606              		.file 8 "Inc/main.h"
+ 607              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
+ 608              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 609              		.file 11 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 610              		.file 12 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h"
+ 611              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 612              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 613              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 614              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 615              		.file 17 "Inc/motor.h"
+ 616              		.file 18 "Inc/tim.h"
+ARM GAS  /tmp/ccCBFM80.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 motor.c
+                            *COM*:0000000000000004 SpiTxData
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 UpdateFile
                             *COM*:0000000000000008 motor1
                             *COM*:0000000000000008 motor2
                             *COM*:0000000000000008 motor3
                             *COM*:0000000000000008 motor4
-     /tmp/ccWIZWBG.s:26     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
-     /tmp/ccWIZWBG.s:23     .rodata.reductor_coefficient:0000000000000000 $d
-     /tmp/ccWIZWBG.s:29     .text.motorInit:0000000000000000 $t
-     /tmp/ccWIZWBG.s:36     .text.motorInit:0000000000000000 motorInit
-     /tmp/ccWIZWBG.s:60     .text.motorInit:0000000000000010 $d
-     /tmp/ccWIZWBG.s:65     .text.motor1Drive:0000000000000000 $t
-     /tmp/ccWIZWBG.s:72     .text.motor1Drive:0000000000000000 motor1Drive
-     /tmp/ccWIZWBG.s:101    .text.motor2Drive:0000000000000000 $t
-     /tmp/ccWIZWBG.s:108    .text.motor2Drive:0000000000000000 motor2Drive
-     /tmp/ccWIZWBG.s:287    .text.motor2Drive:0000000000000144 $d
-     /tmp/ccWIZWBG.s:593    .data.phase.9772:0000000000000000 phase.9772
-     /tmp/ccWIZWBG.s:295    .text.motor3Drive:0000000000000000 $t
-     /tmp/ccWIZWBG.s:302    .text.motor3Drive:0000000000000000 motor3Drive
-     /tmp/ccWIZWBG.s:331    .text.motor4Drive:0000000000000000 $t
-     /tmp/ccWIZWBG.s:338    .text.motor4Drive:0000000000000000 motor4Drive
-     /tmp/ccWIZWBG.s:367    .text.driveMotor:0000000000000000 $t
-     /tmp/ccWIZWBG.s:374    .text.driveMotor:0000000000000000 driveMotor
-     /tmp/ccWIZWBG.s:450    .text.driveMotor:0000000000000060 $d
-     /tmp/ccWIZWBG.s:458    .text.moveMotor:0000000000000000 $t
-     /tmp/ccWIZWBG.s:465    .text.moveMotor:0000000000000000 moveMotor
-     /tmp/ccWIZWBG.s:500    .text.moveMotor:0000000000000024 $d
-     /tmp/ccWIZWBG.s:504    .text.moveMotor:0000000000000034 $t
-     /tmp/ccWIZWBG.s:582    .text.moveMotor:00000000000000a0 $d
-     /tmp/ccWIZWBG.s:590    .data.phase.9772:0000000000000000 $d
-                     .debug_frame:0000000000000010 $d
+     /tmp/ccCBFM80.s:29     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
+     /tmp/ccCBFM80.s:26     .rodata.reductor_coefficient:0000000000000000 $d
+     /tmp/ccCBFM80.s:32     .text.motorInit:0000000000000000 $t
+     /tmp/ccCBFM80.s:39     .text.motorInit:0000000000000000 motorInit
+     /tmp/ccCBFM80.s:63     .text.motorInit:0000000000000010 $d
+     /tmp/ccCBFM80.s:68     .text.motor1Drive:0000000000000000 $t
+     /tmp/ccCBFM80.s:75     .text.motor1Drive:0000000000000000 motor1Drive
+     /tmp/ccCBFM80.s:104    .text.motor2Drive:0000000000000000 $t
+     /tmp/ccCBFM80.s:111    .text.motor2Drive:0000000000000000 motor2Drive
+     /tmp/ccCBFM80.s:290    .text.motor2Drive:0000000000000144 $d
+     /tmp/ccCBFM80.s:596    .data.phase.10064:0000000000000000 phase.10064
+     /tmp/ccCBFM80.s:298    .text.motor3Drive:0000000000000000 $t
+     /tmp/ccCBFM80.s:305    .text.motor3Drive:0000000000000000 motor3Drive
+     /tmp/ccCBFM80.s:334    .text.motor4Drive:0000000000000000 $t
+     /tmp/ccCBFM80.s:341    .text.motor4Drive:0000000000000000 motor4Drive
+     /tmp/ccCBFM80.s:370    .text.driveMotor:0000000000000000 $t
+     /tmp/ccCBFM80.s:377    .text.driveMotor:0000000000000000 driveMotor
+     /tmp/ccCBFM80.s:453    .text.driveMotor:0000000000000060 $d
+     /tmp/ccCBFM80.s:461    .text.moveMotor:0000000000000000 $t
+     /tmp/ccCBFM80.s:468    .text.moveMotor:0000000000000000 moveMotor
+     /tmp/ccCBFM80.s:503    .text.moveMotor:0000000000000024 $d
+     /tmp/ccCBFM80.s:507    .text.moveMotor:0000000000000034 $t
+     /tmp/ccCBFM80.s:585    .text.moveMotor:00000000000000a0 $d
+     /tmp/ccCBFM80.s:593    .data.phase.10064:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_TIM_Base_Start_IT

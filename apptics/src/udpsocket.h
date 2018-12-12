@@ -52,6 +52,7 @@ public:
 
 
 
+    int sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress);
     int sendData(INFORMATION_DATA_FORMAT &InformationData, const std::string IpAddress);
     int sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAddress);
     int saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);

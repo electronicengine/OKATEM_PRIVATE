@@ -58,6 +58,8 @@ C_SOURCES = \
   Src/motor.c \
   Src/sensor.c \
   Src/gps.c \
+  Src/flash.c \
+  Src/spicom.c \
   Src/stm32f7xx_hal_msp.c  
 ASM_SOURCES = \
   startup/startup_stm32f746xx.s

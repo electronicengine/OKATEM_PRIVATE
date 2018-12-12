@@ -62,6 +62,7 @@ void VideoStream::playStream()
                free(frame_data);
 
                cv::waitKey(1);
+
             }
         }
 

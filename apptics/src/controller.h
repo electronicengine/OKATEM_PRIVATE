@@ -35,6 +35,7 @@ public:
     ~Controller();
 
     int init();
+    void resetStm();
 
     Status isReady();
 

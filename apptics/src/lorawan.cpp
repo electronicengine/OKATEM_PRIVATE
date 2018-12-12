@@ -15,15 +15,21 @@ int LoraWan::init()
 
     Status status;
 
-    status = gmSerial.Init();
-
-    if(status == Status::ok)
-        printAll("LoraWan Serial Port Succesfully Opened");
-    else
+    if(gmSerialPortInit == false)
     {
-        printAll("LoraWan Serial Port Can Not Opened");
-        return FAIL;
+        status = gmSerial.Init();
+
+        if(status == Status::ok)
+            printAll("LoraWan Serial Port Succesfully Opened");
+        else
+        {
+            printAll("LoraWan Serial Port Can Not Opened");
+            return FAIL;
+        }
+
+        gmSerialPortInit = true;
     }
+
 
 
     gmSerial.writeData("sys reset\r\n");
@@ -75,7 +81,7 @@ int LoraWan::sendCommand(std::string Command)
         gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
         usleep(TRANSMISSION_TIMEOUT);
 
-        if(counter >= 4)
+        if(counter >= 10)
             break;
 
     }while(std::string(lora_return.begin(), lora_return.end()) != "ok\r\n" &&
@@ -159,7 +165,7 @@ Status LoraWan::sendBeacon()
 
             counter = 0;
 
-        usleep(100000);
+        usleep(500000);
 
     }
 }
@@ -447,8 +453,6 @@ void LoraWan::callBack(std::string& CommingData)
         gmRecievedLoraSfp.tx_power = (int)std::stoi(token[14]);
         gmRecievedLoraSfp.rx_power = (int)std::stoi(token[15]);
 
-
-
     }
     catch(std::exception ex)
     {
@@ -462,7 +466,7 @@ void LoraWan::callBack(std::string& CommingData)
 
 
 
-    usleep(1000000);
+    usleep(500000);
 
     sendBeacon();
 

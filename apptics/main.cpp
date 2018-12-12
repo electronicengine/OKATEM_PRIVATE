@@ -32,6 +32,7 @@ clock_t last = 0;
 
 std::string stream_ip;
 int stream_port;
+int controller_port;
 
 Queue<UPDATE_FILE_FORMAT> file_queue;
 
@@ -82,7 +83,6 @@ int main()
 
     int ret;
 
-
     ret = init();
 
     if(ret == FAIL)
@@ -97,11 +97,11 @@ int main()
         getEnvironment();
         shareEnvironment();
 
+
         ret = checkIfUdpData();
 
         if(ret != SUCCESS)
             checkIfLcdData();
-
 
         now = clock();
 
@@ -201,12 +201,15 @@ int checkIfLcdData()
         controller.setControlData(lcd_control_data);
         json.saveMotorPositions(lcd_control_data);
     }
+
 }
 
 
 
 int checkIfUdpData()
 {
+
+    Status status;
 
     udp_control_data = udp_controller_socket.getSocketControlData();
 
@@ -215,7 +218,17 @@ int checkIfUdpData()
 
     if(update_file.is_available == true)
     {
-        update_file_seq_is_sent = controller.setUpdateData(update_file);
+
+        status = update_file_seq_is_sent = controller.setUpdateData(update_file);
+
+        if(status == Status::ok)
+        {
+            UDP_DATA_FORMAT feed_back_data;
+
+            feed_back_data.header = 'F' | 'E' << 8;
+            udp_controller_socket.sendData(feed_back_data, stream_ip);
+        }
+
     }
     else if(udp_control_data.is_available == true)
     {
@@ -247,24 +260,27 @@ void shareEnvironment()
 
 void getEnvironment()
 {
+
     stm_data = controller.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
 
     lora.getLoraData(lora_sfp_data, lora_stm_data);
+
 }
 
 
 
 int initUdpSocket()
 {
+
     int ret;
 
-    ret = udp_controller_socket.openPort(stream_ip, CONTROLLER_PORT, LISTENING_MODE);
+    ret = udp_controller_socket.openPort(stream_ip, controller_port, LISTENING_MODE);
 
     if(ret == SUCCESS)
     {
-         udp_controller_socket.saveInformationData(udp_control_data, stm_data ,sfp_data);
-         return SUCCESS;
+        udp_controller_socket.saveInformationData(udp_control_data, stm_data ,sfp_data);
+        return SUCCESS;
     }
     else
     {
@@ -282,10 +298,8 @@ int initLora()
 
     ret = lora.init();
 
-
     if(ret == SUCCESS)
     {
-
 
         stm_data = controller.getStmEnvironment();
         sfp_data = sfp_monitor.getValues();
@@ -342,7 +356,7 @@ int initConfig()
     if(ret == FAIL)
         return FAIL;
 
-    ret = json.loadStreamInfo(stream_ip, stream_port);
+    ret = json.loadStreamInfo(stream_ip, stream_port, controller_port);
 
     if(ret == FAIL)
         return FAIL;
@@ -350,7 +364,6 @@ int initConfig()
     lcd_hmi.setInitialMotorPositions(lcd_control_data);
 
     return SUCCESS;
-
 
 }
 

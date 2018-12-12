@@ -50,6 +50,9 @@ int Json::init()
             if(document.HasMember("stream_port"))
                 gmStreamPort = document["stream_port"].GetInt();
 
+            if(document.HasMember("control_port"))
+                gmControlPort = document["control_port"].GetInt();
+
         }
 
         if(counter >= 3)
@@ -89,7 +92,7 @@ void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 
 }
 
-int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort)
+int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort, int &ControlPort)
 {
 
 
@@ -114,6 +117,9 @@ int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort)
 
             if(document.HasMember("stream_port"))
                 StreamPort = document["stream_port"].GetInt();
+
+            if(document.HasMember("control_port"))
+                ControlPort = document["control_port"].GetInt();
         }
 
         if(counter >= 3)
@@ -354,6 +360,9 @@ void Json::writeJson()
         writer.Key("stream_port");
         writer.Uint(gmStreamPort);
 
+        writer.Key("control_port");
+        writer.Uint(gmControlPort);
+
         writer.EndObject();
 
         writeFile(s.GetString());
@@ -376,7 +385,7 @@ int Json::writeFile(const std::string &Content)
     usleep(50000);
 
 
-    system("mv /var/www/html/json.save /var/www/html/json");
+    system("cp /var/www/html/json.save /var/www/html/json");
 
 }
 

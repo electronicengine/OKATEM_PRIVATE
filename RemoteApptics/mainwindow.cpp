@@ -1,112 +1,261 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QThread>
 
+//#include <QTimer>
 #include <thread>
 #include <QMessageBox>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QPixmap pix;
 
     ui->setupUi(this);
 
-    cv::Mat image = cv::imread("hyperion.jpg");
-
-    if(image.empty()){
-       std::cout << "image empty" << std::endl;
-    }else{
-
-        ui->frame_label->setPixmap(QPixmap::fromImage( cvMatToQImage( image ) ));
-    }
-
-
-    std::thread buttonFollow(&MainWindow::buttonFlower, this);
-    buttonFollow.detach();
-
-
     gpConnectionBox = new ConnectionDialog;
 
-    connect(gpConnectionBox, SIGNAL(accepted(std::string, int)), this, SLOT(connectionAccepted(std::string, int)));
+    connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
     connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
+    connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)));
+
+    connect(this, SIGNAL(refreshScreen(QPixmap)), ui->frame_label, SLOT(setPixmap(QPixmap)));
+    connect(this, SIGNAL(screenClose()), ui->frame_label, SLOT(close()));
+    connect(this, SIGNAL(screenShow()), ui->frame_label, SLOT(show()));
+
+    connect(this, SIGNAL(refreshStatusLabel(QString)), ui->status_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshTxPowerLabel(QString)), ui->tx_power_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshRxPowerLabel(QString)), ui->rx_power_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshTemperatureLabel(QString)), ui->temperature_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshPressureLabel(QString)), ui->pressure_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshAltitudeLabel(QString)), ui->altitude_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshCompassLabel(QString)), ui->compass_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshNMEALabel(QString)), ui->nmea_label, SLOT(setText(QString)));
+
+    connect(this, SIGNAL(statusLabelClose()), ui->status_label, SLOT(close()));
+    connect(this, SIGNAL(statusLabelShow()), ui->status_label, SLOT(show()));
+    connect(this, SIGNAL(txPowerLabelClose()), ui->tx_power_label, SLOT(close()));
+    connect(this, SIGNAL(txPowerLabelShow()), ui->tx_power_label, SLOT(show()));
+    connect(this, SIGNAL(rxPowerLabelClose()), ui->rx_power_label, SLOT(close()));
+    connect(this, SIGNAL(rxPowerLabelShow()), ui->rx_power_label, SLOT(show()));
+    connect(this, SIGNAL(temperatureLabelClose()), ui->temperature_label, SLOT(close()));
+    connect(this, SIGNAL(temperatureLabelShow()), ui->temperature_label, SLOT(show()));
+    connect(this, SIGNAL(pressureLabelClose()), ui->pressure_label, SLOT(close()));
+    connect(this, SIGNAL(pressureLabelShow()), ui->pressure_label, SLOT(show()));
+    connect(this, SIGNAL(altitudeLabelClose()), ui->altitude_label, SLOT(close()));
+    connect(this, SIGNAL(altitudeLabelClose()), ui->altitude_label, SLOT(show()));
+    connect(this, SIGNAL(compassLabelClose()), ui->compass_label, SLOT(close()));
+    connect(this, SIGNAL(compassLabelShow()), ui->compass_label, SLOT(show()));
+    connect(this, SIGNAL(nmeaLabelClose()), ui->nmea_label, SLOT(close()));
+    connect(this, SIGNAL(nmeaLabelShow()), ui->nmea_label, SLOT(show()));
+
+    pix.load("hyperion.jpg");
+    ui->frame_label->setPixmap(pix);
+
+    ui->progressBar->setVisible(false);
+    ui->update_label->setVisible(false);
+
+    std::thread controlThread(&MainWindow::controlThread, this);
+    controlThread.detach();
+
+    std::thread keepAlive(&MainWindow::keepAlive, this);
+    keepAlive.detach();
+
+    setControlPanel(false);
 
 }
+
 
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete gpController;
+    delete gpConnectionBox;
+
+    gpStream->stop();
+    delete gpStream;
 }
+
 
 
 void MainWindow::on_actionConnection_triggered()
 {
-
     gpConnectionBox->show();
-
 }
 
-
-void MainWindow::streamFrameCallBack(const cv::Mat &Frame)
-{
-    QPixmap pix = QPixmap::fromImage( cvMatToQImage( Frame ) );
-
-    ui->frame_label->setPixmap(pix.scaled(1024,768));
-}
 
 
 void MainWindow::on_actionUpdate_Firmware_triggered()
 {
-    QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace");
-    std::cout << file_name.toStdString() << std::endl;
 
-    gpController->updateFirmware(file_name.toStdString());
+//    QString stdw;
+    std::string file;
+//    QFileDialog dialog(this);
 
+    QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace/OKATEM_PRIVATE/stm32f746_rtos/build");
+
+    file = file_name.toStdString();
+
+    if(file.size() != 0)
+    {
+        QMessageBox::StandardButton reply;
+
+        reply = QMessageBox::question(this, "Upgrading FirmWare", "Are You Sure?", QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes)
+        {
+            gpController->updateFirmware(file_name.toStdString());
+        }
+        else
+        {
+            std::cout << "Upgrading cancelled" << std::endl;
+            return;
+        }
+    }
 }
+
 
 
 void MainWindow::deployPanel()
 {
 
-    ui->status_label->setText((gmSfpInfo.status == 1) ? "Connected":"Disconnected");
+    static int counter = 0;
 
-    ui->tx_power_label->setText(QString::number(gmSfpInfo.tx_power));
-    ui->rx_power_label->setText(QString::number(gmSfpInfo.rx_power));
+    counter ++;
 
+    if(counter >= 10)
+    {
+        counter = 0;
 
-    std::cout << gmEnvironmentInfo.sensor_data.pressure << std::endl;
-    ui->temperature_label->setText(QString::number(gmEnvironmentInfo.sensor_data.temperature));
-    ui->pressure_label->setText(QString::number(gmEnvironmentInfo.sensor_data.pressure));
-    ui->altitude_label->setText(QString::number(gmEnvironmentInfo.sensor_data.altitude));
-    ui->compass_label->setText(QString::number(gmEnvironmentInfo.sensor_data.compass_degree));
-    ui->nmea_label->setText(QString(gmEnvironmentInfo.gps_string.c_str()));
+        emit statusLabelClose();
+        emit txPowerLabelClose();
+        emit rxPowerLabelClose();
+        emit temperatureLabelClose();
+        emit pressureLabelClose();
+        emit altitudeLabelClose();
+        emit compassLabelClose();
+        emit nmeaLabelClose();
+
+        usleep(1000);
+
+        emit statusLabelShow();
+        emit txPowerLabelShow();
+        emit rxPowerLabelShow();
+        emit temperatureLabelShow();
+        emit pressureLabelShow();
+        emit altitudeLabelShow();
+        emit compassLabelShow();
+        emit nmeaLabelShow();
+
+        usleep(1000);
+
+    }
+
+    emit refreshStatusLabel((gmSfpInfo.status == 1) ? "Connected":"Disconnected");
+    emit refreshTxPowerLabel(QString::number(gmSfpInfo.tx_power));
+    emit refreshRxPowerLabel(QString::number(gmSfpInfo.rx_power));
+    emit refreshTemperatureLabel(QString::number(gmEnvironmentInfo.sensor_data.temperature));
+    emit refreshPressureLabel(QString::number(gmEnvironmentInfo.sensor_data.pressure));
+    emit refreshAltitudeLabel(QString::number(gmEnvironmentInfo.sensor_data.altitude));
+    emit refreshCompassLabel(QString::number(gmEnvironmentInfo.sensor_data.compass_degree));
+    emit refreshNMEALabel(QString(gmEnvironmentInfo.gps_string.c_str()));
 
 }
 
-void MainWindow::buttonFlower()
+
+
+void MainWindow::setControlPanel(bool Value)
 {
 
-    int counter=0;
+    ui->increase1_button->setEnabled(Value);
+    ui->increase2_button->setEnabled(Value);
+    ui->decrease1_button->setEnabled(Value);
+    ui->decrease2_button->setEnabled(Value);
+
+    ui->right_button->setEnabled(Value);
+    ui->left_button->setEnabled(Value);
+    ui->up_button->setEnabled(Value);
+    ui->down_buttton->setEnabled(Value);
+
+    ui->speed_slider->setEnabled(Value);
+    ui->servo1_slider->setEnabled(Value);
+    ui->servo2_slider->setEnabled(Value);
+
+}
+
+
+
+void MainWindow::controlThread()
+{
+
+    int ret;
+    int counter = 0;
+    int percent = 0;
+    bool update_done = 0;
+
 
     while(1)
     {
+
         counter++;
 
-        if(gmUpButtonPressed){
+        if(gmUpButtonPressed)
+        {
 
             gpController->turnUp();
 
-        }else if(gmDownButtonPressed){
+        }else if(gmDownButtonPressed)
+        {
 
             gpController->turnDown();
 
-        }else if(gmLeftButtonPressed){
+        }else if(gmLeftButtonPressed)
+        {
 
             gpController->turnLeft();
 
-        }else if(gmRightButtonPressed){
+        }else if(gmRightButtonPressed)
+        {
 
             gpController->turnRight();
+
+        }
+
+        if(gmControllerConnectionEstablished == 1)
+        {
+
+            percent = gpController->getUpdatePercenrage();
+
+            if(percent >= 0 && percent < 100)
+            {
+//                printf("%d\n", percent);
+
+                update_done = false;
+
+                if(percent == 1)
+                {
+                     ui->progressBar->setVisible(true);
+                     ui->update_label->setVisible(true);
+                }
+
+                emit progressUpdateFile(percent);
+
+            }else if(percent >= 100 && update_done == false)
+            {
+                ui->progressBar->setVisible(false);
+                ui->update_label->setVisible(false);
+
+                emit progressUpdateFile(percent);
+
+                update_done = true;
+
+                QMessageBox::information(this,"Upgrade Done","The FirmWare Upgrading has been finished Succesfully!");
+            }
+            else
+            {
+//                ui->progressBar->setVisible(false);
+            }
 
         }
 
@@ -119,10 +268,10 @@ void MainWindow::buttonFlower()
             if(gmControllerConnectionEstablished == 1)
             {
 
-                std::cout << "deploy" << std::endl;
-                gpController->getFsoInformations(gmControlInfo, gmEnvironmentInfo, gmSfpInfo);
+                ret = gpController->getFsoInformations(gmControlInfo, gmEnvironmentInfo, gmSfpInfo);
 
-                deployPanel();
+                if(ret == SUCCESS)
+                    deployPanel();
 
             }
 
@@ -134,77 +283,19 @@ void MainWindow::buttonFlower()
 
 
 
-QImage  MainWindow::cvMatToQImage( const cv::Mat &inMat )
+void MainWindow::keepAlive()
 {
-
-    switch ( inMat.type() )
+    while(1)
     {
-     // 8-bit, 4 channel
-     case CV_8UC4:
-     {
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_ARGB32 );
+        sleep(2);
+        QCoreApplication::processEvents();
 
-        return image;
-     }
-
-     // 8-bit, 3 channel
-     case CV_8UC3:
-     {
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_RGB888 );
-
-        return image.rgbSwapped();
-     }
-
-     // 8-bit, 1 channel
-     case CV_8UC1:
-     {
-    #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_Grayscale8 );
-    #else
-        static QVector<QRgb>  sColorTable;
-
-        // only create our color table the first time
-        if ( sColorTable.isEmpty() )
-        {
-           sColorTable.resize( 256 );
-
-           for ( int i = 0; i < 256; ++i )
-           {
-              sColorTable[i] = qRgb( i, i, i );
-           }
-        }
-
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_Indexed8 );
-
-        image.setColorTable( sColorTable );
-    #endif
-
-        return image;
-     }
-
-     default:
-       std::cout << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type() << std::endl;
-        break;
     }
-
-    return QImage();
 }
 
 
 
-void MainWindow::connectionAccepted(std::string IpAddress, int Port)
+void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort)
 {
 
     int ret;
@@ -213,9 +304,10 @@ void MainWindow::connectionAccepted(std::string IpAddress, int Port)
     gpStream = new VideoStream;
 
     gmIpAddress = IpAddress;
-    gmPort = Port;
+    gmStreamPort = StreamPort;
+    gmControlPort = ControlPort;
 
-    ret = gpController->start(gmIpAddress, CONTROLLER_PORT);
+    ret = gpController->start(gmIpAddress, gmControlPort);
     if(ret == FAIL)
     {
         QMessageBox::critical(this, "Error", "Controller Connection Failed");
@@ -231,13 +323,14 @@ void MainWindow::connectionAccepted(std::string IpAddress, int Port)
             std::cout << "Connection Failed"<<std::endl;
 
             delete gpController;
+
         }
         else
         {
             QMessageBox::information(this, "Info", "Connection Established");
             std::cout << "Connection Established "<<std::endl;
 
-            ret = gpStream->start(gmIpAddress, gmPort, this);
+            ret = gpStream->start(gmIpAddress, gmStreamPort, this);
             if(ret == FAIL)
             {
                 QMessageBox::critical(this, "Error", "Streaming Connection Failed");
@@ -245,6 +338,8 @@ void MainWindow::connectionAccepted(std::string IpAddress, int Port)
             }
 
             setTitle();
+
+            setControlPanel(true);
 
             gmControllerConnectionEstablished = 1;
 
@@ -262,11 +357,9 @@ void MainWindow::connectionAccepted(std::string IpAddress, int Port)
             deployPanel();
 
             gpConnectionBox->ui->buttonBox->hide();
+
         }
-
     }
-
-
 }
 
 
@@ -283,6 +376,7 @@ void MainWindow::on_speed_slider_valueChanged(int value)
 
     ui->speed_label->setText("Speed : " + QString::number(value));
     gpController->setSpeed(value);
+
 }
 
 
@@ -321,9 +415,13 @@ void MainWindow::on_down_buttton_released(){ gmDownButtonPressed = 0;}
 
 void MainWindow::on_servo1_slider_valueChanged(int value)
 {
+
     std::cout << value << std::endl;
+
+    ui->servo1_slider->setValue(value);
     ui->servo1_pos_label->setText(QString::number(value));
     gpController->servo1SetValue(value);
+
 }
 
 
@@ -331,6 +429,8 @@ void MainWindow::on_servo1_slider_valueChanged(int value)
 void MainWindow::on_servo2_slider_valueChanged(int value)
 {
     std::cout << value << std::endl;
+
+    ui->servo2_slider->setValue(value);
     ui->servo2_pos_label->setText(QString::number(value));
     gpController->servo2SetValue(value);
 }
@@ -339,28 +439,59 @@ void MainWindow::on_servo2_slider_valueChanged(int value)
 
 void MainWindow::on_increase1_button_clicked()
 {
-    ui->servo1_slider->setValue(++gmServo1SliderValue);
+    int value;
+
+    value = ui->servo1_slider->value() + 1;
+
+    ui->servo1_slider->setValue(value);
+
+//    ui->servo1_slider->setValue(++gmServo1SliderValue);
+
 }
 
 
 
 void MainWindow::on_decrease1_button_clicked()
 {
-     ui->servo1_slider->setValue(--gmServo1SliderValue);
+
+    int value;
+
+    value = ui->servo1_slider->value() - 1;
+
+    ui->servo1_slider->setValue(value);
+
+//     ui->servo1_slider->setValue(--gmServo1SliderValue);
+
 }
 
 
 
 void MainWindow::on_increase2_button_clicked()
 {
-     ui->servo2_slider->setValue(++gmServo2SliderValue);
+
+    int value;
+
+    value = ui->servo2_slider->value() + 1;
+
+    ui->servo2_slider->setValue(value);
+
+//     ui->servo2_slider->setValue(++gmServo2SliderValue);
+
 }
 
 
 
 void MainWindow::on_decrease2_button_clicked()
 {
-     ui->servo2_slider->setValue(--gmServo2SliderValue);
+
+    int value;
+
+    value = ui->servo2_slider->value() - 1;
+
+    ui->servo2_slider->setValue(value);
+
+//    ui->servo2_slider->setValue(--gmServo2SliderValue);
+
 }
 
 
@@ -402,4 +533,29 @@ void MainWindow::setTitle()
     MainWindow::setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
 
 }
+
+
+
+void MainWindow::on_refresh_button_clicked()
+{
+
+    if(gmControllerConnectionEstablished == 1)
+    {
+
+        delete gpStream;
+
+        sleep(1);
+
+        emit clearScreen();
+
+        usleep(1000);
+
+        gpStream = new VideoStream;
+
+        gpStream->start(gmIpAddress, gmStreamPort, this);
+
+    }
+
+}
+
 

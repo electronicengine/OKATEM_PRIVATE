@@ -42,14 +42,15 @@
 #define __MAIN_H__
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f7xx_hal.h"
 
 
 #include <stdarg.h>
 #include <stdio.h>
-
 #include <stdlib.h>
-
+#include <stdarg.h>
+#include <string.h>
+#include <inttypes.h>
+#include <stdlib.h>
 
 /* USER CODE BEGIN Includes */
 
@@ -112,7 +113,7 @@
 #define SPI_ENTITY_SIZE 108
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
-
+#define UPDATE_FILE_PACKAGE_SIZE SPI_ENTITY_SIZE
 
 /* ########################## Assert Selection ############################## */
 /**
@@ -145,10 +146,22 @@
      uint32_t total_sequence_number;
      uint32_t current_sequence_number;
 
-     unsigned char data[108];
+     unsigned char data[UPDATE_FILE_PACKAGE_SIZE];
 
 
  }UPDATE_FILE_FORMAT;
+
+
+
+ SPI_TRANSFER_FORMAT *SpiTxData;
+ SPI_TRANSFER_FORMAT *SpiRxData;
+ UPDATE_FILE_FORMAT *UpdateFile;
+
+ void SystemClock_Config(void);
+
+ void vprint(const char *fmt, va_list argp);
+ void mprintf(const char *fmt, ...);
+ void bootRTOS();
 
 
 void _Error_Handler(char *, int);

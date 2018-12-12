@@ -25,8 +25,10 @@ private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
 
+    void on_comboBox_currentIndexChanged(const QString &arg1);
+
 signals:
-    void accepted(std::string, int);
+    void accepted(std::string, int, int);
     void rejected();
 
 private:

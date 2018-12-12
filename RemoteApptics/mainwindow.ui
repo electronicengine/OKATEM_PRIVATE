@@ -643,6 +643,9 @@ border-image: url(:/images/down_pressed.png);
     </property>
    </widget>
    <widget class="QLabel" name="frame_label">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -650,6 +653,12 @@ border-image: url(:/images/down_pressed.png);
       <width>1024</width>
       <height>768</height>
      </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="tabletTracking">
+     <bool>true</bool>
     </property>
     <property name="frameShape">
      <enum>QFrame::Panel</enum>
@@ -874,8 +883,14 @@ border-image: url(:/images/down_pressed.png);
     <property name="orientation">
      <enum>Qt::Vertical</enum>
     </property>
+    <property name="invertedAppearance">
+     <bool>true</bool>
+    </property>
+    <property name="invertedControls">
+     <bool>true</bool>
+    </property>
    </widget>
-   <widget class="QPushButton" name="increase1_button">
+   <widget class="QPushButton" name="decrease1_button">
     <property name="geometry">
      <rect>
       <x>1050</x>
@@ -888,12 +903,12 @@ border-image: url(:/images/down_pressed.png);
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">#increase1_button
+     <string notr="true">#decrease1_button
 {
 border-image: url(:/images/up_unpressed.png);
 }
 
-#increase1_button:pressed
+#decrease1_button:pressed
 {
 border-image: url(:/images/up_pressed.png);
 }</string>
@@ -905,7 +920,7 @@ border-image: url(:/images/up_pressed.png);
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="decrease1_button">
+   <widget class="QPushButton" name="increase1_button">
     <property name="geometry">
      <rect>
       <x>1050</x>
@@ -918,12 +933,12 @@ border-image: url(:/images/up_pressed.png);
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">#decrease1_button
+     <string notr="true">#increase1_button
 {
 border-image: url(:/images/down_unpressed.png);
 }
 
-#decrease1_button:pressed
+#increase1_button:pressed
 {
 border-image: url(:/images/down_pressed.png);
 }</string>
@@ -950,8 +965,14 @@ border-image: url(:/images/down_pressed.png);
     <property name="orientation">
      <enum>Qt::Vertical</enum>
     </property>
+    <property name="invertedAppearance">
+     <bool>true</bool>
+    </property>
+    <property name="invertedControls">
+     <bool>true</bool>
+    </property>
    </widget>
-   <widget class="QPushButton" name="decrease2_button">
+   <widget class="QPushButton" name="increase2_button">
     <property name="geometry">
      <rect>
       <x>1090</x>
@@ -964,12 +985,12 @@ border-image: url(:/images/down_pressed.png);
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">#decrease2_button
+     <string notr="true">#increase2_button
 {
 border-image: url(:/images/down_unpressed.png);
 }
 
-#decrease2_button:pressed
+#increase2_button:pressed
 {
 border-image: url(:/images/down_pressed.png);
 }</string>
@@ -981,7 +1002,7 @@ border-image: url(:/images/down_pressed.png);
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="increase2_button">
+   <widget class="QPushButton" name="decrease2_button">
     <property name="geometry">
      <rect>
       <x>1090</x>
@@ -994,12 +1015,12 @@ border-image: url(:/images/down_pressed.png);
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">#increase2_button
+     <string notr="true">#decrease2_button
 {
 border-image: url(:/images/up_unpressed.png);
 }
 
-#increase2_button:pressed
+#decrease2_button:pressed
 {
 border-image: url(:/images/up_pressed.png);
 }</string>
@@ -1053,6 +1074,56 @@ border-image: url(:/images/up_pressed.png);
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>390</y>
+      <width>321</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="update_label">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>370</y>
+      <width>161</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Firmware upgrading...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refresh_button">
+    <property name="geometry">
+     <rect>
+      <x>1040</x>
+      <y>0</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#refresh_button
+{
+border-image: url(:/images/refresh_unpressed.png);
+}
+
+#refresh_button:pressed
+{
+border-image: url(:/images/refresh_pressed.png);
+}</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

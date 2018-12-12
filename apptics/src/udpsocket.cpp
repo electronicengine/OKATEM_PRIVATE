@@ -130,6 +130,27 @@ int UdpSocket::sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAdd
     delete raw_data;
 }
 
+
+int UdpSocket::sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress)
+{
+
+
+
+    unsigned char *raw_data;
+
+    raw_data = UdpData;
+
+    gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
+
+    sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
+
+    delete raw_data;
+
+    return 0;
+
+
+}
+
 int UdpSocket::saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
 {
 
@@ -148,6 +169,9 @@ int UdpSocket::saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT
 int UdpSocket::openPort(int Port)
 {
 
+    int ret;
+    struct timeval timeout;
+    int optval = 1;
     gmPort = Port;
 
     gmSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -164,11 +188,18 @@ int UdpSocket::openPort(int Port)
     gmServerAddr.sin_port = htons(Port);
 
 
+    socklen_t gmClientLen= sizeof(gmClientAddr);
 
     gmClientAddr.sin_family = AF_INET;
     gmClientAddr.sin_port = htons(gmPort);
 
-    socklen_t gmClientLen= sizeof(gmClientAddr);
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    setsockopt(gmSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
+    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+
 
 
     if (bind(gmSocket, (struct sockaddr *) &gmServerAddr, sizeof(gmServerAddr)))

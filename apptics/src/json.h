@@ -38,7 +38,7 @@ public:
     int loadMotorPositions(CONTROL_DATA_FORMAT &ControlData);
     void saveMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
-    int loadStreamInfo(std::string &StreamIp, int &StreamPort);
+    int loadStreamInfo(std::string &StreamIp, int &StreamPort, int &ControllerPort);
 
 private:
 
@@ -62,6 +62,7 @@ private:
 
     std::string gmStreamIp;
     int gmStreamPort;
+    int gmControlPort;
 
     std::mutex gmMutex;
 

@@ -10,22 +10,6 @@ extern std::map<std::string, bool> CheckList;
 LaserTracker::LaserTracker(const std::string VideoLocation)
 {
 
-    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
-
-    mVideoCapture = new cv::VideoCapture(VideoLocation);
-
-    mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
-    if (!mVideoCapture->isOpened())
-    {
-        printAll("LaserTracker init is Failed");
-
-        CheckList["LaserTracker"] = false;
-    }
-    else
-    {
-        CheckList["LaserTracker"] = true;
-
-    }
 
 }
 
@@ -174,10 +158,10 @@ int LaserTracker::startTracking()
 //        drawFSOFace(red_circles);
 
         //show the frame
-//        cv::imshow("frame", gmFrame);
+        //cv::imshow("frame", gmFrame);
 
+        drawtargetLines(gmFrame);
         streamFrame(gmFrame);
-
         cv::waitKey(1); // needed
 
 //        CheckList["LaserTracker"] = true;
@@ -291,7 +275,7 @@ cv::Mat LaserTracker::detectRed(cv::Mat &Frame)
     cv::inRange(frame_hsv, cv::Scalar(0, 0, 254), cv::Scalar(0, 0, 255), frame_processed);
 
 //      cv::imshow("frame1", frame_hsv);
-//      cv::waitKey(1);
+      cv::waitKey(1000/30);
 
     cv::GaussianBlur(frame_processed, frame_processed, cv::Size(9, 9), 2, 2);
 
@@ -322,6 +306,26 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
      }
      else
          return circles;
+
+}
+
+
+
+int LaserTracker::drawtargetLines(const cv::Mat &Frame)
+{
+
+    cv::Point p1, p2, p3, p4;
+
+    p1 = cv::Point(0, 240);
+    p2 = cv::Point(640, 240);
+
+    p3 = cv::Point(320, 0);
+    p4 = cv::Point(320, 480);
+
+    cv::line(Frame, p1, p2,  cv::Scalar(0,0,255));
+    cv::line(Frame, p3, p4,  cv::Scalar(0,0,255));
+
+    return 0;
 
 }
 
