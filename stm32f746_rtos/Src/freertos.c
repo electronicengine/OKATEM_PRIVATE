@@ -49,10 +49,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "freertos.h"
 
-#include "gpsops.c"
-#include "spiops.c"
-#include "sensorops.c"
-#include "motorops.c"
+#include "gpsops.h"
+#include "spiops.h"
+#include "sensorops.h"
+#include "motorops.h"
 
 #include <stdlib.h>
 

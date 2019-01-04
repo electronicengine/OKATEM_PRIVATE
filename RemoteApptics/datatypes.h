@@ -23,6 +23,8 @@
 #define SPI_ENTITY_SIZE 108
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
+#define CONTROL_DATA_GARBAGE_SIZE 41
+#define GPS_STRING_SIZE 87
 
 #define SFP_DATA_SIZE 24
 
@@ -415,7 +417,15 @@ struct ENVIRONMENT_DATA_FORMAT
 {
 
     GPS_DATA gps_data;
+
+    uint32_t step_motor1_step;
+    uint32_t step_motor2_step;
+
+    uint16_t servo_motor1_degree;
+    uint16_t servo_motor2_degree;
+
     SENSOR_DATA sensor_data;
+
     std::string gps_string;
 
     ENVIRONMENT_DATA_FORMAT()
@@ -427,18 +437,36 @@ struct ENVIRONMENT_DATA_FORMAT
     {
         try
         {
+            int index = 0;
 
-            gps_string = std::string(&SpiData.data[0], &SpiData.data[98]);
-
+            gps_string = std::string(&SpiData.data[0], &SpiData.data[GPS_STRING_SIZE - 1]);
             gps_data = gps_string;
+            index += GPS_STRING_SIZE;
 
-            sensor_data = &SpiData.data[99];
+            step_motor1_step = SpiData.data[index++];
+            step_motor1_step |= SpiData.data[index++] << 8;
+            step_motor1_step |= SpiData.data[index++] << 16;
+            step_motor1_step |= SpiData.data[index++] << 24;
+
+            step_motor2_step = SpiData.data[index++];
+            step_motor2_step |= SpiData.data[index++] << 8;
+            step_motor2_step |= SpiData.data[index++] << 16;
+            step_motor2_step |= SpiData.data[index++] << 24;
+
+            servo_motor1_degree = SpiData.data[index++];
+            servo_motor1_degree |= SpiData.data[index++] << 8;
+
+            servo_motor2_degree = SpiData.data[index++];
+            servo_motor2_degree |= SpiData.data[index++] << 8;
+
+            sensor_data = &SpiData.data[index];
 
         }
         catch(std::exception& ex)
         {
             std::cout << "SPI_TX_FORMAT exception: " << ex.what() << std::endl;
         }
+
 
     }
 
@@ -451,19 +479,41 @@ struct ENVIRONMENT_DATA_FORMAT
         unsigned char * sensor_data_pointer;
 
         spi_data.header = 'E';
-        spi_data.header |= 'N';
+        spi_data.header |= 'N' << 8;
 
-        for(int i = 0; i<99; i++)
-            spi_data.data[i] = gps_string.c_str()[i + index];
 
-        index += 99;
+
+        for(int i = 0; i<GPS_STRING_SIZE; i++)
+            spi_data.data[i + index] = gps_string.c_str()[i];
+
+        index += GPS_STRING_SIZE;
+
+        spi_data.data[index++] = step_motor1_step & 0xff;
+        spi_data.data[index++] = (step_motor1_step >> 8) & 0xff;
+        spi_data.data[index++] = (step_motor1_step >> 16) & 0xff;
+        spi_data.data[index++] = (step_motor1_step >> 24) & 0xff;
+
+        spi_data.data[index++] = step_motor2_step & 0xff;
+        spi_data.data[index++] = (step_motor2_step >> 8) & 0xff;
+        spi_data.data[index++] = (step_motor2_step >> 16) & 0xff;
+        spi_data.data[index++] = (step_motor2_step >> 24) & 0xff;
+
+        spi_data.data[index++] = servo_motor1_degree & 0xff;
+        spi_data.data[index++] = (servo_motor1_degree >> 8) & 0xff;
+
+        spi_data.data[index++] = servo_motor2_degree && 0xff;
+        spi_data.data[index++] = (servo_motor2_degree >> 8) & 0xff;
 
         sensor_data_pointer = sensor_data;
-        memcpy(&spi_data[index], sensor_data_pointer, sizeof(SENSOR_DATA));
+
+        memcpy(&spi_data.data[index], sensor_data_pointer, sizeof(SENSOR_DATA));
 
         index += sizeof(SENSOR_DATA);
 
+        spi_data.checksum = 0;
+
         delete sensor_data_pointer;
+
 
         return spi_data;
 
@@ -474,12 +524,29 @@ struct ENVIRONMENT_DATA_FORMAT
 
         try
         {
+            int index = 0;
 
-            gps_string = std::string(&SpiData.data[0], &SpiData.data[98]);
-
+            gps_string = std::string(&SpiData.data[0], &SpiData.data[GPS_STRING_SIZE - 1]);
             gps_data = gps_string;
+            index += GPS_STRING_SIZE;
 
-            sensor_data = &SpiData.data[99];
+            step_motor1_step = SpiData.data[index++];
+            step_motor1_step |= SpiData.data[index++] << 8;
+            step_motor1_step |= SpiData.data[index++] << 16;
+            step_motor1_step |= SpiData.data[index++] << 24;
+
+            step_motor2_step = SpiData.data[index++];
+            step_motor2_step |= SpiData.data[index++] << 8;
+            step_motor2_step |= SpiData.data[index++] << 16;
+            step_motor2_step |= SpiData.data[index++] << 24;
+
+            servo_motor1_degree = SpiData.data[index++];
+            servo_motor1_degree |= SpiData.data[index++] << 8;
+
+            servo_motor2_degree = SpiData.data[index++];
+            servo_motor2_degree |= SpiData.data[index++] << 8;
+
+            sensor_data = &SpiData.data[index];
 
         }
         catch(std::exception& ex)
@@ -573,11 +640,12 @@ struct UPDATE_FILE_FORMAT
 };
 
 
+
 struct CONTROL_DATA_FORMAT
 {
 
 
-    uint8_t garbage1[45]; // header
+    uint8_t garbage1[CONTROL_DATA_GARBAGE_SIZE]; // header
 
     uint8_t mode;
 
@@ -601,9 +669,13 @@ struct CONTROL_DATA_FORMAT
 
     uint8_t calibrate_sensor;
 
-    uint8_t garbage2[45]; //footer
+    uint32_t step_motor1_step;
+    uint32_t step_motor2_step;
+
+    uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE]; //footer
 
     volatile bool is_transmitted;
+    volatile bool is_available;
 
     operator bool()
     {
@@ -616,10 +688,10 @@ struct CONTROL_DATA_FORMAT
     {
         int index = 0;
 
-        for(int i=0; i<45; i++)
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             garbage1[i] = SpiData.data[i + index];
 
-        index += 45;
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         mode = SpiData.data[index++];
 
@@ -652,13 +724,23 @@ struct CONTROL_DATA_FORMAT
         servo_motor1_degree = SpiData.data[index++];
         servo_motor2_degree = SpiData.data[index++];
 
+        step_motor1_step = (SpiData.data[index++]);
+        step_motor1_step |= (SpiData.data[index++] << 8);
+        step_motor1_step |= (SpiData.data[index++] << 16);
+        step_motor1_step |= (SpiData.data[index++] << 24);
+
+        step_motor2_step = (SpiData.data[index++]);
+        step_motor2_step |= (SpiData.data[index++] << 8);
+        step_motor2_step |= (SpiData.data[index++] << 16);
+        step_motor2_step |= (SpiData.data[index++] << 24);
+
         calibrate_sensor = SpiData.data[index++];
 
 
-        for(int i=0; i<45; i++)
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             garbage2[i] = SpiData.data[i + index];
 
-        index += 45;
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         is_transmitted = true;
 
@@ -682,10 +764,10 @@ struct CONTROL_DATA_FORMAT
 
         spi_transfer_data.header = ('C' | 'O' << 8);
 
-        for(int i=0; i<45; i++)
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             spi_transfer_data.data[i] = garbage1[i];
 
-        index += 45;
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         spi_transfer_data.data[index++] = mode;
 
@@ -720,15 +802,22 @@ struct CONTROL_DATA_FORMAT
 
         spi_transfer_data.data[index++] = calibrate_sensor;
 
+        spi_transfer_data.data[index++] = (step_motor1_step) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_step >> 8) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_step >> 16) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_step >> 24) & 0xff;
 
-        for(int i=0; i<45; i++)
+        spi_transfer_data.data[index++] = (step_motor2_step) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_step >> 8) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_step >> 16) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_step >> 24) & 0xff;
+
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             spi_transfer_data.data[i + index] = garbage2[i];
 
-
-        index += 45;
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         spi_transfer_data.checksum = 0x20;
-
 
         return spi_transfer_data;
 
@@ -739,10 +828,10 @@ struct CONTROL_DATA_FORMAT
 
         int index = 0;
 
-        for(int i=0; i<45; i++)
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             garbage1[i] = SpiData.data[i + index];
 
-        index += 45;
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         mode = SpiData.data[index++];
 
@@ -777,10 +866,21 @@ struct CONTROL_DATA_FORMAT
 
         calibrate_sensor = SpiData.data[index++];
 
+        step_motor1_step = SpiData.data[index++];
+        step_motor1_step |= SpiData.data[index++] << 8;
+        step_motor1_step |= SpiData.data[index++] << 16;
+        step_motor1_step |= SpiData.data[index++] << 24;
 
-        for(int i=0; i<45; i++)
+        step_motor2_step = SpiData.data[index++];
+        step_motor2_step |= SpiData.data[index++] << 8;
+        step_motor2_step |= SpiData.data[index++] << 16;
+        step_motor2_step |= SpiData.data[index++] << 24;
+
+
+        for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             garbage2[i] = SpiData.data[i + index];
 
+        index += CONTROL_DATA_GARBAGE_SIZE;
 
         is_transmitted = true;
 
@@ -808,10 +908,14 @@ struct CONTROL_DATA_FORMAT
 
         calibrate_sensor = 0;
 
+        step_motor1_step = 0;
+        step_motor2_step = 0;
+
         is_transmitted = false;
     }
 
 };
+
 
 
 struct UDP_DATA_FORMAT

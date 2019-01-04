@@ -13,7 +13,7 @@ TARGET = stm32f746
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O0
+OPT = -O3
 
 #######################################
 # pathes

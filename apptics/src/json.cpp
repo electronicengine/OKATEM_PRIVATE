@@ -384,7 +384,6 @@ int Json::writeFile(const std::string &Content)
 
     usleep(50000);
 
-
     system("cp /var/www/html/json.save /var/www/html/json");
 
 }
@@ -446,6 +445,7 @@ std::vector<size_t> Json::getCpuTick()
     proc_stat.ignore(5, ' '); // Skip the 'cpu' prefix.
     std::vector<size_t> times;
     for (size_t time; proc_stat >> time; times.push_back(time));
+
     return times;
 
 }
@@ -456,6 +456,7 @@ bool Json::getCpuTime(size_t &idle_time, size_t &total_time)
 {
 
     const std::vector<size_t> cpu_times = getCpuTick();
+
     if (cpu_times.size() < 4)
         return false;
     idle_time = cpu_times[3];
@@ -464,12 +465,13 @@ bool Json::getCpuTime(size_t &idle_time, size_t &total_time)
 
 }
 
+
+
 float Json::getCpuUsage()
 {
 
     size_t previous_idle_time=0, previous_total_time=0;
     size_t idle_time, total_time;
-
 
     getCpuTime(idle_time, total_time);
 
@@ -480,7 +482,6 @@ float Json::getCpuUsage()
 
     previous_idle_time = idle_time;
     previous_total_time = total_time;
-
 
     return utilization;
 

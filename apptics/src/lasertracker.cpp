@@ -127,7 +127,6 @@ int LaserTracker::init(int Camera)
     }
     else
     {
-        CheckList["LaserTracker"] = true;
         return SUCCESS;
 
     }
@@ -150,7 +149,6 @@ int LaserTracker::startTracking()
         if(!mVideoCapture->read(gmFrame))
             break;
 
-
 //        gmScalarFrame = detectRed(gmFrame);
 
 //        red_circles = detectCircle(gmScalarFrame);
@@ -170,7 +168,10 @@ int LaserTracker::startTracking()
 
     printAll("Laser Tracker Source Connection has been faild.");
 
-    CheckList["LaserTracker"] = false;
+    sleep(1);
+
+    startTracking();
+
     return FAIL;
 
 }

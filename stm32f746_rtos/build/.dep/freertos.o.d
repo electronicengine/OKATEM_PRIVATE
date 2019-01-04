@@ -1,31 +1,31 @@
 build/freertos.o: Src/freertos.c Inc/freertos.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h \
  Inc/stm32f7xx_hal_conf.h Inc/main.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
- /usr/include/newlib/stdio.h /usr/include/newlib/_ansi.h \
- /usr/include/newlib/newlib.h /usr/include/newlib/_newlib_version.h \
- /usr/include/newlib/sys/config.h /usr/include/newlib/machine/ieeefp.h \
- /usr/include/newlib/sys/features.h /usr/include/newlib/sys/cdefs.h \
- /usr/include/newlib/machine/_default_types.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h \
- /usr/include/newlib/sys/reent.h /usr/include/newlib/_ansi.h \
- /usr/include/newlib/sys/_types.h /usr/include/newlib/machine/_types.h \
- /usr/include/newlib/sys/lock.h /usr/include/newlib/sys/types.h \
- /usr/include/newlib/sys/_stdint.h \
- /usr/include/newlib/sys/_pthreadtypes.h \
- /usr/include/newlib/machine/types.h /usr/include/newlib/sys/stdio.h \
- /usr/include/newlib/stdlib.h /usr/include/newlib/machine/stdlib.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h \
  Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h \
  Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h \
  Drivers/CMSIS/Include/core_cm7.h \
  /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
- /usr/include/newlib/stdint.h /usr/include/newlib/sys/_intsup.h \
+ /usr/include/newlib/stdint.h \
+ /usr/include/newlib/machine/_default_types.h \
+ /usr/include/newlib/sys/features.h /usr/include/newlib/_newlib_version.h \
+ /usr/include/newlib/sys/_intsup.h /usr/include/newlib/sys/_stdint.h \
  Drivers/CMSIS/Include/core_cmInstr.h Drivers/CMSIS/Include/cmsis_gcc.h \
  Drivers/CMSIS/Include/core_cmFunc.h Drivers/CMSIS/Include/core_cmSimd.h \
  Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
+ /usr/include/newlib/stdio.h /usr/include/newlib/_ansi.h \
+ /usr/include/newlib/newlib.h /usr/include/newlib/sys/config.h \
+ /usr/include/newlib/machine/ieeefp.h /usr/include/newlib/sys/cdefs.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
+ /usr/include/newlib/sys/reent.h /usr/include/newlib/_ansi.h \
+ /usr/include/newlib/sys/_types.h /usr/include/newlib/machine/_types.h \
+ /usr/include/newlib/sys/lock.h /usr/include/newlib/sys/types.h \
+ /usr/include/newlib/sys/_pthreadtypes.h \
+ /usr/include/newlib/machine/types.h /usr/include/newlib/sys/stdio.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio_ex.h \
@@ -65,9 +65,9 @@ build/freertos.o: Src/freertos.c Inc/freertos.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/timers.h Inc/gps.h \
  Inc/sensor.h /usr/include/newlib/inttypes.h Inc/motor.h Inc/usart.h \
- Inc/spi.h Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h Src/gpsops.c \
- Inc/gpsops.h Src/spiops.c Inc/spiops.h Src/sensorops.c Inc/sensorops.h \
- Src/motorops.c Inc/motorops.h Inc/main.h
+ Inc/spi.h Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h \
+ /usr/include/newlib/stdlib.h /usr/include/newlib/machine/stdlib.h \
+ Inc/gpsops.h Inc/spiops.h Inc/sensorops.h Inc/motorops.h
 
 Inc/freertos.h:
 
@@ -77,51 +77,7 @@ Inc/stm32f7xx_hal_conf.h:
 
 Inc/main.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
-
-/usr/include/newlib/stdio.h:
-
-/usr/include/newlib/_ansi.h:
-
-/usr/include/newlib/newlib.h:
-
-/usr/include/newlib/_newlib_version.h:
-
-/usr/include/newlib/sys/config.h:
-
-/usr/include/newlib/machine/ieeefp.h:
-
-/usr/include/newlib/sys/features.h:
-
-/usr/include/newlib/sys/cdefs.h:
-
-/usr/include/newlib/machine/_default_types.h:
-
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h:
-
-/usr/include/newlib/sys/reent.h:
-
-/usr/include/newlib/_ansi.h:
-
-/usr/include/newlib/sys/_types.h:
-
-/usr/include/newlib/machine/_types.h:
-
-/usr/include/newlib/sys/lock.h:
-
-/usr/include/newlib/sys/types.h:
-
-/usr/include/newlib/sys/_stdint.h:
-
-/usr/include/newlib/sys/_pthreadtypes.h:
-
-/usr/include/newlib/machine/types.h:
-
-/usr/include/newlib/sys/stdio.h:
-
-/usr/include/newlib/stdlib.h:
-
-/usr/include/newlib/machine/stdlib.h:
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h:
 
 Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h:
 
@@ -137,7 +93,15 @@ Drivers/CMSIS/Include/core_cm7.h:
 
 /usr/include/newlib/stdint.h:
 
+/usr/include/newlib/machine/_default_types.h:
+
+/usr/include/newlib/sys/features.h:
+
+/usr/include/newlib/_newlib_version.h:
+
 /usr/include/newlib/sys/_intsup.h:
+
+/usr/include/newlib/sys/_stdint.h:
 
 Drivers/CMSIS/Include/core_cmInstr.h:
 
@@ -150,6 +114,40 @@ Drivers/CMSIS/Include/core_cmSimd.h:
 Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h:
 
 Drivers/STM32F7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h:
+
+/usr/include/newlib/stdio.h:
+
+/usr/include/newlib/_ansi.h:
+
+/usr/include/newlib/newlib.h:
+
+/usr/include/newlib/sys/config.h:
+
+/usr/include/newlib/machine/ieeefp.h:
+
+/usr/include/newlib/sys/cdefs.h:
+
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h:
+
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
+
+/usr/include/newlib/sys/reent.h:
+
+/usr/include/newlib/_ansi.h:
+
+/usr/include/newlib/sys/_types.h:
+
+/usr/include/newlib/machine/_types.h:
+
+/usr/include/newlib/sys/lock.h:
+
+/usr/include/newlib/sys/types.h:
+
+/usr/include/newlib/sys/_pthreadtypes.h:
+
+/usr/include/newlib/machine/types.h:
+
+/usr/include/newlib/sys/stdio.h:
 
 Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h:
 
@@ -249,20 +247,14 @@ Inc/gpsops.h:
 
 Inc/freertos.h:
 
-Src/gpsops.c:
+/usr/include/newlib/stdlib.h:
+
+/usr/include/newlib/machine/stdlib.h:
 
 Inc/gpsops.h:
 
-Src/spiops.c:
-
 Inc/spiops.h:
-
-Src/sensorops.c:
 
 Inc/sensorops.h:
 
-Src/motorops.c:
-
 Inc/motorops.h:
-
-Inc/main.h:

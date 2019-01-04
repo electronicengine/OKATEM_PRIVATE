@@ -21,6 +21,7 @@
  struct Step_Motor {
    volatile int direction;
    volatile int speed;
+   volatile uint32_t step_number;
  }motor1, motor2, motor3, motor4;
 
 

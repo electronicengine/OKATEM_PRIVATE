@@ -76,10 +76,7 @@ int main(void)
   SCB->VTOR = (unsigned long)APPLICATION_ADDRESS;
 
   HAL_Init();
-
-
   SystemClock_Config();
-
   MX_GPIO_Init();
   MX_I2C2_Init();
   MX_I2C4_Init();
@@ -88,7 +85,6 @@ int main(void)
   MX_UART4_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
-
 
   MX_FREERTOS_Init();
 

@@ -38,16 +38,9 @@
 /* Includes ------------------------------------------------------------------*/
 
 
-#include "eth.h"
 #include "spi.h"
-#include "i2c.h"
-#include "rtc.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "motor.h"
-#include "sensor.h"
-#include "gps.h"
 #include "flash.h"
 #include "spicom.h"
 
@@ -62,9 +55,6 @@ int main(void)
 
     Update_File update_file_describtor;
 
-    unsigned char *file_buffer;
-    uint32_t file_size;
-    int update_condition;
     int ret;
     uint32_t now, last;
 
@@ -75,13 +65,8 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
-    MX_I2C2_Init();
-    MX_I2C4_Init();
     MX_SPI1_Init();
-    MX_TIM3_Init();
-    MX_UART4_Init();
     MX_USART1_UART_Init();
-    MX_TIM2_Init();
 
     mprintf("Bootloader Initializing...\r\n");
 
@@ -94,10 +79,7 @@ int main(void)
 
        now = HAL_GetTick();
 
-
-
        ret = checkDataAvailable();
-
 
        if(ret)
        {
@@ -128,9 +110,7 @@ int main(void)
 
        if(now - last >= 5000 && (now - last) > 0 && (now - last ) < 10000) // timeout
            bootRTOS();
-
     }
-
 
 }
 
@@ -181,8 +161,6 @@ void bootRTOS()
     HAL_DeInit();
     HAL_RCC_DeInit();
     HAL_SPI_DeInit(&hspi1);
-    HAL_I2C_DeInit(&hi2c4);
-    HAL_I2C_DeInit(&hi2c2);
 
     SCB->VTOR = (unsigned long)APPLICATION_ADDRESS;
 

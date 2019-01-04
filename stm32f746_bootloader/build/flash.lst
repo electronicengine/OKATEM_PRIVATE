@@ -1,0 +1,440 @@
+ARM GAS  /tmp/ccUMOEQg.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 2
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"flash.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.writeFlash,"ax",%progbits
+  18              		.align	1
+  19              		.p2align 2,,3
+  20              		.global	writeFlash
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	writeFlash:
+  27              	.LFB138:
+  28              		.file 1 "Src/flash.c"
+   1:Src/flash.c   **** 
+   2:Src/flash.c   **** 
+   3:Src/flash.c   **** /* Includes ------------------------------------------------------------------*/
+   4:Src/flash.c   **** #include "flash.h"
+   5:Src/flash.c   **** 
+   6:Src/flash.c   **** 
+   7:Src/flash.c   **** 
+   8:Src/flash.c   **** 
+   9:Src/flash.c   **** 
+  10:Src/flash.c   **** void writeFlash(uint8_t Data, long Address)
+  11:Src/flash.c   **** {
+  29              		.loc 1 11 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34              	.LVL0:
+  12:Src/flash.c   ****     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
+  35              		.loc 1 12 0
+  36 0000 C2B2     		uxtb	r2, r0
+  37 0002 0023     		movs	r3, #0
+  38 0004 0020     		movs	r0, #0
+  39              	.LVL1:
+  40 0006 FFF7FEBF 		b	HAL_FLASH_Program
+  41              	.LVL2:
+  42              		.cfi_endproc
+  43              	.LFE138:
+  45 000a 00BF     		.section	.text.readFlash,"ax",%progbits
+  46              		.align	1
+  47              		.p2align 2,,3
+ARM GAS  /tmp/ccUMOEQg.s 			page 2
+
+
+  48              		.global	readFlash
+  49              		.syntax unified
+  50              		.thumb
+  51              		.thumb_func
+  52              		.fpu fpv4-sp-d16
+  54              	readFlash:
+  55              	.LFB139:
+  13:Src/flash.c   **** }
+  14:Src/flash.c   **** 
+  15:Src/flash.c   **** 
+  16:Src/flash.c   **** 
+  17:Src/flash.c   **** uint8_t readFlash(int Address)
+  18:Src/flash.c   **** {
+  56              		.loc 1 18 0
+  57              		.cfi_startproc
+  58              		@ args = 0, pretend = 0, frame = 0
+  59              		@ frame_needed = 0, uses_anonymous_args = 0
+  60              		@ link register save eliminated.
+  61              	.LVL3:
+  19:Src/flash.c   ****     uint8_t flash_data;
+  20:Src/flash.c   **** 
+  21:Src/flash.c   ****     flash_data = *(uint8_t *)Address;
+  22:Src/flash.c   **** 
+  23:Src/flash.c   ****     return flash_data;
+  24:Src/flash.c   **** }
+  62              		.loc 1 24 0
+  63 0000 0078     		ldrb	r0, [r0]	@ zero_extendqisi2
+  64              	.LVL4:
+  65 0002 7047     		bx	lr
+  66              		.cfi_endproc
+  67              	.LFE139:
+  69              		.section	.text.loadUpdateFile,"ax",%progbits
+  70              		.align	1
+  71              		.p2align 2,,3
+  72              		.global	loadUpdateFile
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  76              		.fpu fpv4-sp-d16
+  78              	loadUpdateFile:
+  79              	.LFB140:
+  25:Src/flash.c   **** 
+  26:Src/flash.c   **** 
+  27:Src/flash.c   **** 
+  28:Src/flash.c   **** void loadUpdateFile(unsigned char *Buffer, uint32_t Size)
+  29:Src/flash.c   **** {
+  80              		.loc 1 29 0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84              	.LVL5:
+  85 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  86              	.LCFI0:
+  87              		.cfi_def_cfa_offset 24
+  88              		.cfi_offset 4, -24
+  89              		.cfi_offset 5, -20
+  90              		.cfi_offset 6, -16
+ARM GAS  /tmp/ccUMOEQg.s 			page 3
+
+
+  91              		.cfi_offset 7, -12
+  92              		.cfi_offset 8, -8
+  93              		.cfi_offset 14, -4
+  94              		.loc 1 29 0
+  95 0004 0D46     		mov	r5, r1
+  96 0006 0746     		mov	r7, r0
+  30:Src/flash.c   ****     HAL_StatusTypeDef status;
+  31:Src/flash.c   **** 
+  32:Src/flash.c   ****     HAL_FLASH_Unlock();
+  97              		.loc 1 32 0
+  98 0008 FFF7FEFF 		bl	HAL_FLASH_Unlock
+  99              	.LVL6:
+  33:Src/flash.c   **** 
+  34:Src/flash.c   ****     mprintf("Memory Ereasing...\r\n");
+ 100              		.loc 1 34 0
+ 101 000c 1D48     		ldr	r0, .L16
+ 102 000e FFF7FEFF 		bl	mprintf
+ 103              	.LVL7:
+  35:Src/flash.c   **** 
+  36:Src/flash.c   **** 
+  37:Src/flash.c   **** 
+  38:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
+ 104              		.loc 1 38 0
+ 105 0012 0221     		movs	r1, #2
+ 106 0014 0846     		mov	r0, r1
+ 107 0016 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 108              	.LVL8:
+  39:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
+ 109              		.loc 1 39 0
+ 110 001a 0221     		movs	r1, #2
+ 111 001c 0320     		movs	r0, #3
+ 112 001e FFF7FEFF 		bl	FLASH_Erase_Sector
+ 113              	.LVL9:
+  40:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
+ 114              		.loc 1 40 0
+ 115 0022 0221     		movs	r1, #2
+ 116 0024 0420     		movs	r0, #4
+ 117 0026 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 118              	.LVL10:
+  41:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
+ 119              		.loc 1 41 0
+ 120 002a 0221     		movs	r1, #2
+ 121 002c 0520     		movs	r0, #5
+ 122 002e FFF7FEFF 		bl	FLASH_Erase_Sector
+ 123              	.LVL11:
+  42:Src/flash.c   **** 
+  43:Src/flash.c   **** 
+  44:Src/flash.c   ****     HAL_Delay(50);
+ 124              		.loc 1 44 0
+ 125 0032 3220     		movs	r0, #50
+ 126 0034 FFF7FEFF 		bl	HAL_Delay
+ 127              	.LVL12:
+  45:Src/flash.c   **** 
+  46:Src/flash.c   ****     mprintf("UpdateFile is writing on memory\r\n");
+ 128              		.loc 1 46 0
+ 129 0038 1348     		ldr	r0, .L16+4
+ 130 003a FFF7FEFF 		bl	mprintf
+ARM GAS  /tmp/ccUMOEQg.s 			page 4
+
+
+ 131              	.LVL13:
+ 132              	.LBB2:
+  47:Src/flash.c   **** 
+  48:Src/flash.c   ****     for(int i=0; i<Size; i++)
+ 133              		.loc 1 48 0
+ 134 003e BDB1     		cbz	r5, .L5
+ 135 0040 3D44     		add	r5, r5, r7
+ 136              	.LVL14:
+ 137 0042 124E     		ldr	r6, .L16+8
+ 138 0044 7C1E     		subs	r4, r7, #1
+  49:Src/flash.c   ****     {
+  50:Src/flash.c   ****         status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, APPLICATION_ADDRESS + i , Buffer[i]);
+  51:Src/flash.c   **** 
+  52:Src/flash.c   ****         if(status != HAL_OK)
+  53:Src/flash.c   ****             mprintf("Hal flash error\r\n");
+ 139              		.loc 1 53 0
+ 140 0046 DFF84C80 		ldr	r8, .L16+16
+ 141 004a 013D     		subs	r5, r5, #1
+ 142 004c F61B     		subs	r6, r6, r7
+ 143 004e 01E0     		b	.L7
+ 144              	.LVL15:
+ 145              	.L6:
+  48:Src/flash.c   ****     {
+ 146              		.loc 1 48 0 discriminator 2
+ 147 0050 A542     		cmp	r5, r4
+ 148 0052 0DD0     		beq	.L5
+ 149              	.LVL16:
+ 150              	.L7:
+ 151 0054 3119     		adds	r1, r6, r4
+  50:Src/flash.c   **** 
+ 152              		.loc 1 50 0
+ 153 0056 0020     		movs	r0, #0
+ 154 0058 14F8012F 		ldrb	r2, [r4, #1]!	@ zero_extendqisi2
+ 155              	.LVL17:
+ 156 005c 0023     		movs	r3, #0
+ 157 005e FFF7FEFF 		bl	HAL_FLASH_Program
+ 158              	.LVL18:
+  52:Src/flash.c   ****             mprintf("Hal flash error\r\n");
+ 159              		.loc 1 52 0
+ 160 0062 0028     		cmp	r0, #0
+ 161 0064 F4D0     		beq	.L6
+ 162              		.loc 1 53 0
+ 163 0066 4046     		mov	r0, r8
+ 164              	.LVL19:
+ 165 0068 FFF7FEFF 		bl	mprintf
+ 166              	.LVL20:
+  48:Src/flash.c   ****     {
+ 167              		.loc 1 48 0
+ 168 006c A542     		cmp	r5, r4
+ 169 006e F1D1     		bne	.L7
+ 170              	.LVL21:
+ 171              	.L5:
+ 172              	.LBE2:
+  54:Src/flash.c   **** 
+  55:Src/flash.c   ****     }
+  56:Src/flash.c   **** 
+  57:Src/flash.c   ****     HAL_FLASH_Lock();
+ARM GAS  /tmp/ccUMOEQg.s 			page 5
+
+
+ 173              		.loc 1 57 0
+ 174 0070 FFF7FEFF 		bl	HAL_FLASH_Lock
+ 175              	.LVL22:
+  58:Src/flash.c   **** 
+  59:Src/flash.c   **** 
+  60:Src/flash.c   ****     mprintf("UpdateFile has been writen on memory\r\n");
+ 176              		.loc 1 60 0
+ 177 0074 0648     		ldr	r0, .L16+12
+ 178 0076 FFF7FEFF 		bl	mprintf
+ 179              	.LVL23:
+  61:Src/flash.c   **** 
+  62:Src/flash.c   **** 
+  63:Src/flash.c   ****     HAL_Delay(100);
+ 180              		.loc 1 63 0
+ 181 007a 6420     		movs	r0, #100
+  64:Src/flash.c   **** 
+  65:Src/flash.c   **** }
+ 182              		.loc 1 65 0
+ 183 007c BDE8F041 		pop	{r4, r5, r6, r7, r8, lr}
+ 184              	.LCFI1:
+ 185              		.cfi_restore 14
+ 186              		.cfi_restore 8
+ 187              		.cfi_restore 7
+ 188              		.cfi_restore 6
+ 189              		.cfi_restore 5
+ 190              		.cfi_restore 4
+ 191              		.cfi_def_cfa_offset 0
+ 192              	.LVL24:
+  63:Src/flash.c   **** 
+ 193              		.loc 1 63 0
+ 194 0080 FFF7FEBF 		b	HAL_Delay
+ 195              	.LVL25:
+ 196              	.L17:
+ 197              		.align	2
+ 198              	.L16:
+ 199 0084 00000000 		.word	.LC0
+ 200 0088 18000000 		.word	.LC1
+ 201 008c 01000108 		.word	134283265
+ 202 0090 50000000 		.word	.LC3
+ 203 0094 3C000000 		.word	.LC2
+ 204              		.cfi_endproc
+ 205              	.LFE140:
+ 207              		.section	.text.reWriteFlash,"ax",%progbits
+ 208              		.align	1
+ 209              		.p2align 2,,3
+ 210              		.global	reWriteFlash
+ 211              		.syntax unified
+ 212              		.thumb
+ 213              		.thumb_func
+ 214              		.fpu fpv4-sp-d16
+ 216              	reWriteFlash:
+ 217              	.LFB141:
+  66:Src/flash.c   **** 
+  67:Src/flash.c   **** 
+  68:Src/flash.c   **** void reWriteFlash(unsigned char *Data, size_t Size, long Address)
+  69:Src/flash.c   **** {
+ 218              		.loc 1 69 0
+ARM GAS  /tmp/ccUMOEQg.s 			page 6
+
+
+ 219              		.cfi_startproc
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222              	.LVL26:
+ 223 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 224              	.LCFI2:
+ 225              		.cfi_def_cfa_offset 24
+ 226              		.cfi_offset 3, -24
+ 227              		.cfi_offset 4, -20
+ 228              		.cfi_offset 5, -16
+ 229              		.cfi_offset 6, -12
+ 230              		.cfi_offset 7, -8
+ 231              		.cfi_offset 14, -4
+ 232              		.loc 1 69 0
+ 233 0002 0F46     		mov	r7, r1
+ 234 0004 0546     		mov	r5, r0
+  70:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+ 235              		.loc 1 70 0
+ 236 0006 0221     		movs	r1, #2
+ 237              	.LVL27:
+ 238 0008 0620     		movs	r0, #6
+ 239              	.LVL28:
+  69:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+ 240              		.loc 1 69 0
+ 241 000a 1646     		mov	r6, r2
+ 242              		.loc 1 70 0
+ 243 000c FFF7FEFF 		bl	FLASH_Erase_Sector
+ 244              	.LVL29:
+ 245              	.LBB3:
+  71:Src/flash.c   **** 
+  72:Src/flash.c   ****     for(size_t i = 0; i<Size; i++)
+ 246              		.loc 1 72 0
+ 247 0010 5FB1     		cbz	r7, .L18
+ 248 0012 2C46     		mov	r4, r5
+ 249 0014 3D44     		add	r5, r5, r7
+ 250              	.LVL30:
+ 251 0016 361B     		subs	r6, r6, r4
+ 252              	.LVL31:
+ 253              	.L20:
+ 254 0018 3119     		adds	r1, r6, r4
+  73:Src/flash.c   ****         HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
+ 255              		.loc 1 73 0 discriminator 3
+ 256 001a 14F8012B 		ldrb	r2, [r4], #1	@ zero_extendqisi2
+ 257              	.LVL32:
+ 258 001e 0023     		movs	r3, #0
+ 259 0020 0020     		movs	r0, #0
+ 260 0022 FFF7FEFF 		bl	HAL_FLASH_Program
+ 261              	.LVL33:
+  72:Src/flash.c   ****         HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
+ 262              		.loc 1 72 0 discriminator 3
+ 263 0026 AC42     		cmp	r4, r5
+ 264 0028 F6D1     		bne	.L20
+ 265              	.LVL34:
+ 266              	.L18:
+ 267              	.LBE3:
+  74:Src/flash.c   **** 
+  75:Src/flash.c   **** }
+ARM GAS  /tmp/ccUMOEQg.s 			page 7
+
+
+ 268              		.loc 1 75 0
+ 269 002a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 270              		.cfi_endproc
+ 271              	.LFE141:
+ 273              		.comm	UpdateFile,4,4
+ 274              		.comm	SpiRxData,4,4
+ 275              		.comm	SpiTxData,4,4
+ 276              		.section	.rodata.loadUpdateFile.str1.4,"aMS",%progbits,1
+ 277              		.align	2
+ 278              	.LC0:
+ 279 0000 4D656D6F 		.ascii	"Memory Ereasing...\015\012\000"
+ 279      72792045 
+ 279      72656173 
+ 279      696E672E 
+ 279      2E2E0D0A 
+ 280 0015 000000   		.space	3
+ 281              	.LC1:
+ 282 0018 55706461 		.ascii	"UpdateFile is writing on memory\015\012\000"
+ 282      74654669 
+ 282      6C652069 
+ 282      73207772 
+ 282      6974696E 
+ 283 003a 0000     		.space	2
+ 284              	.LC2:
+ 285 003c 48616C20 		.ascii	"Hal flash error\015\012\000"
+ 285      666C6173 
+ 285      68206572 
+ 285      726F720D 
+ 285      0A00
+ 286 004e 0000     		.space	2
+ 287              	.LC3:
+ 288 0050 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
+ 288      74654669 
+ 288      6C652068 
+ 288      61732062 
+ 288      65656E20 
+ 289              		.text
+ 290              	.Letext0:
+ 291              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 292              		.file 3 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 293              		.file 4 "/usr/include/newlib/sys/lock.h"
+ 294              		.file 5 "/usr/include/newlib/sys/_types.h"
+ 295              		.file 6 "/usr/include/newlib/sys/reent.h"
+ 296              		.file 7 "/usr/include/newlib/sys/_stdint.h"
+ 297              		.file 8 "Inc/main.h"
+ 298              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
+ 299              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 300              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 301              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash.h"
+ 302              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h"
+ 303              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
+ARM GAS  /tmp/ccUMOEQg.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 flash.c
+     /tmp/ccUMOEQg.s:18     .text.writeFlash:0000000000000000 $t
+     /tmp/ccUMOEQg.s:26     .text.writeFlash:0000000000000000 writeFlash
+     /tmp/ccUMOEQg.s:46     .text.readFlash:0000000000000000 $t
+     /tmp/ccUMOEQg.s:54     .text.readFlash:0000000000000000 readFlash
+     /tmp/ccUMOEQg.s:70     .text.loadUpdateFile:0000000000000000 $t
+     /tmp/ccUMOEQg.s:78     .text.loadUpdateFile:0000000000000000 loadUpdateFile
+     /tmp/ccUMOEQg.s:199    .text.loadUpdateFile:0000000000000084 $d
+     /tmp/ccUMOEQg.s:208    .text.reWriteFlash:0000000000000000 $t
+     /tmp/ccUMOEQg.s:216    .text.reWriteFlash:0000000000000000 reWriteFlash
+                            *COM*:0000000000000004 UpdateFile
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 SpiTxData
+     /tmp/ccUMOEQg.s:277    .rodata.loadUpdateFile.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Program
+HAL_FLASH_Unlock
+mprintf
+FLASH_Erase_Sector
+HAL_Delay
+HAL_FLASH_Lock

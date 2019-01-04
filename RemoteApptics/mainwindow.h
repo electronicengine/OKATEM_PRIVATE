@@ -61,6 +61,9 @@ private slots:
 
 signals:
     void progressUpdateFile(int Percent);
+    void setprogessbarvisibility(bool);
+    void setupdatelabelvisibility(bool);
+
     void refreshScreen(QPixmap Pix);
     void clearScreen();
 
@@ -91,6 +94,14 @@ signals:
     void compassLabelClose();
     void compassLabelShow();
     void refreshCompassLabel(const QString &Text);
+
+    void step1PosLabelClose();
+    void step1PosLabelShow();
+    void refreshStep1PosLabel(const QString &Text);
+
+    void step2PosLabelClose();
+    void step2PosLabelShow();
+    void refreshStep2PosLabel(const QString &Text);
 
     void nmeaLabelClose();
     void nmeaLabelShow();

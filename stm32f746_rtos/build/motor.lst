@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccLlIZsg.s 			page 1
+ARM GAS  /tmp/ccNiBJ7X.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -17,10 +17,10 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.comm	motor1,8,4
-  18              		.comm	motor2,8,4
-  19              		.comm	motor3,8,4
-  20              		.comm	motor4,8,4
+  17              		.comm	motor1,12,4
+  18              		.comm	motor2,12,4
+  19              		.comm	motor3,12,4
+  20              		.comm	motor4,12,4
   21              		.comm	servo1,8,4
   22              		.comm	servo2,8,4
   23              		.global	reductor_coefficient
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
   46              	.LCFI0:
   47              		.cfi_def_cfa_offset 8
   48              		.cfi_offset 7, -8
-ARM GAS  /tmp/ccLlIZsg.s 			page 2
+ARM GAS  /tmp/ccNiBJ7X.s 			page 2
 
 
   49              		.cfi_offset 14, -4
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
   22:Src/motor.c   **** 
   23:Src/motor.c   ****         HAL_GPIO_WritePin(ENABLE_STEP1_GPIO_Port, ENABLE_STEP1_PIN,GPIO_PIN_SET);
   96              		.loc 1 23 0
-ARM GAS  /tmp/ccLlIZsg.s 			page 3
+ARM GAS  /tmp/ccNiBJ7X.s 			page 3
 
 
   97 0010 0122     		movs	r2, #1
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  137 0062 022B     		cmp	r3, #2
  138 0064 1DD1     		bne	.L7
   38:Src/motor.c   ****           {
-ARM GAS  /tmp/ccLlIZsg.s 			page 4
+ARM GAS  /tmp/ccNiBJ7X.s 			page 4
 
 
   39:Src/motor.c   **** 
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  179 00b8 4FF40051 		mov	r1, #8192
  180 00bc 7448     		ldr	r0, .L15+8
  181 00be FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  /tmp/ccLlIZsg.s 			page 5
+ARM GAS  /tmp/ccNiBJ7X.s 			page 5
 
 
   53:Src/motor.c   **** 
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  222 0114 4FF40041 		mov	r1, #32768
  223 0118 5D48     		ldr	r0, .L15+8
  224 011a FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  /tmp/ccLlIZsg.s 			page 6
+ARM GAS  /tmp/ccNiBJ7X.s 			page 6
 
 
   67:Src/motor.c   ****               phase  = 1;
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  259              		.loc 1 86 0
  260 0162 0022     		movs	r2, #0
  261 0164 4FF40041 		mov	r1, #32768
-ARM GAS  /tmp/ccLlIZsg.s 			page 7
+ARM GAS  /tmp/ccNiBJ7X.s 			page 7
 
 
  262 0168 4948     		ldr	r0, .L15+8
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  300 01b6 0133     		adds	r3, r3, #1
  301 01b8 344A     		ldr	r2, .L15+4
  302 01ba 1360     		str	r3, [r2]
-ARM GAS  /tmp/ccLlIZsg.s 			page 8
+ARM GAS  /tmp/ccNiBJ7X.s 			page 8
 
 
  303 01bc 40E0     		b	.L9
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  342 0208 1AD1     		bne	.L9
  118:Src/motor.c   ****         {
  119:Src/motor.c   **** 
-ARM GAS  /tmp/ccLlIZsg.s 			page 9
+ARM GAS  /tmp/ccNiBJ7X.s 			page 9
 
 
  120:Src/motor.c   ****             HAL_GPIO_WritePin(STEP1_AI1_GPIO_Port, STEP1_AI1_Pin, GPIO_PIN_SET);
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  381 0258 FFF7FEFF 		bl	HAL_GPIO_WritePin
  136:Src/motor.c   ****         HAL_GPIO_WritePin(STEP1_AI2_GPIO_Port, STEP1_AI2_Pin, GPIO_PIN_RESET);
  382              		.loc 1 136 0
-ARM GAS  /tmp/ccLlIZsg.s 			page 10
+ARM GAS  /tmp/ccNiBJ7X.s 			page 10
 
 
  383 025c 0022     		movs	r2, #0
@@ -577,7 +577,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  409              		.align	2
  410              	.L15:
  411 0288 00080240 		.word	1073874944
- 412 028c 00000000 		.word	phase.9951
+ 412 028c 00000000 		.word	phase.9711
  413 0290 00040240 		.word	1073873920
  414 0294 000C0240 		.word	1073875968
  415              		.cfi_endproc
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  429              		.cfi_startproc
  430              		@ args = 0, pretend = 0, frame = 8
  431              		@ frame_needed = 1, uses_anonymous_args = 0
-ARM GAS  /tmp/ccLlIZsg.s 			page 11
+ARM GAS  /tmp/ccNiBJ7X.s 			page 11
 
 
  432 0000 80B5     		push	{r7, lr}
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  470 003c 4FF40051 		mov	r1, #8192
  471 0040 9348     		ldr	r0, .L28+8
  472 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
-ARM GAS  /tmp/ccLlIZsg.s 			page 12
+ARM GAS  /tmp/ccNiBJ7X.s 			page 12
 
 
  163:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_BI2_GPIO_Port, STEP2_BI2_Pin, GPIO_PIN_RESET);
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  514 009a 0133     		adds	r3, r3, #1
  515 009c 7B4A     		ldr	r2, .L28+4
  516 009e 1360     		str	r3, [r2]
-ARM GAS  /tmp/ccLlIZsg.s 			page 13
+ARM GAS  /tmp/ccNiBJ7X.s 			page 13
 
 
  517 00a0 40E0     		b	.L18
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  190:Src/motor.c   ****           {
  191:Src/motor.c   **** 
  192:Src/motor.c   ****               HAL_GPIO_WritePin(STEP2_AI2_GPIO_Port, STEP2_AI2_Pin, GPIO_PIN_SET);
-ARM GAS  /tmp/ccLlIZsg.s 			page 14
+ARM GAS  /tmp/ccNiBJ7X.s 			page 14
 
 
  557              		.loc 1 192 0
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  593 0138 1B68     		ldr	r3, [r3]
  594 013a 012B     		cmp	r3, #1
  595 013c 1DD1     		bne	.L23
-ARM GAS  /tmp/ccLlIZsg.s 			page 15
+ARM GAS  /tmp/ccNiBJ7X.s 			page 15
 
 
  211:Src/motor.c   ****         {
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  227:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_AI1_GPIO_Port, STEP2_AI1_Pin, GPIO_PIN_RESET);
  634              		.loc 1 227 0
  635 018e 0022     		movs	r2, #0
-ARM GAS  /tmp/ccLlIZsg.s 			page 16
+ARM GAS  /tmp/ccNiBJ7X.s 			page 16
 
 
  636 0190 4FF48061 		mov	r1, #1024
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  675 01e4 2A48     		ldr	r0, .L28+8
  676 01e6 FFF7FEFF 		bl	HAL_GPIO_WritePin
  243:Src/motor.c   ****             HAL_GPIO_WritePin(STEP2_BI1_GPIO_Port, STEP2_BI1_Pin, GPIO_PIN_RESET);
-ARM GAS  /tmp/ccLlIZsg.s 			page 17
+ARM GAS  /tmp/ccNiBJ7X.s 			page 17
 
 
  677              		.loc 1 243 0
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  718 023e 1A60     		str	r2, [r3]
  719              	.L22:
  257:Src/motor.c   **** 
-ARM GAS  /tmp/ccLlIZsg.s 			page 18
+ARM GAS  /tmp/ccNiBJ7X.s 			page 18
 
 
  258:Src/motor.c   ****         }
@@ -1078,67 +1078,66 @@ ARM GAS  /tmp/ccLlIZsg.s 			page 1
  758              		@ sp needed
  759 0286 80BD     		pop	{r7, pc}
  760              	.L29:
-ARM GAS  /tmp/ccLlIZsg.s 			page 19
+ARM GAS  /tmp/ccNiBJ7X.s 			page 19
 
 
  761              		.align	2
  762              	.L28:
  763 0288 00080240 		.word	1073874944
- 764 028c 00000000 		.word	phase.9955
+ 764 028c 00000000 		.word	phase.9715
  765 0290 000C0240 		.word	1073875968
  766              		.cfi_endproc
  767              	.LFE140:
- 769              		.section	.data.phase.9951,"aw",%progbits
+ 769              		.section	.data.phase.9711,"aw",%progbits
  770              		.align	2
- 773              	phase.9951:
+ 773              	phase.9711:
  774 0000 01000000 		.word	1
- 775              		.section	.data.phase.9955,"aw",%progbits
+ 775              		.section	.data.phase.9715,"aw",%progbits
  776              		.align	2
- 779              	phase.9955:
+ 779              	phase.9715:
  780 0000 01000000 		.word	1
  781              		.text
  782              	.Letext0:
- 783              		.file 2 "/usr/include/newlib/machine/_default_types.h"
- 784              		.file 3 "/usr/include/newlib/sys/lock.h"
- 785              		.file 4 "/usr/include/newlib/sys/_types.h"
- 786              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
- 787              		.file 6 "/usr/include/newlib/sys/reent.h"
- 788              		.file 7 "/usr/include/newlib/sys/_stdint.h"
- 789              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
- 790              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 791              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 792              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 793              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
- 794              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 795              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 796              		.file 15 "Inc/motor.h"
- 797              		.file 16 "Inc/tim.h"
-ARM GAS  /tmp/ccLlIZsg.s 			page 20
+ 783              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 784              		.file 3 "Drivers/CMSIS/Include/core_cm7.h"
+ 785              		.file 4 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 786              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 787              		.file 6 "/usr/include/newlib/sys/lock.h"
+ 788              		.file 7 "/usr/include/newlib/sys/_types.h"
+ 789              		.file 8 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 790              		.file 9 "/usr/include/newlib/sys/reent.h"
+ 791              		.file 10 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 792              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 793              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 794              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 795              		.file 14 "Inc/motor.h"
+ 796              		.file 15 "Inc/tim.h"
+ARM GAS  /tmp/ccNiBJ7X.s 			page 20
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 motor.c
-                            *COM*:0000000000000008 motor1
-                            *COM*:0000000000000008 motor2
-                            *COM*:0000000000000008 motor3
-                            *COM*:0000000000000008 motor4
+                            *COM*:000000000000000c motor1
+                            *COM*:000000000000000c motor2
+                            *COM*:000000000000000c motor3
+                            *COM*:000000000000000c motor4
                             *COM*:0000000000000008 servo1
                             *COM*:0000000000000008 servo2
-     /tmp/ccLlIZsg.s:28     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
-     /tmp/ccLlIZsg.s:25     .rodata.reductor_coefficient:0000000000000000 $d
-     /tmp/ccLlIZsg.s:31     .text.motorInit:0000000000000000 $t
-     /tmp/ccLlIZsg.s:38     .text.motorInit:0000000000000000 motorInit
-     /tmp/ccLlIZsg.s:62     .text.motorInit:0000000000000010 $d
-     /tmp/ccLlIZsg.s:67     .text.motor1Drive:0000000000000000 $t
-     /tmp/ccLlIZsg.s:74     .text.motor1Drive:0000000000000000 motor1Drive
-     /tmp/ccLlIZsg.s:411    .text.motor1Drive:0000000000000288 $d
-     /tmp/ccLlIZsg.s:773    .data.phase.9951:0000000000000000 phase.9951
-     /tmp/ccLlIZsg.s:419    .text.motor2Drive:0000000000000000 $t
-     /tmp/ccLlIZsg.s:426    .text.motor2Drive:0000000000000000 motor2Drive
-     /tmp/ccLlIZsg.s:763    .text.motor2Drive:0000000000000288 $d
-     /tmp/ccLlIZsg.s:779    .data.phase.9955:0000000000000000 phase.9955
-     /tmp/ccLlIZsg.s:770    .data.phase.9951:0000000000000000 $d
-     /tmp/ccLlIZsg.s:776    .data.phase.9955:0000000000000000 $d
+     /tmp/ccNiBJ7X.s:28     .rodata.reductor_coefficient:0000000000000000 reductor_coefficient
+     /tmp/ccNiBJ7X.s:25     .rodata.reductor_coefficient:0000000000000000 $d
+     /tmp/ccNiBJ7X.s:31     .text.motorInit:0000000000000000 $t
+     /tmp/ccNiBJ7X.s:38     .text.motorInit:0000000000000000 motorInit
+     /tmp/ccNiBJ7X.s:62     .text.motorInit:0000000000000010 $d
+     /tmp/ccNiBJ7X.s:67     .text.motor1Drive:0000000000000000 $t
+     /tmp/ccNiBJ7X.s:74     .text.motor1Drive:0000000000000000 motor1Drive
+     /tmp/ccNiBJ7X.s:411    .text.motor1Drive:0000000000000288 $d
+     /tmp/ccNiBJ7X.s:773    .data.phase.9711:0000000000000000 phase.9711
+     /tmp/ccNiBJ7X.s:419    .text.motor2Drive:0000000000000000 $t
+     /tmp/ccNiBJ7X.s:426    .text.motor2Drive:0000000000000000 motor2Drive
+     /tmp/ccNiBJ7X.s:763    .text.motor2Drive:0000000000000288 $d
+     /tmp/ccNiBJ7X.s:779    .data.phase.9715:0000000000000000 phase.9715
+     /tmp/ccNiBJ7X.s:770    .data.phase.9711:0000000000000000 $d
+     /tmp/ccNiBJ7X.s:776    .data.phase.9715:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_TIM_Base_Start_IT

@@ -53,10 +53,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
+
+#include <stdint-gcc.h>
+
+
 
 
 /* USER CODE BEGIN Includes */
@@ -130,7 +130,8 @@
 #define SPI_ENTITY_SIZE 108
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
-
+#define CONTROL_DATA_GARBAGE_SIZE 41
+#define GPS_STRING_SIZE 87
 
 typedef struct
 {
@@ -155,8 +156,17 @@ typedef struct
 typedef struct
 {
 
-    unsigned char gps_string[99];
+    unsigned char gps_string[GPS_STRING_SIZE];
+
+    uint32_t step_motor1_step;
+    uint32_t step_motor2_step;
+
+    uint16_t servo_motor1_degree;
+    uint16_t servo_motor2_degree;
+
     SENSOR_DATA sensor_data;
+
+
 
 }ENVIRONMENT_DATA_FORMAT;
 
@@ -165,7 +175,7 @@ typedef struct
     uint32_t total_sequence_number;
     uint32_t current_sequence_number;
 
-    unsigned char data[108];
+    unsigned char data[SPI_ENTITY_SIZE];
 
 
 }UPDATE_FILE_FORMAT;
@@ -173,8 +183,7 @@ typedef struct
 typedef struct
 {
 
-
-    uint8_t garbage1[45];
+    uint8_t garbage1[CONTROL_DATA_GARBAGE_SIZE];
 
     uint8_t mode;
 
@@ -198,7 +207,10 @@ typedef struct
 
     uint8_t calibrate_sensor;
 
-    uint8_t garbage2[45];
+    uint32_t step_motor1_step;
+    uint32_t step_motor2_step;
+
+    uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE];
 
 
 }CONTROL_DATA_FORMAT;

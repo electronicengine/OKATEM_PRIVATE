@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cckPBYSp.s 			page 1
+ARM GAS  /tmp/cccERrER.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -10,33 +10,24 @@ ARM GAS  /tmp/cckPBYSp.s 			page 1
    7              		.eabi_attribute 24, 1
    8              		.eabi_attribute 25, 1
    9              		.eabi_attribute 26, 1
-  10              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 30, 2
   11              		.eabi_attribute 34, 1
   12              		.eabi_attribute 18, 4
   13              		.file	"rtc.c"
   14              		.text
   15              	.Ltext0:
   16              		.cfi_sections	.debug_frame
-  17              		.comm	SpiTxData,4,4
-  18              		.comm	SpiRxData,4,4
-  19              		.comm	UpdateFile,4,4
-  20              		.comm	hrtc,32,4
-  21              		.section	.rodata
-  22              		.align	2
-  23              	.LC0:
-  24 0000 5372632F 		.ascii	"Src/rtc.c\000"
-  24      7274632E 
-  24      6300
-  25              		.section	.text.MX_RTC_Init,"ax",%progbits
-  26              		.align	1
-  27              		.global	MX_RTC_Init
-  28              		.syntax unified
-  29              		.thumb
-  30              		.thumb_func
-  31              		.fpu fpv4-sp-d16
-  33              	MX_RTC_Init:
-  34              	.LFB138:
-  35              		.file 1 "Src/rtc.c"
+  17              		.section	.text.MX_RTC_Init,"ax",%progbits
+  18              		.align	1
+  19              		.p2align 2,,3
+  20              		.global	MX_RTC_Init
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	MX_RTC_Init:
+  27              	.LFB138:
+  28              		.file 1 "Src/rtc.c"
    1:Src/rtc.c     **** /**
    2:Src/rtc.c     ****   ******************************************************************************
    3:Src/rtc.c     ****   * File Name          : RTC.c
@@ -58,9 +49,6 @@ ARM GAS  /tmp/cckPBYSp.s 			page 1
   19:Src/rtc.c     ****   *   2. Redistributions in binary form must reproduce the above copyright notice,
   20:Src/rtc.c     ****   *      this list of conditions and the following disclaimer in the documentation
   21:Src/rtc.c     ****   *      and/or other materials provided with the distribution.
-ARM GAS  /tmp/cckPBYSp.s 			page 2
-
-
   22:Src/rtc.c     ****   *   3. Neither the name of STMicroelectronics nor the names of its contributors
   23:Src/rtc.c     ****   *      may be used to endorse or promote products derived from this software
   24:Src/rtc.c     ****   *      without specific prior written permission.
@@ -70,6 +58,9 @@ ARM GAS  /tmp/cckPBYSp.s 			page 1
   28:Src/rtc.c     ****   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
   29:Src/rtc.c     ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
   30:Src/rtc.c     ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ARM GAS  /tmp/cccERrER.s 			page 2
+
+
   31:Src/rtc.c     ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
   32:Src/rtc.c     ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
   33:Src/rtc.c     ****   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -91,280 +82,252 @@ ARM GAS  /tmp/cckPBYSp.s 			page 1
   49:Src/rtc.c     **** /* RTC init function */
   50:Src/rtc.c     **** void MX_RTC_Init(void)
   51:Src/rtc.c     **** {
-  36              		.loc 1 51 0
-  37              		.cfi_startproc
-  38              		@ args = 0, pretend = 0, frame = 0
-  39              		@ frame_needed = 1, uses_anonymous_args = 0
-  40 0000 80B5     		push	{r7, lr}
-  41              	.LCFI0:
-  42              		.cfi_def_cfa_offset 8
-  43              		.cfi_offset 7, -8
-  44              		.cfi_offset 14, -4
-  45 0002 00AF     		add	r7, sp, #0
-  46              	.LCFI1:
-  47              		.cfi_def_cfa_register 7
+  29              		.loc 1 51 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
   52:Src/rtc.c     **** 
   53:Src/rtc.c     ****     /**Initialize RTC Only 
   54:Src/rtc.c     ****     */
   55:Src/rtc.c     ****   hrtc.Instance = RTC;
-  48              		.loc 1 55 0
-  49 0004 104B     		ldr	r3, .L4
-  50 0006 114A     		ldr	r2, .L4+4
-  51 0008 1A60     		str	r2, [r3]
+  40              		.loc 1 55 0
+  41 0002 0B4B     		ldr	r3, .L6
   56:Src/rtc.c     ****   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-  52              		.loc 1 56 0
-  53 000a 0F4B     		ldr	r3, .L4
-  54 000c 0022     		movs	r2, #0
-  55 000e 5A60     		str	r2, [r3, #4]
+  42              		.loc 1 56 0
+  43 0004 0022     		movs	r2, #0
   57:Src/rtc.c     ****   hrtc.Init.AsynchPrediv = 127;
-  56              		.loc 1 57 0
-ARM GAS  /tmp/cckPBYSp.s 			page 3
-
-
-  57 0010 0D4B     		ldr	r3, .L4
-  58 0012 7F22     		movs	r2, #127
-  59 0014 9A60     		str	r2, [r3, #8]
+  44              		.loc 1 57 0
+  45 0006 7F24     		movs	r4, #127
+  55:Src/rtc.c     ****   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  46              		.loc 1 55 0
+  47 0008 0A4D     		ldr	r5, .L6+4
   58:Src/rtc.c     ****   hrtc.Init.SynchPrediv = 255;
-  60              		.loc 1 58 0
-  61 0016 0C4B     		ldr	r3, .L4
-  62 0018 FF22     		movs	r2, #255
-  63 001a DA60     		str	r2, [r3, #12]
+  48              		.loc 1 58 0
+  49 000a FF21     		movs	r1, #255
   59:Src/rtc.c     ****   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  64              		.loc 1 59 0
-  65 001c 0A4B     		ldr	r3, .L4
-  66 001e 0022     		movs	r2, #0
-  67 0020 1A61     		str	r2, [r3, #16]
   60:Src/rtc.c     ****   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  68              		.loc 1 60 0
-  69 0022 094B     		ldr	r3, .L4
-  70 0024 0022     		movs	r2, #0
-  71 0026 5A61     		str	r2, [r3, #20]
   61:Src/rtc.c     ****   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  72              		.loc 1 61 0
-  73 0028 074B     		ldr	r3, .L4
-  74 002a 0022     		movs	r2, #0
-  75 002c 9A61     		str	r2, [r3, #24]
   62:Src/rtc.c     ****   if (HAL_RTC_Init(&hrtc) != HAL_OK)
-  76              		.loc 1 62 0
-  77 002e 0648     		ldr	r0, .L4
-  78 0030 FFF7FEFF 		bl	HAL_RTC_Init
-  79 0034 0346     		mov	r3, r0
-  80 0036 002B     		cmp	r3, #0
-  81 0038 03D0     		beq	.L3
+  50              		.loc 1 62 0
+  51 000c 1846     		mov	r0, r3
+  55:Src/rtc.c     ****   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+ARM GAS  /tmp/cccERrER.s 			page 3
+
+
+  52              		.loc 1 55 0
+  53 000e 1D60     		str	r5, [r3]
+  56:Src/rtc.c     ****   hrtc.Init.AsynchPrediv = 127;
+  54              		.loc 1 56 0
+  55 0010 5A60     		str	r2, [r3, #4]
+  61:Src/rtc.c     ****   if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  56              		.loc 1 61 0
+  57 0012 9A61     		str	r2, [r3, #24]
+  58:Src/rtc.c     ****   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  58              		.loc 1 58 0
+  59 0014 C3E90241 		strd	r4, r1, [r3, #8]
+  60:Src/rtc.c     ****   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  60              		.loc 1 60 0
+  61 0018 C3E90422 		strd	r2, r2, [r3, #16]
+  62              		.loc 1 62 0
+  63 001c FFF7FEFF 		bl	HAL_RTC_Init
+  64              	.LVL0:
+  65 0020 00B9     		cbnz	r0, .L5
   63:Src/rtc.c     ****   {
   64:Src/rtc.c     ****     _Error_Handler(__FILE__, __LINE__);
-  82              		.loc 1 64 0
-  83 003a 4021     		movs	r1, #64
-  84 003c 0448     		ldr	r0, .L4+8
-  85 003e FFF7FEFF 		bl	_Error_Handler
-  86              	.L3:
   65:Src/rtc.c     ****   }
   66:Src/rtc.c     **** 
   67:Src/rtc.c     **** }
-  87              		.loc 1 67 0
-  88 0042 00BF     		nop
-  89 0044 80BD     		pop	{r7, pc}
-  90              	.L5:
-  91 0046 00BF     		.align	2
-  92              	.L4:
-  93 0048 00000000 		.word	hrtc
-  94 004c 00280040 		.word	1073752064
-  95 0050 00000000 		.word	.LC0
-  96              		.cfi_endproc
-  97              	.LFE138:
-  99              		.section	.text.HAL_RTC_MspInit,"ax",%progbits
- 100              		.align	1
- 101              		.global	HAL_RTC_MspInit
- 102              		.syntax unified
- 103              		.thumb
- 104              		.thumb_func
-ARM GAS  /tmp/cckPBYSp.s 			page 4
+  66              		.loc 1 67 0
+  67 0022 38BD     		pop	{r3, r4, r5, pc}
+  68              	.L5:
+  64:Src/rtc.c     ****   }
+  69              		.loc 1 64 0
+  70 0024 4021     		movs	r1, #64
+  71 0026 0448     		ldr	r0, .L6+8
+  72              		.loc 1 67 0
+  73 0028 BDE83840 		pop	{r3, r4, r5, lr}
+  74              	.LCFI1:
+  75              		.cfi_restore 14
+  76              		.cfi_restore 5
+  77              		.cfi_restore 4
+  78              		.cfi_restore 3
+  79              		.cfi_def_cfa_offset 0
+  64:Src/rtc.c     ****   }
+  80              		.loc 1 64 0
+  81 002c FFF7FEBF 		b	_Error_Handler
+  82              	.LVL1:
+  83              	.L7:
+  84              		.align	2
+  85              	.L6:
+  86 0030 00000000 		.word	hrtc
+  87 0034 00280040 		.word	1073752064
+  88 0038 00000000 		.word	.LC0
+  89              		.cfi_endproc
+  90              	.LFE138:
+  92              		.section	.text.HAL_RTC_MspInit,"ax",%progbits
+  93              		.align	1
+  94              		.p2align 2,,3
+  95              		.global	HAL_RTC_MspInit
+  96              		.syntax unified
+  97              		.thumb
+  98              		.thumb_func
+ARM GAS  /tmp/cccERrER.s 			page 4
 
 
- 105              		.fpu fpv4-sp-d16
- 107              	HAL_RTC_MspInit:
- 108              	.LFB139:
+  99              		.fpu fpv4-sp-d16
+ 101              	HAL_RTC_MspInit:
+ 102              	.LFB139:
   68:Src/rtc.c     **** 
   69:Src/rtc.c     **** void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
   70:Src/rtc.c     **** {
- 109              		.loc 1 70 0
- 110              		.cfi_startproc
- 111              		@ args = 0, pretend = 0, frame = 8
- 112              		@ frame_needed = 1, uses_anonymous_args = 0
- 113              		@ link register save eliminated.
- 114 0000 80B4     		push	{r7}
- 115              	.LCFI2:
- 116              		.cfi_def_cfa_offset 4
- 117              		.cfi_offset 7, -4
- 118 0002 83B0     		sub	sp, sp, #12
- 119              	.LCFI3:
- 120              		.cfi_def_cfa_offset 16
- 121 0004 00AF     		add	r7, sp, #0
- 122              	.LCFI4:
- 123              		.cfi_def_cfa_register 7
- 124 0006 7860     		str	r0, [r7, #4]
+ 103              		.loc 1 70 0
+ 104              		.cfi_startproc
+ 105              		@ args = 0, pretend = 0, frame = 0
+ 106              		@ frame_needed = 0, uses_anonymous_args = 0
+ 107              		@ link register save eliminated.
+ 108              	.LVL2:
   71:Src/rtc.c     **** 
   72:Src/rtc.c     ****   if(rtcHandle->Instance==RTC)
- 125              		.loc 1 72 0
- 126 0008 7B68     		ldr	r3, [r7, #4]
- 127 000a 1B68     		ldr	r3, [r3]
- 128 000c 074A     		ldr	r2, .L9
- 129 000e 9342     		cmp	r3, r2
- 130 0010 05D1     		bne	.L8
+ 109              		.loc 1 72 0
+ 110 0000 0268     		ldr	r2, [r0]
+ 111 0002 044B     		ldr	r3, .L10
+ 112 0004 9A42     		cmp	r2, r3
+ 113 0006 04D1     		bne	.L8
   73:Src/rtc.c     ****   {
   74:Src/rtc.c     ****   /* USER CODE BEGIN RTC_MspInit 0 */
   75:Src/rtc.c     **** 
   76:Src/rtc.c     ****   /* USER CODE END RTC_MspInit 0 */
   77:Src/rtc.c     ****     /* RTC clock enable */
   78:Src/rtc.c     ****     __HAL_RCC_RTC_ENABLE();
- 131              		.loc 1 78 0
- 132 0012 074B     		ldr	r3, .L9+4
- 133 0014 1B6F     		ldr	r3, [r3, #112]
- 134 0016 064A     		ldr	r2, .L9+4
- 135 0018 43F40043 		orr	r3, r3, #32768
- 136 001c 1367     		str	r3, [r2, #112]
- 137              	.L8:
+ 114              		.loc 1 78 0
+ 115 0008 034A     		ldr	r2, .L10+4
+ 116 000a 136F     		ldr	r3, [r2, #112]
+ 117 000c 43F40043 		orr	r3, r3, #32768
+ 118 0010 1367     		str	r3, [r2, #112]
+ 119              	.L8:
   79:Src/rtc.c     ****   /* USER CODE BEGIN RTC_MspInit 1 */
   80:Src/rtc.c     **** 
   81:Src/rtc.c     ****   /* USER CODE END RTC_MspInit 1 */
   82:Src/rtc.c     ****   }
   83:Src/rtc.c     **** }
- 138              		.loc 1 83 0
- 139 001e 00BF     		nop
- 140 0020 0C37     		adds	r7, r7, #12
- 141              	.LCFI5:
- 142              		.cfi_def_cfa_offset 4
- 143 0022 BD46     		mov	sp, r7
- 144              	.LCFI6:
- 145              		.cfi_def_cfa_register 13
- 146              		@ sp needed
-ARM GAS  /tmp/cckPBYSp.s 			page 5
-
-
- 147 0024 5DF8047B 		ldr	r7, [sp], #4
- 148              	.LCFI7:
- 149              		.cfi_restore 7
- 150              		.cfi_def_cfa_offset 0
- 151 0028 7047     		bx	lr
- 152              	.L10:
- 153 002a 00BF     		.align	2
- 154              	.L9:
- 155 002c 00280040 		.word	1073752064
- 156 0030 00380240 		.word	1073887232
- 157              		.cfi_endproc
- 158              	.LFE139:
- 160              		.section	.text.HAL_RTC_MspDeInit,"ax",%progbits
- 161              		.align	1
- 162              		.global	HAL_RTC_MspDeInit
- 163              		.syntax unified
- 164              		.thumb
- 165              		.thumb_func
- 166              		.fpu fpv4-sp-d16
- 168              	HAL_RTC_MspDeInit:
- 169              	.LFB140:
+ 120              		.loc 1 83 0
+ 121 0012 7047     		bx	lr
+ 122              	.L11:
+ 123              		.align	2
+ 124              	.L10:
+ 125 0014 00280040 		.word	1073752064
+ 126 0018 00380240 		.word	1073887232
+ 127              		.cfi_endproc
+ 128              	.LFE139:
+ 130              		.section	.text.HAL_RTC_MspDeInit,"ax",%progbits
+ 131              		.align	1
+ 132              		.p2align 2,,3
+ 133              		.global	HAL_RTC_MspDeInit
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 137              		.fpu fpv4-sp-d16
+ 139              	HAL_RTC_MspDeInit:
+ 140              	.LFB140:
   84:Src/rtc.c     **** 
   85:Src/rtc.c     **** void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
+ARM GAS  /tmp/cccERrER.s 			page 5
+
+
   86:Src/rtc.c     **** {
- 170              		.loc 1 86 0
- 171              		.cfi_startproc
- 172              		@ args = 0, pretend = 0, frame = 8
- 173              		@ frame_needed = 1, uses_anonymous_args = 0
- 174              		@ link register save eliminated.
- 175 0000 80B4     		push	{r7}
- 176              	.LCFI8:
- 177              		.cfi_def_cfa_offset 4
- 178              		.cfi_offset 7, -4
- 179 0002 83B0     		sub	sp, sp, #12
- 180              	.LCFI9:
- 181              		.cfi_def_cfa_offset 16
- 182 0004 00AF     		add	r7, sp, #0
- 183              	.LCFI10:
- 184              		.cfi_def_cfa_register 7
- 185 0006 7860     		str	r0, [r7, #4]
+ 141              		.loc 1 86 0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		@ link register save eliminated.
+ 146              	.LVL3:
   87:Src/rtc.c     **** 
   88:Src/rtc.c     ****   if(rtcHandle->Instance==RTC)
- 186              		.loc 1 88 0
- 187 0008 7B68     		ldr	r3, [r7, #4]
- 188 000a 1B68     		ldr	r3, [r3]
- 189 000c 074A     		ldr	r2, .L14
- 190 000e 9342     		cmp	r3, r2
- 191 0010 05D1     		bne	.L13
+ 147              		.loc 1 88 0
+ 148 0000 0268     		ldr	r2, [r0]
+ 149 0002 044B     		ldr	r3, .L14
+ 150 0004 9A42     		cmp	r2, r3
+ 151 0006 04D1     		bne	.L12
   89:Src/rtc.c     ****   {
   90:Src/rtc.c     ****   /* USER CODE BEGIN RTC_MspDeInit 0 */
   91:Src/rtc.c     **** 
   92:Src/rtc.c     ****   /* USER CODE END RTC_MspDeInit 0 */
   93:Src/rtc.c     ****     /* Peripheral clock disable */
   94:Src/rtc.c     ****     __HAL_RCC_RTC_DISABLE();
- 192              		.loc 1 94 0
- 193 0012 074B     		ldr	r3, .L14+4
- 194 0014 1B6F     		ldr	r3, [r3, #112]
-ARM GAS  /tmp/cckPBYSp.s 			page 6
-
-
- 195 0016 064A     		ldr	r2, .L14+4
- 196 0018 23F40043 		bic	r3, r3, #32768
- 197 001c 1367     		str	r3, [r2, #112]
- 198              	.L13:
+ 152              		.loc 1 94 0
+ 153 0008 034A     		ldr	r2, .L14+4
+ 154 000a 136F     		ldr	r3, [r2, #112]
+ 155 000c 23F40043 		bic	r3, r3, #32768
+ 156 0010 1367     		str	r3, [r2, #112]
+ 157              	.L12:
   95:Src/rtc.c     ****   /* USER CODE BEGIN RTC_MspDeInit 1 */
   96:Src/rtc.c     **** 
   97:Src/rtc.c     ****   /* USER CODE END RTC_MspDeInit 1 */
   98:Src/rtc.c     ****   }
   99:Src/rtc.c     **** } 
- 199              		.loc 1 99 0
- 200 001e 00BF     		nop
- 201 0020 0C37     		adds	r7, r7, #12
- 202              	.LCFI11:
- 203              		.cfi_def_cfa_offset 4
- 204 0022 BD46     		mov	sp, r7
- 205              	.LCFI12:
- 206              		.cfi_def_cfa_register 13
- 207              		@ sp needed
- 208 0024 5DF8047B 		ldr	r7, [sp], #4
- 209              	.LCFI13:
- 210              		.cfi_restore 7
- 211              		.cfi_def_cfa_offset 0
- 212 0028 7047     		bx	lr
- 213              	.L15:
- 214 002a 00BF     		.align	2
- 215              	.L14:
- 216 002c 00280040 		.word	1073752064
- 217 0030 00380240 		.word	1073887232
- 218              		.cfi_endproc
- 219              	.LFE140:
- 221              		.text
- 222              	.Letext0:
- 223              		.file 2 "/usr/include/newlib/machine/_default_types.h"
- 224              		.file 3 "/usr/include/newlib/sys/lock.h"
- 225              		.file 4 "/usr/include/newlib/sys/_types.h"
- 226              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
- 227              		.file 6 "/usr/include/newlib/sys/reent.h"
- 228              		.file 7 "/usr/include/newlib/sys/_stdint.h"
- 229              		.file 8 "Inc/main.h"
- 230              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
- 231              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 232              		.file 11 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 233              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 234              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rtc.h"
- 235              		.file 14 "Inc/rtc.h"
-ARM GAS  /tmp/cckPBYSp.s 			page 7
+ 158              		.loc 1 99 0
+ 159 0012 7047     		bx	lr
+ 160              	.L15:
+ 161              		.align	2
+ 162              	.L14:
+ 163 0014 00280040 		.word	1073752064
+ 164 0018 00380240 		.word	1073887232
+ 165              		.cfi_endproc
+ 166              	.LFE140:
+ 168              		.comm	hrtc,32,4
+ 169              		.comm	UpdateFile,4,4
+ 170              		.comm	SpiRxData,4,4
+ 171              		.comm	SpiTxData,4,4
+ 172              		.section	.rodata.MX_RTC_Init.str1.4,"aMS",%progbits,1
+ 173              		.align	2
+ 174              	.LC0:
+ 175 0000 5372632F 		.ascii	"Src/rtc.c\000"
+ 175      7274632E 
+ 175      6300
+ 176              		.text
+ 177              	.Letext0:
+ 178              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 179              		.file 3 "/usr/include/newlib/sys/lock.h"
+ 180              		.file 4 "/usr/include/newlib/sys/_types.h"
+ 181              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 182              		.file 6 "/usr/include/newlib/sys/reent.h"
+ARM GAS  /tmp/cccERrER.s 			page 6
+
+
+ 183              		.file 7 "/usr/include/newlib/sys/_stdint.h"
+ 184              		.file 8 "Inc/main.h"
+ 185              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
+ 186              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 187              		.file 11 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 188              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 189              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rtc.h"
+ 190              		.file 14 "Inc/rtc.h"
+ARM GAS  /tmp/cccERrER.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 rtc.c
-                            *COM*:0000000000000004 SpiTxData
-                            *COM*:0000000000000004 SpiRxData
-                            *COM*:0000000000000004 UpdateFile
+     /tmp/cccERrER.s:18     .text.MX_RTC_Init:0000000000000000 $t
+     /tmp/cccERrER.s:26     .text.MX_RTC_Init:0000000000000000 MX_RTC_Init
+     /tmp/cccERrER.s:86     .text.MX_RTC_Init:0000000000000030 $d
                             *COM*:0000000000000020 hrtc
-     /tmp/cckPBYSp.s:22     .rodata:0000000000000000 $d
-     /tmp/cckPBYSp.s:26     .text.MX_RTC_Init:0000000000000000 $t
-     /tmp/cckPBYSp.s:33     .text.MX_RTC_Init:0000000000000000 MX_RTC_Init
-     /tmp/cckPBYSp.s:93     .text.MX_RTC_Init:0000000000000048 $d
-     /tmp/cckPBYSp.s:100    .text.HAL_RTC_MspInit:0000000000000000 $t
-     /tmp/cckPBYSp.s:107    .text.HAL_RTC_MspInit:0000000000000000 HAL_RTC_MspInit
-     /tmp/cckPBYSp.s:155    .text.HAL_RTC_MspInit:000000000000002c $d
-     /tmp/cckPBYSp.s:161    .text.HAL_RTC_MspDeInit:0000000000000000 $t
-     /tmp/cckPBYSp.s:168    .text.HAL_RTC_MspDeInit:0000000000000000 HAL_RTC_MspDeInit
-     /tmp/cckPBYSp.s:216    .text.HAL_RTC_MspDeInit:000000000000002c $d
+     /tmp/cccERrER.s:93     .text.HAL_RTC_MspInit:0000000000000000 $t
+     /tmp/cccERrER.s:101    .text.HAL_RTC_MspInit:0000000000000000 HAL_RTC_MspInit
+     /tmp/cccERrER.s:125    .text.HAL_RTC_MspInit:0000000000000014 $d
+     /tmp/cccERrER.s:131    .text.HAL_RTC_MspDeInit:0000000000000000 $t
+     /tmp/cccERrER.s:139    .text.HAL_RTC_MspDeInit:0000000000000000 HAL_RTC_MspDeInit
+     /tmp/cccERrER.s:163    .text.HAL_RTC_MspDeInit:0000000000000014 $d
+                            *COM*:0000000000000004 UpdateFile
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 SpiTxData
+     /tmp/cccERrER.s:173    .rodata.MX_RTC_Init.str1.4:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_RTC_Init

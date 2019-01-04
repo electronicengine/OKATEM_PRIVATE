@@ -70,6 +70,11 @@ C_SOURCES = \
   Src/stm32f7xx_hal_msp.c \
   Src/stm32f7xx_hal_timebase_TIM.c \
   Src/sfp.c \
+  Src/flash.c \
+  Src/gpsops.c \
+  Src/spiops.c \
+  Src/sensorops.c \
+  Src/motorops.c \
   Src/freertos.c  
 ASM_SOURCES = \
   startup/startup_stm32f746xx.s

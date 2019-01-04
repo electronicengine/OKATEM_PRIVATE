@@ -97,7 +97,6 @@ int main()
         getEnvironment();
         shareEnvironment();
 
-
         ret = checkIfUdpData();
 
         if(ret != SUCCESS)
@@ -162,7 +161,6 @@ int init()
     ret = initLcd();
     if(ret == FAIL)
         return FAIL;
-
 
     return SUCCESS;
 

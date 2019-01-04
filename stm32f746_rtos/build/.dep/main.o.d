@@ -45,7 +45,7 @@ build/main.o: Src/main.c Inc/main.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
- /usr/include/newlib/stdlib.h /usr/include/newlib/machine/stdlib.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h \
  Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  Inc/FreeRTOSConfig.h \
@@ -67,7 +67,8 @@ build/main.o: Src/main.c Inc/main.h \
  Inc/freertos.h /usr/include/newlib/string.h \
  /usr/include/newlib/sys/string.h Inc/gps.h Inc/sensor.h \
  /usr/include/newlib/inttypes.h Inc/motor.h Inc/usart.h Inc/spi.h \
- Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h
+ Inc/sfp.h Inc/tim.h Inc/gpsops.h Inc/freertos.h \
+ /usr/include/newlib/stdlib.h /usr/include/newlib/machine/stdlib.h
 
 Inc/main.h:
 
@@ -187,9 +188,7 @@ Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h:
 
 Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
 
-/usr/include/newlib/stdlib.h:
-
-/usr/include/newlib/machine/stdlib.h:
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h:
 
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h:
 
@@ -264,3 +263,7 @@ Inc/tim.h:
 Inc/gpsops.h:
 
 Inc/freertos.h:
+
+/usr/include/newlib/stdlib.h:
+
+/usr/include/newlib/machine/stdlib.h:

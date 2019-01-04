@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
     connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
     connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(this, SIGNAL(setprogessbarvisibility(bool)), ui->progressBar, SLOT(setVisible(bool)));
+    connect(this, SIGNAL(setupdatelabelvisibility(bool)), ui->update_label, SLOT(setVisible(bool)));
 
     connect(this, SIGNAL(refreshScreen(QPixmap)), ui->frame_label, SLOT(setPixmap(QPixmap)));
     connect(this, SIGNAL(screenClose()), ui->frame_label, SLOT(close()));
@@ -31,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(refreshAltitudeLabel(QString)), ui->altitude_label, SLOT(setText(QString)));
     connect(this, SIGNAL(refreshCompassLabel(QString)), ui->compass_label, SLOT(setText(QString)));
     connect(this, SIGNAL(refreshNMEALabel(QString)), ui->nmea_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshStep1PosLabel(QString)), ui->step1_pos_label, SLOT(setText(QString)));
+    connect(this, SIGNAL(refreshStep2PosLabel(QString)), ui->step2_pos_label, SLOT(setText(QString)));
+
 
     connect(this, SIGNAL(statusLabelClose()), ui->status_label, SLOT(close()));
     connect(this, SIGNAL(statusLabelShow()), ui->status_label, SLOT(show()));
@@ -48,12 +53,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(compassLabelShow()), ui->compass_label, SLOT(show()));
     connect(this, SIGNAL(nmeaLabelClose()), ui->nmea_label, SLOT(close()));
     connect(this, SIGNAL(nmeaLabelShow()), ui->nmea_label, SLOT(show()));
+    connect(this, SIGNAL(step1PosLabelClose()), ui->nmea_label, SLOT(close()));
+    connect(this, SIGNAL(step1PosLabelShow()), ui->nmea_label, SLOT(show()));
+    connect(this, SIGNAL(step2PosLabelClose()), ui->nmea_label, SLOT(close()));
+    connect(this, SIGNAL(step2PosLabelShow()), ui->nmea_label, SLOT(show()));
 
     pix.load("hyperion.jpg");
     ui->frame_label->setPixmap(pix);
 
-    ui->progressBar->setVisible(false);
-    ui->update_label->setVisible(false);
+    emit setprogessbarvisibility(false);
+    emit setupdatelabelvisibility(false);
 
     std::thread controlThread(&MainWindow::controlThread, this);
     controlThread.detach();
@@ -136,6 +145,8 @@ void MainWindow::deployPanel()
         emit altitudeLabelClose();
         emit compassLabelClose();
         emit nmeaLabelClose();
+        emit step1PosLabelClose();
+        emit step2PosLabelClose();
 
         usleep(1000);
 
@@ -147,6 +158,8 @@ void MainWindow::deployPanel()
         emit altitudeLabelShow();
         emit compassLabelShow();
         emit nmeaLabelShow();
+        emit step1PosLabelShow();
+        emit step2PosLabelShow();
 
         usleep(1000);
 
@@ -160,6 +173,9 @@ void MainWindow::deployPanel()
     emit refreshAltitudeLabel(QString::number(gmEnvironmentInfo.sensor_data.altitude));
     emit refreshCompassLabel(QString::number(gmEnvironmentInfo.sensor_data.compass_degree));
     emit refreshNMEALabel(QString(gmEnvironmentInfo.gps_string.c_str()));
+    emit refreshStep1PosLabel(QString::number(gmEnvironmentInfo.step_motor1_step));
+    emit refreshStep2PosLabel(QString::number(gmEnvironmentInfo.step_motor2_step));
+
 
 }
 
@@ -181,6 +197,7 @@ void MainWindow::setControlPanel(bool Value)
     ui->speed_slider->setEnabled(Value);
     ui->servo1_slider->setEnabled(Value);
     ui->servo2_slider->setEnabled(Value);
+    ui->refresh_button->setEnabled(Value);
 
 }
 
@@ -235,20 +252,25 @@ void MainWindow::controlThread()
 
                 if(percent == 1)
                 {
-                     ui->progressBar->setVisible(true);
-                     ui->update_label->setVisible(true);
+                     emit setprogessbarvisibility(true);
+                     emit setupdatelabelvisibility(true);
+                     setControlPanel(false);
+
+
                 }
 
                 emit progressUpdateFile(percent);
 
             }else if(percent >= 100 && update_done == false)
             {
-                ui->progressBar->setVisible(false);
-                ui->update_label->setVisible(false);
+                emit setprogessbarvisibility(false);
+                emit setupdatelabelvisibility(false);
 
                 emit progressUpdateFile(percent);
 
                 update_done = true;
+
+                setControlPanel(true);
 
                 QMessageBox::information(this,"Upgrade Done","The FirmWare Upgrading has been finished Succesfully!");
             }

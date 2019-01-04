@@ -48,6 +48,7 @@ build/list.o: Middlewares/Third_Party/FreeRTOS/Source/list.c \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
@@ -178,6 +179,8 @@ Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h:
 Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h:
 
 Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h:
+
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h:
 
 Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
 

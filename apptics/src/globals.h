@@ -129,7 +129,7 @@ void printAll(const TAIL&... tail)
 
     std::cout << package << std::endl;
 
-    writeLog(package);
+//    writeLog(package);
 
 
 

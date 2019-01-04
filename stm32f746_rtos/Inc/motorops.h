@@ -11,9 +11,16 @@
 #include "stm32f7xx_hal.h"
 #include "main.h"
 #include <string.h>
+#include "freertos.h"
+
 
 
 void motorOps(void const * argument);
+void driveStepMotors();
+void driveServoMotors();
+void saveMotorPositions();
+void loadMotorPositions();
+
 
 #ifdef __cplusplus
 }
