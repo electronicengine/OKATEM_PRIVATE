@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccUMOEQg.s 			page 1
+ARM GAS  /tmp/ccoZlwqA.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccUMOEQg.s 			page 1
   45 000a 00BF     		.section	.text.readFlash,"ax",%progbits
   46              		.align	1
   47              		.p2align 2,,3
-ARM GAS  /tmp/ccUMOEQg.s 			page 2
+ARM GAS  /tmp/ccoZlwqA.s 			page 2
 
 
   48              		.global	readFlash
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccUMOEQg.s 			page 1
   88              		.cfi_offset 4, -24
   89              		.cfi_offset 5, -20
   90              		.cfi_offset 6, -16
-ARM GAS  /tmp/ccUMOEQg.s 			page 3
+ARM GAS  /tmp/ccoZlwqA.s 			page 3
 
 
   91              		.cfi_offset 7, -12
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccUMOEQg.s 			page 1
  128              		.loc 1 46 0
  129 0038 1348     		ldr	r0, .L16+4
  130 003a FFF7FEFF 		bl	mprintf
-ARM GAS  /tmp/ccUMOEQg.s 			page 4
+ARM GAS  /tmp/ccoZlwqA.s 			page 4
 
 
  131              	.LVL13:
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccUMOEQg.s 			page 1
   55:Src/flash.c   ****     }
   56:Src/flash.c   **** 
   57:Src/flash.c   ****     HAL_FLASH_Lock();
-ARM GAS  /tmp/ccUMOEQg.s 			page 5
+ARM GAS  /tmp/ccoZlwqA.s 			page 5
 
 
  173              		.loc 1 57 0
@@ -283,153 +283,72 @@ ARM GAS  /tmp/ccUMOEQg.s 			page 1
  203 0094 3C000000 		.word	.LC2
  204              		.cfi_endproc
  205              	.LFE140:
- 207              		.section	.text.reWriteFlash,"ax",%progbits
- 208              		.align	1
- 209              		.p2align 2,,3
- 210              		.global	reWriteFlash
- 211              		.syntax unified
- 212              		.thumb
- 213              		.thumb_func
- 214              		.fpu fpv4-sp-d16
- 216              	reWriteFlash:
- 217              	.LFB141:
-  66:Src/flash.c   **** 
-  67:Src/flash.c   **** 
-  68:Src/flash.c   **** void reWriteFlash(unsigned char *Data, size_t Size, long Address)
-  69:Src/flash.c   **** {
- 218              		.loc 1 69 0
-ARM GAS  /tmp/ccUMOEQg.s 			page 6
+ 207              		.comm	UpdateFile,4,4
+ 208              		.comm	SpiRxData,4,4
+ 209              		.comm	SpiTxData,4,4
+ 210              		.section	.rodata.loadUpdateFile.str1.4,"aMS",%progbits,1
+ 211              		.align	2
+ 212              	.LC0:
+ 213 0000 4D656D6F 		.ascii	"Memory Ereasing...\015\012\000"
+ 213      72792045 
+ 213      72656173 
+ 213      696E672E 
+ 213      2E2E0D0A 
+ 214 0015 000000   		.space	3
+ 215              	.LC1:
+ 216 0018 55706461 		.ascii	"UpdateFile is writing on memory\015\012\000"
+ 216      74654669 
+ARM GAS  /tmp/ccoZlwqA.s 			page 6
 
 
- 219              		.cfi_startproc
- 220              		@ args = 0, pretend = 0, frame = 0
- 221              		@ frame_needed = 0, uses_anonymous_args = 0
- 222              	.LVL26:
- 223 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
- 224              	.LCFI2:
- 225              		.cfi_def_cfa_offset 24
- 226              		.cfi_offset 3, -24
- 227              		.cfi_offset 4, -20
- 228              		.cfi_offset 5, -16
- 229              		.cfi_offset 6, -12
- 230              		.cfi_offset 7, -8
- 231              		.cfi_offset 14, -4
- 232              		.loc 1 69 0
- 233 0002 0F46     		mov	r7, r1
- 234 0004 0546     		mov	r5, r0
-  70:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
- 235              		.loc 1 70 0
- 236 0006 0221     		movs	r1, #2
- 237              	.LVL27:
- 238 0008 0620     		movs	r0, #6
- 239              	.LVL28:
-  69:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
- 240              		.loc 1 69 0
- 241 000a 1646     		mov	r6, r2
- 242              		.loc 1 70 0
- 243 000c FFF7FEFF 		bl	FLASH_Erase_Sector
- 244              	.LVL29:
- 245              	.LBB3:
-  71:Src/flash.c   **** 
-  72:Src/flash.c   ****     for(size_t i = 0; i<Size; i++)
- 246              		.loc 1 72 0
- 247 0010 5FB1     		cbz	r7, .L18
- 248 0012 2C46     		mov	r4, r5
- 249 0014 3D44     		add	r5, r5, r7
- 250              	.LVL30:
- 251 0016 361B     		subs	r6, r6, r4
- 252              	.LVL31:
- 253              	.L20:
- 254 0018 3119     		adds	r1, r6, r4
-  73:Src/flash.c   ****         HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
- 255              		.loc 1 73 0 discriminator 3
- 256 001a 14F8012B 		ldrb	r2, [r4], #1	@ zero_extendqisi2
- 257              	.LVL32:
- 258 001e 0023     		movs	r3, #0
- 259 0020 0020     		movs	r0, #0
- 260 0022 FFF7FEFF 		bl	HAL_FLASH_Program
- 261              	.LVL33:
-  72:Src/flash.c   ****         HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
- 262              		.loc 1 72 0 discriminator 3
- 263 0026 AC42     		cmp	r4, r5
- 264 0028 F6D1     		bne	.L20
- 265              	.LVL34:
- 266              	.L18:
- 267              	.LBE3:
-  74:Src/flash.c   **** 
-  75:Src/flash.c   **** }
-ARM GAS  /tmp/ccUMOEQg.s 			page 7
-
-
- 268              		.loc 1 75 0
- 269 002a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
- 270              		.cfi_endproc
- 271              	.LFE141:
- 273              		.comm	UpdateFile,4,4
- 274              		.comm	SpiRxData,4,4
- 275              		.comm	SpiTxData,4,4
- 276              		.section	.rodata.loadUpdateFile.str1.4,"aMS",%progbits,1
- 277              		.align	2
- 278              	.LC0:
- 279 0000 4D656D6F 		.ascii	"Memory Ereasing...\015\012\000"
- 279      72792045 
- 279      72656173 
- 279      696E672E 
- 279      2E2E0D0A 
- 280 0015 000000   		.space	3
- 281              	.LC1:
- 282 0018 55706461 		.ascii	"UpdateFile is writing on memory\015\012\000"
- 282      74654669 
- 282      6C652069 
- 282      73207772 
- 282      6974696E 
- 283 003a 0000     		.space	2
- 284              	.LC2:
- 285 003c 48616C20 		.ascii	"Hal flash error\015\012\000"
- 285      666C6173 
- 285      68206572 
- 285      726F720D 
- 285      0A00
- 286 004e 0000     		.space	2
- 287              	.LC3:
- 288 0050 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
- 288      74654669 
- 288      6C652068 
- 288      61732062 
- 288      65656E20 
- 289              		.text
- 290              	.Letext0:
- 291              		.file 2 "/usr/include/newlib/machine/_default_types.h"
- 292              		.file 3 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
- 293              		.file 4 "/usr/include/newlib/sys/lock.h"
- 294              		.file 5 "/usr/include/newlib/sys/_types.h"
- 295              		.file 6 "/usr/include/newlib/sys/reent.h"
- 296              		.file 7 "/usr/include/newlib/sys/_stdint.h"
- 297              		.file 8 "Inc/main.h"
- 298              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
- 299              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 300              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 301              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash.h"
- 302              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h"
- 303              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
-ARM GAS  /tmp/ccUMOEQg.s 			page 8
+ 216      6C652069 
+ 216      73207772 
+ 216      6974696E 
+ 217 003a 0000     		.space	2
+ 218              	.LC2:
+ 219 003c 48616C20 		.ascii	"Hal flash error\015\012\000"
+ 219      666C6173 
+ 219      68206572 
+ 219      726F720D 
+ 219      0A00
+ 220 004e 0000     		.space	2
+ 221              	.LC3:
+ 222 0050 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
+ 222      74654669 
+ 222      6C652068 
+ 222      61732062 
+ 222      65656E20 
+ 223              		.text
+ 224              	.Letext0:
+ 225              		.file 2 "/usr/include/newlib/machine/_default_types.h"
+ 226              		.file 3 "/usr/include/newlib/sys/lock.h"
+ 227              		.file 4 "/usr/include/newlib/sys/_types.h"
+ 228              		.file 5 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 229              		.file 6 "/usr/include/newlib/sys/reent.h"
+ 230              		.file 7 "/usr/include/newlib/sys/_stdint.h"
+ 231              		.file 8 "Inc/main.h"
+ 232              		.file 9 "Drivers/CMSIS/Include/core_cm7.h"
+ 233              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 234              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 235              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash.h"
+ 236              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h"
+ 237              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
+ARM GAS  /tmp/ccoZlwqA.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 flash.c
-     /tmp/ccUMOEQg.s:18     .text.writeFlash:0000000000000000 $t
-     /tmp/ccUMOEQg.s:26     .text.writeFlash:0000000000000000 writeFlash
-     /tmp/ccUMOEQg.s:46     .text.readFlash:0000000000000000 $t
-     /tmp/ccUMOEQg.s:54     .text.readFlash:0000000000000000 readFlash
-     /tmp/ccUMOEQg.s:70     .text.loadUpdateFile:0000000000000000 $t
-     /tmp/ccUMOEQg.s:78     .text.loadUpdateFile:0000000000000000 loadUpdateFile
-     /tmp/ccUMOEQg.s:199    .text.loadUpdateFile:0000000000000084 $d
-     /tmp/ccUMOEQg.s:208    .text.reWriteFlash:0000000000000000 $t
-     /tmp/ccUMOEQg.s:216    .text.reWriteFlash:0000000000000000 reWriteFlash
+     /tmp/ccoZlwqA.s:18     .text.writeFlash:0000000000000000 $t
+     /tmp/ccoZlwqA.s:26     .text.writeFlash:0000000000000000 writeFlash
+     /tmp/ccoZlwqA.s:46     .text.readFlash:0000000000000000 $t
+     /tmp/ccoZlwqA.s:54     .text.readFlash:0000000000000000 readFlash
+     /tmp/ccoZlwqA.s:70     .text.loadUpdateFile:0000000000000000 $t
+     /tmp/ccoZlwqA.s:78     .text.loadUpdateFile:0000000000000000 loadUpdateFile
+     /tmp/ccoZlwqA.s:199    .text.loadUpdateFile:0000000000000084 $d
                             *COM*:0000000000000004 UpdateFile
                             *COM*:0000000000000004 SpiRxData
                             *COM*:0000000000000004 SpiTxData
-     /tmp/ccUMOEQg.s:277    .rodata.loadUpdateFile.str1.4:0000000000000000 $d
+     /tmp/ccoZlwqA.s:211    .rodata.loadUpdateFile.str1.4:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_FLASH_Program

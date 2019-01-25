@@ -18,8 +18,7 @@
 void motorOps(void const * argument);
 void driveStepMotors();
 void driveServoMotors();
-void saveMotorPositions();
-void loadMotorPositions();
+void getInitialPositions();
 
 
 #ifdef __cplusplus

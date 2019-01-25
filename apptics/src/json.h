@@ -18,7 +18,73 @@
 #include <sys/sysinfo.h>
 #include <numeric>
 #include "globals.h"
+#include <memory>
 
+
+struct MOTOR_INFORMATIONS
+{
+
+    uint8_t servo_motor1_degree;
+    uint8_t servo_motor1_bottom_degree;
+    uint8_t servo_motor1_top_degree;
+
+    uint8_t servo_motor2_degree;
+    uint8_t servo_motor2_bottom_degree;
+    uint8_t servo_motor2_top_degree;
+
+    uint32_t step_motor1_position;
+    uint32_t step_motor1_max_step;
+
+    uint32_t step_motor2_position;
+    uint32_t step_motor2_max_step;
+
+
+
+    operator CONTROL_DATA_FORMAT()
+    {
+        CONTROL_DATA_FORMAT control_data;
+
+        control_data.servo_motor1_degree = servo_motor1_degree;
+        control_data.servo_motor1_bottom_degree = servo_motor1_bottom_degree;
+        control_data.servo_motor1_top_degree = servo_motor1_top_degree;
+
+        control_data.servo_motor2_degree = servo_motor2_degree;
+        control_data.servo_motor2_bottom_degree = servo_motor2_bottom_degree;
+        control_data.servo_motor2_top_degree = servo_motor2_top_degree;
+
+        control_data.step_motor1_step = step_motor1_position;
+        control_data.step_motor2_step = step_motor2_position;
+
+        return control_data;
+
+    }
+
+    MOTOR_INFORMATIONS operator =(CONTROL_DATA_FORMAT &ControlData)
+    {
+        servo_motor1_degree = ControlData.servo_motor1_degree;
+        servo_motor1_bottom_degree = ControlData.servo_motor1_bottom_degree;
+        servo_motor1_top_degree = ControlData.servo_motor1_top_degree;
+
+        servo_motor2_degree = ControlData.servo_motor2_degree;
+        servo_motor2_bottom_degree = ControlData.servo_motor2_bottom_degree;
+        servo_motor2_top_degree = ControlData.servo_motor2_top_degree;
+
+        step_motor1_position = ControlData.step_motor1_step;
+        step_motor2_position = ControlData.step_motor2_step;
+
+        return *this;
+    }
+
+
+};
+
+struct REMOTEMACHINE_INFORMATIONS
+{
+    std::string stream_ip;
+
+    int stream_port;
+    int control_port;
+};
 
 
 class Json
@@ -35,15 +101,33 @@ public:
     void saveEnvironmentData(ENVIRONMENT_DATA_FORMAT &StmData, SFP_DATA_FORMAT &SfpData);
     void saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &LoraSfpData);
 
-    int loadMotorPositions(CONTROL_DATA_FORMAT &ControlData);
-    void saveMotorPositions(CONTROL_DATA_FORMAT &ControlData);
+    template <typename T>
+    int loadMotorPositions(T &ControlData)
+    {
+        MOTOR_INFORMATIONS info;
 
-    int loadStreamInfo(std::string &StreamIp, int &StreamPort, int &ControllerPort);
+        info = ControlData;
+
+        loadMotorPositions(info);
+
+        ControlData = info;
+
+    }
+
+
+    template <typename T>
+    int saveMotorPositions(T &ControlData)
+    {
+
+    }
+
+    int loadMotorPositions(MOTOR_INFORMATIONS &ControlData);
+    void saveMotorPositions(MOTOR_INFORMATIONS &ControlData);
+
+
+    int loadStreamInfo(REMOTEMACHINE_INFORMATIONS &RemoteMachine);
 
 private:
-
-//    rapidjson::StringBuffer gmStringBuffer;
-//    rapidjson::Writer<rapidjson::StringBuffer> *gmWriter;
 
     ENVIRONMENT_DATA_FORMAT gmStmData;
     ENVIRONMENT_DATA_FORMAT gmLoraStmData;
@@ -51,18 +135,8 @@ private:
     SFP_DATA_FORMAT gmSfpData;
     SFP_DATA_FORMAT gmLoraSfpData;
 
-
-    CONTROL_DATA_FORMAT gmControlData;
-
-    uint8_t gmServoMotor2Degree;
-    uint8_t gmServoMotor1Degree;
-
-    int gmStepMotor1Position;
-    int gmStepMotor2Position;
-
-    std::string gmStreamIp;
-    int gmStreamPort;
-    int gmControlPort;
+    MOTOR_INFORMATIONS gmMotorInformations;
+    REMOTEMACHINE_INFORMATIONS gmRemoteMachineInformations;
 
     std::mutex gmMutex;
 

@@ -20,6 +20,7 @@ HAL_StatusTypeDef checkIfControlData();
 void putControlDataResponse();
 void processControlData();
 void putEnvironmentData();
+void recieveControlData(SPI_TRANSFER_FORMAT *SpiRxData);
 
 
 

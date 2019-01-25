@@ -23,6 +23,9 @@
 
 #define CONTROLLER_PORT 24000
 
+#define FORWARD 1
+#define BACKWARD 2
+#define STOP 0
 
 
 class Controller
@@ -50,6 +53,9 @@ public:
     Status setControlData(CONTROL_DATA_FORMAT& Data);
     Status setUpdateData(UPDATE_FILE_FORMAT& Data);
 
+    void setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations);
+
+
     ENVIRONMENT_DATA_FORMAT getStmEnvironment();
 
 
@@ -64,20 +70,23 @@ private:
     volatile bool gmIsReceived = false;
     volatile bool gmIsTransmitted = true;
 
+    MOTOR_INFORMATIONS gmCalibratedMotorValues;
 
     uint32_t gmDesiredPackageSequence = 1;
     uint32_t gmCurrentPackageSequence = 1;
 
     SpiCom gmSpi;
-
     std::mutex gmMutex;
 
     UPDATE_FILE_FORMAT gmBackupUpdateFile;
     UPDATE_FILE_FORMAT gmUpdateFile;
 
+    int checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData);
+    void correctWithMotorPositionLimits(CONTROL_DATA_FORMAT &ControlData);
     void communicationThread();
     Status checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData);
     Status checkIfEnvironmentData(const SPI_TRANSFER_FORMAT& SpiData);
+    Status checkValidEnvironmentData(ENVIRONMENT_DATA_FORMAT& Data);
 
 
 };

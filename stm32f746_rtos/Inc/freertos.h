@@ -36,7 +36,7 @@ osThreadId motorThreadHandle;
 
 osMutexId spiMutexHandle;
 osMutexId uartMutexHandle;
-osMutexId memoryMutexHandle;
+osMutexId controlMutexHandle;
 
 osSemaphoreId spiSemaphoreHandle;
 osSemaphoreId uartSemaphoreHandle;

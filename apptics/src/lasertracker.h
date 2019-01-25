@@ -58,8 +58,6 @@ private:
 
 public:
 
-        std::string gmStreamIp;
-
         PERSPECTIVE_RATE gmPerspective;
         UdpSocket gmUdpStreamSocket;
 

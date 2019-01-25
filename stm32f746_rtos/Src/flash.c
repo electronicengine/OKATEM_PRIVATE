@@ -5,10 +5,24 @@
 
 void reWriteFlash(unsigned char *Data, size_t Size, long Address)
 {
+    HAL_StatusTypeDef status;
+
+
+
+
+    HAL_FLASH_Unlock();
+
     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
 
-    for(size_t i = 0; i<Size; i++)
-        HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
+    for(size_t i = 0; i < Size; i++)
+    {
+        status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
+
+        if(status != HAL_OK)
+            mprintf("Hal flash error\r\n");
+    }
+
+    HAL_FLASH_Lock();
 
 }
 

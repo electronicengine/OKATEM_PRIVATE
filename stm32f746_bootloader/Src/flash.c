@@ -64,12 +64,3 @@ void loadUpdateFile(unsigned char *Buffer, uint32_t Size)
 
 }
 
-
-void reWriteFlash(unsigned char *Data, size_t Size, long Address)
-{
-    FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
-
-    for(size_t i = 0; i<Size; i++)
-        HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
-
-}

@@ -647,7 +647,7 @@ struct CONTROL_DATA_FORMAT
 
     uint8_t garbage1[CONTROL_DATA_GARBAGE_SIZE]; // header
 
-    uint8_t mode;
+    uint8_t setting_enable;
 
     uint32_t x_position;
     uint32_t y_position;
@@ -655,17 +655,20 @@ struct CONTROL_DATA_FORMAT
 
     uint8_t step_motor1_direction;
     uint8_t step_motor2_direction;
-    uint8_t step_motor3_direction;
-    uint8_t step_motor4_direction;
+
     uint8_t servo_motor1_direction;
     uint8_t servo_motor2_direction;
 
     uint8_t step_motor1_speed;
     uint8_t step_motor2_speed;
-    uint8_t step_motor3_speed;
-    uint8_t step_motor4_speed;
+
     uint8_t servo_motor1_degree;
+    uint8_t servo_motor1_top_degree;
+    uint8_t servo_motor1_bottom_degree;
+
     uint8_t servo_motor2_degree;
+    uint8_t servo_motor2_top_degree;
+    uint8_t servo_motor2_bottom_degree;
 
     uint8_t calibrate_sensor;
 
@@ -693,7 +696,7 @@ struct CONTROL_DATA_FORMAT
 
         index += CONTROL_DATA_GARBAGE_SIZE;
 
-        mode = SpiData.data[index++];
+        setting_enable = SpiData.data[index++];
 
         x_position = (SpiData.data[index++]);
         x_position |= (SpiData.data[index++] << 8);
@@ -712,17 +715,20 @@ struct CONTROL_DATA_FORMAT
 
         step_motor1_direction = SpiData.data[index++];
         step_motor2_direction = SpiData.data[index++];
-        step_motor3_direction = SpiData.data[index++];
-        step_motor4_direction = SpiData.data[index++];
+
         servo_motor1_direction = SpiData.data[index++];
         servo_motor2_direction = SpiData.data[index++];
 
         step_motor1_speed = SpiData.data[index++];
         step_motor2_speed = SpiData.data[index++];
-        step_motor3_speed = SpiData.data[index++];
-        step_motor4_speed = SpiData.data[index++];
+
         servo_motor1_degree = SpiData.data[index++];
+        servo_motor1_top_degree = SpiData.data[index++];
+        servo_motor1_bottom_degree = SpiData.data[index++];
+
         servo_motor2_degree = SpiData.data[index++];
+        servo_motor2_top_degree = SpiData.data[index++];
+        servo_motor2_bottom_degree = SpiData.data[index++];
 
         step_motor1_step = (SpiData.data[index++]);
         step_motor1_step |= (SpiData.data[index++] << 8);
@@ -765,11 +771,11 @@ struct CONTROL_DATA_FORMAT
         spi_transfer_data.header = ('C' | 'O' << 8);
 
         for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
-            spi_transfer_data.data[i] = garbage1[i];
+            spi_transfer_data.data[i + index] = garbage1[i];
 
         index += CONTROL_DATA_GARBAGE_SIZE;
 
-        spi_transfer_data.data[index++] = mode;
+        spi_transfer_data.data[index++] = setting_enable;
 
         spi_transfer_data.data[index++] = (x_position) & 0xff;
         spi_transfer_data.data[index++] = (x_position >> 8) & 0xff;
@@ -788,17 +794,20 @@ struct CONTROL_DATA_FORMAT
 
         spi_transfer_data.data[index++] = step_motor1_direction;
         spi_transfer_data.data[index++] = step_motor2_direction;
-        spi_transfer_data.data[index++] = step_motor3_direction;
-        spi_transfer_data.data[index++] = step_motor4_direction;
+
         spi_transfer_data.data[index++] = servo_motor1_direction;
         spi_transfer_data.data[index++] = servo_motor2_direction;
 
         spi_transfer_data.data[index++] = step_motor1_speed;
         spi_transfer_data.data[index++] = step_motor2_speed;
-        spi_transfer_data.data[index++] = step_motor3_speed;
-        spi_transfer_data.data[index++] = step_motor4_speed;
+
         spi_transfer_data.data[index++] = servo_motor1_degree;
+        spi_transfer_data.data[index++] = servo_motor1_top_degree;
+        spi_transfer_data.data[index++] = servo_motor1_bottom_degree;
+
         spi_transfer_data.data[index++] = servo_motor2_degree;
+        spi_transfer_data.data[index++] = servo_motor2_top_degree;
+        spi_transfer_data.data[index++] = servo_motor2_bottom_degree;
 
         spi_transfer_data.data[index++] = calibrate_sensor;
 
@@ -833,7 +842,7 @@ struct CONTROL_DATA_FORMAT
 
         index += CONTROL_DATA_GARBAGE_SIZE;
 
-        mode = SpiData.data[index++];
+        setting_enable = SpiData.data[index++];
 
         x_position = (SpiData.data[index++]);
         x_position |= (SpiData.data[index++] << 8);
@@ -852,17 +861,20 @@ struct CONTROL_DATA_FORMAT
 
         step_motor1_direction = SpiData.data[index++];
         step_motor2_direction = SpiData.data[index++];
-        step_motor3_direction = SpiData.data[index++];
-        step_motor4_direction = SpiData.data[index++];
+
         servo_motor1_direction = SpiData.data[index++];
         servo_motor2_direction = SpiData.data[index++];
 
         step_motor1_speed = SpiData.data[index++];
         step_motor2_speed = SpiData.data[index++];
-        step_motor3_speed = SpiData.data[index++];
-        step_motor4_speed = SpiData.data[index++];
+
         servo_motor1_degree = SpiData.data[index++];
+        servo_motor1_top_degree = SpiData.data[index++];
+        servo_motor1_bottom_degree = SpiData.data[index++];
+
         servo_motor2_degree = SpiData.data[index++];
+        servo_motor2_top_degree = SpiData.data[index++];
+        servo_motor2_bottom_degree = SpiData.data[index++];
 
         calibrate_sensor = SpiData.data[index++];
 
@@ -891,17 +903,14 @@ struct CONTROL_DATA_FORMAT
 
     void clear()
     {
-        mode = 0;
+        setting_enable = 0;
 
         step_motor1_direction = 0;
         step_motor2_direction = 0;
-        step_motor3_direction = 0;
-        step_motor4_direction = 0;
+
 
         step_motor1_speed = 0;
         step_motor2_speed = 0;
-        step_motor3_speed = 0;
-        step_motor4_speed = 0;
 
         servo_motor1_degree = 0;
         servo_motor1_degree = 0;
@@ -918,34 +927,13 @@ struct CONTROL_DATA_FORMAT
 
 
 
+
 struct UDP_DATA_FORMAT
 {
     uint16_t header;
     unsigned char data[ETHERNET_ENTITY_SIZE];
     uint16_t checksum;
 
-
-//    operator SPI_TRANSFER_FORMAT()
-//    {
-//        SPI_TRANSFER_FORMAT spi_data;
-
-//        int index = 0;
-
-//        spi_data.header = data[index++];
-//        spi_data.header |= data[index++] << 8;
-
-//        for(int i = 0; i<SPI_DATA_SIZE; i++ )
-//            spi_data.data[i] = data[i + index];
-
-//        index += SPI_DATA_SIZE;
-
-//        spi_data.checksum = data[index++];
-//        spi_data.checksum |= data[index++];
-
-//        return spi_data;
-
-
-//    }
 
     UDP_DATA_FORMAT& operator = (SPI_TRANSFER_FORMAT &SpiData)
     {
@@ -971,31 +959,35 @@ struct UDP_DATA_FORMAT
     }
 
 
-    UDP_DATA_FORMAT& operator = (unsigned char * Data)
+    UDP_DATA_FORMAT& operator = (std::vector<unsigned char> Data)
     {
 
-        int index = 0;
+        if(Data.size() == ETHERNET_TRANSFER_SIZE)
+        {
+            int index = 0;
 
-        header =  Data[index++];
-        header |=  (Data[index++] << 8);
+            header =  Data.data()[index++];
+            header |=  (Data.data()[index++] << 8);
 
-        for(int i=0; i<ETHERNET_ENTITY_SIZE; i++)
-            data[i] = Data[i + index];
+            for(int i=0; i<ETHERNET_ENTITY_SIZE; i++)
+                data[i] = Data.data()[i + index];
 
-        index += ETHERNET_ENTITY_SIZE;
+            index += ETHERNET_ENTITY_SIZE;
 
-        checksum = Data[index++];
-        checksum |= Data[index++] << 8;
+            checksum = Data.data()[index++];
+            checksum |= Data.data()[index++] << 8;
+
+        }
 
         return *this;
 
     }
 
-    operator unsigned char*()
+    operator std::vector<unsigned char> ()
     {
-        int index = 0;
 
-        unsigned char * data_all = new unsigned char[ETHERNET_TRANSFER_SIZE];
+        std::vector<unsigned char> data_all(ETHERNET_TRANSFER_SIZE);
+        int index = 0;
 
         data_all[index++] = header & 0xff;
         data_all[index++] = (header >> 8) & 0xff;
@@ -1018,11 +1010,13 @@ struct UDP_DATA_FORMAT
 
 struct STREAM_DATA_FORMAT
 {
-    int total_pack;
-    int current_pack;
+    u_int32_t total_pack;
+    u_int32_t current_pack;
     unsigned char data[STREAM_DATA_SIZE];
 
+    bool is_available = false;
     bool data_correct;
+
 
     STREAM_DATA_FORMAT& operator = (UDP_DATA_FORMAT Data)
     {
@@ -1070,6 +1064,48 @@ struct STREAM_DATA_FORMAT
 
         return udp_data;
     }
+
+    operator std::vector<unsigned char>()
+    {
+        int index = 0;
+
+        std::vector<unsigned char> raw_data(ETHERNET_TRANSFER_SIZE);
+
+        raw_data[index++] = 'S'; // header
+        raw_data[index++] = 'T';
+
+        raw_data[index++] = total_pack & 0xff;
+        raw_data[index++] = (total_pack >> 8) & 0xff;
+        raw_data[index++] = (total_pack >> 16) & 0xff;
+        raw_data[index++] = (total_pack >> 24) & 0xff;
+
+        raw_data[index++] = current_pack & 0xff;
+        raw_data[index++] = (current_pack >> 8) & 0xff;
+        raw_data[index++] = (current_pack >> 16) & 0xff;
+        raw_data[index++] = (current_pack >> 24) & 0xff;
+
+        for(int i = 0; i < STREAM_DATA_SIZE; i++)
+            raw_data[index + i] = data[i];
+
+        index += STREAM_DATA_SIZE;
+
+        raw_data[index++] = 0x20; //checksum
+        raw_data[index++] = 0x20;
+
+        return raw_data;
+    }
+
+    void clear()
+    {
+        total_pack = -1;
+        current_pack = 0;
+
+        for(int i=0; i<STREAM_DATA_SIZE; i++)
+            data[i] = 0;
+
+        is_available = false;
+    }
+
 };
 
 
@@ -1079,10 +1115,12 @@ struct INFORMATION_DATA_FORMAT
     ENVIRONMENT_DATA_FORMAT environment_data;
     SFP_DATA_FORMAT sfp_data;
 
+    bool is_available;
 
     operator UDP_DATA_FORMAT()
     {
         UDP_DATA_FORMAT udp_data;
+
 
         int index = 0;
         unsigned char *controldata_bytes = (unsigned char *)(SPI_TRANSFER_FORMAT)control_data;
@@ -1108,7 +1146,6 @@ struct INFORMATION_DATA_FORMAT
             udp_data.data[i + index] = sfpdata_bytes[i];
 
         index += SFP_DATA_SIZE;
-
 
 
         udp_data.checksum = 2;
@@ -1140,7 +1177,6 @@ struct INFORMATION_DATA_FORMAT
         return *this;
 
     }
-
 
 };
 

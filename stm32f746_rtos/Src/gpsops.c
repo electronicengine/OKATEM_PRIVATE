@@ -23,6 +23,7 @@ void gpsOps(void const *argument)
 
     gpsInit();
 
+
   while(1)
   {
 

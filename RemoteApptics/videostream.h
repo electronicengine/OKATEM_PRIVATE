@@ -7,6 +7,8 @@
 #include <functional>
 #include "udpsocket.h"
 #include "ui_mainwindow.h"
+#include "socketlistener.h"
+
 #include <QThread>
 #include <QImage>
 
@@ -20,18 +22,22 @@
 
 class MainWindow;
 
-class VideoStream
+class VideoStream : public SocketListener
 {
 public:
-    VideoStream();
-    ~VideoStream();
+
+    VideoStream(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
+    virtual ~VideoStream(){ gmStreamStop = true; }
 
     int start(const std::string &IpAddress, int Port, MainWindow* Window);
     void stop();
 
+    void socketDataCheckCall();
+
+
 private:
 
-    UdpSocket gmSocket;
+    UdpSocket *gpSocket;
     std::string gmIpAddress;
     int gmPort;
 
@@ -40,7 +46,7 @@ private:
     volatile bool gmStreamStop = false;
 
     int putStreamDataIntoBuffer(std::vector<unsigned char> &DataBuffer, unsigned char *DataIn, int Size);
-    STREAM_DATA_FORMAT checkPackageAccuracy(std::vector <unsigned char> &Package);
+    int checkPackageAccuracy(STREAM_DATA_FORMAT &StreamData);
     int checkSocketCondition(clock_t &LastDataComming);
     int checkifStreamPacket(std::vector <unsigned char> &Package);
     int restartSocket(MainWindow *Window);

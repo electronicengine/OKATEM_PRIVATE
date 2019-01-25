@@ -175,6 +175,12 @@ Status Controller::setControlData(CONTROL_DATA_FORMAT& Data)
 
     gmSpiTxData = Data;
 
+    if(Data.servo_motor1_degree != 0)
+        gmCalibratedMotorValues.servo_motor1_degree = Data.servo_motor1_degree;
+
+    if(Data.servo_motor2_degree != 0)
+        gmCalibratedMotorValues.servo_motor2_degree = Data.servo_motor2_degree;
+
     gmMutex.unlock();
 
     return Status::ok;
@@ -248,6 +254,21 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 
 }
 
+void Controller::setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations)
+{
+    gmCalibratedMotorValues = MotorInformations;
+}
+
+Status Controller::checkValidEnvironmentData(ENVIRONMENT_DATA_FORMAT &Data)
+{
+    if(Data.servo_motor1_degree == 0xff && Data.servo_motor2_degree == 0xff &&
+            Data.step_motor1_step == 0xffffffff && Data.step_motor2_step == 0xffffffff)
+        return Status::error;
+    else
+        return Status::ok;
+
+}
+
 
 
 ENVIRONMENT_DATA_FORMAT Controller::getStmEnvironment()
@@ -264,13 +285,60 @@ ENVIRONMENT_DATA_FORMAT Controller::getStmEnvironment()
     return data;
 }
 
+int Controller::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData)
+{
+
+    CONTROL_DATA_FORMAT initial_control_data;
+
+
+    if(EnvironmentData.step_motor1_step == 0xffffffff && EnvironmentData.step_motor2_step == 0xffffffff &&
+          EnvironmentData.servo_motor1_degree == 0xff && EnvironmentData.servo_motor1_degree == 0xff) //initiliazation needed
+    {
+
+        printAll( "!!!!!!!!!!!  motor positions sent !!!!!!!!!!!!!!!" );
+
+        initial_control_data.y_position = gmCalibratedMotorValues.step_motor1_position;
+        initial_control_data.x_position = gmCalibratedMotorValues.step_motor2_position;
+        initial_control_data.step_motor1_step = gmCalibratedMotorValues.step_motor1_max_step;
+        initial_control_data.step_motor2_step = gmCalibratedMotorValues.step_motor2_max_step;
+
+        initial_control_data.servo_motor1_degree = gmCalibratedMotorValues.servo_motor1_degree;
+        std::cout << "calibrated: " << std::to_string(initial_control_data.servo_motor1_degree) << std::endl;
+
+
+        initial_control_data.servo_motor1_top_degree = gmCalibratedMotorValues.servo_motor1_top_degree;
+        initial_control_data.servo_motor1_bottom_degree = gmCalibratedMotorValues.servo_motor1_bottom_degree;
+
+        initial_control_data.servo_motor2_degree = gmCalibratedMotorValues.servo_motor2_degree;
+        initial_control_data.servo_motor2_top_degree = gmCalibratedMotorValues.servo_motor2_top_degree;
+        initial_control_data.servo_motor2_bottom_degree = gmCalibratedMotorValues.servo_motor2_bottom_degree;
+
+        initial_control_data.setting_enable = 0xff;
+
+
+        gmSpiTxData = initial_control_data;
+
+
+        return SUCCESS;
+
+    }
+    else
+    {
+        return FAIL;
+    }
+}
+
+void Controller::correctWithMotorPositionLimits(CONTROL_DATA_FORMAT &ControlData)
+{
+
+}
+
 
 
 void Controller::communicationThread()
 {
 
 
-    bool spi_is_working = false;
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
 
@@ -284,6 +352,11 @@ void Controller::communicationThread()
     {
 
         gmMutex.lock();
+
+        checkInitilizationNeeded(gmEnvironmentData);
+
+//        printf("direction1: %d - angle: %d\n", gmSpiTxData.data[54], gmSpiTxData.data[60]);
+
 
         spi_transfer_data = gmSpiTxData;
 
@@ -445,8 +518,6 @@ Status Controller::checkIfEnvironmentData(const SPI_TRANSFER_FORMAT &SpiData)
     {
 
         gmEnvironmentData = gmSpiRxData;
-
-        gmSpiRxData.clear();
 
         return Status::ok;
 

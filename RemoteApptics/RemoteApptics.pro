@@ -20,6 +20,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+
+
 INCLUDEPATH += /usr/local/include/opencv
 LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -pthread -lopencv_imgproc \
     -lopencv_calib3d -lopencv_dnn -lopencv_features2d -lopencv_flann -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_shape \
@@ -27,26 +29,36 @@ LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lope
 
 CONFIG += c++17
 
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        controller.cpp \
         datatypes.cpp \
         udpsocket.cpp \
+        queue.cpp \
+        ethernetsocket.cpp \
         videostream.cpp \
-    connectiondialog.cpp
+        connectiondialog.cpp \
+        autocontrol.cpp \
+        remotecontroller.cpp \
+    socketlistener.cpp
 
 HEADERS += \
         mainwindow.h \
-        controller.h \
         datatypes.h \
         udpsocket.h \
+        ethernetsocket.h \
+        queue.h \
         videostream.h \
-    connectiondialog.h
+        connectiondialog.h \
+        autocontrol.h \
+        remotecontroller.h \
+    socketlistener.h
 
 FORMS += \
         mainwindow.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    autocontrol.ui \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -55,3 +67,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     images.qrc
+
+DISTFILES +=

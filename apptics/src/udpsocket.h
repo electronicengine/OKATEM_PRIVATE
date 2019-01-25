@@ -20,9 +20,9 @@
 #include <mutex>
 #include <vector>
 
-#include "controller.h"
+
 #include "queue.h"
-#include "fstream"
+#include "ethernetsocket.h"
 
 #define PORT            24000
 
@@ -33,61 +33,61 @@
 #define NORMAL_MODE     2
 
 
+class SocketObserver;
+class RemoteController;
+class VideoStream;
 
 class UdpSocket
 {
 
+
 public:
+
+
     UdpSocket();
     ~UdpSocket();
 
 
 
+    INFORMATION_DATA_FORMAT getInformationData();
     CONTROL_DATA_FORMAT getSocketControlData();
-
     UPDATE_FILE_FORMAT getSocketUpdateData();
+    STREAM_DATA_FORMAT getStreamData();
+
 
     volatile int gmIsRecieved = 0;
 
+    void listen();
 
+    int init(const std::string &IpAddress, int Port);
 
-
-    int sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress);
-    int sendData(INFORMATION_DATA_FORMAT &InformationData, const std::string IpAddress);
-    int sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAddress);
+    int sendData(SPI_TRANSFER_FORMAT SpiData);
+    int sendData(UDP_DATA_FORMAT &UdpData);
+    int sendData(INFORMATION_DATA_FORMAT &InformationData);
+    int sendData(STREAM_DATA_FORMAT &StreamData);
     int saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
-
-    std::vector<unsigned char> receiveData();
-
-    int openPort(const std::string &IpAddress, int Port, int Mode);
-
+    int setInitialMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
 
 private:
 
-    int gmSocket;
-    struct sockaddr_in gmClientAddr;
-    struct sockaddr_in gmServerAddr;
-
-    socklen_t gmClientLen = sizeof(gmServerAddr);
-
-    std::string gmIpAddress;
-    int gmPort;
-
     Queue<UPDATE_FILE_FORMAT> gmUpdateFileQueue;
+    Queue<STREAM_DATA_FORMAT> gmStreamDataQueue;
 
     std::mutex gmMutex;
     SPI_TRANSFER_FORMAT gmSpiControlData;
     SPI_TRANSFER_FORMAT gmSpiUpdateData;
 
-    void closePort();
-    int openPort(int Port);
-
     CONTROL_DATA_FORMAT gmControlData;
     ENVIRONMENT_DATA_FORMAT gmEnvironmentData;
     SFP_DATA_FORMAT gmSfpData;
+    INFORMATION_DATA_FORMAT gmInformationData;
+
+    EthernetSocket gmEthernetSocket;
 
     void listenPort();
+
+
 
 
 

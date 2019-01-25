@@ -73,6 +73,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/controller.cpp
     ${INCLUDE_PATH}/sfpmonitor.cpp
     ${INCLUDE_PATH}/udpsocket.cpp
+    ${INCLUDE_PATH}/ethernetsocket.cpp
     ${INCLUDE_PATH}/queue.cpp
     ${INCLUDE_PATH}/json.cpp
     ${INCLUDE_PATH}/datatypes.h
@@ -103,7 +104,7 @@ add_executable(${PROJECT_NAME}
 
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
-#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
+  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
+  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
   COMMENT "Creating directory: "
 )

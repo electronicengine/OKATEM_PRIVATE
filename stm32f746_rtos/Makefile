@@ -63,6 +63,7 @@ C_SOURCES = \
   Src/stm32f7xx_it.c \
   Src/gps.c \
   Src/motor.c \
+  Src/servo.c \
   Src/sensor.c \
   Src/eth.c \
   Src/system_stm32f7xx.c \

@@ -39,6 +39,16 @@ border-image: url(:/images/up_unpressed.png);
 #up_button:pressed
 {
 border-image: url(:/images/up_pressed.png);
+}
+
+#up_button:checked
+{
+border-image: url(:/images/up_pressed.png);
+}
+
+#up_button:checked
+{
+border-image: url(:/images/up_pressed.png);
 }</string>
     </property>
     <property name="text">
@@ -46,6 +56,12 @@ border-image: url(:/images/up_pressed.png);
     </property>
     <property name="shortcut">
      <string/>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="left_button">
@@ -66,10 +82,23 @@ border-image: url(:/images/left_unpressed.png);
 #left_button:pressed
 {
 border-image: url(:/images/left_pressed.png);
+}
+#left_button:checked
+{
+border-image: url(:/images/left_pressed.png);
 }</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="shortcut">
+     <string/>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="right_button">
@@ -88,6 +117,10 @@ border-image: url(:/images/right_unpressed.png);
 }
 
 #right_button:pressed
+{
+border-image: url(:/images/right_pressed.png);
+}
+#right_button:checked
 {
 border-image: url(:/images/right_pressed.png);
 }</string>
@@ -112,6 +145,10 @@ border-image: url(:/images/down_unpressed.png);
 }
 
 #down_buttton:pressed
+{
+border-image: url(:/images/down_pressed.png);
+}
+#down_buttton:checked
 {
 border-image: url(:/images/down_pressed.png);
 }</string>
@@ -1126,6 +1163,52 @@ border-image: url(:/images/refresh_pressed.png);
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="toggle_button">
+    <property name="geometry">
+     <rect>
+      <x>1280</x>
+      <y>0</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#toggle_button
+{
+	border-image: url(:/images/toggle_button_off.png);
+}
+
+#toggle_button:checked
+{
+border-image: url(:/images/toggle_button_on.png);
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_25">
+    <property name="geometry">
+     <rect>
+      <x>1270</x>
+      <y>30</y>
+      <width>91</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(114, 159, 207);</string>
+    </property>
+    <property name="text">
+     <string> Keep Press</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -1144,6 +1227,8 @@ border-image: url(:/images/refresh_pressed.png);
      <string>Options</string>
     </property>
     <addaction name="actionConnection"/>
+    <addaction name="actionSet_Initial_Values"/>
+    <addaction name="actionAuto_Control_Settings"/>
     <addaction name="actionUpdate_Firmware"/>
    </widget>
    <addaction name="menuas"/>
@@ -1157,6 +1242,16 @@ border-image: url(:/images/refresh_pressed.png);
   <action name="actionUpdate_Firmware">
    <property name="text">
     <string>Update Firmware</string>
+   </property>
+  </action>
+  <action name="actionAuto_Control_Settings">
+   <property name="text">
+    <string>Auto Control Settings</string>
+   </property>
+  </action>
+  <action name="actionSet_Initial_Values">
+   <property name="text">
+    <string>Set Initial Values</string>
    </property>
   </action>
  </widget>

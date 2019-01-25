@@ -38,20 +38,9 @@ int Json::init()
 
         if(document.IsObject())
         {
-            if(document.HasMember("servo_motor1_degree"))
-                gmServoMotor1Degree = document["servo_motor1_degree"].GetInt();
 
-            if(document.HasMember("servo_motor2_degree"))
-                gmServoMotor2Degree = document["servo_motor2_degree"].GetInt();
-
-            if(document.HasMember("stream_ip"))
-                gmStreamIp = document["stream_ip"].GetString();
-
-            if(document.HasMember("stream_port"))
-                gmStreamPort = document["stream_port"].GetInt();
-
-            if(document.HasMember("control_port"))
-                gmControlPort = document["control_port"].GetInt();
+            loadMotorPositions(gmMotorInformations);
+            loadStreamInfo(gmRemoteMachineInformations);
 
         }
 
@@ -78,21 +67,8 @@ int Json::init()
 
 }
 
-void Json::saveMotorPositions(CONTROL_DATA_FORMAT &ControlData)
-{
-    gmMutex.lock();
 
-    if(ControlData.servo_motor1_degree != 0)
-        gmServoMotor1Degree = ControlData.servo_motor1_degree;
-
-    if(ControlData.servo_motor2_degree != 0)
-        gmServoMotor2Degree = ControlData.servo_motor2_degree;
-
-    gmMutex.unlock();
-
-}
-
-int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort, int &ControlPort)
+int Json::loadStreamInfo(REMOTEMACHINE_INFORMATIONS &RemoteMachineInfo)
 {
 
 
@@ -113,13 +89,13 @@ int Json::loadStreamInfo(std::string &StreamIp, int &StreamPort, int &ControlPor
         if(document.IsObject())
         {
             if(document.HasMember("stream_ip"))
-                StreamIp = document["stream_ip"].GetString();
+                RemoteMachineInfo.stream_ip = document["stream_ip"].GetString();
 
             if(document.HasMember("stream_port"))
-                StreamPort = document["stream_port"].GetInt();
+                RemoteMachineInfo.stream_port = document["stream_port"].GetInt();
 
             if(document.HasMember("control_port"))
-                ControlPort = document["control_port"].GetInt();
+                RemoteMachineInfo.control_port = document["control_port"].GetInt();
         }
 
         if(counter >= 3)
@@ -147,6 +123,16 @@ void Json::saveEnvironmentData(ENVIRONMENT_DATA_FORMAT &StmData, SFP_DATA_FORMAT
     gmSfpData = SfpData;
     gmStmData = StmData;
 
+    gmMotorInformations.step_motor1_position = StmData.step_motor1_step;
+    gmMotorInformations.step_motor2_position = StmData.step_motor2_step;
+
+    if(StmData.servo_motor1_degree != 0 && StmData.servo_motor1_degree != 0xff)
+        gmMotorInformations.servo_motor1_degree = StmData.servo_motor1_degree;
+
+    if(StmData.servo_motor2_degree != 0 && StmData.servo_motor1_degree != 0xff)
+        gmMotorInformations.servo_motor2_degree = StmData.servo_motor2_degree;
+
+
     gmMutex.unlock();
 
 }
@@ -165,9 +151,12 @@ void Json::saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &L
 
 }
 
+void Json::saveMotorPositions(MOTOR_INFORMATIONS &MotorInfo)
+{
 
+}
 
-int Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
+int Json::loadMotorPositions(MOTOR_INFORMATIONS &MotorInfo)
 {
 
     std::string json;
@@ -183,18 +172,43 @@ int Json::loadMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 
         if(document.IsObject())
         {
-
             if(document.HasMember("servo_motor1_degree"))
-                ControlData.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
+                MotorInfo.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
 
-            if(document.HasMember("step_motor1_position"))
-                ControlData.step_motor1_direction = document["step_motor1_position"].GetInt();
+            if(document.HasMember("servo_motor1_top_degree"))
+                MotorInfo.servo_motor1_top_degree = document["servo_motor1_top_degree"].GetInt();
+
+            if(document.HasMember("servo_motor1_bottom_degree"))
+                MotorInfo.servo_motor1_bottom_degree = document["servo_motor1_bottom_degree"].GetInt();
 
             if(document.HasMember("servo_motor2_degree"))
-                ControlData.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+                MotorInfo.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+
+            if(document.HasMember("servo_motor2_top_degree"))
+                MotorInfo.servo_motor2_top_degree = document["servo_motor2_top_degree"].GetInt();
+
+            if(document.HasMember("servo_motor2_bottom_degree"))
+                MotorInfo.servo_motor2_bottom_degree = document["servo_motor2_bottom_degree"].GetInt();
+
+
+            if(document.HasMember("step_motor1_position"))
+            {
+                MotorInfo.step_motor1_position = document["step_motor1_position"].GetInt64();
+            }
+
+
+            if(document.HasMember("step_motor1_max_step"))
+                MotorInfo.step_motor1_max_step = document["step_motor1_max_step"].GetInt64();
+
+
 
             if(document.HasMember("step_motor2_position"))
-                ControlData.step_motor2_direction = document["step_motor2_position"].GetInt();
+            {
+                MotorInfo.step_motor2_position = document["step_motor2_position"].GetInt64();
+            }
+
+            if(document.HasMember("step_motor2_max_step"))
+                MotorInfo.step_motor2_max_step = document["step_motor2_max_step"].GetInt64();
 
         }
 
@@ -291,16 +305,35 @@ void Json::writeJson()
         writer.Uint(gmStmData.sensor_data.compass_degree);
 
         writer.Key("servo_motor1_degree");
-        writer.Uint(gmServoMotor1Degree);
+        writer.Uint(gmMotorInformations.servo_motor1_degree);
+
+        writer.Key("servo_motor1_top_degree");
+        writer.Uint(gmMotorInformations.servo_motor1_top_degree);
+
+        writer.Key("servo_motor1_bottom_degree");
+        writer.Uint(gmMotorInformations.servo_motor1_bottom_degree);
 
         writer.Key("servo_motor2_degree");
-        writer.Uint(gmServoMotor2Degree);
+        writer.Uint(gmMotorInformations.servo_motor2_degree);
+
+        writer.Key("servo_motor2_top_degree");
+        writer.Uint(gmMotorInformations.servo_motor1_top_degree);
+
+        writer.Key("servo_motor2_bottom_degree");
+        writer.Uint(gmMotorInformations.servo_motor2_bottom_degree);
 
         writer.Key("step_motor1_position");
-        writer.Uint(gmStepMotor1Position);
+        writer.Uint64(gmMotorInformations.step_motor1_position);
+
+        writer.Key("step_motor1_max_step");
+        writer.Uint64(gmMotorInformations.step_motor1_max_step);
 
         writer.Key("step_motor2_position");
-        writer.Uint(gmStepMotor2Position);
+        writer.Uint64(gmMotorInformations.step_motor2_position);
+
+        writer.Key("step_motor2_max_step");
+        writer.Uint64(gmMotorInformations.step_motor2_max_step);
+
 
         writer.Key("cpu_usage");
         writer.Double(cpu_usage);
@@ -355,13 +388,13 @@ void Json::writeJson()
         writer.Uint(gmLoraStmData.sensor_data.compass_degree);
 
         writer.Key("stream_ip");
-        writer.String(gmStreamIp.c_str());
+        writer.String(gmRemoteMachineInformations.stream_ip.c_str());
 
         writer.Key("stream_port");
-        writer.Uint(gmStreamPort);
+        writer.Uint(gmRemoteMachineInformations.stream_port);
 
         writer.Key("control_port");
-        writer.Uint(gmControlPort);
+        writer.Uint(gmRemoteMachineInformations.control_port);
 
         writer.EndObject();
 

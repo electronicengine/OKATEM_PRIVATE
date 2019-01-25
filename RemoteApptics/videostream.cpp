@@ -6,29 +6,17 @@
 
 
 
-VideoStream::VideoStream()
-{
-
-}
-
-
-
-VideoStream::~VideoStream()
-{
-    gmStreamStop = true;
-    gmSocket.closePort();
-}
-
-
 
 int VideoStream::start(const std::string &IpAddress, int Port, MainWindow *Window)
 {
 
     int ret;
 
-    ret = gmSocket.openPort(Port, NORMAL_MODE);
     gmIpAddress = IpAddress;
     gmPort = Port;
+
+
+    ret = gpSocket->init(IpAddress, Port);
 
     if(ret == FAIL)
         return FAIL;
@@ -36,8 +24,12 @@ int VideoStream::start(const std::string &IpAddress, int Port, MainWindow *Windo
     {
         gmStreamStop = false;
 
-        std::thread play(&VideoStream::playStream, this, Window);
-        play.detach();
+        gpSocket->listen();
+
+        gpWindow = Window;
+
+//        std::thread play(&VideoStream::playStream, this, Window);
+//        play.detach();
     }
 
     return SUCCESS;
@@ -51,7 +43,48 @@ void VideoStream::stop()
 {
 
     gmStreamStop = true;
-    gmSocket.closePort();
+//    gpSocket->closePort();
+
+}
+
+void VideoStream::socketDataCheckCall()
+{
+    int ret;
+
+    static std::vector<unsigned char> frame_data;
+
+    STREAM_DATA_FORMAT stream;
+
+    cv::Mat frame;
+
+    stream = gpSocket->getStreamData();
+
+    if(stream.is_available == true)
+    {
+
+        ret = checkPackageAccuracy(stream);
+
+        if(ret == SUCCESS)
+        {
+
+            putStreamDataIntoBuffer(frame_data, stream.data, STREAM_DATA_SIZE);
+
+            if(stream.current_pack == stream.total_pack)  //if the last frame package
+            {
+
+                ret = convertPackageToMat(frame_data, frame);
+                if(ret != FAIL)
+                    showInScreen(frame, gpWindow);
+
+                frame_data.clear();
+
+            }
+        }
+        else
+        {
+            frame_data.clear();
+        }
+    }
 
 }
 
@@ -71,43 +104,44 @@ int VideoStream::putStreamDataIntoBuffer(std::vector<unsigned char> &DataBuffer,
 
 
 
-STREAM_DATA_FORMAT VideoStream::checkPackageAccuracy(std::vector<unsigned char> &Package)
+int VideoStream::checkPackageAccuracy(STREAM_DATA_FORMAT &StreamData)
 {
 
-    int total_pack;
-    int sequence_number;
-    static int package_counter = 0;
+    uint32_t total_pack;
+    uint32_t sequence_number;
+    static uint32_t package_counter = 0;
 
-    UDP_DATA_FORMAT udp_data;
-    STREAM_DATA_FORMAT stream_data;
-
-//    std::cout << "st in" << std::endl;
-    udp_data = Package.data();
-
-    stream_data = udp_data;
-
-    total_pack = stream_data.total_pack;
-    sequence_number = stream_data.current_pack;
+    total_pack = StreamData.total_pack;
+    sequence_number = StreamData.current_pack;
 
     package_counter++;
 
+
+
     if(sequence_number != package_counter)
     {
+
+        std::cout << "wrong package sequence: " << std::to_string(sequence_number) << "/" << package_counter << std::endl;
+
         package_counter = 0;
 
-        stream_data.data_correct = false;
+        return FAIL;
     }
 
-    if(total_pack > 1000  || sequence_number > total_pack || total_pack < -1 )
+    if(total_pack > 1000  || sequence_number > total_pack)
     {
+        std::cout << "wrong total size" << std::endl;
+
         package_counter = 0;
 
-        stream_data.data_correct = false;
+        return FAIL;
     }
 
-    stream_data.data_correct = true;
+    if(total_pack == sequence_number)
+        package_counter = 0;
 
-    return stream_data;
+
+    return SUCCESS;
 
 }
 
@@ -147,7 +181,6 @@ int VideoStream::checkifStreamPacket(std::vector<unsigned char> &Package)
 
     if(Package.size() != 0)
     {
-//        std::cout << "pack in" << std::endl;
 
         if(Package[0] == 'S' && Package[1] == 'T')
         {
@@ -241,7 +274,6 @@ void VideoStream::playStream(MainWindow *Window)
 
     clock_t last_time_data_comming = 0;
 
-    std::vector<unsigned char> socket_message; // Size of received message
     std::vector<unsigned char> frame_data;
     STREAM_DATA_FORMAT stream;
 
@@ -256,20 +288,21 @@ void VideoStream::playStream(MainWindow *Window)
 
         if(ret != SUCCESS)
         {
+            std::cout << "restarting socket" << std::endl;
+
             restartSocket(Window);
 
             break;
         }
 
-        socket_message = gmSocket.receiveData();
+        stream = gpSocket->getStreamData();
 
-        ret = checkifStreamPacket(socket_message);
-
-        if(ret == SUCCESS)
+        if(stream.is_available == true)
         {
-            stream = checkPackageAccuracy(socket_message);
 
-            if(stream.data_correct == true)
+            ret = checkPackageAccuracy(stream);
+
+            if(ret == SUCCESS)
             {
 
                 putStreamDataIntoBuffer(frame_data, stream.data, STREAM_DATA_SIZE);

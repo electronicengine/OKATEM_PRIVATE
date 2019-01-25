@@ -93,8 +93,8 @@ void MX_FREERTOS_Init(void)
   osMutexDef(uartMutex);
   uartMutexHandle = osMutexCreate(osMutex(uartMutex));
 
-  osMutexDef(memoryMutex);
-  memoryMutexHandle = osMutexCreate(osMutex(memoryMutex));
+  osMutexDef(controlMutex);
+  controlMutexHandle = osMutexCreate(osMutex(controlMutex));
 
   osSemaphoreDef(uartSemaphore);
   uartSemaphoreHandle = osSemaphoreCreate(osSemaphore(uartSemaphore), 1);
@@ -112,10 +112,10 @@ void MX_FREERTOS_Init(void)
   sensorThreadHandle = osThreadCreate(osThread(sensorThread), NULL);
 
   /* definition and creation of spiComThread */
-  osThreadDef(spiComThread, spiComOps, osPriorityAboveNormal, 0, 1024);
+  osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 1024);
   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
 
-  osThreadDef(motorThread, motorOps, osPriorityNormal, 0, 512);
+  osThreadDef(motorThread, motorOps, osPriorityAboveNormal, 0, 512);
   motorThreadHandle = osThreadCreate(osThread(motorThread), NULL);
 
 

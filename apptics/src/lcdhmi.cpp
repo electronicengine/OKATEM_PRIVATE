@@ -168,8 +168,7 @@ void LcdHMI::callManualPage(std::vector<unsigned char> &Data)
 
         gmControlData.step_motor1_speed = 1;
         gmControlData.step_motor2_speed = 1;
-        gmControlData.step_motor3_speed = 1;
-        gmControlData.step_motor4_speed = 1;
+
     }
     else if(Data[1] == BUTTON_UNPRESSED)
     {

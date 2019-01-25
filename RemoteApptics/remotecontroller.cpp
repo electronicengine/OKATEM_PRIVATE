@@ -1,31 +1,25 @@
-﻿#include "controller.h"
-//#include <mainwindow.h>
-
-Controller::Controller()
-{
+﻿#include "mainwindow.h"
+#include "remotecontroller.h"
 
 
 
-
-}
-
-
-
-int Controller::start(const std::string &IpAddress, int Port)
+int RemoteController::start(const std::string &IpAddress, int Port)
 {
     int ret;
 
     gmIpAddress = IpAddress;
     gmPort = Port;
 
-    ret = gmSocket.openPort(Port, NORMAL_MODE);
+    ret = gpSocket->init(IpAddress, Port);
+
+    gpSocket->listen();
 
     return ret;
 }
 
 
 
-std::vector<unsigned char> Controller::readFile(const std::string &FileName)
+std::vector<unsigned char> RemoteController::readFile(const std::string &FileName)
 {
     FILE *file;
     unsigned char buffer;
@@ -65,7 +59,7 @@ std::vector<unsigned char> Controller::readFile(const std::string &FileName)
 
 
 
-void Controller::parseAndSendData(std::vector<unsigned char> &Container, const std::string &IpAddress)
+void RemoteController::parseAndSendData(std::vector<unsigned char> &Container, const std::string &IpAddress)
 {
 
     int size = Container.size();
@@ -112,7 +106,7 @@ void Controller::parseAndSendData(std::vector<unsigned char> &Container, const s
 
 
 
-        gmSocket.sendData((SPI_TRANSFER_FORMAT)parsed_file, gmIpAddress);
+        gpSocket->sendData((SPI_TRANSFER_FORMAT) parsed_file);
 
         std::cout << parsed_file.current_sequence_number << "/" << parsed_file.total_sequence_number << " Transmitted \r" << std::endl;
 
@@ -123,7 +117,7 @@ void Controller::parseAndSendData(std::vector<unsigned char> &Container, const s
 
 
 
-void Controller::servo1SetValue(int Value)
+void RemoteController::servo1SetValue(int Value)
 {
 
     gmTxData.servo_motor1_degree = Value;
@@ -137,14 +131,14 @@ void Controller::servo1SetValue(int Value)
     gmTxData.step_motor2_speed = 0;
 
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT) gmTxData);
     printf("Servo1 setting value %d\r\n", gmServoMotor1Degree);
 
 }
 
 
 
-void Controller::servo2SetValue(int Value)
+void RemoteController::servo2SetValue(int Value)
 {
 
     gmTxData.servo_motor1_degree = 0;
@@ -157,13 +151,13 @@ void Controller::servo2SetValue(int Value)
     gmTxData.step_motor2_speed = 0;
 
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo1 setting value %d\r\n", gmServoMotor1Degree);
 
 }
 
 
-void Controller::servo1Forward()
+void RemoteController::servo1Forward()
 {
 
     gmTxData.clear();
@@ -177,14 +171,14 @@ void Controller::servo1Forward()
     if(gmServoMotor1Degree < 64)
         gmServoMotor1Degree = 64;
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo1 Forward %d\r\n", gmServoMotor1Degree);
 
 }
 
 
 
-void Controller::servo2Forward()
+void RemoteController::servo2Forward()
 {
 
     gmTxData.clear();
@@ -196,14 +190,14 @@ void Controller::servo2Forward()
 
 
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo2 Forward %d\r\n",gmServoMotor2Degree);
 
 }
 
 
 
-void Controller::servo1Backward()
+void RemoteController::servo1Backward()
 {
 
 
@@ -215,14 +209,14 @@ void Controller::servo1Backward()
         gmServoMotor1Degree = 0;
 
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo1 Forward %d\r\n",gmServoMotor1Degree);
 
 }
 
 
 
-void Controller::servo2Backward()
+void RemoteController::servo2Backward()
 {
     gmTxData.clear();
     gmTxData.servo_motor2_degree = --gmServoMotor2Degree;
@@ -232,19 +226,19 @@ void Controller::servo2Backward()
         gmServoMotor2Degree = 0;
 
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo2 Down %d\r\n",gmServoMotor2Degree);
 
 }
 
 
 
-void Controller::turnLeft()
+void RemoteController::turnLeft()
 {
 
     gmTxData.clear();
     gmTxData.x_position = 365;
-    gmTxData.step_motor2_direction = 1;
+    gmTxData.step_motor2_direction = FORWARD;
 
     gmTxData.step_motor1_speed = gmSpeed;
     gmTxData.step_motor2_speed = gmSpeed;
@@ -252,19 +246,19 @@ void Controller::turnLeft()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("LEFT\r\n");
 
 }
 
 
 
-void Controller::turnRight()
+void RemoteController::turnRight()
 {
 
     gmTxData.clear();
     gmTxData.x_position = 365;
-    gmTxData.step_motor2_direction = 2;
+    gmTxData.step_motor2_direction = BACKWARD;
 
     gmTxData.step_motor1_speed = gmSpeed;
     gmTxData.step_motor2_speed = gmSpeed;
@@ -272,19 +266,19 @@ void Controller::turnRight()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("RIGHT\r\n");
 
 }
 
 
 
-void Controller::turnUp()
+void RemoteController::turnUp()
 {
 
     gmTxData.clear();
     gmTxData.x_position = 365;
-    gmTxData.step_motor1_direction = 1;
+    gmTxData.step_motor1_direction = FORWARD;
 
     gmTxData.step_motor1_speed = gmSpeed;
     gmTxData.step_motor2_speed = gmSpeed;
@@ -293,19 +287,19 @@ void Controller::turnUp()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("UP %d\r\n", gmTxData.step_motor1_speed);
 
 }
 
 
 
-void Controller::turnDown()
+void RemoteController::turnDown()
 {
 
     gmTxData.clear();
     gmTxData.x_position = 365;
-    gmTxData.step_motor1_direction = 2;
+    gmTxData.step_motor1_direction = BACKWARD;
 
     gmTxData.step_motor1_speed = gmSpeed;
     gmTxData.step_motor2_speed = gmSpeed;
@@ -314,14 +308,14 @@ void Controller::turnDown()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmSocket.sendData((SPI_TRANSFER_FORMAT)gmTxData, gmIpAddress);
+    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("DOWN\r\n");
 
 }
 
 
 
-void Controller::increaseSpeed()
+void RemoteController::increaseSpeed()
 {
     gmSpeed++;
 
@@ -334,7 +328,7 @@ void Controller::increaseSpeed()
 
 
 
-void Controller::decreaseSpeed()
+void RemoteController::decreaseSpeed()
 {
 
     gmSpeed--;
@@ -349,7 +343,7 @@ void Controller::decreaseSpeed()
 
 
 
-void Controller::setSpeed(int value)
+void RemoteController::setSpeed(int value)
 {
     if(value == 20)
         value = 19;
@@ -362,16 +356,16 @@ void Controller::setSpeed(int value)
 
 
 
-void Controller::updateFirmware(const std::string &FileName)
+void RemoteController::updateFirmware(const std::string &FileName)
 {
 
 
-    std::thread barthread(&Controller::progressBarThread, this);
-    barthread.detach();
+//    std::thread barthread(&RemoteController::progressBarThread, this);
+//    barthread.detach();
 
     std::cout << "update firmware" << std::endl;
 
-    std::thread update(&Controller::updateThread, this, FileName);
+    std::thread update(&RemoteController::updateThread, this, FileName);
     update.detach();
 
 
@@ -379,61 +373,59 @@ void Controller::updateFirmware(const std::string &FileName)
 
 
 
-int Controller::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
+int RemoteController::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
 {
 
     UDP_DATA_FORMAT request_package;
-    INFORMATION_DATA_FORMAT info_package;
-    std::vector<unsigned char> ethernet_package;
-    int counter = 0;
+
+    int timeout_counter = 0;
+    int ret;
+
 
     if(gmUploadingStart != true)
     {
         request_package.header = ('I' | ('N' << 8));
 
 
-        gmSocket.sendData(request_package, gmIpAddress);
+        ret = gpSocket->sendData(request_package);
 
-        do{
-            counter ++;
-            if(counter >= 3)
-                return FAIL;
-
-            ethernet_package = gmSocket.receiveData();
-
-        }while(ethernet_package.size() == !ETHERNET_TRANSFER_SIZE);
-
-        if(counter >= 3)
-            printf("Udp Timeout!\n");
-
-        request_package = ethernet_package.data();
-
-        if(ethernet_package[0] == 'I' && ethernet_package[1] == 'N')
+        if(ret != SUCCESS)
         {
-            info_package = request_package;
-            ControlData = info_package.control_data;
-            EnvironmentData = info_package.environment_data;
-            SfpData = info_package.sfp_data;
-
-            return SUCCESS;
-        }
-        else
-        {
+            std::cout << "Information Data Request can not be sent" << std::endl;
             return FAIL;
         }
 
+        usleep(200000);
 
+
+        while(gmInformationData.is_available == false)
+        {
+            timeout_counter++;
+
+            if(timeout_counter >= 200)
+                return FAIL;
+
+            usleep(10000);
+        }
+
+        gmMutex.lock();
+        ControlData = gmInformationData.control_data;
+        EnvironmentData = gmInformationData.environment_data;
+        SfpData = gmInformationData.sfp_data;
+        gmMutex.unlock();
+
+        return SUCCESS;
     }
     else
     {
-        return FALSE;
+        return FAIL;
     }
 
 
 
 }
 
-int Controller::getUpdatePercenrage()
+int RemoteController::getUpdatePercenrage()
 {
     int percent;
 
@@ -444,61 +436,74 @@ int Controller::getUpdatePercenrage()
     return percent;
 }
 
-void Controller::progressBarThread()
+void RemoteController::socketDataCheckCall()
 {
-    UDP_DATA_FORMAT feedback_package;
-    INFORMATION_DATA_FORMAT info_package;
-    std::vector<unsigned char> ethernet_package;
-    int counter = 0;
-    float percent = 0;
 
-    usleep(1000);
+    gmMutex.lock();
 
-    gmUploadingStart = true;
+    gmInformationData = gpSocket->getInformationData();
 
-    while(true)
-    {
+    gmUpdatePercentage = ((float)((float)(gpSocket->getFeedBackCounter()) / gmUpdateFileSequence)) * 100;
 
-        ethernet_package = gmSocket.receiveData();
+    gmMutex.unlock();
 
-        if(ethernet_package.size() == ETHERNET_TRANSFER_SIZE)
-        {
-            feedback_package = ethernet_package.data();
+}
 
-            if(ethernet_package[0] == 'F' && ethernet_package[1] == 'E')
-            {
-                info_package = feedback_package;
-                counter++;
-                percent = ((float)((float)counter / gmUpdateFileSequence)) * 100;
+void RemoteController::progressBarThread()
+{
+//    UDP_DATA_FORMAT feedback_package;
+//    INFORMATION_DATA_FORMAT info_package;
+//    std::vector<unsigned char> ethernet_package;
+//    int counter = 0;
+//    float percent = 0;
 
+//    usleep(1000);
 
-                gmMutex.lock();
-                gmUpdatePercentage = percent;
-                gmMutex.unlock();
+//    gmUploadingStart = true;
 
-                printf("%d/%d\n", counter, gmUpdateFileSequence);
-                printf("%d\n", gmUpdatePercentage);
+//    while(true)
+//    {
 
+//        ethernet_package = gpSocket->receiveData();
 
+//        if(ethernet_package.size() == ETHERNET_TRANSFER_SIZE)
+//        {
+//            feedback_package = ethernet_package.data();
 
-                if(counter >= gmUpdateFileSequence)
-                {
-                    gmUploadingStart = false;
-
-                    break;
-
-                }
-            }
-        }
-    }
+//            if(ethernet_package[0] == 'F' && ethernet_package[1] == 'E')
+//            {
+//                info_package = feedback_package;
+//                counter++;
+//                percent = ((float)((float)counter / gmUpdateFileSequence)) * 100;
 
 
-    gmUploadingStart = false;
+//                gmMutex.lock();
+//                gmUpdatePercentage = percent;
+//                gmMutex.unlock();
+
+//                printf("%d/%d\n", counter, gmUpdateFileSequence);
+//                printf("%d\n", gmUpdatePercentage);
+
+
+
+//                if(counter >= gmUpdateFileSequence)
+//                {
+//                    gmUploadingStart = false;
+
+//                    break;
+
+//                }
+//            }
+//        }
+//    }
+
+
+//    gmUploadingStart = false;
 
 
 }
 
-void Controller::updateThread(const std::string &FileName)
+void RemoteController::updateThread(const std::string &FileName)
 {
 
     std::vector<unsigned char> data;
@@ -507,3 +512,5 @@ void Controller::updateThread(const std::string &FileName)
     parseAndSendData(data, gmIpAddress);
 
 }
+
+

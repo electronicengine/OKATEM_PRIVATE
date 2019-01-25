@@ -35,12 +35,7 @@ LaserTracker::~LaserTracker()
 
 int LaserTracker::runTracking(std::string StreamIp, int StreamPort)
 {
-
-    gmStreamIp = StreamIp;
-
-    gmUdpStreamSocket.openPort(StreamIp, StreamPort, NORMAL_MODE);
-
-    printAll("stream port", StreamPort);
+    gmUdpStreamSocket.init(StreamIp, StreamPort);
 
 
     std::thread tracking(&LaserTracker::startTracking, this);
@@ -77,6 +72,8 @@ float LaserTracker::getEdgeRate()
 void LaserTracker::streamFrame(cv::Mat Frame)
 {
 
+    int ret;
+
     cv::Mat stream_frame;
     std::vector<unsigned char> encoded_frame;
     std::vector < int > compression_params;
@@ -104,7 +101,13 @@ void LaserTracker::streamFrame(cv::Mat Frame)
             stream_data.data[k] = encoded_frame[i*(STREAM_DATA_SIZE) + k];
 
 
-        gmUdpStreamSocket.sendData(stream_data, gmStreamIp);
+        ret = gmUdpStreamSocket.sendData(stream_data);
+
+        if(ret != SUCCESS)
+        {
+            printAll("Stream Data Doesn't sent");
+            break;
+        }
 
     }
 
@@ -138,10 +141,8 @@ int LaserTracker::startTracking()
 {
     std::vector<cv::Vec3f> red_circles;
 
-
     printAll("LaserTracker is starting...");
 
-    printAll("stream Ip ", gmStreamIp);
 
     while(true)
     {

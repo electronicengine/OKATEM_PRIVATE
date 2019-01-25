@@ -18,16 +18,23 @@
 #define BACKWARD 2
 #define STOP 0
 
- struct Step_Motor {
+
+
+volatile uint8_t setting_enable;
+
+struct Step_Motor {
    volatile int direction;
    volatile int speed;
    volatile uint32_t step_number;
+   volatile uint32_t max_step_number;
  }motor1, motor2, motor3, motor4;
 
 
  struct Servo_motor {
    volatile int angle;
    volatile int speed;
+   volatile int top;
+   volatile int bottom;
  }servo1, servo2;
 
 

@@ -12,10 +12,12 @@
 #include <iostream>
 #include "connectiondialog.h"
 #include "ui_connectiondialog.h"
+#include "autocontrol.h"
+//#include "initialvaluesettings.h"
 
 #include "videostream.h"
 #include "datatypes.h"
-#include "controller.h"
+#include "remotecontroller.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -58,6 +60,14 @@ private slots:
     void on_increase2_button_clicked();
     void on_decrease2_button_clicked();
     void on_refresh_button_clicked();
+    void on_actionAuto_Control_Settings_triggered();
+    void on_toggle_button_toggled(bool checked);
+
+    void on_up_button_toggled(bool checked);
+    void on_left_button_toggled(bool checked);
+    void on_down_buttton_toggled(bool checked);
+    void on_right_button_toggled(bool checked);
+    void on_actionSet_Initial_Values_triggered();
 
 signals:
     void progressUpdateFile(int Percent);
@@ -113,9 +123,14 @@ signals:
 private:
 
 
-    Controller *gpController;
+    RemoteController *gpController;
     VideoStream *gpStream;
     ConnectionDialog *gpConnectionBox;
+    AutoControl *gpAutoControl;
+//    InitialValueSettings *gpInitialValueSettings;
+
+
+    UdpSocket gmControllerSocket, gmVideoStreamSocket;
 
 
     CONTROL_DATA_FORMAT gmControlInfo;
@@ -128,6 +143,15 @@ private:
 
     cv::Mat gmMat;
 
+
+    bool gmKeepButtonsPressed = false;
+
+    bool gmUpButtonCheckState = false;
+    bool gmDownButtonCheckState = false;
+    bool gmLeftButtonCheckState = false;
+    bool gmRightButtonCheckState = false;
+
+
     std::string gmIpAddress;
     int gmStreamPort;
     int gmControlPort;
@@ -139,12 +163,14 @@ private:
     bool gmDownButtonPressed = 0;
     bool gmLeftButtonPressed = 0;
     bool gmRightButtonPressed = 0;
+
     bool gmControllerConnectionEstablished = 0;
     void controlThread();
     void keepAlive();
     void deployPanel();
 
     void setControlPanel(bool Value);
+
 
 };
 

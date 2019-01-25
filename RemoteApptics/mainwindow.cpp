@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     gpConnectionBox = new ConnectionDialog;
+    gpAutoControl = new AutoControl;
+//    gpInitialValueSettings = new InitialValueSettings;
 
     connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
     connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
@@ -61,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     pix.load("hyperion.jpg");
     ui->frame_label->setPixmap(pix);
 
+    ui->toggle_button->setCheckable(true);
+
     emit setprogessbarvisibility(false);
     emit setupdatelabelvisibility(false);
 
@@ -84,44 +88,6 @@ MainWindow::~MainWindow()
 
     gpStream->stop();
     delete gpStream;
-}
-
-
-
-void MainWindow::on_actionConnection_triggered()
-{
-    gpConnectionBox->show();
-}
-
-
-
-void MainWindow::on_actionUpdate_Firmware_triggered()
-{
-
-//    QString stdw;
-    std::string file;
-//    QFileDialog dialog(this);
-
-    QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace/OKATEM_PRIVATE/stm32f746_rtos/build");
-
-    file = file_name.toStdString();
-
-    if(file.size() != 0)
-    {
-        QMessageBox::StandardButton reply;
-
-        reply = QMessageBox::question(this, "Upgrading FirmWare", "Are You Sure?", QMessageBox::Yes|QMessageBox::No);
-
-        if (reply == QMessageBox::Yes)
-        {
-            gpController->updateFirmware(file_name.toStdString());
-        }
-        else
-        {
-            std::cout << "Upgrading cancelled" << std::endl;
-            return;
-        }
-    }
 }
 
 
@@ -206,11 +172,11 @@ void MainWindow::setControlPanel(bool Value)
 void MainWindow::controlThread()
 {
 
+
     int ret;
     int counter = 0;
     int percent = 0;
     bool update_done = 0;
-
 
     while(1)
     {
@@ -219,24 +185,19 @@ void MainWindow::controlThread()
 
         if(gmUpButtonPressed)
         {
-
             gpController->turnUp();
 
         }else if(gmDownButtonPressed)
         {
-
             gpController->turnDown();
 
         }else if(gmLeftButtonPressed)
         {
-
             gpController->turnLeft();
 
         }else if(gmRightButtonPressed)
         {
-
             gpController->turnRight();
-
         }
 
         if(gmControllerConnectionEstablished == 1)
@@ -246,7 +207,6 @@ void MainWindow::controlThread()
 
             if(percent >= 0 && percent < 100)
             {
-//                printf("%d\n", percent);
 
                 update_done = false;
 
@@ -294,6 +254,9 @@ void MainWindow::controlThread()
 
                 if(ret == SUCCESS)
                     deployPanel();
+                else {
+                    std::cout << "Panel Data can not be received" << std::endl;
+                }
 
             }
 
@@ -322,8 +285,9 @@ void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int C
 
     int ret;
 
-    gpController = new Controller;
-    gpStream = new VideoStream;
+    gpController = new RemoteController(&gmControllerSocket);
+
+    gpStream = new VideoStream(&gmVideoStreamSocket);
 
     gmIpAddress = IpAddress;
     gmStreamPort = StreamPort;
@@ -337,12 +301,14 @@ void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int C
     }
     else
     {
+        std::cout << "Controller Connection Succesfull " << std::endl;
+
         ret = gpController->getFsoInformations(gmControlInfo, gmEnvironmentInfo, gmSfpInfo);
         if(ret == FAIL)
         {
 
             QMessageBox::critical(this, "Error", "Connection Failed");
-            std::cout << "Connection Failed"<<std::endl;
+            std::cout << "FSO Information request has not been answered"<<std::endl;
 
             delete gpController;
 
@@ -364,6 +330,9 @@ void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int C
             setControlPanel(true);
 
             gmControllerConnectionEstablished = 1;
+
+            std::cout << "servo 1: " << std::to_string(gmControlInfo.servo_motor1_degree) << std::endl;
+            std::cout << "servo 2: " << std::to_string(gmControlInfo.servo_motor2_degree) << std::endl;
 
             ui->servo1_pos_label->setText(QString::number(gmControlInfo.servo_motor1_degree));
             ui->servo2_pos_label->setText(QString::number(gmControlInfo.servo_motor2_degree));
@@ -403,35 +372,72 @@ void MainWindow::on_speed_slider_valueChanged(int value)
 
 
 
-void MainWindow::on_up_button_pressed(){ gmUpButtonPressed = 1; }
+void MainWindow::on_up_button_pressed() { gmUpButtonPressed = 1; }
 
 
 
-void MainWindow::on_up_button_released(){ gmUpButtonPressed = 0; }
+void MainWindow::on_up_button_released()
+{
+    if(gmKeepButtonsPressed == false)
+        gmUpButtonPressed = 0;
+    else
+    {
+        if(gmUpButtonCheckState == false)
+            gmUpButtonPressed = 0;
+    }
+
+}
+
+
+void MainWindow::on_left_button_pressed() { gmLeftButtonPressed = 1; }
 
 
 
-void MainWindow::on_left_button_pressed(){ gmLeftButtonPressed = 1; }
+void MainWindow::on_left_button_released()
+{
+    if(gmKeepButtonsPressed == false)
+        gmLeftButtonPressed = 0;
+    else
+    {
+        if(gmLeftButtonCheckState == false)
+            gmLeftButtonPressed = 0;
+    }
+}
 
 
 
-void MainWindow::on_left_button_released(){ gmLeftButtonPressed = 0; }
+void MainWindow::on_right_button_pressed() { gmRightButtonPressed = 1; }
 
 
 
-void MainWindow::on_right_button_pressed(){ gmRightButtonPressed = 1; }
+void MainWindow::on_right_button_released()
+{
+    if(gmKeepButtonsPressed == false)
+        gmRightButtonPressed = 0;
+    else
+    {
+        if(gmRightButtonCheckState == false)
+            gmRightButtonPressed = 0;
+    }
+}
 
 
 
-void MainWindow::on_right_button_released(){ gmRightButtonPressed = 0;}
+void MainWindow::on_down_buttton_pressed() { gmDownButtonPressed = 1; }
 
 
 
-void MainWindow::on_down_buttton_pressed(){ gmDownButtonPressed = 1;}
+void MainWindow::on_down_buttton_released()
+{
+    if(gmKeepButtonsPressed == false)
+        gmDownButtonPressed = 0;
+    else
+    {
+        if(gmDownButtonCheckState == false)
+            gmDownButtonPressed = 0;
+    }
+}
 
-
-
-void MainWindow::on_down_buttton_released(){ gmDownButtonPressed = 0;}
 
 
 
@@ -440,9 +446,23 @@ void MainWindow::on_servo1_slider_valueChanged(int value)
 
     std::cout << value << std::endl;
 
-    ui->servo1_slider->setValue(value);
-    ui->servo1_pos_label->setText(QString::number(value));
-    gpController->servo1SetValue(value);
+    if(gmControlInfo.servo_motor1_bottom_degree < value && gmControlInfo.servo_motor1_top_degree > value)
+    {
+        ui->servo1_slider->setValue(value);
+        ui->servo1_pos_label->setText(QString::number(value));
+        gpController->servo1SetValue(value);
+    }
+    else
+    {
+        if(gmControlInfo.servo_motor1_bottom_degree >= value)
+            value = gmControlInfo.servo_motor1_bottom_degree;
+        if(gmControlInfo.servo_motor1_top_degree <= value)
+            value = gmControlInfo.servo_motor1_top_degree;
+
+        ui->servo1_slider->setValue(value);
+        ui->servo1_pos_label->setText(QString::number(value));
+
+    }
 
 }
 
@@ -452,9 +472,23 @@ void MainWindow::on_servo2_slider_valueChanged(int value)
 {
     std::cout << value << std::endl;
 
-    ui->servo2_slider->setValue(value);
-    ui->servo2_pos_label->setText(QString::number(value));
-    gpController->servo2SetValue(value);
+    if(gmControlInfo.servo_motor2_bottom_degree < value && gmControlInfo.servo_motor2_top_degree > value)
+    {
+        ui->servo2_slider->setValue(value);
+        ui->servo2_pos_label->setText(QString::number(value));
+        gpController->servo2SetValue(value);
+    }
+    else
+    {
+        if(gmControlInfo.servo_motor2_bottom_degree >= value)
+            value = gmControlInfo.servo_motor2_bottom_degree;
+        if(gmControlInfo.servo_motor2_top_degree <= value)
+            value = gmControlInfo.servo_motor2_top_degree;
+
+        ui->servo2_slider->setValue(value);
+        ui->servo2_pos_label->setText(QString::number(value));
+
+    }
 }
 
 
@@ -467,7 +501,7 @@ void MainWindow::on_increase1_button_clicked()
 
     ui->servo1_slider->setValue(value);
 
-//    ui->servo1_slider->setValue(++gmServo1SliderValue);
+    ui->servo1_slider->setValue(++gmServo1SliderValue);
 
 }
 
@@ -572,7 +606,7 @@ void MainWindow::on_refresh_button_clicked()
 
         usleep(1000);
 
-        gpStream = new VideoStream;
+        gpStream = new VideoStream(&gmVideoStreamSocket);
 
         gpStream->start(gmIpAddress, gmStreamPort, this);
 
@@ -580,4 +614,88 @@ void MainWindow::on_refresh_button_clicked()
 
 }
 
+
+
+void MainWindow::on_actionConnection_triggered()
+{
+    gpConnectionBox->show();
+}
+
+
+
+void MainWindow::on_actionUpdate_Firmware_triggered()
+{
+
+//    QString stdw;
+    std::string file;
+//    QFileDialog dialog(this);
+
+    QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace/OKATEM_PRIVATE/stm32f746_rtos/build");
+
+    file = file_name.toStdString();
+
+    if(file.size() != 0)
+    {
+        QMessageBox::StandardButton reply;
+
+        reply = QMessageBox::question(this, "Upgrading FirmWare", "Are You Sure?", QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes)
+        {
+            gpController->updateFirmware(file_name.toStdString());
+        }
+        else
+        {
+            std::cout << "Upgrading cancelled" << std::endl;
+            return;
+        }
+    }
+}
+
+
+
+void MainWindow::on_actionAuto_Control_Settings_triggered()
+{
+    gpAutoControl->show();
+}
+
+
+
+void MainWindow::on_actionSet_Initial_Values_triggered()
+{
+//    gpInitialValueSettings->setDefaultValues(gmControlInfo);
+//    gpInitialValueSettings->show();
+}
+
+
+void MainWindow::on_toggle_button_toggled(bool checked)
+{
+
+    gmKeepButtonsPressed = checked;
+    ui->up_button->setCheckable(checked);
+    ui->down_buttton->setCheckable(checked);
+    ui->left_button->setCheckable(checked);
+    ui->right_button->setCheckable(checked);
+
+}
+
+void MainWindow::on_up_button_toggled(bool checked)
+{
+    gmUpButtonCheckState = checked;
+}
+
+void MainWindow::on_left_button_toggled(bool checked)
+{
+    gmLeftButtonCheckState = checked;
+}
+
+void MainWindow::on_down_buttton_toggled(bool checked)
+{
+    gmDownButtonCheckState = checked;
+}
+
+void MainWindow::on_right_button_toggled(bool checked)
+{
+    gmRightButtonCheckState = checked;
+}
 

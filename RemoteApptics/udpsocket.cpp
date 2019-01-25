@@ -1,6 +1,5 @@
 ﻿#include "udpsocket.h"
-
-
+#include "socketlistener.h"
 
 UdpSocket::UdpSocket()
 {
@@ -8,31 +7,10 @@ UdpSocket::UdpSocket()
 
 UdpSocket::~UdpSocket()
 {
-    std::cout << "closing socket" << std::endl;
-    close(gmSocket);
+
+    gmEthernetSocket.closeSocket();
 }
 
-
-std::vector<unsigned char> UdpSocket::receiveData()
-{
-
-    int package_size;
-
-    std::vector<unsigned char> data_container;
-    unsigned char ethernet_data[ETHERNET_TRANSFER_SIZE];
-
-    package_size = recv(gmSocket, ethernet_data, ETHERNET_TRANSFER_SIZE, 0);
-
-    if(package_size == ETHERNET_TRANSFER_SIZE)
-    {
-
-       for(int i=0; i<package_size; i++)
-           data_container.push_back(ethernet_data[i]);
-
-    }
-
-    return data_container;
-}
 
 CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 {
@@ -42,12 +20,14 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 
     if(gmIsRecieved == 1)
     {
-        if(gmSpiControlData.header == (('C') | ('O' << 8)))
+        if(gmSpiControlData.header == ('C' | ('O' << 8)))
         {
             Data = gmSpiControlData;
+            Data.is_available = true;
         }
         else
         {
+            Data.is_available = false;
             Data = false;
         }
 
@@ -55,6 +35,7 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
     }
     else
     {
+        Data.is_available = false;
         Data = false;
     }
 
@@ -70,165 +51,224 @@ UPDATE_FILE_FORMAT UdpSocket::getSocketUpdateData()
 
     UPDATE_FILE_FORMAT Data;
 
-//    gmMutex.lock();
+    gmMutex.lock();
 
-//    if(gmUpdateFileQueue.size() != 0)
-//    {
+    if(gmUpdateFileQueue.size() != 0)
+    {
 
-//        Data = gmUpdateFileQueue.pop_front();
+        Data = gmUpdateFileQueue.pop_front();
 
-//        Data.is_available = true;
+        Data.is_available = true;
 
-//        gmMutex.unlock();
+        gmMutex.unlock();
 
-//        return Data;
+        return Data;
 
-//    }
-//    else
-//    {
-//        Data.clear();
-//        gmMutex.unlock();
+    }
+    else
+    {
+        Data.is_available = false;
 
-//        return Data;
-//    }
+        Data.clear();
+        gmMutex.unlock();
 
-    return Data;
-
-}
-
-int UdpSocket::sendData(UDP_DATA_FORMAT &UdpData, const std::string IpAddress)
-{
-
-
-    unsigned char *raw_data;
-
-    raw_data = UdpData;
-
-    gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
-
-    sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
-
-    delete raw_data;
-
-    return 0;
-
+        return Data;
+    }
 
 }
 
-int UdpSocket::sendData(STREAM_DATA_FORMAT &StreamData, const std::string &IpAddress)
+
+INFORMATION_DATA_FORMAT UdpSocket::getInformationData()
 {
+
+    INFORMATION_DATA_FORMAT information_data;
+
+
+    if(gmInformationData.is_available == true)
+    {
+
+        gmMutex.lock();
+
+        information_data = gmInformationData;
+        gmInformationData.is_available = false;
+
+        gmMutex.unlock();
+
+
+        information_data.is_available = true;
+
+        return information_data;
+
+    }
+    else
+    {
+        information_data.is_available = false;
+
+        return information_data;
+    }
+
+
+
+
+}
+
+STREAM_DATA_FORMAT UdpSocket::getStreamData()
+{
+    STREAM_DATA_FORMAT Data;
+
+
+
+    if(gmStreamDataQueue.size() != 0)
+    {
+
+        gmMutex.lock();
+
+        Data = gmStreamDataQueue.pop_front();
+
+        Data.is_available = true;
+
+        gmMutex.unlock();
+
+        return Data;
+
+    }
+    else
+    {
+        Data.is_available = false;
+
+        Data.clear();
+
+        return Data;
+    }
+}
+
+int UdpSocket::getFeedBackCounter()
+{
+    int counter;
+
+    gmMutex.lock();
+    counter = gmFeedBackCounter;
+    gmMutex.unlock();
+
+    return counter;
+
+}
+
+void UdpSocket::setFeedBackCounter(int Value)
+{
+    gmMutex.lock();
+
+    gmFeedBackCounter = Value;
+
+    gmMutex.unlock();
+
+}
+
+void UdpSocket::attach(SocketListener *Observer)
+{
+    listeners.push_back(Observer);
+
+}
+
+
+void UdpSocket::listen()
+{
+
+
+    std::thread listening_port(&UdpSocket::listenPort, this);
+    listening_port.detach();
+
+}
+
+
+
+int UdpSocket::init(const std::string &IpAddress, int Port)
+{
+    return gmEthernetSocket.openSocket(IpAddress, Port);
+}
+
+
+
+int UdpSocket::sendData(SPI_TRANSFER_FORMAT SpiData)
+{
+
+    std::vector<unsigned char> raw_data;
+
     UDP_DATA_FORMAT udp_data;
-
-    unsigned char *raw_data;
-
-    udp_data = StreamData;
-
-    raw_data = udp_data;
-
-    gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
-    sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
-
-    delete raw_data;
-
-    return 0;
-}
-
-int UdpSocket::sendData(SPI_TRANSFER_FORMAT SpiData, const std::string &IpAddress)
-{
-    UDP_DATA_FORMAT udp_data;
-
-    unsigned char *raw_data;
-
 
     udp_data = SpiData;
 
     raw_data = udp_data;
 
-    gmClientAddr.sin_addr.s_addr = inet_addr(IpAddress.c_str());
-    sendto(gmSocket, raw_data, ETHERNET_TRANSFER_SIZE, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
 
-    delete raw_data;
+    return gmEthernetSocket.transferData(raw_data);
+}
+
+
+
+int UdpSocket::sendData(INFORMATION_DATA_FORMAT &InformationData)
+{
+
+    UDP_DATA_FORMAT udp_data;
+
+    std::vector<unsigned char> raw_data;
+
+    udp_data = InformationData;
+
+    raw_data = udp_data;
+
+    return gmEthernetSocket.transferData(raw_data);
+
+}
+
+int UdpSocket::sendData(STREAM_DATA_FORMAT &StreamData)
+{
+
+
+    std::vector<unsigned char> raw_data;
+
+    raw_data = StreamData;
+
+    return gmEthernetSocket.transferData(raw_data);
+
+}
+
+
+int UdpSocket::sendData(UDP_DATA_FORMAT &UdpData)
+{
+
+    std::vector<unsigned char> raw_data;
+
+    raw_data = UdpData;
+
+    return gmEthernetSocket.transferData(raw_data);
+
+}
+
+int UdpSocket::saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
+{
+
+    gmMutex.lock();
+
+    gmControlData = ControlData;
+    gmEnvironmentData = EnvironmentData;
+    gmSfpData = SfpData;
+
+    gmMutex.unlock();
 
     return 0;
 }
 
-
-int UdpSocket::openPort(int Port)
+int UdpSocket::setInitialMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 {
+    gmMutex.lock();
 
-    int ret;
-    struct timeval timeout;
-    int optval = 1;
-    gmPort = Port;
+    gmControlData = ControlData;
 
-    gmSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (gmSocket < 0)
-    {
-        printf("cannot Open datagram socket!!\r\n");
-        return FAIL;
-    }
+    gmMutex.unlock();
 
+    return 0;
 
-    /* Bind our local address so that the client can send to us */
-    gmServerAddr.sin_family = AF_INET;
-    gmServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    gmServerAddr.sin_port = htons(Port);
-
-
-
-    gmClientAddr.sin_family = AF_INET;
-    gmClientAddr.sin_port = htons(gmPort);
-
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-
-    setsockopt(gmSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
-    setsockopt(gmSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-
-    ret = bind(gmSocket, (struct sockaddr *) &gmServerAddr, sizeof(gmServerAddr));
-    if (ret)
-    {
-        printf("cannot bind datagram socket!! %d\r\n", ret);
-        return FAIL;
-    }
-
-
-    printf("Socket has port number %d\r\n", ntohs(gmServerAddr.sin_port));
-
-    return SUCCESS;
-
-}
-
-
-int UdpSocket::openPort(int Port, int Mode)
-{
-    int ret;
-
-    ret = openPort(Port);
-
-    if(ret != SUCCESS)
-        return FAIL;
-
-    if(Mode == LISTENING_MODE)
-    {
-        std::thread listening_port(&UdpSocket::listenPort, this);
-        listening_port.detach();
-
-        return ret;
-    }
-    else
-    {
-        return ret;
-    }
-
-}
-
-int UdpSocket::closePort()
-{
-    close(gmSocket);
-
-    return SUCCESS;
 }
 
 
@@ -236,39 +276,41 @@ int UdpSocket::closePort()
 void UdpSocket::listenPort()
 {
 
-    int package_size;
-
-    SPI_TRANSFER_FORMAT spi_data;
+    int ret;
     UDP_DATA_FORMAT udp_data;
-    INFORMATION_DATA_FORMAT information_data;
-
-    unsigned char *ethernet_data = new unsigned char[sizeof(UDP_DATA_FORMAT)];
+    SPI_TRANSFER_FORMAT spi_data;
 
 
+    std::vector<unsigned char> raw_data(ETHERNET_TRANSFER_SIZE);
+
+    std::cout << "Udp Port Listening Thread Starting..." << std::endl;
 
     while(true)
     {
 
+        ret = gmEthernetSocket.recieveData(raw_data, ETHERNET_TRANSFER_SIZE);
 
-        package_size = read(gmSocket, ethernet_data, ETHERNET_TRANSFER_SIZE);
 
-        if(package_size == ETHERNET_TRANSFER_SIZE)
+        if(ret == SUCCESS)
         {
 
             gmMutex.lock();
 
-            udp_data = ethernet_data;
+            udp_data = raw_data;
 
-            if(ethernet_data[0] == 'S' && ethernet_data[1] == 'P')
+
+
+            if(raw_data[0] == 'S' && raw_data[1] == 'P')
             {
                 spi_data = (unsigned char *)udp_data.data;
 
                 if((spi_data.header & 0xff) == 'U' && ((spi_data.header >> 8) & 0xff) == 'P')
                 {
 
-                    UPDATE_FILE_FORMAT update_file;
 
-                    update_file = spi_data;
+//                    UPDATE_FILE_FORMAT update_file;
+
+//                    update_file = spi_data;
 
 //                    gmUpdateFileQueue.push_back(update_file);
 
@@ -276,26 +318,47 @@ void UdpSocket::listenPort()
 
                 if((spi_data.header& 0xff) == 'C' && ((spi_data.header >> 8) & 0xff) == 'O')
                 {
-                    gmSpiControlData = spi_data;
 
-                    gmIsRecieved = 1;
+//                    gmSpiControlData = spi_data;
+
+//                    gmIsRecieved = 1;
                 }
 
 
-            } else if(ethernet_data[0] == 'I' && ethernet_data[1] == 'N')
+            } else if(raw_data[0] == 'I' && raw_data[1] == 'N')
             {
 
-                    //information data has been taken
 
-            }else if(ethernet_data[0] == 'S' && ethernet_data[1] == 'T')
+                if(gmInformationData.is_available == false)
+                {
+                    gmInformationData = udp_data;
+                    gmInformationData.is_available = true;
+
+                }
+
+
+            }else if(raw_data[0] == 'S' && raw_data[1] == 'T')
             {
 
-                //stream data has been taken
+                STREAM_DATA_FORMAT stream_data;
+
+                stream_data = udp_data;
+
+                gmStreamDataQueue.push_back(stream_data);
+
+            }
+            else if(raw_data[0] == 'F' && raw_data[1] == 'E')
+            {
+
+                gmFeedBackCounter++;
 
             }
 
 
             gmMutex.unlock();
+
+            for(size_t i=0; i<listeners.size(); i++) // notify the subscribers
+                listeners[i]->socketDataCheckCall();
 
         }
 

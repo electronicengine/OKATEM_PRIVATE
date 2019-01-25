@@ -161,8 +161,8 @@ typedef struct
     uint32_t step_motor1_step;
     uint32_t step_motor2_step;
 
-    uint16_t servo_motor1_degree;
-    uint16_t servo_motor2_degree;
+    uint8_t servo_motor1_degree;
+    uint8_t servo_motor2_degree;
 
     SENSOR_DATA sensor_data;
 
@@ -183,37 +183,44 @@ typedef struct
 typedef struct
 {
 
-    uint8_t garbage1[CONTROL_DATA_GARBAGE_SIZE];
+    uint8_t garbage1[CONTROL_DATA_GARBAGE_SIZE]; // header
 
-    uint8_t mode;
+    uint8_t setting_enable;
 
     uint32_t x_position;
     uint32_t y_position;
     uint32_t z_position;
 
-    uint8_t step_motor1_direction;
-    uint8_t step_motor2_direction;
-    uint8_t step_motor3_direction;
-    uint8_t step_motor4_direction;
+    uint8_t step_motor1_direction; // 54
+    uint8_t step_motor2_direction; // 55
+
     uint8_t servo_motor1_direction;
     uint8_t servo_motor2_direction;
 
     uint8_t step_motor1_speed;
     uint8_t step_motor2_speed;
-    uint8_t step_motor3_speed;
-    uint8_t step_motor4_speed;
-    uint8_t servo_motor1_degree;
-    uint8_t servo_motor2_degree;
+
+    uint8_t servo_motor1_degree; //61
+    uint8_t servo_motor1_top_degree;
+    uint8_t servo_motor1_bottom_degree;
+
+    uint8_t servo_motor2_degree; //64
+    uint8_t servo_motor2_top_degree;
+    uint8_t servo_motor2_bottom_degree;
 
     uint8_t calibrate_sensor;
 
     uint32_t step_motor1_step;
     uint32_t step_motor2_step;
 
-    uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE];
+    uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE]; //footer
+
 
 
 }CONTROL_DATA_FORMAT;
+
+
+
 
 
 /* ########################## Assert Selection ############################## */

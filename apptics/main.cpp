@@ -30,10 +30,7 @@ std::map<const std::string, bool> CheckList;
 clock_t now = 0;
 clock_t last = 0;
 
-std::string stream_ip;
-int stream_port;
-int controller_port;
-
+REMOTEMACHINE_INFORMATIONS remote_machine_informations;
 Queue<UPDATE_FILE_FORMAT> file_queue;
 
 ENVIRONMENT_DATA_FORMAT stm_data;
@@ -58,23 +55,24 @@ Json json;
 Status update_file_seq_is_sent  = Status::ok;
 
 
-
 void safeLog();
 
 int init();
-int initUdpSocket();
+int initUdpControlSocket();
 int initConfig();
 int initCamera();
 int initLora();
 int initController();
 int initSfpMonitor();
 int initLcd();
-void getEnvironment();
+int getEnvironment();
+
 void shareEnvironment();
 
 
-int checkIfUdpData();
-int checkIfLcdData();
+
+int checkIfUdpDataAvaliable();
+int checkIfLcdDataAvaliable();
 
 
 
@@ -97,10 +95,10 @@ int main()
         getEnvironment();
         shareEnvironment();
 
-        ret = checkIfUdpData();
+        ret = checkIfUdpDataAvaliable();
 
         if(ret != SUCCESS)
-            checkIfLcdData();
+            checkIfLcdDataAvaliable();
 
         now = clock();
 
@@ -153,7 +151,7 @@ int init()
     if(ret == FAIL)
         return FAIL;
 
-    ret = initUdpSocket();
+    ret = initUdpControlSocket();
 
     if(ret == FAIL)
         return FAIL;
@@ -189,7 +187,7 @@ int initController()
 
 
 
-int checkIfLcdData()
+int checkIfLcdDataAvaliable()
 {
 
     lcd_control_data = lcd_hmi.getHCMControlData();
@@ -197,14 +195,13 @@ int checkIfLcdData()
    if(lcd_control_data == true)
     {
         controller.setControlData(lcd_control_data);
-        json.saveMotorPositions(lcd_control_data);
     }
 
 }
 
 
 
-int checkIfUdpData()
+int checkIfUdpDataAvaliable()
 {
 
     Status status;
@@ -224,15 +221,13 @@ int checkIfUdpData()
             UDP_DATA_FORMAT feed_back_data;
 
             feed_back_data.header = 'F' | 'E' << 8;
-            udp_controller_socket.sendData(feed_back_data, stream_ip);
+            udp_controller_socket.sendData(feed_back_data);
         }
 
     }
     else if(udp_control_data.is_available == true)
     {
         controller.setControlData(udp_control_data);
-
-        json.saveMotorPositions(udp_control_data);
     }
 
     udp_control_data.clear();
@@ -256,28 +251,31 @@ void shareEnvironment()
 
 
 
-void getEnvironment()
+int getEnvironment()
 {
+
+    int ret;
 
     stm_data = controller.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
 
     lora.getLoraData(lora_sfp_data, lora_stm_data);
 
+    return ret;
 }
 
 
 
-int initUdpSocket()
+int initUdpControlSocket()
 {
 
     int ret;
 
-    ret = udp_controller_socket.openPort(stream_ip, controller_port, LISTENING_MODE);
+    udp_controller_socket.init(remote_machine_informations.stream_ip, remote_machine_informations.control_port);
 
     if(ret == SUCCESS)
     {
-        udp_controller_socket.saveInformationData(udp_control_data, stm_data ,sfp_data);
+        udp_controller_socket.listen();
         return SUCCESS;
     }
     else
@@ -330,7 +328,8 @@ int initCamera()
 
     if(ret == SUCCESS)
     {
-        tracker.runTracking(stream_ip, stream_port);
+
+        tracker.runTracking(remote_machine_informations.stream_ip, remote_machine_informations.stream_port);
 
         return SUCCESS;
     }
@@ -348,18 +347,26 @@ int initConfig()
 
     int ret;
 
-    ret = json.loadMotorPositions(lcd_control_data);
-    ret = json.loadMotorPositions(udp_control_data);
+    MOTOR_INFORMATIONS motor_informations;
+
+    ret = json.loadMotorPositions(motor_informations);
 
     if(ret == FAIL)
         return FAIL;
 
-    ret = json.loadStreamInfo(stream_ip, stream_port, controller_port);
+    ret = json.loadStreamInfo(remote_machine_informations);
 
     if(ret == FAIL)
         return FAIL;
+
+    controller.setMotorCalibrationValues(motor_informations);
+
+    lcd_control_data = motor_informations;
+    udp_control_data = motor_informations;
 
     lcd_hmi.setInitialMotorPositions(lcd_control_data);
+    udp_controller_socket.setInitialMotorPositions(udp_control_data);
+
 
     return SUCCESS;
 

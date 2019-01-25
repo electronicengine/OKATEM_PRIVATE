@@ -7,6 +7,8 @@
 
 const int reductor_coefficient = 300; // 500/1.8 = 355.55555
 
+uint32_t step_num = 5000;
+uint32_t counter = 0;
 
 void motorInit()
 {
@@ -73,6 +75,7 @@ void  motor1Drive(int Direction)
 
     if(Direction == BACKWARD)
     {
+
         HAL_GPIO_WritePin(ENABLE_STEP1_GPIO_Port, ENABLE_STEP1_PIN,GPIO_PIN_SET);
 
 

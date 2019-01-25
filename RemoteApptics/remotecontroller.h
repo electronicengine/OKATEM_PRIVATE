@@ -1,5 +1,7 @@
-﻿#ifndef CONTROLLER_H
-#define CONTROLLER_H
+﻿#ifndef REMOTECONTROLLER_H
+#define REMOTECONTROLLER_H
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,8 +15,11 @@
 #include <thread>
 #include <mutex>
 
+
+#include "socketlistener.h"
 #include "udpsocket.h"
 #include "datatypes.h"
+#include <QApplication>
 
 
 
@@ -22,14 +27,24 @@
 #define HEIGHT 10
 
 #define MAX_SPEED 20
+#define FORWARD 1
+#define BACKWARD 2
+#define STOP 0
 
 
 
-class Controller
+class MainWindow;
+
+
+class RemoteController : public SocketListener
 {
 
 public:
-    Controller();
+
+
+    RemoteController(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
+    virtual ~RemoteController(){ }
+
 
     int start(const std::string &IpAddress, int Port);
 
@@ -52,6 +67,7 @@ public:
     void turnDown();
     void turnUp();
 
+
     void increaseSpeed();
     void decreaseSpeed();
     void setSpeed(int value);
@@ -61,11 +77,13 @@ public:
     int getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
     int getUpdatePercenrage();
 
+    void socketDataCheckCall();
+
 private:
 
 
+    UdpSocket *gpSocket;
 
-    UdpSocket gmSocket;
 
     int gmServoMotor1Degree = 50;
     int gmServoMotor2Degree = 50;
@@ -80,11 +98,13 @@ private:
     std::string gmPort;
     CONTROL_DATA_FORMAT gmTxData;
 
+
+    INFORMATION_DATA_FORMAT gmInformationData;
+
     std::mutex gmMutex;
 
     void progressBarThread();
     void updateThread(const std::string &FileName);
-
 
 };
 
