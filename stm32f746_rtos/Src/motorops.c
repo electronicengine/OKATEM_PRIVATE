@@ -56,12 +56,12 @@ void driveStepMotors()
         {
             motor1Drive(FORWARD);
 
-            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
+//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
                 speed = motor1.speed;
                 motor1.step_number++;
 
-            xSemaphoreGive(controlMutexHandle);
+//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -76,14 +76,14 @@ void driveStepMotors()
         {
             motor1Drive(BACKWARD);
 
-            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
+//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
                 speed = motor1.speed;
 
                 if(motor1.step_number != 0)
                     motor1.step_number--;
 
-            xSemaphoreGive(controlMutexHandle);
+//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -106,12 +106,12 @@ void driveStepMotors()
             motor2Drive(FORWARD);
 
 
-            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
+//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
                 speed = motor1.speed;
 
                 if(motor2.step_number != 0)
                     motor2.step_number--;
-            xSemaphoreGive(controlMutexHandle);
+//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -126,13 +126,13 @@ void driveStepMotors()
         {
             motor2Drive(BACKWARD);
 
-            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
+//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
                 speed = motor1.speed;
 
                 motor2.step_number++;
 
-            xSemaphoreGive(controlMutexHandle);
+//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {

@@ -3,11 +3,11 @@
 #include <opencv2/opencv.hpp>
 
 #include "mainwindow.h"
+#include "camerapanel.h"
 
 
 
-
-int VideoStream::start(const std::string &IpAddress, int Port, MainWindow *Window)
+int VideoStream::start(const std::string &IpAddress, int Port, CameraPanel *Panel)
 {
 
     int ret;
@@ -26,10 +26,8 @@ int VideoStream::start(const std::string &IpAddress, int Port, MainWindow *Windo
 
         gpSocket->listen();
 
-        gpWindow = Window;
+        gpPanel = Panel;
 
-//        std::thread play(&VideoStream::playStream, this, Window);
-//        play.detach();
     }
 
     return SUCCESS;
@@ -74,7 +72,7 @@ void VideoStream::socketDataCheckCall()
 
                 ret = convertPackageToMat(frame_data, frame);
                 if(ret != FAIL)
-                    showInScreen(frame, gpWindow);
+                    gpPanel->printScreen(QPixmap::fromImage(cvMatToQImage(frame)));
 
                 frame_data.clear();
 
@@ -196,7 +194,7 @@ int VideoStream::checkifStreamPacket(std::vector<unsigned char> &Package)
 
 
 
-int VideoStream::restartSocket(MainWindow *Window)
+int VideoStream::restartSocket(CameraPanel *Panel)
 {
 
     int ret;
@@ -205,7 +203,7 @@ int VideoStream::restartSocket(MainWindow *Window)
 
     usleep(1000);
 
-    ret = start(gmIpAddress, gmPort, Window);
+    ret = start(gmIpAddress, gmPort, Panel);
 
     return ret;
 
@@ -240,92 +238,6 @@ int VideoStream::convertPackageToMat(std::vector<unsigned char> FrameData, cv::M
         return FAIL;
     }
 
-
-}
-
-
-
-void VideoStream::showInScreen(cv::Mat &Frame, MainWindow *Window)
-{
-    static int count = 0;
-
-    count ++;
-
-    if(count >= 50)
-    {
-        emit Window->screenClose();
-        usleep(1000);
-        count = 0;
-        emit Window->screenShow();
-        usleep(1000);
-    }
-
-    emit Window->refreshScreen(QPixmap::fromImage(cvMatToQImage(Frame)));
-
-//    std::cout << "Comming Stream Packets: " << std::to_string(count) << std::endl;
-}
-
-
-
-void VideoStream::playStream(MainWindow *Window)
-{
-
-    int ret;
-
-    clock_t last_time_data_comming = 0;
-
-    std::vector<unsigned char> frame_data;
-    STREAM_DATA_FORMAT stream;
-
-    std::cout << "playing stream" << std::endl;
-
-    cv::Mat frame;
-
-    while(1)
-    {
-
-        ret = checkSocketCondition(last_time_data_comming);
-
-        if(ret != SUCCESS)
-        {
-            std::cout << "restarting socket" << std::endl;
-
-            restartSocket(Window);
-
-            break;
-        }
-
-        stream = gpSocket->getStreamData();
-
-        if(stream.is_available == true)
-        {
-
-            ret = checkPackageAccuracy(stream);
-
-            if(ret == SUCCESS)
-            {
-
-                putStreamDataIntoBuffer(frame_data, stream.data, STREAM_DATA_SIZE);
-
-                if(stream.current_pack == stream.total_pack)  //if the last frame package
-                {
-                    last_time_data_comming = clock();
-
-                    ret = convertPackageToMat(frame_data, frame);
-                    if(ret != FAIL)
-                        showInScreen(frame, Window);
-
-                    frame_data.clear();
-
-                }
-            }
-            else
-            {
-                frame_data.clear();
-                continue;
-            }
-        }
-    }
 
 }
 

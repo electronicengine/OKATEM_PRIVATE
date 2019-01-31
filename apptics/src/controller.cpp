@@ -199,12 +199,13 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
       if(gmIsTransmitted)
       {
 
-          gmMutex.lock();
 
           if(gmDesiredPackageSequence >= gmCurrentPackageSequence)
           {
               if(Data.current_sequence_number == 1)
                   resetStm();
+
+             gmMutex.lock();
 
              gmUpdateFile = Data;
 
@@ -232,6 +233,8 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 
 
               gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
+
+              gmMutex.lock();
 
               gmSpiTxData = gmUpdateFile;
 
@@ -290,7 +293,6 @@ int Controller::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentDat
 
     CONTROL_DATA_FORMAT initial_control_data;
 
-
     if(EnvironmentData.step_motor1_step == 0xffffffff && EnvironmentData.step_motor2_step == 0xffffffff &&
           EnvironmentData.servo_motor1_degree == 0xff && EnvironmentData.servo_motor1_degree == 0xff) //initiliazation needed
     {
@@ -315,7 +317,6 @@ int Controller::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentDat
 
         initial_control_data.setting_enable = 0xff;
 
-
         gmSpiTxData = initial_control_data;
 
 
@@ -328,16 +329,12 @@ int Controller::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentDat
     }
 }
 
-void Controller::correctWithMotorPositionLimits(CONTROL_DATA_FORMAT &ControlData)
-{
-
-}
-
 
 
 void Controller::communicationThread()
 {
 
+    SPI_TRANSFER_FORMAT spi_data;
 
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
@@ -351,22 +348,26 @@ void Controller::communicationThread()
     while(true)
     {
 
-        gmMutex.lock();
-
         checkInitilizationNeeded(gmEnvironmentData);
 
-//        printf("direction1: %d - angle: %d\n", gmSpiTxData.data[54], gmSpiTxData.data[60]);
-
+        gmMutex.lock();
 
         spi_transfer_data = gmSpiTxData;
+
+        gmMutex.unlock();
+
+
+        printf("%02X-%02X\n", spi_transfer_data[56], spi_transfer_data[57]);
+
 
         status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
 
         if(status == Status::ok)
         {
-           gmSpiRxData = spi_transfer_data;
+           spi_data = spi_transfer_data;
 
-            status = checkIfUpdateData(gmSpiRxData);
+            status = checkIfUpdateData(spi_data);
+
             if(status == Status::ok)
             {
                gmIsTransmitted = true;
@@ -380,7 +381,7 @@ void Controller::communicationThread()
             }
             else
             {
-                status = checkIfEnvironmentData(gmSpiRxData);
+                status = checkIfEnvironmentData(spi_data);
                 if(status == Status::ok)
                 {
 
@@ -393,32 +394,22 @@ void Controller::communicationThread()
                     gmIsTransmitted = true;
                     gmIsReceived = true;
 
-//                    gmIsTransmitted = false;
-//                    gmIsReceived = false;
                 }
 
+                gmMutex.lock();
                 gmSpiTxData.clear();
+                gmMutex.unlock();
 
             }
-
-
-            CheckList["Controller"] = true;
 
         }
         else
         {
 
-            gmSpiTxData.clear();
-
-            gmSpiRxData.clear();
-            gmSpiTxData.clear();
             gmIsTransmitted = false;
             gmIsReceived = false;
 
         }
-
-
-        gmMutex.unlock();
 
         delete spi_transfer_data;
 
@@ -434,6 +425,7 @@ void Controller::communicationThread()
 Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
 {
 
+    static UPDATE_FILE_FORMAT backup_update_file;
     UPDATE_FILE_FORMAT file_package_response;
 
     if((SpiData.header & 0xff) == 'U' && ((SpiData.header >> 8) & 0xff) == 'P')
@@ -448,17 +440,14 @@ Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
         {
 
             printAll(gmDesiredPackageSequence, "<", gmCurrentPackageSequence);
-//             std::cout << gmDesiredPackageSequence << "<" << gmCurrentPackageSequence << std::endl;
 
-            gmSpiTxData = gmBackupUpdateFile;
+            gmMutex.lock();
+            gmSpiTxData = backup_update_file;
+            gmMutex.unlock();
 
-            gmCurrentPackageSequence = gmBackupUpdateFile.current_sequence_number;
-
-//            std::cout << gmDesiredPackageSequence << "<=" << gmCurrentPackageSequence << std::endl;
+            gmCurrentPackageSequence = backup_update_file.current_sequence_number;
 
             gmIsTransmitted = false;
-
-            gmSpiRxData.clear();
 
             return Status::time_out;
 
@@ -468,33 +457,29 @@ Status Controller::checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
         {
 
             printAll(gmDesiredPackageSequence, ">", gmCurrentPackageSequence);
-//            std::cout << gmDesiredPackageSequence << ">" << gmCurrentPackageSequence << std::endl;
-
-            gmSpiRxData.clear();
 
             return Status::ok;
-
 
         }
         else if(((gmDesiredPackageSequence == gmCurrentPackageSequence)))
         {
 
             printAll(gmDesiredPackageSequence, "==", gmCurrentPackageSequence);
-//             std::cout << gmDesiredPackageSequence << "==" << gmCurrentPackageSequence << std::endl;
 
-            gmBackupUpdateFile = gmUpdateFile;
+            backup_update_file = gmUpdateFile;
             gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
 
             if(gmCurrentPackageSequence == gmUpdateFile.total_sequence_number)
             {
                 printAll("Firmware Updating is done");
+
+                gmMutex.lock();
                 gmUpdateFile.clear();
                 gmSpiTxData.clear();
+                gmMutex.unlock();
 
                 return Status::error;
             }
-
-            gmSpiRxData.clear();
 
             return Status::ok;
 
@@ -517,7 +502,9 @@ Status Controller::checkIfEnvironmentData(const SPI_TRANSFER_FORMAT &SpiData)
     if((SpiData.header & 0xff) == 'E' && ((SpiData.header >> 8) & 0xff) == 'N')
     {
 
-        gmEnvironmentData = gmSpiRxData;
+        gmMutex.lock();
+        gmEnvironmentData = SpiData;
+        gmMutex.unlock();
 
         return Status::ok;
 

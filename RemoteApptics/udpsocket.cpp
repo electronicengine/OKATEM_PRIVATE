@@ -294,7 +294,6 @@ void UdpSocket::listenPort()
         if(ret == SUCCESS)
         {
 
-            gmMutex.lock();
 
             udp_data = raw_data;
 
@@ -331,9 +330,10 @@ void UdpSocket::listenPort()
 
                 if(gmInformationData.is_available == false)
                 {
+                    gmMutex.lock();
                     gmInformationData = udp_data;
                     gmInformationData.is_available = true;
-
+                    gmMutex.unlock();
                 }
 
 
@@ -344,18 +344,23 @@ void UdpSocket::listenPort()
 
                 stream_data = udp_data;
 
+                gmMutex.lock();
                 gmStreamDataQueue.push_back(stream_data);
+                gmMutex.unlock();
+
 
             }
             else if(raw_data[0] == 'F' && raw_data[1] == 'E')
             {
 
+                gmMutex.lock();
                 gmFeedBackCounter++;
+                gmMutex.unlock();
+
 
             }
 
 
-            gmMutex.unlock();
 
             for(size_t i=0; i<listeners.size(); i++) // notify the subscribers
                 listeners[i]->socketDataCheckCall();

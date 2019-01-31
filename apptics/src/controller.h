@@ -63,26 +63,25 @@ public:
 private:
 
     SPI_TRANSFER_FORMAT gmSpiTxData;
-    SPI_TRANSFER_FORMAT gmSpiRxData;
     ENVIRONMENT_DATA_FORMAT gmEnvironmentData;
     CONTROL_DATA_FORMAT gmControlData;
+    UPDATE_FILE_FORMAT gmUpdateFile;
+
 
     volatile bool gmIsReceived = false;
     volatile bool gmIsTransmitted = true;
 
     MOTOR_INFORMATIONS gmCalibratedMotorValues;
 
-    uint32_t gmDesiredPackageSequence = 1;
-    uint32_t gmCurrentPackageSequence = 1;
+    volatile uint32_t gmDesiredPackageSequence = 1;
+    volatile uint32_t gmCurrentPackageSequence = 1;
 
     SpiCom gmSpi;
     std::mutex gmMutex;
 
-    UPDATE_FILE_FORMAT gmBackupUpdateFile;
-    UPDATE_FILE_FORMAT gmUpdateFile;
+
 
     int checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData);
-    void correctWithMotorPositionLimits(CONTROL_DATA_FORMAT &ControlData);
     void communicationThread();
     Status checkIfUpdateData(const SPI_TRANSFER_FORMAT& SpiData);
     Status checkIfEnvironmentData(const SPI_TRANSFER_FORMAT& SpiData);

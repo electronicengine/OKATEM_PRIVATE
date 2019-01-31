@@ -6,7 +6,6 @@
 #include <QPixmap>
 #include <functional>
 #include "udpsocket.h"
-#include "ui_mainwindow.h"
 #include "socketlistener.h"
 
 #include <QThread>
@@ -21,6 +20,7 @@
 
 
 class MainWindow;
+class CameraPanel;
 
 class VideoStream : public SocketListener
 {
@@ -29,7 +29,7 @@ public:
     VideoStream(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
     virtual ~VideoStream(){ gmStreamStop = true; }
 
-    int start(const std::string &IpAddress, int Port, MainWindow* Window);
+    int start(const std::string &IpAddress, int Port, CameraPanel* Panel);
     void stop();
 
     void socketDataCheckCall();
@@ -41,7 +41,7 @@ private:
     std::string gmIpAddress;
     int gmPort;
 
-    MainWindow *gpWindow;
+    CameraPanel *gpPanel;
 
     volatile bool gmStreamStop = false;
 
@@ -49,10 +49,8 @@ private:
     int checkPackageAccuracy(STREAM_DATA_FORMAT &StreamData);
     int checkSocketCondition(clock_t &LastDataComming);
     int checkifStreamPacket(std::vector <unsigned char> &Package);
-    int restartSocket(MainWindow *Window);
+    int restartSocket(CameraPanel *Panel);
     int convertPackageToMat(std::vector<unsigned char> FrameData, cv::Mat &Frame);
-    void showInScreen(cv::Mat &Frame, MainWindow *Window);
-    void playStream(MainWindow *Window);
     QImage cvMatToQImage( const cv::Mat &inMat );
 };
 

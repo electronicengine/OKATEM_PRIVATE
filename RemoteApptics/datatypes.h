@@ -1115,7 +1115,7 @@ struct INFORMATION_DATA_FORMAT
     ENVIRONMENT_DATA_FORMAT environment_data;
     SFP_DATA_FORMAT sfp_data;
 
-    bool is_available;
+    bool is_available = false;
 
     operator UDP_DATA_FORMAT()
     {

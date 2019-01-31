@@ -42,7 +42,10 @@ class RemoteController : public SocketListener
 public:
 
 
-    RemoteController(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
+    RemoteController(UdpSocket *Socket) : SocketListener(Socket)
+    {
+        gpSocket = Socket;
+    }
     virtual ~RemoteController(){ }
 
 
@@ -75,7 +78,10 @@ public:
     void updateFirmware(const std::string &FileName);
 
     int getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
-    int getUpdatePercenrage();
+    int getUpdatePercentage();
+    int resetUpdatePercentage();
+
+    int stop();
 
     void socketDataCheckCall();
 
@@ -84,12 +90,12 @@ private:
 
     UdpSocket *gpSocket;
 
-
     int gmServoMotor1Degree = 50;
     int gmServoMotor2Degree = 50;
 
     int gmUpdatePercentage = 0;
 
+    volatile bool gmStopAll = false;
     volatile bool gmUploadingStart = false;
 
     int gmUpdateFileSequence;
@@ -103,7 +109,6 @@ private:
 
     std::mutex gmMutex;
 
-    void progressBarThread();
     void updateThread(const std::string &FileName);
 
 };

@@ -259,9 +259,11 @@ void UdpSocket::listenPort()
 
                     gmMutex.lock();
                     gmSpiControlData = spi_data;
-                    gmMutex.unlock();
 
                     gmIsRecieved = 1;
+
+                    gmMutex.unlock();
+
                 }
 
 
@@ -304,9 +306,6 @@ void UdpSocket::listenPort()
                 gmMutex.unlock();
 
             }
-
-
-            gmMutex.unlock();
 
 
         }

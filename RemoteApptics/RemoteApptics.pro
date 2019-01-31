@@ -41,7 +41,10 @@ SOURCES += \
         connectiondialog.cpp \
         autocontrol.cpp \
         remotecontroller.cpp \
-    socketlistener.cpp
+        socketlistener.cpp \
+    controlpanel.cpp \
+    displaypanel.cpp \
+    camerapanel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -53,7 +56,10 @@ HEADERS += \
         connectiondialog.h \
         autocontrol.h \
         remotecontroller.h \
-    socketlistener.h
+        socketlistener.h \
+    controlpanel.h \
+    displaypanel.h \
+    camerapanel.h
 
 FORMS += \
         mainwindow.ui \
