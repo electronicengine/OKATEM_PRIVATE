@@ -8,7 +8,14 @@ UdpSocket::UdpSocket()
 UdpSocket::~UdpSocket()
 {
 
-    gmEthernetSocket.closeSocket();
+
+    gmTerminate = true;
+
+    while(gmTerminated == false);
+
+    if(gmEthernetSocket.isOpened() != SUCCESS)
+        gmEthernetSocket.closeSocket();
+
 }
 
 
@@ -271,6 +278,20 @@ int UdpSocket::setInitialMotorPositions(CONTROL_DATA_FORMAT &ControlData)
 
 }
 
+int UdpSocket::terminate()
+{
+
+    gmTerminate = true;
+
+    while(gmTerminated == false);
+
+    if(gmEthernetSocket.isOpened() != SUCCESS)
+        gmEthernetSocket.closeSocket();
+
+    return SUCCESS;
+
+}
+
 
 
 void UdpSocket::listenPort()
@@ -283,7 +304,10 @@ void UdpSocket::listenPort()
 
     std::vector<unsigned char> raw_data(ETHERNET_TRANSFER_SIZE);
 
+    gmTerminated = false;
+
     std::cout << "Udp Port Listening Thread Starting..." << std::endl;
+
 
     while(true)
     {
@@ -367,5 +391,14 @@ void UdpSocket::listenPort()
 
         }
 
+        if(gmTerminate == true)
+            break;
+
     }
+
+
+    gmTerminated = true;
+
+    std::cout << "Udp Socket Thread terminating... " << std::endl;
+
 }

@@ -44,7 +44,8 @@ SOURCES += \
         socketlistener.cpp \
     controlpanel.cpp \
     displaypanel.cpp \
-    camerapanel.cpp
+    camerapanel.cpp \
+    connectionpanel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,12 +60,13 @@ HEADERS += \
         socketlistener.h \
     controlpanel.h \
     displaypanel.h \
-    camerapanel.h
+    camerapanel.h \
+    connectionpanel.h
 
 FORMS += \
         mainwindow.ui \
     connectiondialog.ui \
-    autocontrol.ui \
+    autocontrol.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

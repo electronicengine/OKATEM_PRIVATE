@@ -1,3 +1,5 @@
+#include "connectiondialog.h"
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QThread>
@@ -5,7 +7,6 @@
 #include "displaypanel.h"
 #include "camerapanel.h"
 
-//#include <QTimer>
 #include <thread>
 #include <QMessageBox>
 
@@ -16,6 +17,7 @@ MainWindow::MainWindow(MainWindow *Window)
 
     ui = Window->ui;
     gpController = Window->gpController;
+    gpVideoStreamSocket = Window->gpVideoStreamSocket;
 
     gpControlInfo = Window->gpControlInfo;
     gpEnvironmentInfo = Window->gpEnvironmentInfo;
@@ -41,7 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
     gpControllerSocket = new UdpSocket;
     gpVideoStreamSocket = new UdpSocket;
 
-    gpConnectionBox = new ConnectionDialog;
     gpAutoControl = new AutoControl;
     gpController = new RemoteController(gpControllerSocket);
 
@@ -50,8 +51,10 @@ MainWindow::MainWindow(QWidget *parent) :
     gpDisplaypanel = new DisplayPanel(this);
     gpCameraPanel = new CameraPanel(this);
 
-    connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
-    connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
+//    connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
+//    connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
+
+    gpConnectionBox = new ConnectionDialog(this);
 
     ui->toggle_button->setCheckable(true);
     pix.load("hyperion.jpg");
@@ -70,12 +73,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    delete gpController;
-    delete gpConnectionBox;
 
-    gpStream->stop();
-    delete gpStream;
+    gpVideoStreamSocket->terminate();
+    gpController->terminate();
+
+    delete ui;    
+    delete gpConnectionBox;
+    delete gpAutoControl;
+
 }
 
 
@@ -83,95 +88,106 @@ MainWindow::~MainWindow()
 void MainWindow::worker()
 {
 
+    static int connection_established = false;
 
     while(1)
     {
 
-        if(gmConnectionEstablished == true)
+        if(gmConnectionAvailable == true)
         {
+
+            connection_established = true;
 
             gpControlPanel->process();
 
             gpDisplaypanel->process();
 
         }
+        else {
 
+            if(connection_established != false)
+                emit gpDisplaypanel->showMessageBox("Connection Error", "Ethernet Connection has been lost", MessageBoxType::error);
 
-
-    }
-
-}
-
-
-
-void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort)
-{
-
-    int ret;
-
-    gmIpAddress = IpAddress;
-    gmStreamPort = StreamPort;
-    gmControlPort = ControlPort;
-
-    ret = gpController->start(gmIpAddress, gmControlPort);
-    if(ret == FAIL)
-    {
-        QMessageBox::critical(this, "Error", "Controller Connection Failed");
-        std::cout << "Controller Connection Failed: "<< gmIpAddress << std::endl;
-    }
-    else
-    {
-        std::cout << "Controller Connection Succesfull " << std::endl;
-
-        ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
-        if(ret == FAIL)
-        {
-
-            QMessageBox::critical(this, "Error", "Connection Failed");
-            std::cout << "FSO Information request has not been answered"<<std::endl;
-
-            delete gpController;
-
+            connection_established = false;
         }
-        else
-        {
-            QMessageBox::information(this, "Info", "Connection Established");
-            std::cout << "Connection Established "<<std::endl;
-
-            gpCameraPanel->startCamera();
-
-            setTitle();
-
-            gpControlPanel->setPanelEnable(true);
 
 
-            gpControlPanel->setServoSliderInitialValues(gpControlInfo->servo_motor1_degree, gpControlInfo->servo_motor2_degree);
-            std::cout << std::to_string(gpSfpInfo->status) << std::endl;
-            std::cout << std::to_string(gpSfpInfo->tx_power) << std::endl;
-            std::cout << std::to_string(gpSfpInfo->rx_power) << std::endl;
 
-            std::cout << "step1: " << std::to_string(gpEnvironmentInfo->step_motor1_step) << std::endl;
-            std::cout << "step2: " << std::to_string(gpEnvironmentInfo->step_motor2_step) << std::endl;
-
-            std::cout << "servo1: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
-            std::cout << "servo2: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
-
-            gpDisplaypanel->deployPanel();
-
-            gmConnectionEstablished = true;
-
-            gpConnectionBox->ui->buttonBox->hide();
-
-        }
     }
+
 }
 
 
 
-void MainWindow::connectionRejected()
-{
-    std::cout << "rejected" << std::endl;
-}
+//void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort)
+//{
+
+//    int ret;
+
+//    gmIpAddress = IpAddress;
+//    gmStreamPort = StreamPort;
+//    gmControlPort = ControlPort;
+
+//    ret = gpController->start(gmIpAddress, gmControlPort);
+//    if(ret == FAIL)
+//    {
+//        QMessageBox::critical(this, "Error", "Controller Connection Failed");
+//        std::cout << "Controller Connection Failed: "<< gmIpAddress << std::endl;
+//    }
+//    else
+//    {
+
+//        std::cout << "Controller Connection Succesfull " << std::endl;
+
+//        ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
+//        if(ret == FAIL)
+//        {
+
+//            QMessageBox::critical(this, "Error", "Connection Failed");
+//            std::cout << "FSO Information request has not been answered"<<std::endl;
+
+//            delete gpController;
+
+//        }
+//        else
+//        {
+
+//            QMessageBox::information(this, "Info", "Connection Established");
+//            std::cout << "Connection Established "<<std::endl;
+
+//            gmConnectionAvailable = true;
+
+//            gpCameraPanel->startCamera(gmIpAddress, gmStreamPort);
+
+//            setTitle();
+
+//            gpControlPanel->setPanelEnable(true);
+
+//            gpControlPanel->setServoSliderInitialValues(gpControlInfo->servo_motor1_degree, gpControlInfo->servo_motor2_degree);
+//            std::cout << std::to_string(gpSfpInfo->status) << std::endl;
+//            std::cout << std::to_string(gpSfpInfo->tx_power) << std::endl;
+//            std::cout << std::to_string(gpSfpInfo->rx_power) << std::endl;
+
+//            std::cout << "step1: " << std::to_string(gpEnvironmentInfo->step_motor1_step) << std::endl;
+//            std::cout << "step2: " << std::to_string(gpEnvironmentInfo->step_motor2_step) << std::endl;
+
+//            std::cout << "servo1: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
+//            std::cout << "servo2: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
+
+//            gpDisplaypanel->deployPanel();
+
+//            gpConnectionBox->ui->buttonBox->hide();
+
+//        }
+//    }
+//}
+
+
+
+//void MainWindow::connectionRejected()
+//{
+//    std::cout << "rejected" << std::endl;
+//}
 
 
 
@@ -217,7 +233,7 @@ void MainWindow::setTitle()
 
 void MainWindow::on_actionConnection_triggered()
 {
-    gpConnectionBox->show();
+//    gpConnectionBox->show();
 }
 
 

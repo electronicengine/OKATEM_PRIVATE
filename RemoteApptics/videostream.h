@@ -27,10 +27,13 @@ class VideoStream : public SocketListener
 public:
 
     VideoStream(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
-    virtual ~VideoStream(){ gmStreamStop = true; }
+    virtual ~VideoStream()
+    {
+//        gpSocket->terminate();
+    }
 
     int start(const std::string &IpAddress, int Port, CameraPanel* Panel);
-    void stop();
+    int terminate();
 
     void socketDataCheckCall();
 
@@ -49,7 +52,6 @@ private:
     int checkPackageAccuracy(STREAM_DATA_FORMAT &StreamData);
     int checkSocketCondition(clock_t &LastDataComming);
     int checkifStreamPacket(std::vector <unsigned char> &Package);
-    int restartSocket(CameraPanel *Panel);
     int convertPackageToMat(std::vector<unsigned char> FrameData, cv::Mat &Frame);
     QImage cvMatToQImage( const cv::Mat &inMat );
 };

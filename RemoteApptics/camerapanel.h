@@ -23,7 +23,7 @@ private slots:
 
 public:
     CameraPanel(MainWindow *Window);
-    void startCamera();
+    void startCamera(const std::string &StreamIpAddress,  int StreamPort);
     void printScreen(const QPixmap &PixMap);
 
 
@@ -31,8 +31,6 @@ public:
 private:
     void attachWindow();
 
-    std::string *gpStreamIpAddress;
-    int *gpStreamPort;
 
 };
 

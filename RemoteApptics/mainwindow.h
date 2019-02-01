@@ -10,13 +10,16 @@
 #include <string>
 
 #include <iostream>
-#include "connectiondialog.h"
+
+//#include "connectiondialog.h"
 #include "ui_connectiondialog.h"
+
 #include "autocontrol.h"
 #include "videostream.h"
 
 #include "datatypes.h"
 #include "remotecontroller.h"
+
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -26,6 +29,7 @@
 class ControlPanel;
 class DisplayPanel;
 class CameraPanel;
+class ConnectionDialog;
 
 namespace Ui {
 class MainWindow;
@@ -37,8 +41,8 @@ class MainWindow : public QMainWindow
 
 
 private slots:
-    void connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort);
-    void connectionRejected();
+//    void connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort);
+//    void connectionRejected();
     void on_actionConnection_triggered();
     void on_actionUpdate_Firmware_triggered();
     void on_actionAuto_Control_Settings_triggered();
@@ -50,11 +54,11 @@ signals:
 public:
     MainWindow(MainWindow *Window);
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    virtual ~MainWindow();
 
     Ui::MainWindow *ui;
 
-
+    bool gmConnectionAvailable = false;
 
 protected:
 
@@ -73,6 +77,7 @@ protected:
     int gmStreamPort;
     int gmControlPort;
 
+
 private:
 
     AutoControl *gpAutoControl;
@@ -84,14 +89,12 @@ private:
     CameraPanel *gpCameraPanel;
 
 
-
     std::string execCmd(const char* cmd) ;
     void setTitle();
 
 
 
     cv::Mat gmMat;
-    bool gmConnectionEstablished = 0;
 
     void worker();
 

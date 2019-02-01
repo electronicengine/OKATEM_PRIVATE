@@ -3,6 +3,23 @@
 
 
 
+RemoteController::RemoteController(UdpSocket *Socket) : SocketListener(Socket)
+{
+    gpSocket = Socket;
+}
+
+
+
+RemoteController::~RemoteController()
+{
+    gmTerminate = true;
+
+    while(gmTerminated == false);
+
+    gpSocket->terminate();
+
+}
+
 int RemoteController::start(const std::string &IpAddress, int Port)
 {
     int ret;
@@ -82,7 +99,7 @@ void RemoteController::parseAndSendData(std::vector<unsigned char> &Container, c
     for(int i=0; i<sequence; i++)
     {
 
-        if(gmStopAll == true)  // stop thread
+        if(gmTerminate == true)  // stop thread
             return;
 
         parsed_file.current_sequence_number = i + 1;
@@ -362,10 +379,6 @@ void RemoteController::setSpeed(int value)
 void RemoteController::updateFirmware(const std::string &FileName)
 {
 
-
-//    std::thread barthread(&RemoteController::progressBarThread, this);
-//    barthread.detach();
-
     std::cout << "update firmware" << std::endl;
 
     std::thread update(&RemoteController::updateThread, this, FileName);
@@ -429,17 +442,14 @@ int RemoteController::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIR
 int RemoteController::resetUpdatePercentage()
 {
     gmMutex.lock();
+    gpSocket->setFeedBackCounter(0);
     gmUpdatePercentage = 0;
     gmMutex.unlock();
 
     return SUCCESS;
 }
 
-int RemoteController::stop()
-{
 
-    return 0;
-}
 
 int RemoteController::getUpdatePercentage()
 {
@@ -465,17 +475,29 @@ void RemoteController::socketDataCheckCall()
 
 }
 
+int RemoteController::terminate()
+{
+    gmTerminate = true;
+
+    while(gmTerminated == false);
+
+    gpSocket->terminate();
+
+    return SUCCESS;
+}
+
 
 void RemoteController::updateThread(const std::string &FileName)
 {
 
     std::vector<unsigned char> data;
 
+    gmTerminated = false;
+
     data = readFile(FileName);
     parseAndSendData(data, gmIpAddress);
 
-
-
+    gmTerminated = true;
 }
 
 

@@ -2,6 +2,7 @@
 #define CONNECTIONDIALOG_H
 
 #include <QDialog>
+#include "mainwindow.h"
 
 #define REJECTED    -1
 #define ACCEPTED    1
@@ -16,8 +17,11 @@ class ConnectionDialog : public QDialog
 
 public:
 
-     Ui::ConnectionDialog *ui;
-    explicit ConnectionDialog(QWidget *parent = nullptr);
+
+    Ui::ConnectionDialog *ui_local;
+   explicit ConnectionDialog(QWidget *parent = nullptr);
+
+    void attach(MainWindow *Window);
 
     ~ConnectionDialog();
 
@@ -32,6 +36,8 @@ signals:
     void rejected();
 
 private:
+
+    MainWindow *gpMainWindow;
 
 };
 

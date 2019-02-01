@@ -5,6 +5,8 @@
 DisplayPanel::DisplayPanel(MainWindow *Window) : MainWindow(Window)
 {
 
+    gpConnectionAvailable = &Window->gmConnectionAvailable;
+
     attachWindow();
 
 }
@@ -14,7 +16,7 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(setprogessbarvisibility(bool)), ui->progressBar, SLOT(setVisible(bool)), Qt::QueuedConnection);
     connect(this, SIGNAL(setupdatelabelvisibility(bool)), ui->update_label, SLOT(setVisible(bool)), Qt::QueuedConnection);
-    connect(this, SIGNAL(showMessageBox(QString)), this, SLOT(showMessage(QString)), Qt::BlockingQueuedConnection);
+    connect(this, SIGNAL(showMessageBox(const QString &, const QString &, MessageBoxType )), this, SLOT(showMessage(const QString &, const QString &, MessageBoxType )), Qt::BlockingQueuedConnection);
 
     connect(this, SIGNAL(refreshStatusLabel(QString)), ui->status_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshTxPowerLabel(QString)), ui->tx_power_label, SLOT(setText(QString)), Qt::QueuedConnection);
@@ -60,15 +62,12 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
 {
     int percent;
 
-    static int update_done = true;
-
     percent = gpController->getUpdatePercentage();
 
     if(percent > 0 && percent < 100)
     {
 
-        update_done = false;
-
+        std::cout << "%" << std::to_string(percent) << " upgraded" << std::endl;
          emit setprogessbarvisibility(true);
          emit setupdatelabelvisibility(true);
 
@@ -76,21 +75,19 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
 
         return SUCCESS;
 
-    }else if(percent >= 100 && update_done == false)
+    }else if(percent >= 100)
     {
+
+        std::cout << "Update is done Percent: " << std::to_string(percent)  << std::endl;
         emit setprogessbarvisibility(false);
         emit setupdatelabelvisibility(false);
 
         emit progressUpdateFile(percent);
 
-        update_done = true;
-
-//            setPanelEnable(true);
-
-        emit showMessageBox("The FirmWare Upgrading has been finished Succesfully!");
+        emit showMessageBox("Firmware Update Done","The FirmWare Upgrading has been finished Succesfully!",
+                            MessageBoxType::information);
 
         gpController->resetUpdatePercentage();
-
 
         return FAIL;
     }
@@ -102,16 +99,20 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
         return FAIL;
     }
 
-
-
 }
 
-int DisplayPanel::showMessage(const QString &Str)
+int DisplayPanel::showMessage(const QString &Title, const QString &Message, MessageBoxType Type)
 {
 
+    std::cout << "MessageBox showing Type : " << Type << std::endl;
     this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
-    return QMessageBox::information(this,"Upgrade Done",Str);
 
+    if(Type == MessageBoxType::information)
+        QMessageBox::information(this, Title, Message);
+    if(Type == MessageBoxType::error)
+        QMessageBox::critical(this, Title, Message);
+
+    return SUCCESS;
 }
 
 void DisplayPanel::deployPanel()
@@ -173,7 +174,7 @@ void DisplayPanel::preparePanelInfo()
 {
 
     int ret;
-
+    static int timeout_counter = 0;
 
 
     ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
@@ -181,7 +182,16 @@ void DisplayPanel::preparePanelInfo()
         if(ret == SUCCESS)
             deployPanel();
         else
+        {
+            timeout_counter++;
             std::cout << "Panel Data can not be received" << std::endl;
+        }
+
+        if(timeout_counter >= 5)
+        {
+            *gpConnectionAvailable = false;
+            std::cout << "Ethernet connection has been lost. Check your ethernet connection and try again" << std::endl;
+        }
 
 
 
@@ -198,20 +208,27 @@ void DisplayPanel::process()
     static int counter = 0;
     int ret;
 
-    counter++;
-
-    if(counter >= 20)
+    if(*gpConnectionAvailable == true)
     {
-        counter = 0;
+        counter++;
 
-        ret = checkFirmwareUpdateAvailable();
+        if(counter >= 20)
+        {
+            counter = 0;
 
-        if(ret != SUCCESS)
-            preparePanelInfo();
+            ret = checkFirmwareUpdateAvailable();
+
+            if(ret != SUCCESS)
+                preparePanelInfo();
+            else {
+
+            }
+
+        }
+    }
+    else {
 
     }
-
-
 
 }
 

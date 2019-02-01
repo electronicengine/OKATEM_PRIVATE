@@ -73,6 +73,8 @@ public:
     int saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
     int setInitialMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
+    int terminate();
+
 
 private:
 
@@ -95,8 +97,8 @@ private:
     int gmFeedBackCounter = 0;
     std::vector<SocketListener *> listeners;
 
-
-
+    volatile bool gmTerminate = false;
+    volatile bool gmTerminated = true;
 
 };
 

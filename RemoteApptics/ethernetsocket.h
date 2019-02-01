@@ -29,6 +29,7 @@ public:
     EthernetSocket();
     ~EthernetSocket();
 
+    int isOpened();
     int openSocket(const std::string &IpAddress, int Port);
     void closeSocket();
 

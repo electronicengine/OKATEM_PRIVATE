@@ -3,28 +3,24 @@
 #include "QMessageBox"
 
 
-int CameraPanel::showMessage(QString Str)
-{
-    this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
-    return QMessageBox::information(this,"Upgrade Done",Str);
-
-}
 
 CameraPanel::CameraPanel(MainWindow *Window) : MainWindow(Window)
 {
     attachWindow();
 
     gpStream = new VideoStream(gpVideoStreamSocket);
-    gpStreamIpAddress = &gmIpAddress;
-    gpStreamPort = &gmStreamPort;
+
 
 }
 
-void CameraPanel::startCamera()
+
+
+void CameraPanel::startCamera(const std::string &StreamIpAddress,  int StreamPort)
 {
     int ret ;
 
-    ret = gpStream->start(*gpStreamIpAddress, *gpStreamPort, this);
+    std::cout << "Starting Camera... Ip" << StreamIpAddress << "Port: " << std::to_string(StreamPort) << std::endl;
+    ret = gpStream->start(StreamIpAddress, StreamPort, this);
     if(ret == FAIL)
     {
         emit showMessageBox("Connection Established!");
@@ -32,6 +28,17 @@ void CameraPanel::startCamera()
     }
 
 }
+
+
+
+int CameraPanel::showMessage(QString Str)
+{
+    this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
+    return QMessageBox::information(this,"Upgrade Done",Str);
+
+}
+
+
 
 void CameraPanel::printScreen(const QPixmap &PixMap)
 {

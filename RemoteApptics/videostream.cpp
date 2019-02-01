@@ -37,11 +37,11 @@ int VideoStream::start(const std::string &IpAddress, int Port, CameraPanel *Pane
 
 
 
-void VideoStream::stop()
+int VideoStream::terminate()
 {
 
-    gmStreamStop = true;
-//    gpSocket->closePort();
+    return gpSocket->terminate();
+    return SUCCESS;
 
 }
 
@@ -113,7 +113,6 @@ int VideoStream::checkPackageAccuracy(STREAM_DATA_FORMAT &StreamData)
     sequence_number = StreamData.current_pack;
 
     package_counter++;
-
 
 
     if(sequence_number != package_counter)
@@ -189,23 +188,6 @@ int VideoStream::checkifStreamPacket(std::vector<unsigned char> &Package)
     }
 
     return FAIL;
-
-}
-
-
-
-int VideoStream::restartSocket(CameraPanel *Panel)
-{
-
-    int ret;
-
-    stop();
-
-    usleep(1000);
-
-    ret = start(gmIpAddress, gmPort, Panel);
-
-    return ret;
 
 }
 

@@ -10,6 +10,15 @@ EthernetSocket::~EthernetSocket()
     closeSocket();
 }
 
+int EthernetSocket::isOpened()
+{
+    if(gmSocket < 0)
+        return FAIL;
+    else
+        return SUCCESS;
+
+}
+
 int EthernetSocket::openSocket(const std::string &IpAddress, int Port)
 {
 
@@ -67,7 +76,10 @@ int EthernetSocket::openSocket(const std::string &IpAddress, int Port)
 
 void EthernetSocket::closeSocket()
 {
+    std::cout << "Port :" << std::to_string(gmPort) << "Closing!" << std::endl;
     close(gmSocket);
+
+    gmSocket = -1;
 }
 
 int EthernetSocket::transferData(const std::vector<unsigned char> &Data)
@@ -80,19 +92,29 @@ int EthernetSocket::transferData(const std::vector<unsigned char> &Data)
 
     if(data_size != 0)
     {
-        gmClientAddr.sin_addr.s_addr = inet_addr(gmIpAddress.c_str());
 
-        transfered_size = sendto(gmSocket, (unsigned char *)Data.data(), data_size, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
-
-        if(transfered_size == data_size)
+        if(isOpened() == SUCCESS)
         {
-            return SUCCESS;
+            gmClientAddr.sin_addr.s_addr = inet_addr(gmIpAddress.c_str());
+
+            transfered_size = sendto(gmSocket, (unsigned char *)Data.data(), data_size, 0, (struct sockaddr *)&gmClientAddr, gmClientLen);
+
+            if(transfered_size == data_size)
+            {
+                return SUCCESS;
+            }
+            else
+            {
+                std::cout << "Ethernet Data transfer problem" << std::endl;
+                return FAIL;
+            }
         }
         else
         {
-            printf("Ethernet Data transfer problem");
+            std::cout << "Ethernet Socket is close!" << std::endl;
             return FAIL;
         }
+
 
     }
     else

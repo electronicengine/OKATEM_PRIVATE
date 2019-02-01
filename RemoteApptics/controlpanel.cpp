@@ -7,6 +7,8 @@
 
 ControlPanel::ControlPanel(MainWindow *Window) : MainWindow(Window)
 {
+    gpConnectionAvailable = &Window->gmConnectionAvailable;
+
     attachToWindow();
 }
 
@@ -195,7 +197,10 @@ void ControlPanel::on_speed_slider_valueChanged(int value)
 
 
 
-void ControlPanel::on_up_button_pressed() { gmUpButtonPressed = 1; }
+void ControlPanel::on_up_button_pressed()
+{
+    gmUpButtonPressed = 1;
+}
 
 
 

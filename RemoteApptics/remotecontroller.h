@@ -42,11 +42,8 @@ class RemoteController : public SocketListener
 public:
 
 
-    RemoteController(UdpSocket *Socket) : SocketListener(Socket)
-    {
-        gpSocket = Socket;
-    }
-    virtual ~RemoteController(){ }
+    RemoteController(UdpSocket *Socket);
+    virtual ~RemoteController();
 
 
     int start(const std::string &IpAddress, int Port);
@@ -81,9 +78,10 @@ public:
     int getUpdatePercentage();
     int resetUpdatePercentage();
 
-    int stop();
-
     void socketDataCheckCall();
+
+    int terminate();
+
 
 private:
 
@@ -95,7 +93,9 @@ private:
 
     int gmUpdatePercentage = 0;
 
-    volatile bool gmStopAll = false;
+    volatile bool gmTerminate = false;
+    volatile bool gmTerminated = true;
+
     volatile bool gmUploadingStart = false;
 
     int gmUpdateFileSequence;
@@ -110,7 +110,10 @@ private:
     std::mutex gmMutex;
 
     void updateThread(const std::string &FileName);
+    void updateThreadTerminated();
 
 };
+
+
 
 #endif // CONTROLLER_H

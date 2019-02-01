@@ -1,8 +1,18 @@
 #ifndef DISPLAYPANEL_H
 #define DISPLAYPANEL_H
 
+
+#include "QMessageBox"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+
+enum MessageBoxType
+{
+    information,
+    error
+};
+
 
 class DisplayPanel : public MainWindow
 {
@@ -22,15 +32,15 @@ private:
     void preparePanelInfo();
     int checkFirmwareUpdateAvailable();
 
-    bool *gpConnectionEstablished;
+    bool *gpConnectionAvailable;
 
 private slots:
-    int showMessage(const QString &Str);
+    int showMessage(const QString &Title, const QString &Message, MessageBoxType Type);
 
 signals:
 
 
-    int showMessageBox(QString);
+    int showMessageBox(const QString &Title, const QString &Message, MessageBoxType Type);
     void progressUpdateFile(int);
     void setprogessbarvisibility(bool);
     void setupdatelabelvisibility(bool);

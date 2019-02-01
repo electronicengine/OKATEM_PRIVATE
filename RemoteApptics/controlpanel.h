@@ -67,7 +67,7 @@ public:
     void setServoSliderInitialValues(int Servo1Value, int Servo2Value);
 
 protected:
-    bool *gpConnectionEstablished;
+    bool *gpConnectionAvailable;
 
 private:
 
