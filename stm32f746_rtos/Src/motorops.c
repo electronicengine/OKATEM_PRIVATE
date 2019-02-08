@@ -21,6 +21,18 @@ void motorOps(void const * argument)
     while(1)
     {
 
+        uint8_t step_motor_breaks = 0;
+
+        if(HAL_GPIO_ReadPin(STEP1_BREAK_GPIO_Port, STEP1_BREAK_Pin) == GPIO_PIN_SET)
+            step_motor_breaks =  1;
+        else
+            step_motor_breaks =  0;
+
+
+        if(HAL_GPIO_ReadPin(STEP2_BREAK_GPIO_Port, STEP2_BREAK_Pin) == GPIO_PIN_SET)
+            step_motor_breaks += 240;
+        else
+            step_motor_breaks += 0;
 
         driveStepMotors();
 
@@ -32,6 +44,7 @@ void motorOps(void const * argument)
             EnvironmentData->step_motor2_step = motor2.step_number;
             EnvironmentData->servo_motor1_degree = servo1.angle;
             EnvironmentData->servo_motor2_degree = servo2.angle;
+            EnvironmentData->step_motor_breaks = step_motor_breaks;
 
         xSemaphoreGive(spiMutexHandle);
 
@@ -42,12 +55,6 @@ void motorOps(void const * argument)
 
 void driveStepMotors()
 {
-    int step_motor1_break;
-    int step_motor2_break;
-
-    step_motor1_break = HAL_GPIO_ReadPin(STEP1_BREAK_GPIO_Port, STEP1_BREAK_Pin);
-    step_motor2_break = HAL_GPIO_ReadPin(STEP2_BREAK_GPIO_Port, STEP2_BREAK_Pin);
-
 
     if(motor1.direction == FORWARD)
     {
@@ -56,12 +63,10 @@ void driveStepMotors()
         {
             motor1Drive(FORWARD);
 
-//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
-                speed = motor1.speed;
-                motor1.step_number++;
+            speed = motor1.speed;
+            motor1.step_number++;
 
-//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -76,14 +81,12 @@ void driveStepMotors()
         {
             motor1Drive(BACKWARD);
 
-//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
-                speed = motor1.speed;
+            speed = motor1.speed;
 
-                if(motor1.step_number != 0)
-                    motor1.step_number--;
+            if(motor1.step_number != 0)
+                motor1.step_number--;
 
-//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -106,12 +109,11 @@ void driveStepMotors()
             motor2Drive(FORWARD);
 
 
-//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
-                speed = motor1.speed;
+            speed = motor1.speed;
 
-                if(motor2.step_number != 0)
-                    motor2.step_number--;
-//            xSemaphoreGive(controlMutexHandle);
+            if(motor2.step_number != 0)
+                motor2.step_number--;
+
         }
         else
         {
@@ -126,13 +128,11 @@ void driveStepMotors()
         {
             motor2Drive(BACKWARD);
 
-//            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
                 speed = motor1.speed;
 
                 motor2.step_number++;
 
-//            xSemaphoreGive(controlMutexHandle);
         }
         else
         {
@@ -161,11 +161,9 @@ void driveServoMotors()
     {
        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
-       xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
 
-         servo2_degree = servo2.angle;
+        servo2_degree = servo2.angle;
 
-       xSemaphoreGive(controlMutexHandle);
 
 
        counter2 = 0;
@@ -184,17 +182,12 @@ void driveServoMotors()
 
     if(servo1.angle != 0  /*&& servo1.angle <= servo1.top && servo1.angle >= servo1.bottom*/)
     {
-       HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
-       xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
+        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
-         servo1_degree = servo1.angle;
-
-       xSemaphoreGive(controlMutexHandle);
-
-
-       counter1 = 0;
-       speed = 1;
+        servo1_degree = servo1.angle;
+        counter1 = 0;
+        speed = 1;
     }
 
 
@@ -213,39 +206,15 @@ void driveServoMotors()
 
 void getInitialPositions()
 {
-    uint8_t setting = 0;
 
 
     while(1)
     {
 
-        xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
-            setting = setting_enable;
-        xSemaphoreGive(controlMutexHandle);
 
 
-        if(setting == 0xff)
+        if(setting_enable == 0xff)
         {
-
-            xSemaphoreTake(controlMutexHandle, portMAX_DELAY);
-
-                motor1.step_number = ControlData->y_position;
-                motor1.max_step_number = ControlData->step_motor1_step;
-
-                motor2.step_number = ControlData->x_position;
-                motor2.max_step_number = ControlData->step_motor2_step;
-
-                servo1.top =  ControlData->servo_motor1_top_degree;
-                servo1.bottom = ControlData->servo_motor1_bottom_degree;
-
-                servo2.top =  ControlData->servo_motor2_top_degree;
-                servo2.bottom = ControlData->servo_motor2_bottom_degree;
-
-            xSemaphoreGive(controlMutexHandle);
-
-
-
-
             break;
         }
         else

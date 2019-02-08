@@ -20,7 +20,6 @@
 #include <mutex>
 #include <vector>
 
-
 #include "queue.h"
 #include "ethernetsocket.h"
 
@@ -46,8 +45,6 @@ public:
 
     UdpSocket();
     ~UdpSocket();
-
-
 
     INFORMATION_DATA_FORMAT getInformationData();
     CONTROL_DATA_FORMAT getSocketControlData();

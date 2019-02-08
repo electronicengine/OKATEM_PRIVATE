@@ -38,14 +38,16 @@ SOURCES += \
         queue.cpp \
         ethernetsocket.cpp \
         videostream.cpp \
-        connectiondialog.cpp \
         autocontrol.cpp \
         remotecontroller.cpp \
         socketlistener.cpp \
     controlpanel.cpp \
     displaypanel.cpp \
     camerapanel.cpp \
-    connectionpanel.cpp
+    connectionpanel.cpp \
+    connectionwindow.cpp \
+    calibrationwindow.cpp \
+    calibrationpanel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,19 +56,22 @@ HEADERS += \
         ethernetsocket.h \
         queue.h \
         videostream.h \
-        connectiondialog.h \
         autocontrol.h \
         remotecontroller.h \
         socketlistener.h \
     controlpanel.h \
     displaypanel.h \
     camerapanel.h \
-    connectionpanel.h
+    connectionpanel.h \
+    connectionwindow.h \
+    calibrationwindow.h \
+    calibrationpanel.h
 
 FORMS += \
         mainwindow.ui \
-    connectiondialog.ui \
-    autocontrol.ui
+    autocontrol.ui \
+    connectionwindow.ui \
+    calibrationwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

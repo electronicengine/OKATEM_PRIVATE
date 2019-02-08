@@ -31,7 +31,6 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
      }
      else
      {
-
          data = false;
          return data;
      }
@@ -41,10 +40,11 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
 Status LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
 {
 
-    servo_motor1_angle = SavedData.servo_motor1_degree;
-    servo_motor2_angle = SavedData.servo_motor2_degree;
-
+    gmMutex.lock();
+    gmMotorInformation = SavedData;
+    gmMutex.unlock();
 }
+
 
 Status LcdHMI::setHCMData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &EnvironmentData)
 {
@@ -226,97 +226,97 @@ void LcdHMI::callAutoPage(std::vector<unsigned char> &Data)
 void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
 {
 
-   gmMutex.lock();
+//   gmMutex.lock();
 
-    if(Data[1] == BUTTON_PRESSED)
-    {
+//    if(Data[1] == BUTTON_PRESSED)
+//    {
 
-        gmDataComing = true;
+//        gmDataComing = true;
 
-        if(Data[2] == CAMERA1_UP_BUTTON_ID)
-        {
+//        if(Data[2] == CAMERA1_UP_BUTTON_ID)
+//        {
 
-            if(servo_motor1_angle<= 150)
-                servo_motor1_angle += Data[6];
+//            if(servo_motor1_angle<= 150)
+//                servo_motor1_angle += Data[6];
 
-            if(servo_motor1_angle >= 150)
-                servo_motor1_angle = 150;
+//            if(servo_motor1_angle >= 150)
+//                servo_motor1_angle = 150;
 
-            if(servo_motor1_angle <= 0)
-                servo_motor1_angle = 0;
+//            if(servo_motor1_angle <= 0)
+//                servo_motor1_angle = 0;
 
-            gmControlData.servo_motor1_degree = servo_motor1_angle;
+//            gmControlData.servo_motor1_degree = servo_motor1_angle;
 
-            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
+//            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
 
-            printf("Camera1 Up %d\r\n", servo_motor1_angle);
-        }
+//            printf("Camera1 Up %d\r\n", servo_motor1_angle);
+//        }
 
-        if(Data[2] == CAMERA1_DOWN_BUTTON_ID)
-        {
-            if(servo_motor1_angle >= 0)
-                servo_motor1_angle -= Data[6];
+//        if(Data[2] == CAMERA1_DOWN_BUTTON_ID)
+//        {
+//            if(servo_motor1_angle >= 0)
+//                servo_motor1_angle -= Data[6];
 
-            if(servo_motor1_angle >= 150)
-                servo_motor1_angle = 150;
+//            if(servo_motor1_angle >= 150)
+//                servo_motor1_angle = 150;
 
-            if(servo_motor1_angle <= 0)
-                servo_motor1_angle = 0;
+//            if(servo_motor1_angle <= 0)
+//                servo_motor1_angle = 0;
 
-            gmControlData.servo_motor1_degree = servo_motor1_angle;
+//            gmControlData.servo_motor1_degree = servo_motor1_angle;
 
-            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
+//            gmSerial->writeData("t1.txt=\"", std::to_string(servo_motor1_angle), " Deg\";");
 
-            printf("Camera1 Down %d\r\n", servo_motor1_angle);
-        }
+//            printf("Camera1 Down %d\r\n", servo_motor1_angle);
+//        }
 
-        if(Data[2] == CAMERA2_UP_BUTTON_ID)
-        {
+//        if(Data[2] == CAMERA2_UP_BUTTON_ID)
+//        {
 
-            if(servo_motor2_angle <= 150)
-                servo_motor2_angle += Data[6];
+//            if(servo_motor2_angle <= 150)
+//                servo_motor2_angle += Data[6];
 
-            if(servo_motor2_angle >= 150)
-                servo_motor2_angle = 150;
+//            if(servo_motor2_angle >= 150)
+//                servo_motor2_angle = 150;
 
-            if(servo_motor2_angle <= 0)
-                servo_motor2_angle = 0;
+//            if(servo_motor2_angle <= 0)
+//                servo_motor2_angle = 0;
 
-            gmControlData.servo_motor2_degree = servo_motor2_angle;
+//            gmControlData.servo_motor2_degree = servo_motor2_angle;
 
-            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
+//            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
 
-            printf("Camera2 Up %d\r\n", servo_motor2_angle);
-        }
+//            printf("Camera2 Up %d\r\n", servo_motor2_angle);
+//        }
 
-        if(Data[2] == CAMERA2_DOWN_BUTTON_ID)
-        {
+//        if(Data[2] == CAMERA2_DOWN_BUTTON_ID)
+//        {
 
-            if(servo_motor2_angle >= 0)
-                servo_motor2_angle -= Data[6];
+//            if(servo_motor2_angle >= 0)
+//                servo_motor2_angle -= Data[6];
 
-            if(servo_motor2_angle >= 150)
-                servo_motor2_angle = 150;
+//            if(servo_motor2_angle >= 150)
+//                servo_motor2_angle = 150;
 
-            if(servo_motor2_angle <= 0)
-                servo_motor2_angle = 0;
+//            if(servo_motor2_angle <= 0)
+//                servo_motor2_angle = 0;
 
-            gmControlData.servo_motor2_degree = servo_motor2_angle;
+//            gmControlData.servo_motor2_degree = servo_motor2_angle;
 
-            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
+//            gmSerial->writeData("t2.txt=\"", std::to_string(servo_motor2_angle), " Deg\";");
 
-            printf("Camera2 Down %d\r\n", servo_motor2_angle);
-        }
+//            printf("Camera2 Down %d\r\n", servo_motor2_angle);
+//        }
 
-    }
+//    }
 
-    if(Data[1] == BUTTON_UNPRESSED)
-    {
-        gmDataComing = false;
+//    if(Data[1] == BUTTON_UNPRESSED)
+//    {
+//        gmDataComing = false;
 
-    }
+//    }
 
-    gmMutex.unlock();
+//    gmMutex.unlock();
 
 
 }
@@ -326,28 +326,28 @@ void LcdHMI::callCameraPage(std::vector<unsigned char> &Data)
 int LcdHMI::init()
 {
 
-    Status status;
+//    Status status;
 
-    gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
+//    gmSerial = new SerialCom("B115200", "/dev/ttyUSB0");
 
-    status = gmSerial->Init();
+//    status = gmSerial->Init();
 
-    if(status == Status::ok)
-    {
-        printAll("LcdHMI Serial Port Succesfully Openned");
+//    if(status == Status::ok)
+//    {
+//        printAll("LcdHMI Serial Port Succesfully Openned");
 
-        servo_motor1_angle = 50;
-        servo_motor2_angle = 50;
+//        servo_motor1_angle = 50;
+//        servo_motor2_angle = 50;
 
-        std::thread listen(&LcdHMI::listenHMI, this);
-        listen.detach();
+//        std::thread listen(&LcdHMI::listenHMI, this);
+//        listen.detach();
 
         return SUCCESS;
-    }
-    else
-    {
-        return FAIL;
-    }
+//    }
+//    else
+//    {
+//        return FAIL;
+//    }
 
 
 }

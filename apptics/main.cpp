@@ -73,6 +73,7 @@ void shareEnvironment();
 
 int checkIfUdpDataAvaliable();
 int checkIfLcdDataAvaliable();
+int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData);
 
 
 
@@ -190,6 +191,7 @@ int initController()
 int checkIfLcdDataAvaliable()
 {
 
+
     lcd_control_data = lcd_hmi.getHCMControlData();
 
    if(lcd_control_data == true)
@@ -227,7 +229,10 @@ int checkIfUdpDataAvaliable()
     }
     else if(udp_control_data.is_available == true)
     {
-        controller.setControlData(udp_control_data);
+
+        if(checkUdpCalibrationValues(udp_control_data) != SUCCESS)
+            controller.setControlData(udp_control_data);
+
     }
 
     udp_control_data.clear();
@@ -236,8 +241,52 @@ int checkIfUdpDataAvaliable()
 
 
 
+int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData)
+{
+    if(ControlData.setting_enable == 0xff)
+    {
+        MOTOR_INFORMATIONS calibration_values;
+
+        printAll("Calibration Values are setting...");
+
+
+
+
+        calibration_values = ControlData;
+        json.saveMotorPositions(calibration_values);
+        controller.setMotorCalibrationValues(calibration_values);
+
+
+        std::cout << "step_motor1_step: " << std::to_string(calibration_values.step_motor1_position) << std::endl;
+        std::cout << "step_motor1_max_step: " << std::to_string(calibration_values.step_motor1_max_step) << std::endl;
+
+        std::cout << "step_motor2_step: " << std::to_string(calibration_values.step_motor2_position) << std::endl;
+        std::cout << "step_motor2_max_step: " << std::to_string(calibration_values.step_motor2_max_step) << std::endl;
+
+        std::cout << "servo_motor1_degree: " << std::to_string(calibration_values.servo_motor1_degree) << std::endl;
+        std::cout << "servo_motor2_degree: " << std::to_string(calibration_values.servo_motor2_degree) << std::endl;
+
+        std::cout << "servo_motor1_bottom_degree: " << std::to_string(calibration_values.servo_motor1_bottom_degree) << std::endl;
+        std::cout << "servo_motor1_top_degree: " << std::to_string(calibration_values.servo_motor1_top_degree) << std::endl;
+
+        std::cout << "servo_motor2_bottom_degree: " << std::to_string(calibration_values.servo_motor2_bottom_degree) << std::endl;
+        std::cout << "servo_motor2_top_degree: " << std::to_string(calibration_values.servo_motor2_top_degree) << std::endl;
+
+
+        controller.resetStm();
+
+        ControlData.clear();
+
+        return SUCCESS;
+    }
+    else
+        return FAIL;
+
+}
+
 void shareEnvironment()
 {
+
 
     json.saveEnvironmentData(stm_data, sfp_data);
 
@@ -289,6 +338,7 @@ int initUdpControlSocket()
 
 int initLora()
 {
+
 
     int ret;
 

@@ -130,8 +130,8 @@
 #define SPI_ENTITY_SIZE 108
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
-#define CONTROL_DATA_GARBAGE_SIZE 41
-#define GPS_STRING_SIZE 87
+#define CONTROL_DATA_GARBAGE_SIZE 38
+#define GPS_STRING_SIZE 86
 
 typedef struct
 {
@@ -166,6 +166,8 @@ typedef struct
 
     SENSOR_DATA sensor_data;
 
+    uint8_t step_motor_breaks;
+
 
 
 }ENVIRONMENT_DATA_FORMAT;
@@ -191,27 +193,28 @@ typedef struct
     uint32_t y_position;
     uint32_t z_position;
 
-    uint8_t step_motor1_direction; // 54
-    uint8_t step_motor2_direction; // 55
-
-    uint8_t servo_motor1_direction;
-    uint8_t servo_motor2_direction;
+    uint8_t step_motor1_direction;
+    uint8_t step_motor2_direction;
 
     uint8_t step_motor1_speed;
     uint8_t step_motor2_speed;
 
-    uint8_t servo_motor1_degree; //61
+    uint8_t servo_motor1_degree;
     uint8_t servo_motor1_top_degree;
     uint8_t servo_motor1_bottom_degree;
 
-    uint8_t servo_motor2_degree; //64
+    uint8_t servo_motor2_degree;
     uint8_t servo_motor2_top_degree;
     uint8_t servo_motor2_bottom_degree;
 
     uint8_t calibrate_sensor;
 
     uint32_t step_motor1_step;
+    uint32_t step_motor1_max_step;
+
     uint32_t step_motor2_step;
+    uint32_t step_motor2_max_step;
+
 
     uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE]; //footer
 

@@ -78,7 +78,7 @@ Status Controller::zoomInCamera()
 {
 
     gmControlData.servo_motor1_degree= 120;
-    gmControlData.servo_motor1_direction = FORWARD;
+//    gmControlData.servo_motor1_direction = FORWARD;
 
     gmMutex.lock();
 
@@ -96,7 +96,7 @@ Status Controller::zoomOutCamera()
 {
 
     gmControlData.servo_motor1_degree = 120;
-    gmControlData.servo_motor1_direction = BACKWARD;
+//    gmControlData.servo_motor1_direction = BACKWARD;
 
     gmMutex.lock();
     gmSpiTxData = gmControlData;
@@ -207,6 +207,9 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 
              gmMutex.lock();
 
+             gmEnvironmentData.servo_motor1_degree = 0;
+             gmEnvironmentData.servo_motor2_degree = 0;
+
              gmUpdateFile = Data;
 
              gmCurrentPackageSequence = gmUpdateFile.current_sequence_number;
@@ -257,9 +260,11 @@ Status Controller::setUpdateData(UPDATE_FILE_FORMAT &Data)
 
 }
 
-void Controller::setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations)
+void Controller::setMotorCalibrationValues(MOTOR_INFORMATIONS &MotorInformations)
 {
+    gmMutex.lock();
     gmCalibratedMotorValues = MotorInformations;
+    gmMutex.unlock();
 }
 
 Status Controller::checkValidEnvironmentData(ENVIRONMENT_DATA_FORMAT &Data)
@@ -299,15 +304,13 @@ int Controller::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentDat
 
         printAll( "!!!!!!!!!!!  motor positions sent !!!!!!!!!!!!!!!" );
 
-        initial_control_data.y_position = gmCalibratedMotorValues.step_motor1_position;
-        initial_control_data.x_position = gmCalibratedMotorValues.step_motor2_position;
-        initial_control_data.step_motor1_step = gmCalibratedMotorValues.step_motor1_max_step;
-        initial_control_data.step_motor2_step = gmCalibratedMotorValues.step_motor2_max_step;
+        initial_control_data.step_motor1_max_step = gmCalibratedMotorValues.step_motor1_max_step;
+        initial_control_data.step_motor1_step= gmCalibratedMotorValues.step_motor1_position;
+
+        initial_control_data.step_motor2_max_step = gmCalibratedMotorValues.step_motor2_max_step;
+        initial_control_data.step_motor2_step = gmCalibratedMotorValues.step_motor2_position;
 
         initial_control_data.servo_motor1_degree = gmCalibratedMotorValues.servo_motor1_degree;
-        std::cout << "calibrated: " << std::to_string(initial_control_data.servo_motor1_degree) << std::endl;
-
-
         initial_control_data.servo_motor1_top_degree = gmCalibratedMotorValues.servo_motor1_top_degree;
         initial_control_data.servo_motor1_bottom_degree = gmCalibratedMotorValues.servo_motor1_bottom_degree;
 
@@ -348,17 +351,13 @@ void Controller::communicationThread()
     while(true)
     {
 
-        checkInitilizationNeeded(gmEnvironmentData);
-
         gmMutex.lock();
+
+        checkInitilizationNeeded(gmEnvironmentData);
 
         spi_transfer_data = gmSpiTxData;
 
         gmMutex.unlock();
-
-
-        printf("%02X-%02X\n", spi_transfer_data[56], spi_transfer_data[57]);
-
 
         status = gmSpi.spiTransmiteReceive(spi_transfer_data, SPI_TRANSFER_SIZE);
 

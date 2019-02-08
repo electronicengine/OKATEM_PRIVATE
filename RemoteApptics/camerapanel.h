@@ -1,8 +1,8 @@
 #ifndef CAMERAPANEL_H
 #define CAMERAPANEL_H
 
-#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "mainwindow.h"
 
 
 class CameraPanel : public MainWindow
@@ -23,14 +23,16 @@ private slots:
 
 public:
     CameraPanel(MainWindow *Window);
-    void startCamera(const std::string &StreamIpAddress,  int StreamPort);
-    void printScreen(const QPixmap &PixMap);
+    int startCamera(const std::string &StreamIpAddress,  int StreamPort, int ControlPort);
+    void printScreen(const cv::Mat &Frame);
 
 
 
 private:
     void attachWindow();
+    QImage cvMatToQImage( const cv::Mat &inMat );
 
+    cv::Mat gmTemplate;
 
 };
 

@@ -256,6 +256,8 @@ void RemoteController::servo2Backward()
 void RemoteController::turnLeft()
 {
 
+    int ret;
+
     gmTxData.clear();
     gmTxData.x_position = 365;
     gmTxData.step_motor2_direction = FORWARD;
@@ -266,8 +268,11 @@ void RemoteController::turnLeft()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("LEFT\r\n");
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("LEFT %d\r\n", gmTxData.step_motor1_speed);
 
 }
 
@@ -275,6 +280,8 @@ void RemoteController::turnLeft()
 
 void RemoteController::turnRight()
 {
+
+    int ret;
 
     gmTxData.clear();
     gmTxData.x_position = 365;
@@ -286,8 +293,11 @@ void RemoteController::turnRight()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("RIGHT\r\n");
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("RIGHT %d\r\n", gmTxData.step_motor1_speed);
 
 }
 
@@ -295,6 +305,8 @@ void RemoteController::turnRight()
 
 void RemoteController::turnUp()
 {
+
+    int ret;
 
     gmTxData.clear();
     gmTxData.x_position = 365;
@@ -305,17 +317,37 @@ void RemoteController::turnUp()
 
 
     gmTxData.servo_motor1_degree = 0;
-    gmTxData.servo_motor2_degree = 0;
+    gmTxData.servo_motor2_degree= 0;
 
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("UP %d\r\n", gmTxData.step_motor1_speed);
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("UP %d\r\n", gmTxData.step_motor1_speed);
 
+}
+
+void RemoteController::setCalibrationValues(const CONTROL_DATA_FORMAT &CalibrationValues)
+{
+    int ret;
+
+    gmTxData.clear();
+
+    gmTxData = CalibrationValues;
+
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("CALIB %d\r\n", gmTxData.step_motor1_speed);
 }
 
 
 
 void RemoteController::turnDown()
 {
+
+    int ret;
 
     gmTxData.clear();
     gmTxData.x_position = 365;
@@ -328,8 +360,11 @@ void RemoteController::turnDown()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("DOWN\r\n");
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("DOWN %d\r\n", gmTxData.step_motor1_speed);
 
 }
 

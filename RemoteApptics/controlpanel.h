@@ -2,8 +2,8 @@
 #define CONTROLPANEL_H
 
 //#include "QObject"
-#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "mainwindow.h"
 
 //class MainWindow;
 
@@ -65,6 +65,7 @@ public:
     void process();
     void setPanelEnable(bool Value);
     void setServoSliderInitialValues(int Servo1Value, int Servo2Value);
+    void setCalibrationData(CONTROL_DATA_FORMAT &ControlData);
 
 protected:
     bool *gpConnectionAvailable;
@@ -74,9 +75,6 @@ private:
     void attachToWindow();
 
     void checkButtons();
-    void checkUpdateBar();
-    void deployPanel();
-    void preparePanelInfo();
 
     volatile bool gmKeepButtonsPressed = false;
 

@@ -123,8 +123,7 @@ typedef enum
                                     }while (0U)
 #endif /* USE_RTOS */
 
-
-#define __weak   __attribute__((weak))
+#define __weak  __attribute__((weak))
 
 
 /* Macro to get variable aligned on 4-bytes, for __ICCARM__ the directive "#pragma data_alignment=4" must be used instead */

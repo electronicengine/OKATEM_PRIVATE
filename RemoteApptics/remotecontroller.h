@@ -67,7 +67,7 @@ public:
     void turnDown();
     void turnUp();
 
-
+    void setCalibrationValues(const CONTROL_DATA_FORMAT &CalibrationValues);
     void increaseSpeed();
     void decreaseSpeed();
     void setSpeed(int value);

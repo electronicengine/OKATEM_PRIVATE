@@ -123,8 +123,11 @@ void Json::saveEnvironmentData(ENVIRONMENT_DATA_FORMAT &StmData, SFP_DATA_FORMAT
     gmSfpData = SfpData;
     gmStmData = StmData;
 
-    gmMotorInformations.step_motor1_position = StmData.step_motor1_step;
-    gmMotorInformations.step_motor2_position = StmData.step_motor2_step;
+    if(StmData.step_motor1_step <= 0xF4240)
+        gmMotorInformations.step_motor1_position = StmData.step_motor1_step;
+
+    if(StmData.step_motor2_step <= 0xF4240)
+        gmMotorInformations.step_motor2_position = StmData.step_motor2_step;
 
     if(StmData.servo_motor1_degree != 0 && StmData.servo_motor1_degree != 0xff)
         gmMotorInformations.servo_motor1_degree = StmData.servo_motor1_degree;
@@ -153,7 +156,9 @@ void Json::saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &L
 
 void Json::saveMotorPositions(MOTOR_INFORMATIONS &MotorInfo)
 {
-
+    gmMutex.lock();
+    gmMotorInformations = MotorInfo;
+    gmMutex.unlock();
 }
 
 int Json::loadMotorPositions(MOTOR_INFORMATIONS &MotorInfo)
@@ -161,71 +166,60 @@ int Json::loadMotorPositions(MOTOR_INFORMATIONS &MotorInfo)
 
     std::string json;
     rapidjson::Document document;
-    int counter;
 
     json = readFile();
 
-    do{
-        document.Parse(json.c_str());
+    document.Parse(json.c_str());
 
-        counter++;
 
-        if(document.IsObject())
+
+    if(document.IsObject())
+    {
+        if(document.HasMember("servo_motor1_degree"))
+            MotorInfo.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
+
+        if(document.HasMember("servo_motor1_top_degree"))
+            MotorInfo.servo_motor1_top_degree = document["servo_motor1_top_degree"].GetInt();
+
+        if(document.HasMember("servo_motor1_bottom_degree"))
+            MotorInfo.servo_motor1_bottom_degree = document["servo_motor1_bottom_degree"].GetInt();
+
+        if(document.HasMember("servo_motor2_degree"))
+            MotorInfo.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
+
+        if(document.HasMember("servo_motor2_top_degree"))
+            MotorInfo.servo_motor2_top_degree = document["servo_motor2_top_degree"].GetInt();
+
+        if(document.HasMember("servo_motor2_bottom_degree"))
+            MotorInfo.servo_motor2_bottom_degree = document["servo_motor2_bottom_degree"].GetInt();
+
+
+        if(document.HasMember("step_motor1_position"))
         {
-            if(document.HasMember("servo_motor1_degree"))
-                MotorInfo.servo_motor1_degree = document["servo_motor1_degree"].GetInt();
-
-            if(document.HasMember("servo_motor1_top_degree"))
-                MotorInfo.servo_motor1_top_degree = document["servo_motor1_top_degree"].GetInt();
-
-            if(document.HasMember("servo_motor1_bottom_degree"))
-                MotorInfo.servo_motor1_bottom_degree = document["servo_motor1_bottom_degree"].GetInt();
-
-            if(document.HasMember("servo_motor2_degree"))
-                MotorInfo.servo_motor2_degree = document["servo_motor2_degree"].GetInt();
-
-            if(document.HasMember("servo_motor2_top_degree"))
-                MotorInfo.servo_motor2_top_degree = document["servo_motor2_top_degree"].GetInt();
-
-            if(document.HasMember("servo_motor2_bottom_degree"))
-                MotorInfo.servo_motor2_bottom_degree = document["servo_motor2_bottom_degree"].GetInt();
-
-
-            if(document.HasMember("step_motor1_position"))
-            {
-                MotorInfo.step_motor1_position = document["step_motor1_position"].GetInt64();
-            }
-
-
-            if(document.HasMember("step_motor1_max_step"))
-                MotorInfo.step_motor1_max_step = document["step_motor1_max_step"].GetInt64();
-
-
-
-            if(document.HasMember("step_motor2_position"))
-            {
-                MotorInfo.step_motor2_position = document["step_motor2_position"].GetInt64();
-            }
-
-            if(document.HasMember("step_motor2_max_step"))
-                MotorInfo.step_motor2_max_step = document["step_motor2_max_step"].GetInt64();
-
+            MotorInfo.step_motor1_position = document["step_motor1_position"].GetInt64();
         }
 
-        if(counter >= 3)
-            break;
+
+        if(document.HasMember("step_motor1_max_step"))
+            MotorInfo.step_motor1_max_step = document["step_motor1_max_step"].GetInt64();
 
 
-    }while(!document.IsObject());
 
-    if(!document.IsObject())
-    {
-        printAll("Motor Positions have not loaded into buffer! Check Json Object");
-        return FAIL;
+        if(document.HasMember("step_motor2_position"))
+        {
+            MotorInfo.step_motor2_position = document["step_motor2_position"].GetInt64();
+        }
+
+        if(document.HasMember("step_motor2_max_step"))
+            MotorInfo.step_motor2_max_step = document["step_motor2_max_step"].GetInt64();
+
+        return SUCCESS;
+
     }
     else
     {
-        return SUCCESS;
+        printAll("Motor Positions have not loaded into buffer! Check Json Object");
+        return FAIL;
     }
 
 
@@ -317,7 +311,7 @@ void Json::writeJson()
         writer.Uint(gmMotorInformations.servo_motor2_degree);
 
         writer.Key("servo_motor2_top_degree");
-        writer.Uint(gmMotorInformations.servo_motor1_top_degree);
+        writer.Uint(gmMotorInformations.servo_motor2_top_degree);
 
         writer.Key("servo_motor2_bottom_degree");
         writer.Uint(gmMotorInformations.servo_motor2_bottom_degree);

@@ -1,4 +1,4 @@
-#include "connectiondialog.h"
+//#include "connectiondialog.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -6,9 +6,18 @@
 #include "controlpanel.h"
 #include "displaypanel.h"
 #include "camerapanel.h"
+#include "connectionwindow.h"
+#include "calibrationwindow.h"
 
 #include <thread>
 #include <QMessageBox>
+
+
+
+MainWindow::MainWindow(bool Constructed)
+{
+    std::cout << "MainWindow Constructed" << Constructed << std::endl;
+}
 
 
 
@@ -17,11 +26,16 @@ MainWindow::MainWindow(MainWindow *Window)
 
     ui = Window->ui;
     gpController = Window->gpController;
+    gpStream = Window->gpStream;
+
+
     gpVideoStreamSocket = Window->gpVideoStreamSocket;
 
     gpControlInfo = Window->gpControlInfo;
     gpEnvironmentInfo = Window->gpEnvironmentInfo;
     gpSfpInfo = Window->gpSfpInfo;
+
+    gpMainWindow = Window->gpMainWindow;
 
 }
 
@@ -31,10 +45,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
     QPixmap pix;
 
     ui->setupUi(this);
 
+    connect(ui->actionConnection, SIGNAL(triggered(bool)), this, SLOT(actionConnectionTriggered()));
+    connect(ui->actionAuto_Control_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionAuto_Control_Settings_triggered()));
+    connect(ui->actionSet_Initial_Values, SIGNAL(triggered(bool)), this, SLOT(on_actionSet_Initial_Values_triggered()));
+    connect(ui->actionUpdate_Firmware, SIGNAL(triggered(bool)), this, SLOT(actionUpdateFirmwareTriggered()));
+
+    gpMainWindow = this;
 
     gpControlInfo = new CONTROL_DATA_FORMAT;
     gpEnvironmentInfo = new ENVIRONMENT_DATA_FORMAT;
@@ -44,21 +65,22 @@ MainWindow::MainWindow(QWidget *parent) :
     gpVideoStreamSocket = new UdpSocket;
 
     gpAutoControl = new AutoControl;
+
     gpController = new RemoteController(gpControllerSocket);
+    gpStream = new VideoStream(gpVideoStreamSocket);
 
 
     gpControlPanel = new ControlPanel(this);
     gpDisplaypanel = new DisplayPanel(this);
     gpCameraPanel = new CameraPanel(this);
 
-//    connect(gpConnectionBox, SIGNAL(accepted(std::string, int, int)), this, SLOT(connectionAccepted(std::string, int, int)));
-//    connect(gpConnectionBox, SIGNAL(rejected()), this, SLOT(connectionRejected()));
-
-    gpConnectionBox = new ConnectionDialog(this);
 
     ui->toggle_button->setCheckable(true);
     pix.load("hyperion.jpg");
     ui->frame_label->setPixmap(pix);
+
+    gpConnectionWindow = new ConnectionWindow(this);
+    gpCalibrationWindow = new CalibrationWindow(this);
 
     std::thread controlThread(&MainWindow::worker, this);
     controlThread.detach();
@@ -78,8 +100,8 @@ MainWindow::~MainWindow()
     gpController->terminate();
 
     delete ui;    
-    delete gpConnectionBox;
     delete gpAutoControl;
+
 
 }
 
@@ -103,7 +125,8 @@ void MainWindow::worker()
             gpDisplaypanel->process();
 
         }
-        else {
+        else
+        {
 
             if(connection_established != false)
                 emit gpDisplaypanel->showMessageBox("Connection Error", "Ethernet Connection has been lost", MessageBoxType::error);
@@ -117,77 +140,6 @@ void MainWindow::worker()
 
 }
 
-
-
-//void MainWindow::connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort)
-//{
-
-//    int ret;
-
-//    gmIpAddress = IpAddress;
-//    gmStreamPort = StreamPort;
-//    gmControlPort = ControlPort;
-
-//    ret = gpController->start(gmIpAddress, gmControlPort);
-//    if(ret == FAIL)
-//    {
-//        QMessageBox::critical(this, "Error", "Controller Connection Failed");
-//        std::cout << "Controller Connection Failed: "<< gmIpAddress << std::endl;
-//    }
-//    else
-//    {
-
-//        std::cout << "Controller Connection Succesfull " << std::endl;
-
-//        ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
-//        if(ret == FAIL)
-//        {
-
-//            QMessageBox::critical(this, "Error", "Connection Failed");
-//            std::cout << "FSO Information request has not been answered"<<std::endl;
-
-//            delete gpController;
-
-//        }
-//        else
-//        {
-
-//            QMessageBox::information(this, "Info", "Connection Established");
-//            std::cout << "Connection Established "<<std::endl;
-
-//            gmConnectionAvailable = true;
-
-//            gpCameraPanel->startCamera(gmIpAddress, gmStreamPort);
-
-//            setTitle();
-
-//            gpControlPanel->setPanelEnable(true);
-
-//            gpControlPanel->setServoSliderInitialValues(gpControlInfo->servo_motor1_degree, gpControlInfo->servo_motor2_degree);
-//            std::cout << std::to_string(gpSfpInfo->status) << std::endl;
-//            std::cout << std::to_string(gpSfpInfo->tx_power) << std::endl;
-//            std::cout << std::to_string(gpSfpInfo->rx_power) << std::endl;
-
-//            std::cout << "step1: " << std::to_string(gpEnvironmentInfo->step_motor1_step) << std::endl;
-//            std::cout << "step2: " << std::to_string(gpEnvironmentInfo->step_motor2_step) << std::endl;
-
-//            std::cout << "servo1: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
-//            std::cout << "servo2: " << std::to_string(gpEnvironmentInfo->servo_motor1_degree) << std::endl;
-
-//            gpDisplaypanel->deployPanel();
-
-//            gpConnectionBox->ui->buttonBox->hide();
-
-//        }
-//    }
-//}
-
-
-
-//void MainWindow::connectionRejected()
-//{
-//    std::cout << "rejected" << std::endl;
-//}
 
 
 
@@ -217,33 +169,38 @@ std::string MainWindow::execCmd(const char* cmd)  // replace popen and pclose wi
 
 
 
-void MainWindow::setTitle()
+void MainWindow::setTitle(const std::string &IpAddress)
 {
     char cmd[100];
 
+    gmIpAddress = IpAddress;
+
+
     snprintf(cmd, 100, "sudo sshpass -p \"hyperion\" ssh pi@%s hostname", gmIpAddress.c_str());
 
+    std::cout << "running command: " << cmd << std::endl;
     std::string hostName = execCmd(cmd);
 
-    MainWindow::setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
+    std::cout << "hostname " << hostName << std::endl;
+
+    gpMainWindow->setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
+//    MainWindow::setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
 
 }
 
 
 
-void MainWindow::on_actionConnection_triggered()
+void MainWindow::actionConnectionTriggered()
 {
-//    gpConnectionBox->show();
+    gpConnectionWindow->show();
 }
 
 
 
-void MainWindow::on_actionUpdate_Firmware_triggered()
+void MainWindow::actionUpdateFirmwareTriggered()
 {
 
-//    QString stdw;
     std::string file;
-//    QFileDialog dialog(this);
 
     QString file_name = QFileDialog::getOpenFileName(this, "select binary", "/root/qt-workspace/OKATEM_PRIVATE/stm32f746_rtos/build");
 
@@ -269,19 +226,18 @@ void MainWindow::on_actionUpdate_Firmware_triggered()
 
 
 
-void MainWindow::on_actionAuto_Control_Settings_triggered()
-{
-    gpAutoControl->show();
-}
-
 
 
 void MainWindow::on_actionSet_Initial_Values_triggered()
 {
-//    gpInitialValueSettings->setDefaultValues(gmControlInfo);
-    //    gpInitialValueSettings->show();
+    gpCalibrationWindow->deployTextBoxes();
+    gpCalibrationWindow->show();
 }
 
 
 
+void MainWindow::on_actionAuto_Control_Settings_triggered()
+{
+    gpAutoControl->show();
 
+}

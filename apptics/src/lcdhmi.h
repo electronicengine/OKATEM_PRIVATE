@@ -4,6 +4,8 @@
 #include "serialcom.h"
 #include "globals.h"
 #include "queue.h"
+#include "controller.h"
+
 
 #define INTRO_PAGE_ID           0x00
 #define MAIN_PAGE_ID            0x01
@@ -62,8 +64,9 @@ private:
     bool gmDataComing = false;
     bool gmAutoModeEnable = false;
 
-    uint32_t servo_motor1_angle = 50;
-    uint32_t servo_motor2_angle = 50;
+
+
+    MOTOR_INFORMATIONS gmMotorInformation;
 
     SerialCom *gmSerial;
 

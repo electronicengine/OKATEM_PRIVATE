@@ -1,11 +1,12 @@
 ﻿#include "displaypanel.h"
 #include "QMessageBox"
-
+#include "controlpanel.h"
 
 DisplayPanel::DisplayPanel(MainWindow *Window) : MainWindow(Window)
 {
 
     gpConnectionAvailable = &Window->gmConnectionAvailable;
+    gpControlPanel = Window->gpControlPanel;
 
     attachWindow();
 
@@ -27,7 +28,9 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(refreshCompassLabel(QString)), ui->compass_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshNMEALabel(QString)), ui->nmea_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshStep1PosLabel(QString)), ui->step1_pos_label, SLOT(setText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(setStyleSheetofStep1(QString)), ui->step1_pos_label, SLOT(setStyleSheet(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshStep2PosLabel(QString)), ui->step2_pos_label, SLOT(setText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(setStyleSheetofStep2(QString)), ui->step2_pos_label, SLOT(setStyleSheet(QString)), Qt::QueuedConnection);
 
     connect(this, SIGNAL(statusLabelClose()), ui->status_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(statusLabelShow()), ui->status_label, SLOT(show()), Qt::QueuedConnection);
@@ -67,11 +70,15 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
     if(percent > 0 && percent < 100)
     {
 
-        std::cout << "%" << std::to_string(percent) << " upgraded" << std::endl;
-         emit setprogessbarvisibility(true);
-         emit setupdatelabelvisibility(true);
 
-         emit progressUpdateFile(percent);
+
+        gpControlPanel->setPanelEnable(false);
+
+        std::cout << "%" << std::to_string(percent) << " upgraded" << std::endl;
+        emit setprogessbarvisibility(true);
+        emit setupdatelabelvisibility(true);
+
+        emit progressUpdateFile(percent);
 
         return SUCCESS;
 
@@ -88,6 +95,9 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
                             MessageBoxType::information);
 
         gpController->resetUpdatePercentage();
+
+        gpControlPanel->setPanelEnable(true);
+
 
         return FAIL;
     }
@@ -155,6 +165,17 @@ void DisplayPanel::deployPanel()
     }
 
 
+    if((gpEnvironmentInfo->step_motor_breaks & 0x0f) == 0)
+        emit setStyleSheetofStep1("color: rgb(255, 0, 0); background-color: transparent;");
+    else
+        emit setStyleSheetofStep1("color: rgb(114, 159, 207); background-color: transparent;");
+
+    if((gpEnvironmentInfo->step_motor_breaks & 0xf0) >> 4 == 0)
+        emit setStyleSheetofStep2("color: rgb(255, 0, 0); background-color: transparent;");
+    else
+        emit setStyleSheetofStep2("color: rgb(114, 159, 207); background-color: transparent;");
+
+
     emit refreshStatusLabel((gpSfpInfo->status == 1) ? "Connected":"Disconnected");
     emit refreshTxPowerLabel(QString::number(gpSfpInfo->tx_power));
     emit refreshRxPowerLabel(QString::number(gpSfpInfo->rx_power));
@@ -169,6 +190,50 @@ void DisplayPanel::deployPanel()
 
 
 }
+
+int DisplayPanel::startDisplayManager(const std::string &IpAddress, int ControlPort, int StreamPort)
+{
+
+    int ret;
+
+    gmIpAddress = IpAddress;
+    gmControlPort = ControlPort;
+    gmStreamPort = StreamPort;
+
+    ret = gpController->start(gmIpAddress, gmControlPort);
+    if(ret == FAIL)
+    {
+        std::cout << "Controller socket can not be opened:  "<< gmIpAddress << std::endl;
+
+        return FAIL;
+    }
+    else
+    {
+
+        std::cout << "Controller Connection Succesfull " << std::endl;
+
+        ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
+        if(ret == FAIL)
+        {
+
+            std::cout << "FSO Information request has not been answered"<<std::endl;
+
+            return FAIL;
+
+        }
+        else
+        {
+
+            std::cout << "Connection Established "<<std::endl;
+
+            return SUCCESS;
+
+
+        }
+    }
+}
+
+
 
 void DisplayPanel::preparePanelInfo()
 {

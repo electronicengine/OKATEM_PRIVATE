@@ -8,25 +8,34 @@ CameraPanel::CameraPanel(MainWindow *Window) : MainWindow(Window)
 {
     attachWindow();
 
-    gpStream = new VideoStream(gpVideoStreamSocket);
-
+    gmTemplate = cv::imread("template.png", CV_LOAD_IMAGE_COLOR);
 
 }
 
 
 
-void CameraPanel::startCamera(const std::string &StreamIpAddress,  int StreamPort)
+int CameraPanel::startCamera(const std::string &StreamIpAddress,  int StreamPort, int ControlPort)
 {
     int ret ;
 
-    std::cout << "Starting Camera... Ip" << StreamIpAddress << "Port: " << std::to_string(StreamPort) << std::endl;
-    ret = gpStream->start(StreamIpAddress, StreamPort, this);
+    gmIpAddress = StreamIpAddress;
+    gmStreamPort = StreamPort;
+    gmControlPort = ControlPort;
+
+    std::cout << "Starting Camera... Ip" << gmIpAddress << "Port: " << std::to_string(gmStreamPort) << std::endl;
+    ret = gpStream->start(gmIpAddress, gmStreamPort, this);
     if(ret == FAIL)
     {
         emit showMessageBox("Connection Established!");
         std::cout << "Streaming Connection Failed "<<std::endl;
-    }
 
+        return FAIL;
+    }
+    else
+    {
+        std::cout << "Streaming Connection has been established" << std::endl;
+        return SUCCESS;
+    }
 }
 
 
@@ -40,11 +49,18 @@ int CameraPanel::showMessage(QString Str)
 
 
 
-void CameraPanel::printScreen(const QPixmap &PixMap)
+void CameraPanel::printScreen(const cv::Mat &Frame)
 {
     static int count = 0;
 
     count ++;
+    cv::Mat scaled;
+
+
+    cv::resize(Frame, scaled, cv::Size(ui->frame_label->width(), ui->frame_label->height()));
+
+
+    scaled = scaled + gmTemplate;
 
     if(count >= 50)
     {
@@ -55,7 +71,7 @@ void CameraPanel::printScreen(const QPixmap &PixMap)
         usleep(1000);
     }
 
-    emit refreshScreen(PixMap);
+    emit refreshScreen(QPixmap::fromImage(cvMatToQImage(scaled)));
 }
 
 void CameraPanel::attachWindow()
@@ -64,4 +80,74 @@ void CameraPanel::attachWindow()
     connect(this, SIGNAL(screenClose()), ui->frame_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(screenShow()), ui->frame_label, SLOT(show()), Qt::QueuedConnection);
     connect(this, SIGNAL(showMessageBox(QString)), this, SLOT(showMessage(QString)), Qt::BlockingQueuedConnection);
+}
+
+
+
+QImage  CameraPanel::cvMatToQImage( const cv::Mat &inMat )
+{
+
+    switch ( inMat.type() )
+    {
+     // 8-bit, 4 channel
+     case CV_8UC4:
+     {
+        QImage image( inMat.data,
+                      inMat.cols, inMat.rows,
+                      static_cast<int>(inMat.step),
+                      QImage::Format_ARGB32 );
+
+        return image;
+     }
+
+     // 8-bit, 3 channel
+     case CV_8UC3:
+     {
+        QImage image( inMat.data,
+                      inMat.cols, inMat.rows,
+                      static_cast<int>(inMat.step),
+                      QImage::Format_RGB888 );
+
+        return image.rgbSwapped();
+     }
+
+     // 8-bit, 1 channel
+     case CV_8UC1:
+     {
+    #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
+        QImage image( inMat.data,
+                      inMat.cols, inMat.rows,
+                      static_cast<int>(inMat.step),
+                      QImage::Format_Grayscale8 );
+    #else
+        static QVector<QRgb>  sColorTable;
+
+        // only create our color table the first time
+        if ( sColorTable.isEmpty() )
+        {
+           sColorTable.resize( 256 );
+
+           for ( int i = 0; i < 256; ++i )
+           {
+              sColorTable[i] = qRgb( i, i, i );
+           }
+        }
+
+        QImage image( inMat.data,
+                      inMat.cols, inMat.rows,
+                      static_cast<int>(inMat.step),
+                      QImage::Format_Indexed8 );
+
+        image.setColorTable( sColorTable );
+    #endif
+
+        return image;
+     }
+
+     default:
+       std::cout << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type() << std::endl;
+        break;
+    }
+
+    return QImage();
 }

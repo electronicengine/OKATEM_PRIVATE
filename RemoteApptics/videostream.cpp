@@ -7,6 +7,8 @@
 
 
 
+VideoStream::VideoStream(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
+
 int VideoStream::start(const std::string &IpAddress, int Port, CameraPanel *Panel)
 {
 
@@ -72,7 +74,7 @@ void VideoStream::socketDataCheckCall()
 
                 ret = convertPackageToMat(frame_data, frame);
                 if(ret != FAIL)
-                    gpPanel->printScreen(QPixmap::fromImage(cvMatToQImage(frame)));
+                    gpPanel->printScreen(frame);
 
                 frame_data.clear();
 
@@ -200,7 +202,6 @@ int VideoStream::convertPackageToMat(std::vector<unsigned char> FrameData, cv::M
     {
         cv::Mat rawData = cv::Mat(1, FrameData.size(), CV_8UC1, FrameData.data());
         cv::Mat frame = cv::imdecode(rawData, CV_LOAD_IMAGE_COLOR);
-        cv::Mat scaled;
 
         if (frame.size().width == 0)
         {
@@ -208,9 +209,7 @@ int VideoStream::convertPackageToMat(std::vector<unsigned char> FrameData, cv::M
             return FAIL;
         }
 
-        cv::resize(frame, scaled, cv::Size(1024, 768));
-
-        Frame = scaled;
+        Frame = frame;
 
         return SUCCESS;
     }
@@ -225,73 +224,6 @@ int VideoStream::convertPackageToMat(std::vector<unsigned char> FrameData, cv::M
 
 
 
-QImage  VideoStream::cvMatToQImage( const cv::Mat &inMat )
-{
-
-    switch ( inMat.type() )
-    {
-     // 8-bit, 4 channel
-     case CV_8UC4:
-     {
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_ARGB32 );
-
-        return image;
-     }
-
-     // 8-bit, 3 channel
-     case CV_8UC3:
-     {
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_RGB888 );
-
-        return image.rgbSwapped();
-     }
-
-     // 8-bit, 1 channel
-     case CV_8UC1:
-     {
-    #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_Grayscale8 );
-    #else
-        static QVector<QRgb>  sColorTable;
-
-        // only create our color table the first time
-        if ( sColorTable.isEmpty() )
-        {
-           sColorTable.resize( 256 );
-
-           for ( int i = 0; i < 256; ++i )
-           {
-              sColorTable[i] = qRgb( i, i, i );
-           }
-        }
-
-        QImage image( inMat.data,
-                      inMat.cols, inMat.rows,
-                      static_cast<int>(inMat.step),
-                      QImage::Format_Indexed8 );
-
-        image.setColorTable( sColorTable );
-    #endif
-
-        return image;
-     }
-
-     default:
-       std::cout << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type() << std::endl;
-        break;
-    }
-
-    return QImage();
-}
 
 
 

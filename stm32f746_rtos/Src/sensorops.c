@@ -22,8 +22,6 @@ void sensorOps(void const * argument)
       else
       {
 
-          printf("hello all \n");
-          // brada herhangi bir sıkıntıyla karşılaştığınızda nasıl bir önlem alacağınızı şu an biliyor olmalısınız ama nasıl bir yöntem izleyeceğiniz
           readAllSensors();
 
           xSemaphoreTake(spiMutexHandle, portMAX_DELAY);

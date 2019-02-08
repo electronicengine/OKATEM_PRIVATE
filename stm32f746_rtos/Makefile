@@ -109,12 +109,12 @@ C_INCLUDES += -IMiddlewares/Third_Party/FreeRTOS/Source/include
 C_INCLUDES += -IInc
 # compile gcc flags
 ASFLAGS = -mthumb -mcpu=cortex-m7 -mfpu=fpv4-sp-d16 -mfloat-abi=hard $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
-CFLAGS = -mthumb -mcpu=cortex-m7 -mfpu=fpv4-sp-d16 -mfloat-abi=hard $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS = -mthumb -mcpu=cortex-m7 -mfpu=fpv4-sp-d16 -mfloat-abi=hard $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -Wno-builtin-macro-redefined
 ifeq ($(DEBUG), 1)
-CFLAGS += -g -gdwarf-2
+CFLAGS += -g -gdwarf-2 
 endif
 # Generate dependency information
-CFLAGS += -std=c99 -MD -MP -MF $(BUILD_DIR)/.dep/$(@F).d
+CFLAGS += -std=c99 -MD -MP -MF $(BUILD_DIR)/.dep/$(@F).d -Wno-builtin-macro-redefined
 
 #######################################
 # LDFLAGS

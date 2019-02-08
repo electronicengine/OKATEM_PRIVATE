@@ -159,7 +159,7 @@ int LaserTracker::startTracking()
         //show the frame
         //cv::imshow("frame", gmFrame);
 
-        drawtargetLines(gmFrame);
+        drawTarget(gmFrame);
         streamFrame(gmFrame);
         cv::waitKey(1); // needed
 
@@ -313,7 +313,7 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
 
 
 
-int LaserTracker::drawtargetLines(const cv::Mat &Frame)
+int LaserTracker::drawTarget(const cv::Mat &Frame)
 {
 
     cv::Point p1, p2, p3, p4;

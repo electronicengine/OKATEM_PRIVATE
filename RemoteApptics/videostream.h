@@ -26,17 +26,16 @@ class VideoStream : public SocketListener
 {
 public:
 
-    VideoStream(UdpSocket *Socket) : SocketListener(Socket){ gpSocket = Socket; }
+    VideoStream(UdpSocket *Socket);
     virtual ~VideoStream()
     {
-//        gpSocket->terminate();
+        gpSocket->terminate();
     }
 
     int start(const std::string &IpAddress, int Port, CameraPanel* Panel);
     int terminate();
 
     void socketDataCheckCall();
-
 
 private:
 

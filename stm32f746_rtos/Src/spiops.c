@@ -153,6 +153,8 @@ void putEnvironmentData()
 
         SpiTxData->data[index++] = EnvironmentData->servo_motor1_degree & 0xff;
 
+
+
         SpiTxData->data[index++] = EnvironmentData->servo_motor2_degree & 0xff;
 
         SpiTxData->data[index++] = EnvironmentData->sensor_data.temperature & 0xff;
@@ -176,6 +178,7 @@ void putEnvironmentData()
         SpiTxData->data[index++] = (EnvironmentData->sensor_data.altitude >> 24) & 0xff;
 
         SpiTxData->data[index++] = EnvironmentData->sensor_data.wheather_condition & 0xff;
+        SpiTxData->data[index++] = EnvironmentData->step_motor_breaks;
 
 
         SpiTxData->checksum = (('C') | (('H') << 8 ));
@@ -189,7 +192,28 @@ void putEnvironmentData()
 void processControlData()
 {
 
-    xSemaphoreTake(controlMutexHandle, (TickType_t)1000);
+
+    if(ControlData->setting_enable == 0xff)
+    {
+
+        setting_enable = 0xff;
+
+        motor1.step_number = ControlData->step_motor1_step;
+        motor1.max_step_number = ControlData->step_motor1_max_step;
+
+        motor2.step_number = ControlData->step_motor2_step;
+        motor2.max_step_number = ControlData->step_motor2_max_step;
+
+        servo1.top =  ControlData->servo_motor1_top_degree;
+        servo1.bottom = ControlData->servo_motor1_bottom_degree;
+
+        servo2.top =  ControlData->servo_motor2_top_degree;
+        servo2.bottom = ControlData->servo_motor2_bottom_degree;
+
+    }
+    else
+    {
+        setting_enable = 0;
 
         motor1.direction = ControlData -> step_motor1_direction;
         motor1.speed = ControlData -> step_motor1_speed;
@@ -198,26 +222,22 @@ void processControlData()
         motor2.speed = ControlData -> step_motor2_speed;
 
         servo1.angle = ControlData -> servo_motor1_degree;
-
         servo2.angle = ControlData -> servo_motor2_degree;
         setting_enable = ControlData -> setting_enable;
+    }
 
 
 
-        if(ControlData -> calibrate_sensor == 1)
-        {
-            mprintf("S\r\n");
+    if(ControlData -> calibrate_sensor == 1)
+    {
+        mprintf("S\r\n");
 
-            calibration.available = 1;
+        calibration.available = 1;
 
-            motor1.direction = STOP;
-            motor2.direction = STOP;
+        motor1.direction = STOP;
+        motor2.direction = STOP;
 
-        }
-
-    xSemaphoreGive(controlMutexHandle);
-
-
+    }
 
 }
 
@@ -240,21 +260,18 @@ void recieveControlData(SPI_TRANSFER_FORMAT *SpiRxData)
     ControlData->x_position |= (SpiRxData->data[index++] << 16);
     ControlData->x_position |= (SpiRxData->data[index++] << 24);
 
-    ControlData->y_position = SpiRxData->data[index++] & 0xff;
+    ControlData->y_position = SpiRxData->data[index++];
     ControlData->y_position |= (SpiRxData->data[index++] << 8);
     ControlData->y_position |= (SpiRxData->data[index++] << 16);
     ControlData->y_position |= (SpiRxData->data[index++] << 24);
 
-    ControlData->z_position = SpiRxData->data[index++] & 0xff;
+    ControlData->z_position = SpiRxData->data[index++];
     ControlData->z_position |= (SpiRxData->data[index++] << 8);
     ControlData->z_position |= (SpiRxData->data[index++] << 16);
     ControlData->z_position |= (SpiRxData->data[index++] << 24);
 
     ControlData->step_motor1_direction = SpiRxData->data[index++];
     ControlData->step_motor2_direction = SpiRxData->data[index++];
-
-    ControlData->servo_motor1_direction = SpiRxData->data[index++];
-    ControlData->servo_motor2_direction = SpiRxData->data[index++];
 
     ControlData->step_motor1_speed = SpiRxData->data[index++];
     ControlData->step_motor2_speed = SpiRxData->data[index++];
@@ -274,11 +291,20 @@ void recieveControlData(SPI_TRANSFER_FORMAT *SpiRxData)
     ControlData->step_motor1_step |= (SpiRxData->data[index++] << 16);
     ControlData->step_motor1_step |= (SpiRxData->data[index++] << 24);
 
+    ControlData->step_motor1_max_step = SpiRxData->data[index++];
+    ControlData->step_motor1_max_step |= (SpiRxData->data[index++] << 8);
+    ControlData->step_motor1_max_step |= (SpiRxData->data[index++] << 16);
+    ControlData->step_motor1_max_step |= (SpiRxData->data[index++] << 24);
+
     ControlData->step_motor2_step = SpiRxData->data[index++];
     ControlData->step_motor2_step |= (SpiRxData->data[index++] << 8);
     ControlData->step_motor2_step |= (SpiRxData->data[index++] << 16);
     ControlData->step_motor2_step |= (SpiRxData->data[index++] << 24);
 
+    ControlData->step_motor2_max_step = SpiRxData->data[index++];
+    ControlData->step_motor2_max_step |= (SpiRxData->data[index++] << 8);
+    ControlData->step_motor2_max_step |= (SpiRxData->data[index++] << 16);
+    ControlData->step_motor2_max_step |= (SpiRxData->data[index++] << 24);
 
     for(int i = 0; i < CONTROL_DATA_GARBAGE_SIZE; i++)
          ControlData->garbage1[i] = SpiRxData->data[i + index];

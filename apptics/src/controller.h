@@ -53,7 +53,7 @@ public:
     Status setControlData(CONTROL_DATA_FORMAT& Data);
     Status setUpdateData(UPDATE_FILE_FORMAT& Data);
 
-    void setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations);
+    void setMotorCalibrationValues(MOTOR_INFORMATIONS &MotorInformations);
 
 
     ENVIRONMENT_DATA_FORMAT getStmEnvironment();

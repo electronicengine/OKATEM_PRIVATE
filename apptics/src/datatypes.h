@@ -24,14 +24,15 @@
 #define SPI_ENTITY_SIZE 108
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
-#define CONTROL_DATA_GARBAGE_SIZE 41
-#define GPS_STRING_SIZE 87
+#define CONTROL_DATA_GARBAGE_SIZE 38
+#define GPS_STRING_SIZE 86
 
 #define SFP_DATA_SIZE 24
 
 #define ETHERNET_TRANSFER_SIZE 292
 #define ETHERNET_ENTITY_SIZE 288
 #define STREAM_DATA_SIZE 280
+#define SENSOR_DATA_SIZE 17
 
 
 #define FORWARD 1
@@ -175,7 +176,7 @@ struct SENSOR_DATA
 
     operator unsigned char*()
     {
-        unsigned char *data = new unsigned char[sizeof(SENSOR_DATA)];
+        unsigned char *data = new unsigned char[SENSOR_DATA_SIZE];
 
         int index = 0;
 
@@ -449,11 +450,12 @@ struct ENVIRONMENT_DATA_FORMAT
     uint32_t step_motor1_step;
     uint32_t step_motor2_step;
 
-    uint8_t servo_motor1_degree;
-    uint8_t servo_motor2_degree;
+    uint16_t servo_motor1_degree;
+    uint16_t servo_motor2_degree;
 
     SENSOR_DATA sensor_data;
 
+    uint8_t step_motor_breaks;
 
     std::string gps_string;
 
@@ -487,6 +489,10 @@ struct ENVIRONMENT_DATA_FORMAT
             servo_motor2_degree = SpiData.data[index++];
 
             sensor_data = &SpiData.data[index];
+
+            index += SENSOR_DATA_SIZE;
+
+            step_motor_breaks = SpiData.data[index++];
 
         }
         catch(std::exception& ex)
@@ -527,13 +533,14 @@ struct ENVIRONMENT_DATA_FORMAT
 
         spi_data.data[index++] = servo_motor1_degree & 0xff;
 
-        spi_data.data[index++] = servo_motor2_degree & 0xff;
+        spi_data.data[index++] = servo_motor2_degree && 0xff;
 
         sensor_data_pointer = sensor_data;
 
-        memcpy(&spi_data.data[index], sensor_data_pointer, sizeof(SENSOR_DATA));
+        for(int i = 0; i < SENSOR_DATA_SIZE; i++)
+            spi_data.data[index++] = sensor_data_pointer[i];
 
-        index += sizeof(SENSOR_DATA);
+        spi_data.data[index++] = step_motor_breaks;
 
         spi_data.checksum = 0;
 
@@ -570,6 +577,11 @@ struct ENVIRONMENT_DATA_FORMAT
             servo_motor2_degree = SpiData.data[index++];
 
             sensor_data = &SpiData.data[index];
+
+            index += SENSOR_DATA_SIZE;
+
+            step_motor_breaks = SpiData.data[index++];
+
 
         }
         catch(std::exception& ex)
@@ -686,31 +698,32 @@ struct CONTROL_DATA_FORMAT
 
     uint8_t setting_enable;
 
-    uint32_t x_position;  // while setting_enable = 1, x_position is initial step1
-    uint32_t y_position;  // while setting_enable = 1, y_position is initial step2
+    uint32_t x_position;
+    uint32_t y_position;
     uint32_t z_position;
 
-    uint8_t step_motor1_direction; // 54
-    uint8_t step_motor2_direction; // 55
-
-    uint8_t servo_motor1_direction;
-    uint8_t servo_motor2_direction;
+    uint8_t step_motor1_direction;
+    uint8_t step_motor2_direction;
 
     uint8_t step_motor1_speed;
     uint8_t step_motor2_speed;
 
-    uint8_t servo_motor1_degree; // 60
+    uint8_t servo_motor1_degree;
     uint8_t servo_motor1_top_degree;
     uint8_t servo_motor1_bottom_degree;
 
-    uint8_t servo_motor2_degree; //63
+    uint8_t servo_motor2_degree;
     uint8_t servo_motor2_top_degree;
     uint8_t servo_motor2_bottom_degree;
 
     uint8_t calibrate_sensor;
 
-    uint32_t step_motor1_step; // while setting_enable = 1, step_motor1_step is max step1
-    uint32_t step_motor2_step; // while setting_enable = 1, step_motor2_step is max step2
+    uint32_t step_motor1_step;
+    uint32_t step_motor1_max_step;
+
+    uint32_t step_motor2_step;
+    uint32_t step_motor2_max_step;
+
 
     uint8_t garbage2[CONTROL_DATA_GARBAGE_SIZE]; //footer
 
@@ -753,9 +766,6 @@ struct CONTROL_DATA_FORMAT
         step_motor1_direction = SpiData.data[index++];
         step_motor2_direction = SpiData.data[index++];
 
-        servo_motor1_direction = SpiData.data[index++];
-        servo_motor2_direction = SpiData.data[index++];
-
         step_motor1_speed = SpiData.data[index++];
         step_motor2_speed = SpiData.data[index++];
 
@@ -772,10 +782,20 @@ struct CONTROL_DATA_FORMAT
         step_motor1_step |= (SpiData.data[index++] << 16);
         step_motor1_step |= (SpiData.data[index++] << 24);
 
+        step_motor1_max_step = (SpiData.data[index++]);
+        step_motor1_max_step |= (SpiData.data[index++] << 8);
+        step_motor1_max_step |= (SpiData.data[index++] << 16);
+        step_motor1_max_step |= (SpiData.data[index++] << 24);
+
         step_motor2_step = (SpiData.data[index++]);
         step_motor2_step |= (SpiData.data[index++] << 8);
         step_motor2_step |= (SpiData.data[index++] << 16);
         step_motor2_step |= (SpiData.data[index++] << 24);
+
+        step_motor2_max_step = (SpiData.data[index++]);
+        step_motor2_max_step |= (SpiData.data[index++] << 8);
+        step_motor2_max_step |= (SpiData.data[index++] << 16);
+        step_motor2_max_step |= (SpiData.data[index++] << 24);
 
         calibrate_sensor = SpiData.data[index++];
 
@@ -832,9 +852,6 @@ struct CONTROL_DATA_FORMAT
         spi_transfer_data.data[index++] = step_motor1_direction;
         spi_transfer_data.data[index++] = step_motor2_direction;
 
-        spi_transfer_data.data[index++] = servo_motor1_direction;
-        spi_transfer_data.data[index++] = servo_motor2_direction;
-
         spi_transfer_data.data[index++] = step_motor1_speed;
         spi_transfer_data.data[index++] = step_motor2_speed;
 
@@ -853,10 +870,22 @@ struct CONTROL_DATA_FORMAT
         spi_transfer_data.data[index++] = (step_motor1_step >> 16) & 0xff;
         spi_transfer_data.data[index++] = (step_motor1_step >> 24) & 0xff;
 
+        spi_transfer_data.data[index++] = (step_motor1_max_step) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_max_step >> 8) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_max_step >> 16) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor1_max_step >> 24) & 0xff;
+
+
         spi_transfer_data.data[index++] = (step_motor2_step) & 0xff;
         spi_transfer_data.data[index++] = (step_motor2_step >> 8) & 0xff;
         spi_transfer_data.data[index++] = (step_motor2_step >> 16) & 0xff;
         spi_transfer_data.data[index++] = (step_motor2_step >> 24) & 0xff;
+
+        spi_transfer_data.data[index++] = (step_motor2_max_step) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_max_step >> 8) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_max_step >> 16) & 0xff;
+        spi_transfer_data.data[index++] = (step_motor2_max_step >> 24) & 0xff;
+
 
         for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
             spi_transfer_data.data[i + index] = garbage2[i];
@@ -899,9 +928,6 @@ struct CONTROL_DATA_FORMAT
         step_motor1_direction = SpiData.data[index++];
         step_motor2_direction = SpiData.data[index++];
 
-        servo_motor1_direction = SpiData.data[index++];
-        servo_motor2_direction = SpiData.data[index++];
-
         step_motor1_speed = SpiData.data[index++];
         step_motor2_speed = SpiData.data[index++];
 
@@ -915,15 +941,25 @@ struct CONTROL_DATA_FORMAT
 
         calibrate_sensor = SpiData.data[index++];
 
-        step_motor1_step = SpiData.data[index++];
-        step_motor1_step |= SpiData.data[index++] << 8;
-        step_motor1_step |= SpiData.data[index++] << 16;
-        step_motor1_step |= SpiData.data[index++] << 24;
+        step_motor1_step = (SpiData.data[index++]);
+        step_motor1_step |= (SpiData.data[index++] << 8);
+        step_motor1_step |= (SpiData.data[index++] << 16);
+        step_motor1_step |= (SpiData.data[index++] << 24);
 
-        step_motor2_step = SpiData.data[index++];
-        step_motor2_step |= SpiData.data[index++] << 8;
-        step_motor2_step |= SpiData.data[index++] << 16;
-        step_motor2_step |= SpiData.data[index++] << 24;
+        step_motor1_max_step = (SpiData.data[index++]);
+        step_motor1_max_step |= (SpiData.data[index++] << 8);
+        step_motor1_max_step |= (SpiData.data[index++] << 16);
+        step_motor1_max_step |= (SpiData.data[index++] << 24);
+
+        step_motor2_step = (SpiData.data[index++]);
+        step_motor2_step |= (SpiData.data[index++] << 8);
+        step_motor2_step |= (SpiData.data[index++] << 16);
+        step_motor2_step |= (SpiData.data[index++] << 24);
+
+        step_motor2_max_step = (SpiData.data[index++]);
+        step_motor2_max_step |= (SpiData.data[index++] << 8);
+        step_motor2_max_step |= (SpiData.data[index++] << 16);
+        step_motor2_max_step |= (SpiData.data[index++] << 24);
 
 
         for(int i=0; i<CONTROL_DATA_GARBAGE_SIZE; i++)
@@ -944,7 +980,6 @@ struct CONTROL_DATA_FORMAT
 
         step_motor1_direction = 0;
         step_motor2_direction = 0;
-
 
         step_motor1_speed = 0;
         step_motor2_speed = 0;
@@ -1162,6 +1197,7 @@ struct INFORMATION_DATA_FORMAT
         unsigned char *environmentdata_bytes = (unsigned char *)(SPI_TRANSFER_FORMAT)environment_data;
         unsigned char *sfpdata_bytes = (unsigned char *) sfp_data;
 
+
         udp_data.header = 'I';
         udp_data.header |= 'N' << 8;
 
@@ -1173,6 +1209,7 @@ struct INFORMATION_DATA_FORMAT
 
         for(int i = 0; i<SPI_TRANSFER_SIZE; i++)
             udp_data.data[i + index] = environmentdata_bytes[i];
+
 
         index += SPI_TRANSFER_SIZE;
 
@@ -1216,6 +1253,82 @@ struct INFORMATION_DATA_FORMAT
     }
 
 };
+
+
+
+struct MOTOR_INFORMATIONS
+{
+
+    uint8_t servo_motor1_degree;
+    uint8_t servo_motor1_bottom_degree;
+    uint8_t servo_motor1_top_degree;
+
+    uint8_t servo_motor2_degree;
+    uint8_t servo_motor2_bottom_degree;
+    uint8_t servo_motor2_top_degree;
+
+    uint32_t step_motor1_position;
+    uint32_t step_motor1_max_step;
+
+    uint32_t step_motor2_position;
+    uint32_t step_motor2_max_step;
+
+
+
+    operator CONTROL_DATA_FORMAT()
+    {
+        CONTROL_DATA_FORMAT control_data;
+
+        control_data.servo_motor1_degree = servo_motor1_degree;
+        control_data.servo_motor1_bottom_degree = servo_motor1_bottom_degree;
+        control_data.servo_motor1_top_degree = servo_motor1_top_degree;
+
+        control_data.servo_motor2_degree = servo_motor2_degree;
+        control_data.servo_motor2_bottom_degree = servo_motor2_bottom_degree;
+        control_data.servo_motor2_top_degree = servo_motor2_top_degree;
+
+        control_data.step_motor1_step = step_motor1_position;
+        control_data.step_motor1_max_step = step_motor1_max_step;
+
+        control_data.step_motor2_step = step_motor2_position;
+        control_data.step_motor2_max_step = step_motor2_max_step;
+
+        return control_data;
+
+    }
+
+    MOTOR_INFORMATIONS operator =(CONTROL_DATA_FORMAT &ControlData)
+    {
+        servo_motor1_degree = ControlData.servo_motor1_degree;
+        servo_motor1_bottom_degree = ControlData.servo_motor1_bottom_degree;
+        servo_motor1_top_degree = ControlData.servo_motor1_top_degree;
+
+        servo_motor2_degree = ControlData.servo_motor2_degree;
+        servo_motor2_bottom_degree = ControlData.servo_motor2_bottom_degree;
+        servo_motor2_top_degree = ControlData.servo_motor2_top_degree;
+
+        step_motor1_position = ControlData.step_motor1_step;
+        step_motor1_max_step = ControlData.step_motor1_max_step;
+
+        step_motor2_position = ControlData.step_motor2_step;
+        step_motor2_max_step = ControlData.step_motor2_max_step;
+
+        return *this;
+    }
+
+
+};
+
+
+
+struct REMOTEMACHINE_INFORMATIONS
+{
+    std::string stream_ip;
+
+    int stream_port;
+    int control_port;
+};
+
 
 
 

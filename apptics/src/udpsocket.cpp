@@ -15,13 +15,16 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 {
     CONTROL_DATA_FORMAT Data;
 
-    gmMutex.lock();
-
     if(gmIsRecieved == 1)
     {
         if(gmSpiControlData.header == 'C' | 'O' << 8)
         {
+            printf("udp available\r\n");
+
+            gmMutex.lock();
             Data = gmSpiControlData;
+            gmMutex.unlock();
+
             Data.is_available = true;
         }
         else
@@ -39,7 +42,6 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
     }
 
 
-    gmMutex.unlock();
 
     return Data;
 
@@ -50,16 +52,16 @@ UPDATE_FILE_FORMAT UdpSocket::getSocketUpdateData()
 
     UPDATE_FILE_FORMAT Data;
 
-    gmMutex.lock();
 
     if(gmUpdateFileQueue.size() != 0)
     {
 
+        gmMutex.lock();
         Data = gmUpdateFileQueue.pop_front();
+        gmMutex.unlock();
 
         Data.is_available = true;
 
-        gmMutex.unlock();
 
         return Data;
 
@@ -69,7 +71,6 @@ UPDATE_FILE_FORMAT UdpSocket::getSocketUpdateData()
         Data.is_available = false;
 
         Data.clear();
-        gmMutex.unlock();
 
         return Data;
     }
@@ -87,12 +88,11 @@ STREAM_DATA_FORMAT UdpSocket::getStreamData()
     {
 
         gmMutex.lock();
-
         Data = gmStreamDataQueue.pop_front();
+        gmMutex.unlock();
 
         Data.is_available = true;
 
-        gmMutex.unlock();
 
         return Data;
 
@@ -154,6 +154,7 @@ int UdpSocket::sendData(INFORMATION_DATA_FORMAT &InformationData)
     udp_data = InformationData;
 
     raw_data = udp_data;
+
 
     return gmEthernetSocket.transferData(raw_data);
 
@@ -281,6 +282,7 @@ void UdpSocket::listenPort()
                information_data.environment_data = gmEnvironmentData;
 
                gmMutex.unlock();
+
 
                sendData(information_data);
 

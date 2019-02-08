@@ -15,7 +15,6 @@ ControlPanel::ControlPanel(MainWindow *Window) : MainWindow(Window)
 void ControlPanel::process()
 {
 
-
     checkButtons();
 
     usleep(25000);
@@ -131,6 +130,11 @@ void ControlPanel::setServoSliderInitialValues(int Servo1Value, int Servo2Value)
     emit setServo2SliderValue(Servo2Value);
     emit setServo2LabelText(QString::number(Servo2Value));
 
+}
+
+void ControlPanel::setCalibrationData(CONTROL_DATA_FORMAT &ControlData)
+{
+    gpController->setCalibrationValues(ControlData);
 }
 
 

@@ -11,9 +11,6 @@
 
 #include <iostream>
 
-//#include "connectiondialog.h"
-#include "ui_connectiondialog.h"
-
 #include "autocontrol.h"
 #include "videostream.h"
 
@@ -29,11 +26,19 @@
 class ControlPanel;
 class DisplayPanel;
 class CameraPanel;
-class ConnectionDialog;
+class ConnectionWindow;
+class CalibrationWindow;
 
 namespace Ui {
 class MainWindow;
 }
+
+enum MessageBoxType
+{
+    information,
+    error
+};
+
 
 class MainWindow : public QMainWindow
 {
@@ -41,58 +46,57 @@ class MainWindow : public QMainWindow
 
 
 private slots:
-//    void connectionAccepted(std::string IpAddress, int StreamPort, int ControlPort);
-//    void connectionRejected();
-    void on_actionConnection_triggered();
-    void on_actionUpdate_Firmware_triggered();
-    void on_actionAuto_Control_Settings_triggered();
+
+    void actionConnectionTriggered();
+    void actionUpdateFirmwareTriggered();
     void on_actionSet_Initial_Values_triggered();
-
-signals:
-
+    void on_actionAuto_Control_Settings_triggered();
 
 public:
+    MainWindow(bool Constructed);
     MainWindow(MainWindow *Window);
     explicit MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow();
 
     Ui::MainWindow *ui;
 
-    bool gmConnectionAvailable = false;
-
-protected:
-
+    ControlPanel *gpControlPanel;
+    DisplayPanel *gpDisplaypanel;
+    CameraPanel *gpCameraPanel;
 
     CONTROL_DATA_FORMAT *gpControlInfo;
     SFP_DATA_FORMAT *gpSfpInfo;
     ENVIRONMENT_DATA_FORMAT *gpEnvironmentInfo;
 
+    std::string gmIpAddress;
+    int gmStreamPort;
+    int gmControlPort;
+    bool gmConnectionAvailable = false;
+
+protected:
+
+    ConnectionWindow *gpConnectionWindow;
+    CalibrationWindow *gpCalibrationWindow;
+
+
     RemoteController *gpController;
     VideoStream *gpStream;
+
 
     UdpSocket *gpControllerSocket;
     UdpSocket *gpVideoStreamSocket;
 
-    std::string gmIpAddress;
-    int gmStreamPort;
-    int gmControlPort;
+    void setTitle(const std::string &IpAddress);
+
+    MainWindow *gpMainWindow;
+
 
 
 private:
 
     AutoControl *gpAutoControl;
 
-    ConnectionDialog *gpConnectionBox;
-
-    ControlPanel *gpControlPanel;
-    DisplayPanel *gpDisplaypanel;
-    CameraPanel *gpCameraPanel;
-
-
     std::string execCmd(const char* cmd) ;
-    void setTitle();
-
-
 
     cv::Mat gmMat;
 
