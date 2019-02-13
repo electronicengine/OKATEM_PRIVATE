@@ -5,11 +5,13 @@
 DisplayPanel::DisplayPanel(MainWindow *Window) : MainWindow(Window)
 {
 
-    gpConnectionAvailable = &Window->gmConnectionAvailable;
-    gpControlPanel = Window->gpControlPanel;
-
     attachWindow();
 
+}
+
+DisplayPanel::~DisplayPanel()
+{
+    delete gpController;
 }
 
 void DisplayPanel::attachWindow()
@@ -17,7 +19,7 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(setprogessbarvisibility(bool)), ui->progressBar, SLOT(setVisible(bool)), Qt::QueuedConnection);
     connect(this, SIGNAL(setupdatelabelvisibility(bool)), ui->update_label, SLOT(setVisible(bool)), Qt::QueuedConnection);
-    connect(this, SIGNAL(showMessageBox(const QString &, const QString &, MessageBoxType )), this, SLOT(showMessage(const QString &, const QString &, MessageBoxType )), Qt::BlockingQueuedConnection);
+    connect(this, SIGNAL(showMessageBox(QWidget *, const QString &, const QString &, MessageBoxType )), this, SLOT(showMessage(QWidget *, const QString &, const QString &, MessageBoxType )), Qt::BlockingQueuedConnection);
 
     connect(this, SIGNAL(refreshStatusLabel(QString)), ui->status_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshTxPowerLabel(QString)), ui->tx_power_label, SLOT(setText(QString)), Qt::QueuedConnection);
@@ -91,7 +93,7 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
 
         emit progressUpdateFile(percent);
 
-        emit showMessageBox("Firmware Update Done","The FirmWare Upgrading has been finished Succesfully!",
+        emit showMessageBox(gpMainWindow, "Firmware Update Done","The FirmWare Upgrading has been finished Succesfully!",
                             MessageBoxType::information);
 
         gpController->resetUpdatePercentage();
@@ -111,16 +113,16 @@ int DisplayPanel::checkFirmwareUpdateAvailable()
 
 }
 
-int DisplayPanel::showMessage(const QString &Title, const QString &Message, MessageBoxType Type)
+int DisplayPanel::showMessage(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type)
 {
 
     std::cout << "MessageBox showing Type : " << Type << std::endl;
     this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
 
     if(Type == MessageBoxType::information)
-        QMessageBox::information(this, Title, Message);
+        QMessageBox::information(Parent, Title, Message);
     if(Type == MessageBoxType::error)
-        QMessageBox::critical(this, Title, Message);
+        QMessageBox::critical(Parent, Title, Message);
 
     return SUCCESS;
 }
@@ -191,19 +193,15 @@ void DisplayPanel::deployPanel()
 
 }
 
-int DisplayPanel::startDisplayManager(const std::string &IpAddress, int ControlPort, int StreamPort)
+int DisplayPanel::startDisplayManager()
 {
 
     int ret;
 
-    gmIpAddress = IpAddress;
-    gmControlPort = ControlPort;
-    gmStreamPort = StreamPort;
-
-    ret = gpController->start(gmIpAddress, gmControlPort);
+    ret = gpController->start(*gpIpAddress, *gpControlPort);
     if(ret == FAIL)
     {
-        std::cout << "Controller socket can not be opened:  "<< gmIpAddress << std::endl;
+        std::cout << "Controller socket can not be opened:  "<< *gpIpAddress << std::endl;
 
         return FAIL;
     }

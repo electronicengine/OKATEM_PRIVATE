@@ -12,18 +12,19 @@ CameraPanel::CameraPanel(MainWindow *Window) : MainWindow(Window)
 
 }
 
+CameraPanel::~CameraPanel()
+{
+    delete gpStream;
+}
 
 
-int CameraPanel::startCamera(const std::string &StreamIpAddress,  int StreamPort, int ControlPort)
+
+int CameraPanel::startCamera()
 {
     int ret ;
 
-    gmIpAddress = StreamIpAddress;
-    gmStreamPort = StreamPort;
-    gmControlPort = ControlPort;
-
-    std::cout << "Starting Camera... Ip" << gmIpAddress << "Port: " << std::to_string(gmStreamPort) << std::endl;
-    ret = gpStream->start(gmIpAddress, gmStreamPort, this);
+    std::cout << "Starting Camera... Ip" << *gpIpAddress << "Port: " << std::to_string(*gpStreamPort) << std::endl;
+    ret = gpStream->start(*gpIpAddress, *gpStreamPort, this);
     if(ret == FAIL)
     {
         emit showMessageBox("Connection Established!");

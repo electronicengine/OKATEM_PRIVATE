@@ -27,7 +27,8 @@ struct Step_Motor {
    volatile int speed;
    volatile uint32_t step_number;
    volatile uint32_t max_step_number;
- }motor1, motor2, motor3, motor4;
+   volatile uint32_t desired_step;
+ }motor1, motor2;
 
 
  struct Servo_motor {

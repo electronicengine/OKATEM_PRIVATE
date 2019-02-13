@@ -934,6 +934,9 @@ struct CONTROL_DATA_FORMAT
     {
         setting_enable = 0;
 
+        x_position = 0;
+        y_position = 0;
+
         step_motor1_direction = 0;
         step_motor2_direction = 0;
 
@@ -941,7 +944,7 @@ struct CONTROL_DATA_FORMAT
         step_motor2_speed = 0;
 
         servo_motor1_degree = 0;
-        servo_motor1_degree = 0;
+        servo_motor2_degree = 0;
 
         calibrate_sensor = 0;
 

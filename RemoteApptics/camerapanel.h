@@ -23,7 +23,9 @@ private slots:
 
 public:
     CameraPanel(MainWindow *Window);
-    int startCamera(const std::string &StreamIpAddress,  int StreamPort, int ControlPort);
+    virtual ~CameraPanel();
+
+    int startCamera();
     void printScreen(const cv::Mat &Frame);
 
 

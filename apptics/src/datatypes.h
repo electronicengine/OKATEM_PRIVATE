@@ -494,6 +494,7 @@ struct ENVIRONMENT_DATA_FORMAT
 
             step_motor_breaks = SpiData.data[index++];
 
+
         }
         catch(std::exception& ex)
         {

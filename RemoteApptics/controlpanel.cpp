@@ -7,9 +7,13 @@
 
 ControlPanel::ControlPanel(MainWindow *Window) : MainWindow(Window)
 {
-    gpConnectionAvailable = &Window->gmConnectionAvailable;
 
     attachToWindow();
+}
+
+ControlPanel::~ControlPanel()
+{
+
 }
 
 void ControlPanel::process()
@@ -84,19 +88,25 @@ void ControlPanel::attachToWindow()
 void ControlPanel::checkButtons()
 {
 
+    gpController->stop();
+
     if(gmUpButtonPressed)
     {
         gpController->turnUp();
+    }
 
-    }else if(gmDownButtonPressed)
+    if(gmDownButtonPressed)
     {
         gpController->turnDown();
+    }
 
-    }else if(gmLeftButtonPressed)
+    if(gmLeftButtonPressed)
     {
         gpController->turnLeft();
 
-    }else if(gmRightButtonPressed)
+    }
+
+    if(gmRightButtonPressed)
     {
         gpController->turnRight();
     }

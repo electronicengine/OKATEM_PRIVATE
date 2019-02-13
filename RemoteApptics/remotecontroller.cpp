@@ -140,16 +140,9 @@ void RemoteController::parseAndSendData(std::vector<unsigned char> &Container, c
 void RemoteController::servo1SetValue(int Value)
 {
 
+    gmTxData.clear();
+
     gmTxData.servo_motor1_degree = Value;
-    gmTxData.servo_motor2_degree = 0;
-
-
-    gmTxData.step_motor1_direction = 0;
-    gmTxData.step_motor2_direction = 0;
-
-    gmTxData.step_motor1_speed = 0;
-    gmTxData.step_motor2_speed = 0;
-
 
     gpSocket->sendData((SPI_TRANSFER_FORMAT) gmTxData);
     printf("Servo1 setting value %d\r\n", gmTxData.servo_motor1_degree );
@@ -161,14 +154,9 @@ void RemoteController::servo1SetValue(int Value)
 void RemoteController::servo2SetValue(int Value)
 {
 
-    gmTxData.servo_motor1_degree = 0;
+    gmTxData.clear();
+
     gmTxData.servo_motor2_degree = Value;
-
-    gmTxData.step_motor1_direction = 0;
-    gmTxData.step_motor2_direction = 0;
-
-    gmTxData.step_motor1_speed = 0;
-    gmTxData.step_motor2_speed = 0;
 
 
     gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
@@ -176,80 +164,12 @@ void RemoteController::servo2SetValue(int Value)
 
 }
 
-
-void RemoteController::servo1Forward()
+void RemoteController::stop()
 {
-
     gmTxData.clear();
-
-    gmTxData.servo_motor1_degree = ++gmServoMotor1Degree;
-    gmTxData.servo_motor2_degree = 0;
-
-    if(gmServoMotor1Degree >= 150)
-        gmServoMotor1Degree = 150;
-
-    if(gmServoMotor1Degree < 64)
-        gmServoMotor1Degree = 64;
-
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("Servo1 Forward %d\r\n", gmServoMotor1Degree);
-
 }
 
 
-
-void RemoteController::servo2Forward()
-{
-
-    gmTxData.clear();
-    gmTxData.servo_motor2_degree = ++gmServoMotor2Degree;
-    gmTxData.servo_motor1_degree = 0;
-
-    if(gmServoMotor2Degree >= 150)
-        gmServoMotor2Degree = 150;
-
-
-
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("Servo2 Forward %d\r\n",gmServoMotor2Degree);
-
-}
-
-
-
-void RemoteController::servo1Backward()
-{
-
-
-    gmTxData.clear();
-    gmTxData.servo_motor1_degree = --gmServoMotor1Degree;
-    gmTxData.servo_motor2_degree = 0;
-
-    if(gmServoMotor1Degree <= 0)
-        gmServoMotor1Degree = 0;
-
-
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("Servo1 Forward %d\r\n",gmServoMotor1Degree);
-
-}
-
-
-
-void RemoteController::servo2Backward()
-{
-    gmTxData.clear();
-    gmTxData.servo_motor2_degree = --gmServoMotor2Degree;
-    gmTxData.servo_motor1_degree = 0;
-
-    if(gmServoMotor2Degree <= 0)
-        gmServoMotor2Degree = 0;
-
-
-    gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    printf("Servo2 Down %d\r\n",gmServoMotor2Degree);
-
-}
 
 
 
@@ -258,15 +178,16 @@ void RemoteController::turnLeft()
 
     int ret;
 
-    gmTxData.clear();
-    gmTxData.x_position = 365;
     gmTxData.step_motor2_direction = FORWARD;
 
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
 
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
+
+    gmTxData.step_motor1_speed = gmSpeed;
+    gmTxData.step_motor2_speed = gmSpeed;
 
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
@@ -283,15 +204,16 @@ void RemoteController::turnRight()
 
     int ret;
 
-    gmTxData.clear();
-    gmTxData.x_position = 365;
     gmTxData.step_motor2_direction = BACKWARD;
-
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
 
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
+
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
+
+    gmTxData.step_motor1_speed = gmSpeed;
+    gmTxData.step_motor2_speed = gmSpeed;
 
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
@@ -308,22 +230,47 @@ void RemoteController::turnUp()
 
     int ret;
 
-    gmTxData.clear();
-    gmTxData.x_position = 365;
     gmTxData.step_motor1_direction = FORWARD;
+
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
+
+    gmTxData.servo_motor1_degree = 0;
+    gmTxData.servo_motor2_degree = 0;
 
     gmTxData.step_motor1_speed = gmSpeed;
     gmTxData.step_motor2_speed = gmSpeed;
-
-
-    gmTxData.servo_motor1_degree = 0;
-    gmTxData.servo_motor2_degree= 0;
 
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
     else
         printf("UP %d\r\n", gmTxData.step_motor1_speed);
+
+}
+
+
+void RemoteController::turnDown()
+{
+
+    int ret;
+
+    gmTxData.step_motor1_direction = BACKWARD;
+
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
+
+    gmTxData.servo_motor1_degree = 0;
+    gmTxData.servo_motor2_degree = 0;
+
+    gmTxData.step_motor1_speed = gmSpeed;
+    gmTxData.step_motor2_speed = gmSpeed;
+
+    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+    if(ret != SUCCESS)
+        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
+    else
+        printf("DOWN %d\r\n", gmTxData.step_motor1_speed);
 
 }
 
@@ -344,32 +291,6 @@ void RemoteController::setCalibrationValues(const CONTROL_DATA_FORMAT &Calibrati
 
 
 
-void RemoteController::turnDown()
-{
-
-    int ret;
-
-    gmTxData.clear();
-    gmTxData.x_position = 365;
-    gmTxData.step_motor1_direction = BACKWARD;
-
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
-
-
-    gmTxData.servo_motor1_degree = 0;
-    gmTxData.servo_motor2_degree = 0;
-
-    ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
-    if(ret != SUCCESS)
-        printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("DOWN %d\r\n", gmTxData.step_motor1_speed);
-
-}
-
-
-
 void RemoteController::increaseSpeed()
 {
     gmSpeed++;
@@ -377,7 +298,7 @@ void RemoteController::increaseSpeed()
     if(gmSpeed > 20 )
         gmSpeed = 20;
 
-    printf("Speed: %d\r\n", MAX_SPEED - gmSpeed);
+    printf("Speed: %d\r\n", MAX_INVERSE_SPEED_VALUE - gmSpeed);
 
 }
 
@@ -391,7 +312,7 @@ void RemoteController::decreaseSpeed()
     if(gmSpeed < 1 )
         gmSpeed = 1;
 
-    printf("Speed: %d\r\n", MAX_SPEED - gmSpeed);
+    printf("Speed: %d\r\n", MAX_INVERSE_SPEED_VALUE - gmSpeed);
 
 
 }
@@ -406,7 +327,7 @@ void RemoteController::setSpeed(int value)
     if(value == 0)
         value = 1;
 
-    gmSpeed = MAX_SPEED - value;
+    gmSpeed = MAX_INVERSE_SPEED_VALUE - value;
 }
 
 
@@ -482,6 +403,92 @@ int RemoteController::resetUpdatePercentage()
     gmMutex.unlock();
 
     return SUCCESS;
+}
+
+int RemoteController::gotoPositions(uint32_t XPosition, uint32_t YPosition)
+{
+
+    int ret;
+    ENVIRONMENT_DATA_FORMAT information;
+
+    do
+    {
+
+        gmTxData.clear();
+
+        gmTxData.step_motor1_speed = MAX_STEPMOTOR_SPEED;
+        gmTxData.step_motor2_speed = MAX_STEPMOTOR_SPEED;
+
+        gmTxData.x_position = XPosition;
+        gmTxData.y_position = YPosition;
+
+        ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+        if(ret != SUCCESS)
+            printf("can not be sent!\r\n");
+
+        gmMutex.lock();
+        information = gmInformationData.environment_data;
+        gmMutex.unlock();
+
+        usleep(50000);
+
+    }while(information.step_motor1_step != YPosition || information.step_motor2_step != XPosition);
+
+    return ret;
+}
+
+int RemoteController::turntoDirection(uint32_t DirectionCommand, uint32_t Duration)
+{
+
+    int duration = 0;
+
+    do{
+        switch (DirectionCommand)
+        {
+            case Up:
+                stop();
+                turnUp();
+                break;
+            case Down:
+                stop();
+                turnDown();
+                break;
+            case Left:
+                stop();
+                turnLeft();
+                break;
+            case Right:
+                stop();
+                turnRight();
+                break;
+            case UpLeft:
+                turnUp();
+                turnLeft();
+                break;
+            case UpRight:
+                turnUp();
+                turnRight();
+                break;
+            case DownLeft:
+                turnDown();
+                turnLeft();
+                break;
+            case DownRight:
+                turnDown();
+                turnRight();
+                break;
+
+            default:
+                break;
+        }
+
+        usleep(50000);
+        duration += 50;
+
+    }while(duration <= (int)Duration);
+
+    return SUCCESS;
+
 }
 
 

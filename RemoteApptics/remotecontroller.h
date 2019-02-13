@@ -26,7 +26,8 @@
 #define WIDTH 30
 #define HEIGHT 10
 
-#define MAX_SPEED 20
+#define MAX_STEPMOTOR_SPEED 1
+#define MAX_INVERSE_SPEED_VALUE 20
 #define FORWARD 1
 #define BACKWARD 2
 #define STOP 0
@@ -34,6 +35,20 @@
 
 
 class MainWindow;
+
+
+enum Direction
+{
+    Up,
+    Down,
+    Left,
+    Right,
+    UpLeft,
+    UpRight,
+    DownLeft,
+    DownRight,
+    stop
+};
 
 
 class RemoteController : public SocketListener
@@ -57,11 +72,8 @@ public:
     void servo1SetValue(int Value);
     void servo2SetValue(int Value);
 
-    void servo1Forward();
-    void servo1Backward();
-    void servo2Forward();
-    void servo2Backward();
 
+    void stop();
     void turnLeft();
     void turnRight();
     void turnDown();
@@ -77,6 +89,8 @@ public:
     int getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
     int getUpdatePercentage();
     int resetUpdatePercentage();
+    int gotoPositions(uint32_t XPosition, uint32_t YPosition);
+    int turntoDirection(uint32_t DirectionCommand, uint32_t Duration);
 
     void socketDataCheckCall();
 

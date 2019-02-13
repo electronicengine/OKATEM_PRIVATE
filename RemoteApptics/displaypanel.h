@@ -16,10 +16,11 @@ class DisplayPanel : public MainWindow
 
 public:
     DisplayPanel(MainWindow *Window);
+    virtual ~DisplayPanel();
 
     void process();
     void deployPanel();
-    int startDisplayManager(const std::string &IpAddress, int ControlPort, int StreamPort);
+    int startDisplayManager();
 
 
 private:
@@ -27,15 +28,13 @@ private:
     void preparePanelInfo();
     int checkFirmwareUpdateAvailable();
 
-    bool *gpConnectionAvailable;
-
 private slots:
-    int showMessage(const QString &Title, const QString &Message, MessageBoxType Type);
+    int showMessage(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type);
 
 signals:
 
 
-    int showMessageBox(const QString &Title, const QString &Message, MessageBoxType Type);
+    int showMessageBox(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type);
     void progressUpdateFile(int);
     void setprogessbarvisibility(bool);
     void setupdatelabelvisibility(bool);

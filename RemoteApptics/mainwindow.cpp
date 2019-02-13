@@ -8,6 +8,7 @@
 #include "camerapanel.h"
 #include "connectionwindow.h"
 #include "calibrationwindow.h"
+#include "autocontrolwindow.h"
 
 #include <thread>
 #include <QMessageBox>
@@ -25,15 +26,25 @@ MainWindow::MainWindow(MainWindow *Window)
 {
 
     ui = Window->ui;
+
+    gpControlPanel = Window->gpControlPanel;
+    gpDisplaypanel = Window->gpDisplaypanel;
+    gpCameraPanel = Window->gpCameraPanel;
+
+    gpEnvironmentInfo = Window->gpEnvironmentInfo;
+    gpControlInfo = Window->gpControlInfo;
+    gpSfpInfo = Window->gpSfpInfo;
+
+    gpIpAddress = Window->gpIpAddress;
+    gpStreamPort = Window->gpStreamPort;
+    gpControlPort = Window->gpControlPort;
+
+    gpConnectionAvailable = Window->gpConnectionAvailable;
+
     gpController = Window->gpController;
     gpStream = Window->gpStream;
 
-
     gpVideoStreamSocket = Window->gpVideoStreamSocket;
-
-    gpControlInfo = Window->gpControlInfo;
-    gpEnvironmentInfo = Window->gpEnvironmentInfo;
-    gpSfpInfo = Window->gpSfpInfo;
 
     gpMainWindow = Window->gpMainWindow;
 
@@ -50,6 +61,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    gpConnectionAvailable = new bool;
+    gpIpAddress = new std::string;
+    gpStreamPort = new int;
+    gpControlPort = new int;
+
+    *gpConnectionAvailable = false;
+
     connect(ui->actionConnection, SIGNAL(triggered(bool)), this, SLOT(actionConnectionTriggered()));
     connect(ui->actionAuto_Control_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionAuto_Control_Settings_triggered()));
     connect(ui->actionSet_Initial_Values, SIGNAL(triggered(bool)), this, SLOT(on_actionSet_Initial_Values_triggered()));
@@ -64,7 +82,6 @@ MainWindow::MainWindow(QWidget *parent) :
     gpControllerSocket = new UdpSocket;
     gpVideoStreamSocket = new UdpSocket;
 
-    gpAutoControl = new AutoControl;
 
     gpController = new RemoteController(gpControllerSocket);
     gpStream = new VideoStream(gpVideoStreamSocket);
@@ -81,10 +98,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gpConnectionWindow = new ConnectionWindow(this);
     gpCalibrationWindow = new CalibrationWindow(this);
+    gpAutoControlWindow = new AutoControlWindow(this);
 
     std::thread controlThread(&MainWindow::worker, this);
     controlThread.detach();
-
 
 
     gpControlPanel->setPanelEnable(false);
@@ -96,13 +113,18 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 
-    gpVideoStreamSocket->terminate();
-    gpController->terminate();
+    terminateWorker();
 
-    delete ui;    
-    delete gpAutoControl;
+    delete ui;
 
+    delete gpControlInfo;
+    delete gpSfpInfo;
+    delete gpEnvironmentInfo;
 
+    delete gpConnectionAvailable;
+    delete gpIpAddress;
+    delete gpControlPort;
+    delete gpStreamPort;
 }
 
 
@@ -112,10 +134,15 @@ void MainWindow::worker()
 
     static int connection_established = false;
 
+    gmWorkerTerminated = false;
+
     while(1)
     {
 
-        if(gmConnectionAvailable == true)
+        if(gmTerminateWorker == true)
+            break;
+
+        if(*gpConnectionAvailable == true)
         {
 
             connection_established = true;
@@ -129,15 +156,22 @@ void MainWindow::worker()
         {
 
             if(connection_established != false)
-                emit gpDisplaypanel->showMessageBox("Connection Error", "Ethernet Connection has been lost", MessageBoxType::error);
+                emit gpDisplaypanel->showMessageBox(gpMainWindow, "Connection Error", "Ethernet Connection has been lost", MessageBoxType::error);
 
             connection_established = false;
         }
 
-
-
     }
 
+    gmWorkerTerminated = true;
+
+}
+
+void MainWindow::terminateWorker()
+{
+    gmTerminateWorker = true;
+
+    while(gmWorkerTerminated == false);
 }
 
 
@@ -173,17 +207,17 @@ void MainWindow::setTitle(const std::string &IpAddress)
 {
     char cmd[100];
 
-    gmIpAddress = IpAddress;
+    *gpIpAddress = IpAddress;
 
 
-    snprintf(cmd, 100, "sudo sshpass -p \"hyperion\" ssh pi@%s hostname", gmIpAddress.c_str());
+    snprintf(cmd, 100, "sudo sshpass -p \"hyperion\" ssh pi@%s hostname", gpIpAddress->c_str());
 
     std::cout << "running command: " << cmd << std::endl;
     std::string hostName = execCmd(cmd);
 
     std::cout << "hostname " << hostName << std::endl;
 
-    gpMainWindow->setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
+    gpMainWindow->setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gpIpAddress->c_str()));
 //    MainWindow::setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
 
 }
@@ -238,6 +272,6 @@ void MainWindow::on_actionSet_Initial_Values_triggered()
 
 void MainWindow::on_actionAuto_Control_Settings_triggered()
 {
-    gpAutoControl->show();
+    gpAutoControlWindow->show();
 
 }

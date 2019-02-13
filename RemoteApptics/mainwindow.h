@@ -11,7 +11,6 @@
 
 #include <iostream>
 
-#include "autocontrol.h"
 #include "videostream.h"
 
 #include "datatypes.h"
@@ -28,6 +27,7 @@ class DisplayPanel;
 class CameraPanel;
 class ConnectionWindow;
 class CalibrationWindow;
+class AutoControlWindow;
 
 namespace Ui {
 class MainWindow;
@@ -68,10 +68,11 @@ public:
     SFP_DATA_FORMAT *gpSfpInfo;
     ENVIRONMENT_DATA_FORMAT *gpEnvironmentInfo;
 
-    std::string gmIpAddress;
-    int gmStreamPort;
-    int gmControlPort;
-    bool gmConnectionAvailable = false;
+    bool *gpConnectionAvailable;
+
+    std::string *gpIpAddress;
+    int *gpStreamPort;
+    int *gpControlPort;
 
 protected:
 
@@ -94,13 +95,17 @@ protected:
 
 private:
 
-    AutoControl *gpAutoControl;
+    AutoControlWindow *gpAutoControlWindow;
 
     std::string execCmd(const char* cmd) ;
 
     cv::Mat gmMat;
 
+    volatile bool gmTerminateWorker = false;
+    volatile bool gmWorkerTerminated = false;
+
     void worker();
+    void terminateWorker();
 
 
 

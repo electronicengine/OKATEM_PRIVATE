@@ -23,30 +23,15 @@ CalibrationWindow::CalibrationWindow(CalibrationWindow *Window) : MainWindow(tru
 
     gpCalibrationWindow = Window->gpCalibrationWindow;
 
-
 }
+
+
 
 CalibrationWindow::CalibrationWindow(MainWindow *Window):
     MainWindow(Window),
     calibration_ui(new Ui::CalibrationWindow)
 {
     calibration_ui->setupUi(this);
-
-    ui = Window->ui;
-
-    gpControlPanel = Window->gpControlPanel;
-    gpDisplaypanel = Window->gpDisplaypanel;
-    gpCameraPanel = Window->gpCameraPanel;
-
-    gpEnvironmentInfo = Window->gpEnvironmentInfo;
-    gpControlInfo = Window->gpControlInfo;
-    gpSfpInfo = Window->gpSfpInfo;
-
-    gpIpAddress = &Window->gmIpAddress;
-    gpStreamPort = &Window->gmStreamPort;
-    gpControlPort = &Window->gmControlPort;
-
-    gpConnectionAvailable = &Window->gmConnectionAvailable;
 
     gpCalibrationWindow = this;
 
@@ -56,10 +41,14 @@ CalibrationWindow::CalibrationWindow(MainWindow *Window):
 
 }
 
+
+
 CalibrationWindow::~CalibrationWindow()
 {
-
+    delete gpCalibrationPanel;
+    delete calibration_ui;
 }
+
 
 
 void CalibrationWindow::deployTextBoxes()

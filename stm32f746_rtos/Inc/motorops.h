@@ -15,8 +15,12 @@
 
 
 
+
 void motorOps(void const * argument);
-void driveStepMotors();
+
+void putMotorInformationstoEnvironmentData();
+void driveStepMotorswithPosition();
+void driveStepMotorswithDirection();
 void driveServoMotors();
 void getInitialPositions();
 

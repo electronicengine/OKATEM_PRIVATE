@@ -42,12 +42,12 @@ void ConnectionPanel::accepted()
 
     std::cout << "Connection Ip: " << *gpIpAddress << " Stream Port: " << *gpStreamPort << " Control Port: " << *gpControlPort << std::endl;
 
-    ret = gpDisplaypanel->startDisplayManager(*gpIpAddress, *gpControlPort, *gpStreamPort);
+    ret = gpDisplaypanel->startDisplayManager();
 
     if(ret == SUCCESS)
     {
 
-        ret = gpCameraPanel->startCamera(*gpIpAddress, *gpStreamPort, *gpControlPort);
+        ret = gpCameraPanel->startCamera();
 
         if(ret == SUCCESS)
         {
@@ -77,7 +77,12 @@ void ConnectionPanel::accepted()
 
 
     }
+    else
+    {
+        *gpConnectionAvailable = false;
 
+        QMessageBox::critical(gpConnectionWindow, "Error", "Connection can not be established");
+    }
 
 
 }

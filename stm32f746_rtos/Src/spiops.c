@@ -192,7 +192,6 @@ void putEnvironmentData()
 void processControlData()
 {
 
-
     if(ControlData->setting_enable == 0xff)
     {
 
@@ -215,9 +214,12 @@ void processControlData()
     {
         setting_enable = 0;
 
+
+        motor1.desired_step = ControlData->y_position;
         motor1.direction = ControlData -> step_motor1_direction;
         motor1.speed = ControlData -> step_motor1_speed;
 
+        motor2.desired_step = ControlData ->x_position;
         motor2.direction = ControlData -> step_motor2_direction;
         motor2.speed = ControlData -> step_motor2_speed;
 

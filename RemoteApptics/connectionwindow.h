@@ -39,11 +39,6 @@ protected:
 
     QStringList gmConnectionList = {"Juliet", "Romeo"};
 
-    bool *gpConnectionAvailable;
-
-    std::string *gpIpAddress;
-    int *gpStreamPort;
-    int *gpControlPort;
 
 private:
     ConnectionPanel *gpConnectionPanel;

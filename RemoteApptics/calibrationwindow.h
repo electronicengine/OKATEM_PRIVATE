@@ -30,11 +30,6 @@ private:
 protected:
    Ui::CalibrationWindow *calibration_ui;
 
-   bool *gpConnectionAvailable;
-
-   std::string *gpIpAddress;
-   int *gpStreamPort;
-   int *gpControlPort;
 };
 
 

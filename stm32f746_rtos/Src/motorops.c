@@ -6,7 +6,8 @@
 
 
 volatile int speed = 0;
-
+volatile uint32_t step1_desired_step = 0;
+volatile uint32_t step2_desired_step = 0;
 
 void motorOps(void const * argument)
 {
@@ -15,45 +16,33 @@ void motorOps(void const * argument)
 
     mprintf("motorOps\r\n");
 
-
     getInitialPositions();
 
     while(1)
     {
 
-        uint8_t step_motor_breaks = 0;
+        if(motor1.desired_step != 0)
+            step1_desired_step = motor1.desired_step;
 
-        if(HAL_GPIO_ReadPin(STEP1_BREAK_GPIO_Port, STEP1_BREAK_Pin) == GPIO_PIN_SET)
-            step_motor_breaks =  1;
+        if(motor2.desired_step != 0)
+            step2_desired_step = motor2.desired_step;
+
+
+        if(step1_desired_step != 0 || step2_desired_step != 0)
+            driveStepMotorswithPosition();
         else
-            step_motor_breaks =  0;
-
-
-        if(HAL_GPIO_ReadPin(STEP2_BREAK_GPIO_Port, STEP2_BREAK_Pin) == GPIO_PIN_SET)
-            step_motor_breaks += 240;
-        else
-            step_motor_breaks += 0;
-
-        driveStepMotors();
+            driveStepMotorswithDirection();
 
         driveServoMotors();
 
-        xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
-
-            EnvironmentData->step_motor1_step = motor1.step_number;
-            EnvironmentData->step_motor2_step = motor2.step_number;
-            EnvironmentData->servo_motor1_degree = servo1.angle;
-            EnvironmentData->servo_motor2_degree = servo2.angle;
-            EnvironmentData->step_motor_breaks = step_motor_breaks;
-
-        xSemaphoreGive(spiMutexHandle);
+        putMotorInformationstoEnvironmentData();
 
         osDelay(2 + speed);
 
     }
 }
 
-void driveStepMotors()
+void driveStepMotorswithDirection()
 {
 
     if(motor1.direction == FORWARD)
@@ -240,3 +229,90 @@ void getInitialPositions()
 }
 
 
+
+void putMotorInformationstoEnvironmentData()
+{
+
+    uint8_t step_motor_breaks = 0;
+
+    if(HAL_GPIO_ReadPin(STEP1_BREAK_GPIO_Port, STEP1_BREAK_Pin) == GPIO_PIN_SET)
+        step_motor_breaks =  1;
+    else
+        step_motor_breaks =  0;
+
+
+    if(HAL_GPIO_ReadPin(STEP2_BREAK_GPIO_Port, STEP2_BREAK_Pin) == GPIO_PIN_SET)
+        step_motor_breaks += 240;
+    else
+        step_motor_breaks += 0;
+
+    xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+
+        EnvironmentData->step_motor1_step = motor1.step_number;
+        EnvironmentData->step_motor2_step = motor2.step_number;
+        EnvironmentData->servo_motor1_degree = servo1.angle;
+        EnvironmentData->servo_motor2_degree = servo2.angle;
+        EnvironmentData->step_motor_breaks = step_motor_breaks;
+
+    xSemaphoreGive(spiMutexHandle);
+
+}
+
+void driveStepMotorswithPosition()
+{
+
+    if(motor1.step_number < step1_desired_step)
+    {
+        if(motor1.max_step_number > motor1.step_number)
+        {
+            motor1Drive(FORWARD);
+
+            speed = motor1.speed;
+            motor1.step_number++;
+        }
+    }
+    else if(motor1.step_number > step1_desired_step)
+    {
+
+        if(motor1.step_number > 0)
+        {
+            motor1Drive(BACKWARD);
+
+            speed = motor1.speed;
+            motor1.step_number--;
+        }
+    }
+    else
+    {
+        step1_desired_step = 0;
+        motor1Drive(STOP);
+    }
+
+    if(motor2.step_number < step2_desired_step)
+    {
+        if(motor2.max_step_number > motor2.step_number)
+        {
+            motor2Drive(FORWARD);
+
+            speed = motor2.speed;
+            motor2.step_number++;
+        }
+    }
+    else if(motor2.step_number > step2_desired_step)
+    {
+
+        if(motor2.step_number > 0)
+        {
+            motor2Drive(BACKWARD);
+
+            speed = motor2.speed;
+            motor2.step_number--;
+        }
+    }
+    else
+    {
+        step2_desired_step = 0;
+        motor2Drive(STOP);
+    }
+
+}

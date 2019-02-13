@@ -60,15 +60,13 @@ signals:
 public:
     ControlPanel(MainWindow *Window);
 
-    virtual ~ControlPanel(){}
+    virtual ~ControlPanel();
 
     void process();
     void setPanelEnable(bool Value);
     void setServoSliderInitialValues(int Servo1Value, int Servo2Value);
     void setCalibrationData(CONTROL_DATA_FORMAT &ControlData);
 
-protected:
-    bool *gpConnectionAvailable;
 
 private:
 

@@ -37,23 +37,6 @@ ConnectionWindow::ConnectionWindow(MainWindow *Window) :
 
     connection_ui->setupUi(this);
 
-    ui = Window->ui;
-
-    gpControlPanel = Window->gpControlPanel;
-    gpDisplaypanel = Window->gpDisplaypanel;
-    gpCameraPanel = Window->gpCameraPanel;
-
-    gpEnvironmentInfo = Window->gpEnvironmentInfo;
-    gpControlInfo = Window->gpControlInfo;
-    gpSfpInfo = Window->gpSfpInfo;
-
-    gpIpAddress = &Window->gmIpAddress;
-    gpStreamPort = &Window->gmStreamPort;
-    gpControlPort = &Window->gmControlPort;
-
-    gpConnectionAvailable = &Window->gmConnectionAvailable;
-
-
     gpConnectionPanel = new ConnectionPanel(this);
 
 
@@ -66,5 +49,7 @@ ConnectionWindow::ConnectionWindow(MainWindow *Window) :
 
 ConnectionWindow::~ConnectionWindow()
 {
+    delete gpConnectionPanel;
     delete connection_ui;
+
 }
