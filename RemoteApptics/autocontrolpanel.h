@@ -3,7 +3,6 @@
 
 
 #include "autocontrolwindow.h"
-#include "positionadd.h"
 #include "command.h"
 
 
@@ -23,33 +22,26 @@ public:
     void deployPanel();
     void stopExecution();
     int executeCommands();
-
+    void deleteCommand();
+    void putPositionCommand();
+    void putDirectionCommand();
 
 signals:
     void addButtonSetEnable(bool);
     void deleteButtonSetEnable(bool);
     void addCommand(QString);
     void markCommand(int);
+    int showMessageBox(QWidget*, QString, QString, MessageBoxType);
 
-public slots:
-    void addButtonPressed();
-    void deleteButtonPressed();
-    void commandAddAccepted();
-    void commandAddRejected();
-    void addList(QString);
-    void markRow(int Row);
 
 private:
 
-    void putPositionCommand();
-    void putDirectionCommand();
 
     void execute();
     void setPanelEnable(bool Value);
     void attachAutoControlWindow();
 
 
-    PositionAdd *gpAddingWindow;
     Command *gpCommand;
     std::vector<std::pair<uint32_t, uint32_t>> commandListValues;
     std::vector<CommandActions> commandListActions;

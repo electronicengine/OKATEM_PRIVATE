@@ -5,6 +5,8 @@
 #include "mainwindow.h"
 
 
+class Process;
+
 class CameraPanel : public MainWindow
 {
 
@@ -16,26 +18,28 @@ signals:
 
     void screenClose();
     void screenShow();
-    int showMessageBox(QString);
 
-private slots:
-    int showMessage(QString);
+
 
 public:
     CameraPanel(MainWindow *Window);
     virtual ~CameraPanel();
 
     int startCamera();
-    void printScreen(const cv::Mat &Frame);
-
+    void displayCallBack(cv::Mat &Frame);
+    void scaleTarget(int Value);
 
 
 private:
     void attachWindow();
     QImage cvMatToQImage( const cv::Mat &inMat );
+    void processImage(cv::Mat &Image);
+    cv::Mat gmRomeoTemplate;
+    cv::Mat gmJulietTemplate;
 
-    cv::Mat gmTemplate;
-
+    std::mutex gmMutex;
 };
+
+
 
 #endif // CAMERAPANEL_H

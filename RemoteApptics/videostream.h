@@ -43,7 +43,7 @@ private:
     std::string gmIpAddress;
     int gmPort;
 
-    CameraPanel *gpPanel;
+    CameraPanel *gpCameraPanel;
 
     volatile bool gmStreamStop = false;
 
@@ -52,7 +52,6 @@ private:
     int checkSocketCondition(clock_t &LastDataComming);
     int checkifStreamPacket(std::vector <unsigned char> &Package);
     int convertPackageToMat(std::vector<unsigned char> FrameData, cv::Mat &Frame);
-    QImage cvMatToQImage( const cv::Mat &inMat );
 };
 
 

@@ -4,7 +4,7 @@
 #include "serialcom.h"
 #include "globals.h"
 #include "queue.h"
-#include "controller.h"
+#include "stmdriver.h"
 
 
 #define INTRO_PAGE_ID           0x00

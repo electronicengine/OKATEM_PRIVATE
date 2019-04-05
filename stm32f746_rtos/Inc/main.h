@@ -133,6 +133,8 @@
 #define CONTROL_DATA_GARBAGE_SIZE 38
 #define GPS_STRING_SIZE 86
 
+
+
 typedef struct
 {
     uint32_t temperature;
@@ -142,6 +144,16 @@ typedef struct
     uint8_t wheather_condition;
 
 }SENSOR_DATA;
+
+
+typedef enum
+{
+    CONTROL_DATA = 0x2222,
+    ENVIRONMENT_DATA = 0x2223,
+    UPDATE_FILE = 0x5055
+
+}SPI_HEADER;
+
 
 typedef struct
 {

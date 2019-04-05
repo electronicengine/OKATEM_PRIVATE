@@ -22,12 +22,13 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv/cv.h"
 
-class ControlPanel;
+class ControlWindow;
 class DisplayPanel;
 class CameraPanel;
 class ConnectionWindow;
 class CalibrationWindow;
 class AutoControlWindow;
+class CameraSettingsWindow;
 
 namespace Ui {
 class MainWindow;
@@ -44,13 +45,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-
 private slots:
-
     void actionConnectionTriggered();
     void actionUpdateFirmwareTriggered();
-    void on_actionSet_Initial_Values_triggered();
-    void on_actionAuto_Control_Settings_triggered();
+    void on_actionCalibration_Settings_triggered();
+    void on_actionAutoControl_Settings_triggered();
+    void on_actionCamera_Settings_triggered();
+    void scaleSliderChanged(int Value);
+
+public slots:
+    int showMessage(QWidget*, QString, QString, MessageBoxType);
 
 public:
     MainWindow(bool Constructed);
@@ -60,7 +64,7 @@ public:
 
     Ui::MainWindow *ui;
 
-    ControlPanel *gpControlPanel;
+    ControlWindow *gpControlWindow;
     DisplayPanel *gpDisplaypanel;
     CameraPanel *gpCameraPanel;
 
@@ -69,6 +73,8 @@ public:
     ENVIRONMENT_DATA_FORMAT *gpEnvironmentInfo;
 
     bool *gpConnectionAvailable;
+    bool *gpSfpConnectionAvailable;
+    bool *gpSfpLinkAvailable;
 
     std::string *gpIpAddress;
     int *gpStreamPort;
@@ -78,11 +84,11 @@ protected:
 
     ConnectionWindow *gpConnectionWindow;
     CalibrationWindow *gpCalibrationWindow;
-
+    CameraSettingsWindow *gpCameraSettingsWindow;
+    AutoControlWindow *gpAutoControlWindow;
 
     RemoteController *gpController;
     VideoStream *gpStream;
-
 
     UdpSocket *gpControllerSocket;
     UdpSocket *gpVideoStreamSocket;
@@ -95,8 +101,6 @@ protected:
 
 private:
 
-    AutoControlWindow *gpAutoControlWindow;
-
     std::string execCmd(const char* cmd) ;
 
     cv::Mat gmMat;
@@ -106,7 +110,6 @@ private:
 
     void worker();
     void terminateWorker();
-
 
 
 };

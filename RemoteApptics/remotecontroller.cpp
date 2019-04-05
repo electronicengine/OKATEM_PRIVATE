@@ -1,6 +1,6 @@
 ﻿#include "mainwindow.h"
 #include "remotecontroller.h"
-
+#include "displaypanel.h"
 
 
 RemoteController::RemoteController(UdpSocket *Socket) : SocketListener(Socket)
@@ -20,12 +20,13 @@ RemoteController::~RemoteController()
 
 }
 
-int RemoteController::start(const std::string &IpAddress, int Port)
+int RemoteController::start(const std::string &IpAddress, int Port, DisplayPanel *DisplayWindow)
 {
     int ret;
 
     gmIpAddress = IpAddress;
     gmPort = Port;
+    gpDisplayPanel = DisplayWindow;
 
     ret = gpSocket->init(IpAddress, Port);
 
@@ -147,6 +148,10 @@ void RemoteController::servo1SetValue(int Value)
     gpSocket->sendData((SPI_TRANSFER_FORMAT) gmTxData);
     printf("Servo1 setting value %d\r\n", gmTxData.servo_motor1_degree );
 
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
+
 }
 
 
@@ -162,11 +167,34 @@ void RemoteController::servo2SetValue(int Value)
     gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     printf("Servo2 setting value %d\r\n", gmTxData.servo_motor2_degree );
 
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
+
 }
 
 void RemoteController::stop()
-{
-    gmTxData.clear();
+{    
+    gmTxData.setting_enable = 0;
+
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
+
+    gmTxData.step_motor1_direction = 0;
+    gmTxData.step_motor2_direction = 0;
+
+    gmTxData.servo_motor1_degree = 0;
+    gmTxData.servo_motor2_degree = 0;
+
+    gmTxData.calibrate_sensor = 0;
+
+    gmTxData.step_motor1_step = 0;
+    gmTxData.step_motor2_step = 0;
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
+
 }
 
 
@@ -186,14 +214,13 @@ void RemoteController::turnLeft()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
-
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("LEFT %d\r\n", gmTxData.step_motor1_speed);
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
 }
 
@@ -212,14 +239,13 @@ void RemoteController::turnRight()
     gmTxData.x_position = 0;
     gmTxData.y_position = 0;
 
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
-
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("RIGHT %d\r\n", gmTxData.step_motor1_speed);
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
 }
 
@@ -238,14 +264,13 @@ void RemoteController::turnUp()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
-
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("UP %d\r\n", gmTxData.step_motor1_speed);
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
 }
 
@@ -263,14 +288,13 @@ void RemoteController::turnDown()
     gmTxData.servo_motor1_degree = 0;
     gmTxData.servo_motor2_degree = 0;
 
-    gmTxData.step_motor1_speed = gmSpeed;
-    gmTxData.step_motor2_speed = gmSpeed;
-
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("DOWN %d\r\n", gmTxData.step_motor1_speed);
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
 }
 
@@ -285,49 +309,39 @@ void RemoteController::setCalibrationValues(const CONTROL_DATA_FORMAT &Calibrati
     ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
     if(ret != SUCCESS)
         printf("can not be sent %d\r\n", gmTxData.step_motor1_speed);
-    else
-        printf("CALIB %d\r\n", gmTxData.step_motor1_speed);
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 }
 
 
 
-void RemoteController::increaseSpeed()
+void RemoteController::setStep1Speed(int value, int Max)
 {
-    gmSpeed++;
+    if(value > MAX_STEPMOTOR_SPEED)
+        value = MAX_STEPMOTOR_SPEED;
 
-    if(gmSpeed > 20 )
-        gmSpeed = 20;
 
-    printf("Speed: %d\r\n", MAX_INVERSE_SPEED_VALUE - gmSpeed);
+    gmTxData.step_motor1_speed = Max - value;
+
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
 }
 
-
-
-void RemoteController::decreaseSpeed()
+void RemoteController::setStep2Speed(int value, int Max)
 {
+    if(value > MAX_STEPMOTOR_SPEED)
+        value = MAX_STEPMOTOR_SPEED;
 
-    gmSpeed--;
+    gmTxData.step_motor2_speed = Max - value;
 
-    if(gmSpeed < 1 )
-        gmSpeed = 1;
+    gmControlSignalMutex.lock();
+    gmControlSignal = gmTxData;
+    gmControlSignalMutex.unlock();
 
-    printf("Speed: %d\r\n", MAX_INVERSE_SPEED_VALUE - gmSpeed);
-
-
-}
-
-
-
-void RemoteController::setSpeed(int value)
-{
-    if(value == 20)
-        value = 19;
-
-    if(value == 0)
-        value = 1;
-
-    gmSpeed = MAX_INVERSE_SPEED_VALUE - value;
 }
 
 
@@ -344,56 +358,6 @@ void RemoteController::updateFirmware(const std::string &FileName)
 }
 
 
-
-int RemoteController::getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData)
-{
-
-    UDP_DATA_FORMAT request_package;
-
-    int timeout_counter = 0;
-    int ret;
-
-
-    if(gmUploadingStart != true)
-    {
-        request_package.header = ('I' | ('N' << 8));
-
-
-        ret = gpSocket->sendData(request_package);
-
-        if(ret != SUCCESS)
-        {
-            std::cout << "Information Data Request can not be sent" << std::endl;
-            return FAIL;
-        }
-
-        while(gmInformationData.is_available == false)
-        {
-            std::cout << "information data waiting" << std::endl;
-            timeout_counter++;
-
-            if(timeout_counter >= 200)
-                return FAIL;
-
-            usleep(10000);
-        }
-
-        gmMutex.lock();
-        ControlData = gmInformationData.control_data;
-        EnvironmentData = gmInformationData.environment_data;
-        SfpData = gmInformationData.sfp_data;
-        gmMutex.unlock();
-
-        return SUCCESS;
-    }
-    else
-    {
-        return FAIL;
-    }
-
-
-
-}
 
 int RemoteController::resetUpdatePercentage()
 {
@@ -414,10 +378,7 @@ int RemoteController::gotoPositions(uint32_t XPosition, uint32_t YPosition)
     do
     {
 
-        gmTxData.clear();
-
-        gmTxData.step_motor1_speed = MAX_STEPMOTOR_SPEED;
-        gmTxData.step_motor2_speed = MAX_STEPMOTOR_SPEED;
+        stop();
 
         gmTxData.x_position = XPosition;
         gmTxData.y_position = YPosition;
@@ -432,7 +393,12 @@ int RemoteController::gotoPositions(uint32_t XPosition, uint32_t YPosition)
 
         usleep(50000);
 
+        gmControlSignalMutex.lock();
+        gmControlSignal = gmTxData;
+        gmControlSignalMutex.unlock();
+
     }while(information.step_motor1_step != YPosition || information.step_motor2_step != XPosition);
+
 
     return ret;
 }
@@ -440,47 +406,65 @@ int RemoteController::gotoPositions(uint32_t XPosition, uint32_t YPosition)
 int RemoteController::turntoDirection(uint32_t DirectionCommand, uint32_t Duration)
 {
 
+    int ret;
     int duration = 0;
+
+    gmTxData.x_position = 0;
+    gmTxData.y_position = 0;
+
+    gmTxData.servo_motor1_degree = 0;
+    gmTxData.servo_motor2_degree = 0;
 
     do{
         switch (DirectionCommand)
         {
-            case Up:
-                stop();
-                turnUp();
+            case Up:        
+                gmTxData.step_motor1_direction = FORWARD;
+                gmTxData.step_motor2_direction = STOP;
+
                 break;
             case Down:
-                stop();
-                turnDown();
+                gmTxData.step_motor1_direction = BACKWARD;
+                gmTxData.step_motor2_direction = STOP;
+
                 break;
             case Left:
-                stop();
-                turnLeft();
+                gmTxData.step_motor1_direction = STOP;
+                gmTxData.step_motor2_direction = FORWARD;
+
                 break;
             case Right:
-                stop();
-                turnRight();
+                gmTxData.step_motor1_direction = STOP;
+                gmTxData.step_motor2_direction = BACKWARD;
+
                 break;
             case UpLeft:
-                turnUp();
-                turnLeft();
+                gmTxData.step_motor1_direction = FORWARD;
+                gmTxData.step_motor2_direction = FORWARD;
+
                 break;
             case UpRight:
-                turnUp();
-                turnRight();
+                gmTxData.step_motor1_direction = FORWARD;
+                gmTxData.step_motor2_direction = BACKWARD;
+
                 break;
             case DownLeft:
-                turnDown();
-                turnLeft();
+                gmTxData.step_motor1_direction = BACKWARD;
+                gmTxData.step_motor2_direction = FORWARD;
+
                 break;
             case DownRight:
-                turnDown();
-                turnRight();
+                gmTxData.step_motor1_direction = BACKWARD;
+                gmTxData.step_motor2_direction = BACKWARD;
                 break;
 
             default:
                 break;
         }
+
+        ret = gpSocket->sendData((SPI_TRANSFER_FORMAT)gmTxData);
+        if(ret != SUCCESS)
+            printf("direction can not be sent.\r\n");
 
         usleep(50000);
         duration += 50;
@@ -491,29 +475,79 @@ int RemoteController::turntoDirection(uint32_t DirectionCommand, uint32_t Durati
 
 }
 
-
-
-int RemoteController::getUpdatePercentage()
+CONTROL_DATA_FORMAT RemoteController::getControlData()
 {
-    int percent;
+    CONTROL_DATA_FORMAT control_data;
 
     gmMutex.lock();
-    percent = gmUpdatePercentage;
+    control_data = gmControlSignal;
     gmMutex.unlock();
 
-    return percent;
+    return control_data;
 }
+
+
+
+int RemoteController::sendCameraSettingsRequest(const CAMERA_SETTINGS_FORMAT &CameraSettings)
+{
+    return gpSocket->sendData(CameraSettings);
+}
+
+int RemoteController::sendInformationRequest()
+{
+    UDP_DATA_FORMAT request_package;
+
+    int ret;
+
+    request_package.header = UDP_DATA_FORMAT::INFORMATION_DATA;
+
+    ret = gpSocket->sendData(request_package);
+
+    if(ret != SUCCESS)
+    {
+        std::cout << "Information Data Request can not be sent" << std::endl;
+        return FAIL;
+    }
+
+    return SUCCESS;
+
+}
+
+
+
 
 void RemoteController::socketDataCheckCall()
 {
 
+    INFORMATION_DATA_FORMAT information_data;
+    int update_counter;
+
+    information_data = gpSocket->getInformationData();
+    update_counter = gpSocket->getFeedBackCounter();
+
+
     gmMutex.lock();
-
-    gmInformationData = gpSocket->getInformationData();
-
-    gmUpdatePercentage = ((float)((float)(gpSocket->getFeedBackCounter()) / gmUpdateFileSequence)) * 100;
-
+    gmInformationData = information_data;
+    gmUpdatePercentage = ((float)((float)(update_counter) / gmUpdateFileSequence)) * 100;
     gmMutex.unlock();
+
+
+    if(gpSocket->isEthernetConnected() == true)
+    {
+        if(information_data.is_available == true)
+            gpDisplayPanel->panelInformationCallBack(information_data);
+        else if(update_counter > 0)
+            gpDisplayPanel->upgradingFirmworkCallBack((((float)((float)(update_counter) / gmUpdateFileSequence)) * 100));
+
+    }
+    else
+    {
+        gpDisplayPanel->ethernetConnectionLostCallBack();
+    }
+
+
+
+
 
 }
 

@@ -26,8 +26,7 @@
 #define WIDTH 30
 #define HEIGHT 10
 
-#define MAX_STEPMOTOR_SPEED 1
-#define MAX_INVERSE_SPEED_VALUE 20
+#define MAX_STEPMOTOR_SPEED 60
 #define FORWARD 1
 #define BACKWARD 2
 #define STOP 0
@@ -35,7 +34,7 @@
 
 
 class MainWindow;
-
+class DisplayPanel;
 
 enum Direction
 {
@@ -56,22 +55,16 @@ class RemoteController : public SocketListener
 
 public:
 
-
     RemoteController(UdpSocket *Socket);
     virtual ~RemoteController();
 
-
-    int start(const std::string &IpAddress, int Port);
+    int start(const std::string &IpAddress, int Port, DisplayPanel *DisplayWindow);
 
     std::vector<unsigned char> readFile(const std::string &FileName);
     void parseAndSendData(std::vector<unsigned char> &Container, const std::string &IpAddress);
 
-    void run(const std::string &IpAddress, int Port);
-    void runController(const std::string &IpAddress, int Port);
-
     void servo1SetValue(int Value);
     void servo2SetValue(int Value);
-
 
     void stop();
     void turnLeft();
@@ -80,18 +73,19 @@ public:
     void turnUp();
 
     void setCalibrationValues(const CONTROL_DATA_FORMAT &CalibrationValues);
-    void increaseSpeed();
-    void decreaseSpeed();
-    void setSpeed(int value);
+
+    void setStep1Speed(int value, int Max);
+    void setStep2Speed(int value, int Max);
 
     void updateFirmware(const std::string &FileName);
 
-    int getFsoInformations(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
-    int getUpdatePercentage();
     int resetUpdatePercentage();
+    int sendCameraSettingsRequest(const CAMERA_SETTINGS_FORMAT& CameraSettings);
+    int sendInformationRequest();
     int gotoPositions(uint32_t XPosition, uint32_t YPosition);
     int turntoDirection(uint32_t DirectionCommand, uint32_t Duration);
 
+    CONTROL_DATA_FORMAT getControlData();
     void socketDataCheckCall();
 
     int terminate();
@@ -99,29 +93,26 @@ public:
 
 private:
 
+    DisplayPanel *gpDisplayPanel;
 
     UdpSocket *gpSocket;
 
-    int gmServoMotor1Degree = 50;
-    int gmServoMotor2Degree = 50;
 
-    int gmUpdatePercentage = 0;
-
+    volatile int gmUpdatePercentage = 0;
     volatile bool gmTerminate = false;
     volatile bool gmTerminated = true;
 
-    volatile bool gmUploadingStart = false;
-
     int gmUpdateFileSequence;
-    int gmSpeed = 1;
+
     std::string gmIpAddress;
     std::string gmPort;
     CONTROL_DATA_FORMAT gmTxData;
-
+    CONTROL_DATA_FORMAT gmControlSignal;
 
     INFORMATION_DATA_FORMAT gmInformationData;
 
     std::mutex gmMutex;
+    std::mutex gmControlSignalMutex;
 
     void updateThread(const std::string &FileName);
     void updateThreadTerminated();

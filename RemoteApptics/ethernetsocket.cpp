@@ -1,5 +1,6 @@
 #include "ethernetsocket.h"
 
+
 EthernetSocket::EthernetSocket()
 {
 

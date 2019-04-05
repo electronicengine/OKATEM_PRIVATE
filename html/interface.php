@@ -125,97 +125,29 @@
 
 <script>
 
-
-
-    $(function(){
-        $('#save').click(function(){
-
-          var data = {
-
-            laser_diagonal: document.getElementById("laser_diagonal").innerHTML,
-            laser_edge: document.getElementById("laser_edge").innerHTML,
-            sfp_temp: document.getElementById("sfp_temp").innerHTML,
-            sfp_vcc: document.getElementById("sfp_vcc").innerHTML,
-            sfp_tx_bias: document.getElementById("sfp_tx_bias").innerHTML,
-            sfp_tx_power: document.getElementById("sfp_tx_power").innerHTML,
-            sfp_rx_power: document.getElementById("sfp_rx_power").innerHTML,
-
-
-            terminal_temperature: document.getElementById("terminal_temperature").innerHTML,
-            terminal_pressure: document.getElementById("terminal_pressure").innerHTML,
-            terminal_altitude: document.getElementById("terminal_altitude").innerHTML,
-            terminal_compass: document.getElementById("terminal_compass").innerHTML,
-            terminal_gps_string: document.getElementById("terminal_gps_string").innerHTML,
-            terminal_latitude: document.getElementById("terminal_latitude").innerHTML,
-            terminal_latitude: document.getElementById("terminal_latitude").innerHTML,
-            terminal_ns_indicator: document.getElementById("terminal_ns_indicator").innerHTML,
-            terminal_longnitude: document.getElementById("terminal_longnitude").innerHTML,
-            terminal_we_indicator: document.getElementById("terminal_we_indicator").innerHTML,
-
-            servo_motor1_degree: parseInt(document.getElementById("servo_motor1_degree").innerHTML),
-            servo_motor2_degree: parseInt(document.getElementById("servo_motor2_degree").innerHTML),
-            step_motor1_position: parseInt(document.getElementById("step_motor2_position").innerHTML),
-            step_motor2_position: parseInt(document.getElementById("step_motor2_position").innerHTML),
-
-            cpu_usage: document.getElementById("cpu_usage").innerHTML,
-            memory_usage: document.getElementById("memory_usage").innerHTML,
-
-            remote_terminal_status: document.getElementById("remote_terminal_status").innerHTML,
-            remote_sfp_temp: document.getElementById("remote_sfp_temp").innerHTML,
-            remote_sfp_vcc: document.getElementById("remote_sfp_vcc").innerHTML,
-            remote_sfp_tx_bias: document.getElementById("remote_sfp_tx_bias").innerHTML,
-            remote_sfp_tx_power: document.getElementById("remote_sfp_tx_power").innerHTML,
-            remote_sfp_rx_power: document.getElementById("remote_sfp_rx_power").innerHTML,
-
-            remote_terminal_temperature: document.getElementById("remote_terminal_temperature").innerHTML,
-            remote_terminal_pressure: document.getElementById("remote_terminal_pressure").innerHTML,
-            remote_terminal_altitude: document.getElementById("remote_terminal_altitude").innerHTML,
-            remote_terminal_compass: document.getElementById("remote_terminal_compass").innerHTML,
-            remote_terminal_gps_string: document.getElementById("remote_terminal_gps_string").innerHTML,
-            remote_terminal_latitude: parseInt(document.getElementById("remote_terminal_latitude").innerHTML),
-            remote_terminal_ns_indicator: document.getElementById("remote_terminal_ns_indicator").innerHTML,
-            remote_terminal_longnitude: parseInt(document.getElementById("remote_terminal_longnitude").innerHTML),
-            remote_terminal_we_indicator: document.getElementById("remote_terminal_we_indicator").innerHTML,
-            //
-            ip_address: document.getElementById("ip_address_input").value,
-            port_number: parseInt(document.getElementById("port_number_input").value),
-
-          };
-
-
-           var jsonData = JSON.stringify(data);
-
-
-        alert(jsonData);
-
-        <?php add(1,2); ?>
-
-        });
-
-    });
-
-
-
     $(document).ready(
-     function() {
-     setInterval(function() {
+       function() {
+       setInterval(function() {
 
-     readInfoFile('/var/www/html/json');
+       readInfoFile('/var/www/html/json');
 
-     readLogFile("/var/www/html/log.txt");
-   }, 1000);  //Delay here = 5 seconds
+       readLogFile("/var/www/html/log.txt");
+        }, 1000);  //Delay here = 5 seconds
     });
 
 
-    function save_content_to_file(content, filename){
+    function save_content_to_file(content, filename)
+    {
         var dlg = false;
-        with(document){
+        with(document)
+        {
          ir=createElement('iframe');
          ir.id='ifr';
          ir.location='about.blank';
          ir.style.display='none';
          body.appendChild(ir);
-          with(getElementById('ifr').contentWindow.document){
+          with(getElementById('ifr').contentWindow.document)
+          {
                open("text/plain", "replace");
                charset = "utf-8";
                write(content);
@@ -230,8 +162,6 @@
 
     function readInfoFile(file)
     {
-
-
 
         $.getJSON('json', function(data){
           console.log(data);
@@ -284,13 +214,8 @@
           document.getElementById("ip_address").innerHTML = data.stream_ip;
           document.getElementById("port_number").innerHTML = data.stream_port;
 
-          data
-          data.terminal_altitude = 80;
-
-
         });
 
-        rawFile.send(null);
     }
 
 

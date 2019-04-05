@@ -31,7 +31,6 @@ int LoraWan::init()
     }
 
 
-
     gmSerial.writeData("sys reset\r\n");
     gmSerial.readData(lora_return, return_size = 0, TRANSMISSION_TIMEOUT);
 
@@ -99,6 +98,7 @@ int LoraWan::sendCommand(std::string Command)
          return SUCCESS;
     }
 }
+
 
 
 Status LoraWan::sendBeacon()
@@ -267,8 +267,9 @@ void LoraWan::resetChannel()
         resetChannel();
     }
 
-
 }
+
+
 
 std::string LoraWan::prepareData()
 {
@@ -322,7 +323,6 @@ std::string LoraWan::prepareData()
 void LoraWan::collectData(std::string &Data)
 {
 
-
     static std::string total_string;
     int seperator_pos;
 
@@ -360,9 +360,9 @@ void LoraWan::collectData(std::string &Data)
         printAll("Lora Data Collect Exception: ", ex.what());
     }
 
-
-
 }
+
+
 
 void LoraWan::listen()
 {
@@ -371,7 +371,6 @@ void LoraWan::listen()
     lora.detach();
 
 }
-
 
 
 
@@ -386,6 +385,8 @@ void LoraWan::setLoraData(const SFP_DATA_FORMAT &SfpData, const ENVIRONMENT_DATA
     gmMutex.unlock();
 
 }
+
+
 
 void LoraWan::getLoraData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &StmData)
 {
@@ -403,7 +404,6 @@ void LoraWan::getLoraData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &Stm
 
 void LoraWan::callBack(std::string& CommingData)
 {
-
 
     int i = 0;
     int pos;
@@ -459,17 +459,11 @@ void LoraWan::callBack(std::string& CommingData)
         printAll("Lora CallBack Exception: ",ex.what());
     }
 
-
-
-
     gmMutex.unlock();
 
-
-
-    usleep(500000);
+    usleep(700000);
 
     sendBeacon();
-
 
 }
 

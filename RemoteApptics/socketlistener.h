@@ -10,6 +10,8 @@ class SocketListener
 
 
 public:
+
+    SocketListener() = default;
     SocketListener(UdpSocket *Socket)
     {
         gpSocket = Socket;

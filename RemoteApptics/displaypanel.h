@@ -22,19 +22,20 @@ public:
     void deployPanel();
     int startDisplayManager();
 
+    void panelInformationCallBack(const INFORMATION_DATA_FORMAT& InformationData);
+    void upgradingFirmworkCallBack(int UpdatePercentage);
+    void ethernetConnectionLostCallBack();
 
 private:
-    void attachWindow();
-    void preparePanelInfo();
-    int checkFirmwareUpdateAvailable();
 
-private slots:
-    int showMessage(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type);
+    volatile bool gmUpgradingAvailable = false;
+
+    void attachWindow();
 
 signals:
 
 
-    int showMessageBox(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type);
+    int showMessageBox(QWidget *, QString, QString, MessageBoxType);
     void progressUpdateFile(int);
     void setprogessbarvisibility(bool);
     void setupdatelabelvisibility(bool);
@@ -70,8 +71,6 @@ signals:
     void nmeaLabelClose();
     void nmeaLabelShow();
     void refreshNMEALabel(const QString &Text);
-
-
 
 };
 

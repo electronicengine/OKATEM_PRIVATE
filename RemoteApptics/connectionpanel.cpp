@@ -2,16 +2,18 @@
 #include "QMessageBox"
 #include "camerapanel.h"
 #include "displaypanel.h"
-#include "controlpanel.h"
+#include "controlwindow.h"
 
 
 
 ConnectionPanel::ConnectionPanel(ConnectionWindow *Window) : ConnectionWindow(Window)
 {
 
-    attachConnectionWindow();
     connection_ui->comboBox->addItems(gmConnectionList);
     gpConnectionWindow = Window;
+
+    attachConnectionWindow();
+
 
 }
 
@@ -20,19 +22,18 @@ ConnectionPanel::ConnectionPanel(ConnectionWindow *Window) : ConnectionWindow(Wi
 void ConnectionPanel::attachConnectionWindow()
 {
 
-    connect(connection_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accepted()));
-    connect(connection_ui->buttonBox, SIGNAL(rejected()), this, SLOT(rejected()));
-    connect(connection_ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxIndexChanged(int)));
-
     connect(this, SIGNAL(setIpAddress(QString)), connection_ui->ip_address_text, SLOT(setText(QString)));
     connect(this, SIGNAL(setStreamPort(QString)), connection_ui->stream_port_text, SLOT(setText(QString)));
     connect(this, SIGNAL(setControlPort(QString)), connection_ui->control_port_text, SLOT(setText(QString)));
+    connect(this, SIGNAL(hideConnectionWindow()), gpConnectionWindow, SLOT(hide()));
+    connect(this, SIGNAL(hideButtonBox()), connection_ui->buttonBox, SLOT(hide()));
+    connect(this, SIGNAL(showMessageBox(QWidget*, QString, QString, MessageBoxType)), gpMainWindow, SLOT(showMessage(QWidget*,QString, QString , MessageBoxType)), Qt::BlockingQueuedConnection);
 
 }
 
 
 
-void ConnectionPanel::accepted()
+int ConnectionPanel::startConnection()
 {
     int ret;
 
@@ -51,28 +52,28 @@ void ConnectionPanel::accepted()
 
         if(ret == SUCCESS)
         {
-            *gpConnectionAvailable = true;
-
-            QMessageBox::information(gpConnectionWindow, "Info", "Connection Established");
 
             setTitle(*gpIpAddress);
 
-            gpControlPanel->setPanelEnable(true);
-
-            gpControlPanel->setServoSliderInitialValues(gpControlInfo->servo_motor1_degree, gpControlInfo->servo_motor2_degree);
+            gpControlWindow->setPanelEnable(true);
 
             gpDisplaypanel->deployPanel();
 
-            connection_ui->buttonBox->hide();
+            emit hideButtonBox();
 
-            gpConnectionWindow->hide();
+            emit hideConnectionWindow();
+
+
+            return SUCCESS;
 
         }
         else
         {
             *gpConnectionAvailable = false;
 
-            QMessageBox::critical(gpConnectionWindow, "Error", "Connection can not be established");
+            showMessage(gpMainWindow, "Error", "Connection can not be established", MessageBoxType::error);
+
+            return FAIL;
         }
 
 
@@ -81,7 +82,9 @@ void ConnectionPanel::accepted()
     {
         *gpConnectionAvailable = false;
 
-        QMessageBox::critical(gpConnectionWindow, "Error", "Connection can not be established");
+        showMessage(gpMainWindow, "Error", "Connection can not be established", MessageBoxType::error);
+
+        return FAIL;
     }
 
 
@@ -89,14 +92,10 @@ void ConnectionPanel::accepted()
 
 
 
-void ConnectionPanel::rejected()
-{
-
-}
 
 
 
-void ConnectionPanel::comboBoxIndexChanged(int Index)
+void ConnectionPanel::deployPanel(int Index)
 {
 
     switch (Index) {
@@ -119,7 +118,4 @@ void ConnectionPanel::comboBoxIndexChanged(int Index)
     }
 }
 
-void ConnectionPanel::closed()
-{
-    this->hide();
-}
+

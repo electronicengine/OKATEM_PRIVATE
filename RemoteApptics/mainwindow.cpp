@@ -3,12 +3,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QThread>
-#include "controlpanel.h"
+#include "controlwindow.h"
 #include "displaypanel.h"
 #include "camerapanel.h"
 #include "connectionwindow.h"
 #include "calibrationwindow.h"
 #include "autocontrolwindow.h"
+#include "camerasettingswindow.h"
 
 #include <thread>
 #include <QMessageBox>
@@ -27,7 +28,7 @@ MainWindow::MainWindow(MainWindow *Window)
 
     ui = Window->ui;
 
-    gpControlPanel = Window->gpControlPanel;
+    gpControlWindow = Window->gpControlWindow;
     gpDisplaypanel = Window->gpDisplaypanel;
     gpCameraPanel = Window->gpCameraPanel;
 
@@ -40,13 +41,18 @@ MainWindow::MainWindow(MainWindow *Window)
     gpControlPort = Window->gpControlPort;
 
     gpConnectionAvailable = Window->gpConnectionAvailable;
+    gpSfpConnectionAvailable = Window ->gpSfpConnectionAvailable;
+    gpSfpLinkAvailable = Window->gpSfpLinkAvailable;
 
     gpController = Window->gpController;
     gpStream = Window->gpStream;
 
     gpVideoStreamSocket = Window->gpVideoStreamSocket;
+    gpControllerSocket = Window->gpControllerSocket;
 
     gpMainWindow = Window->gpMainWindow;
+    gpCameraSettingsWindow = Window->gpCameraSettingsWindow;
+    gpAutoControlWindow = Window->gpAutoControlWindow;
 
 }
 
@@ -61,7 +67,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    gpSfpLinkAvailable = new bool;
+    gpSfpConnectionAvailable = new bool;
     gpConnectionAvailable = new bool;
+
+    *gpSfpConnectionAvailable = false;
+    *gpSfpLinkAvailable = false;
+    *gpConnectionAvailable = false;
+
     gpIpAddress = new std::string;
     gpStreamPort = new int;
     gpControlPort = new int;
@@ -69,9 +82,10 @@ MainWindow::MainWindow(QWidget *parent) :
     *gpConnectionAvailable = false;
 
     connect(ui->actionConnection, SIGNAL(triggered(bool)), this, SLOT(actionConnectionTriggered()));
-    connect(ui->actionAuto_Control_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionAuto_Control_Settings_triggered()));
-    connect(ui->actionSet_Initial_Values, SIGNAL(triggered(bool)), this, SLOT(on_actionSet_Initial_Values_triggered()));
+    connect(ui->actionCalibration_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionCalibration_Settings_triggered()));
+    connect(ui->actionAutoControl_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionAutoControl_Settings_triggered()));
     connect(ui->actionUpdate_Firmware, SIGNAL(triggered(bool)), this, SLOT(actionUpdateFirmwareTriggered()));
+    connect(ui->referance_scale_slider, SIGNAL(valueChanged(int)), this, SLOT(scaleSliderChanged(int)));
 
     gpMainWindow = this;
 
@@ -86,11 +100,11 @@ MainWindow::MainWindow(QWidget *parent) :
     gpController = new RemoteController(gpControllerSocket);
     gpStream = new VideoStream(gpVideoStreamSocket);
 
+    gpAutoControlWindow = new AutoControlWindow(this);
 
-    gpControlPanel = new ControlPanel(this);
+    gpControlWindow = new ControlWindow(this);
     gpDisplaypanel = new DisplayPanel(this);
     gpCameraPanel = new CameraPanel(this);
-
 
     ui->toggle_button->setCheckable(true);
     pix.load("hyperion.jpg");
@@ -98,13 +112,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gpConnectionWindow = new ConnectionWindow(this);
     gpCalibrationWindow = new CalibrationWindow(this);
-    gpAutoControlWindow = new AutoControlWindow(this);
+    gpCameraSettingsWindow = new CameraSettingsWindow(this);
 
     std::thread controlThread(&MainWindow::worker, this);
     controlThread.detach();
 
 
-    gpControlPanel->setPanelEnable(false);
+    gpControlWindow->setPanelEnable(false);
 
 }
 
@@ -125,14 +139,36 @@ MainWindow::~MainWindow()
     delete gpIpAddress;
     delete gpControlPort;
     delete gpStreamPort;
+
 }
 
+
+void MainWindow::scaleSliderChanged(int Value)
+{
+
+    gpCameraPanel->scaleTarget(Value);
+
+}
+
+
+int MainWindow::showMessage(QWidget *Parent, QString Title, QString Message, MessageBoxType Type)
+{
+
+    std::cout << "MessageBox showing Type : " << Type << std::endl;
+//    this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
+
+    if(Type == MessageBoxType::information)
+        QMessageBox::information(Parent, Title, Message);
+    if(Type == MessageBoxType::error)
+        QMessageBox::critical(Parent, Title, Message);
+
+    return SUCCESS;
+
+}
 
 
 void MainWindow::worker()
 {
-
-    static int connection_established = false;
 
     gmWorkerTerminated = false;
 
@@ -142,24 +178,12 @@ void MainWindow::worker()
         if(gmTerminateWorker == true)
             break;
 
-        if(*gpConnectionAvailable == true)
-        {
+        gpControlWindow->process();
 
-            connection_established = true;
+        gpDisplaypanel->process();
 
-            gpControlPanel->process();
+        gpAutoControlWindow->process();
 
-            gpDisplaypanel->process();
-
-        }
-        else
-        {
-
-            if(connection_established != false)
-                emit gpDisplaypanel->showMessageBox(gpMainWindow, "Connection Error", "Ethernet Connection has been lost", MessageBoxType::error);
-
-            connection_established = false;
-        }
 
     }
 
@@ -169,9 +193,11 @@ void MainWindow::worker()
 
 void MainWindow::terminateWorker()
 {
+
     gmTerminateWorker = true;
 
     while(gmWorkerTerminated == false);
+
 }
 
 
@@ -179,6 +205,7 @@ void MainWindow::terminateWorker()
 
 std::string MainWindow::execCmd(const char* cmd)  // replace popen and pclose with _popen _pclose for windows
 {
+
     char buffer[128];
     std::string result = "";
     FILE* pipe = popen(cmd, "r");
@@ -199,16 +226,17 @@ std::string MainWindow::execCmd(const char* cmd)  // replace popen and pclose wi
     result = result.substr(0, result.size() - 1);
 
     return result;
+
 }
 
 
 
 void MainWindow::setTitle(const std::string &IpAddress)
 {
+
     char cmd[100];
 
     *gpIpAddress = IpAddress;
-
 
     snprintf(cmd, 100, "sudo sshpass -p \"hyperion\" ssh pi@%s hostname", gpIpAddress->c_str());
 
@@ -216,9 +244,7 @@ void MainWindow::setTitle(const std::string &IpAddress)
     std::string hostName = execCmd(cmd);
 
     std::cout << "hostname " << hostName << std::endl;
-
     gpMainWindow->setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gpIpAddress->c_str()));
-//    MainWindow::setWindowTitle(QString(hostName.c_str()) + QString(" - ") + QString(gmIpAddress.c_str()));
 
 }
 
@@ -261,17 +287,23 @@ void MainWindow::actionUpdateFirmwareTriggered()
 
 
 
-
-void MainWindow::on_actionSet_Initial_Values_triggered()
+void MainWindow::on_actionCalibration_Settings_triggered()
 {
-    gpCalibrationWindow->deployTextBoxes();
+    gpCalibrationWindow->setDefaultCalibrationValues();
     gpCalibrationWindow->show();
 }
 
-
-
-void MainWindow::on_actionAuto_Control_Settings_triggered()
+void MainWindow::on_actionAutoControl_Settings_triggered()
 {
     gpAutoControlWindow->show();
+}
 
+void MainWindow::on_actionCamera_Settings_triggered()
+{
+
+    CAMERA_SETTINGS_FORMAT CameraSettingsRequest;
+    CameraSettingsRequest.write_enable = 0;
+
+    gpController->sendCameraSettingsRequest(CameraSettingsRequest);
+    gpCameraSettingsWindow->show();
 }

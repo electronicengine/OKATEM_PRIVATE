@@ -16,16 +16,16 @@
 #include "globals.h"
 #include "lorawan.h"
 #include "spicom.h"
-#include "controller.h"
+#include "stmdriver.h"
 #include "sfpmonitor.h"
 #include "udpsocket.h"
 #include "queue.h"
 #include "lcdhmi.h"
 #include "json.h"
-
+#include <linux/videodev2.h>
+#include "cameradriver.h"
 
 std::map<const std::string, bool> CheckList;
-
 
 clock_t now = 0;
 clock_t last = 0;
@@ -39,21 +39,21 @@ ENVIRONMENT_DATA_FORMAT lora_stm_data;
 CONTROL_DATA_FORMAT udp_control_data;
 CONTROL_DATA_FORMAT lcd_control_data;
 UPDATE_FILE_FORMAT update_file;
+CAMERA_SETTINGS_FORMAT camera_settings;
 
 SFP_DATA_FORMAT sfp_data;
 SFP_DATA_FORMAT lora_sfp_data;
 
 LoraWan lora;
-Controller controller;
+StmDriver stm_driver;
 SfpMonitor sfp_monitor;
 LaserTracker tracker;
 UdpSocket udp_controller_socket;
 LcdHMI lcd_hmi;
 Json json;
-
+CameraDriver camera_driver;
 
 Status update_file_seq_is_sent  = Status::ok;
-
 
 void safeLog();
 
@@ -65,16 +65,16 @@ int initLora();
 int initController();
 int initSfpMonitor();
 int initLcd();
+int initCameraController();
+
 int getEnvironment();
 
 void shareEnvironment();
 
 
-
 int checkIfUdpDataAvaliable();
 int checkIfLcdDataAvaliable();
 int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData);
-
 
 
 int main()
@@ -148,12 +148,10 @@ int init()
         return FAIL;
 
     ret = initCamera();
-
     if(ret == FAIL)
         return FAIL;
 
     ret = initUdpControlSocket();
-
     if(ret == FAIL)
         return FAIL;
 
@@ -161,8 +159,19 @@ int init()
     if(ret == FAIL)
         return FAIL;
 
+    ret = initCameraController();
+    if(ret == FAIL)
+        return FAIL;
+
     return SUCCESS;
 
+}
+
+
+
+int initCameraController()
+{
+    return camera_driver.init();
 }
 
 
@@ -183,7 +192,7 @@ int initSfpMonitor()
 
 int initController()
 {
-    return controller.init();
+    return stm_driver.init();
 }
 
 
@@ -191,12 +200,11 @@ int initController()
 int checkIfLcdDataAvaliable()
 {
 
-
     lcd_control_data = lcd_hmi.getHCMControlData();
 
    if(lcd_control_data == true)
     {
-        controller.setControlData(lcd_control_data);
+        stm_driver.setControlData(lcd_control_data);
     }
 
 }
@@ -213,16 +221,19 @@ int checkIfUdpDataAvaliable()
     if(update_file_seq_is_sent == Status::ok)
         update_file = udp_controller_socket.getSocketUpdateData();
 
+    camera_settings = udp_controller_socket.getCameraSettings();
+
+
     if(update_file.is_available == true)
     {
 
-        status = update_file_seq_is_sent = controller.setUpdateData(update_file);
+        update_file_seq_is_sent = stm_driver.setUpdateData(update_file);
 
-        if(status == Status::ok)
+        if(update_file_seq_is_sent == Status::ok)
         {
             UDP_DATA_FORMAT feed_back_data;
 
-            feed_back_data.header = 'F' | 'E' << 8;
+            feed_back_data.header = UDP_DATA_FORMAT::FEEDBACK_DATA;
             udp_controller_socket.sendData(feed_back_data);
         }
 
@@ -231,7 +242,45 @@ int checkIfUdpDataAvaliable()
     {
 
         if(checkUdpCalibrationValues(udp_control_data) != SUCCESS)
-            controller.setControlData(udp_control_data);
+            stm_driver.setControlData(udp_control_data);
+
+    }
+    else if(camera_settings.available == true)
+    {
+        if(camera_settings.write_enable == 0)
+        {
+            std::cout << "camera settings request"<< std::endl;
+
+            int ret = 0;
+
+            camera_settings = camera_driver.getCameraControls();
+            camera_settings.write_enable = 1;
+
+            printAll("brightness: ", std::to_string(camera_settings.brighness));
+            printAll("contrast: ", std::to_string(camera_settings.contrast));
+            printAll("saturation: ", std::to_string(camera_settings.saturation));
+            printAll("hue: ", std::to_string(camera_settings.hue));
+            printAll("exposure: ", std::to_string(camera_settings.exposure));
+            printAll("auto_exposure: ", std::to_string(camera_settings.auto_exposure));
+            printAll("gain: ", std::to_string(camera_settings.gain));
+            printAll("auto_gain: ", std::to_string(camera_settings.auto_gain));
+            printAll("horizontal_flip: ", std::to_string(camera_settings.horizontal_flip));
+            printAll("vertical_flip: ", std::to_string(camera_settings.vertical_flip));
+            printAll("power_frequency: ", std::to_string(camera_settings.power_frequency));
+            printAll("sharpness: ", std::to_string(camera_settings.sharpness));
+
+            ret = udp_controller_socket.sendData(camera_settings);
+
+            if(ret == FAIL)
+                printAll("Camera Setting Information can not be sent!");
+
+        }
+        else if(camera_settings.write_enable == 0xff)
+        {
+            int ret;
+
+            ret = camera_driver.setCameraControls(camera_settings);
+        }
 
     }
 
@@ -245,17 +294,14 @@ int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData)
 {
     if(ControlData.setting_enable == 0xff)
     {
+
         MOTOR_INFORMATIONS calibration_values;
 
         printAll("Calibration Values are setting...");
 
-
-
-
         calibration_values = ControlData;
         json.saveMotorPositions(calibration_values);
-        controller.setMotorCalibrationValues(calibration_values);
-
+        stm_driver.setMotorCalibrationValues(calibration_values);
 
         std::cout << "step_motor1_step: " << std::to_string(calibration_values.step_motor1_position) << std::endl;
         std::cout << "step_motor1_max_step: " << std::to_string(calibration_values.step_motor1_max_step) << std::endl;
@@ -272,12 +318,12 @@ int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData)
         std::cout << "servo_motor2_bottom_degree: " << std::to_string(calibration_values.servo_motor2_bottom_degree) << std::endl;
         std::cout << "servo_motor2_top_degree: " << std::to_string(calibration_values.servo_motor2_top_degree) << std::endl;
 
-
-        controller.resetStm();
+        stm_driver.resetStm();
 
         ControlData.clear();
 
         return SUCCESS;
+
     }
     else
         return FAIL;
@@ -286,7 +332,6 @@ int checkUdpCalibrationValues(CONTROL_DATA_FORMAT &ControlData)
 
 void shareEnvironment()
 {
-
 
     json.saveEnvironmentData(stm_data, sfp_data);
 
@@ -305,7 +350,7 @@ int getEnvironment()
 
     int ret;
 
-    stm_data = controller.getStmEnvironment();
+    stm_data = stm_driver.getStmEnvironment();
     sfp_data = sfp_monitor.getValues();
 
     lora.getLoraData(lora_sfp_data, lora_stm_data);
@@ -347,7 +392,7 @@ int initLora()
     if(ret == SUCCESS)
     {
 
-        stm_data = controller.getStmEnvironment();
+        stm_data = stm_driver.getStmEnvironment();
         sfp_data = sfp_monitor.getValues();
 
         lora.setLoraData(sfp_data, stm_data);
@@ -372,6 +417,7 @@ int initLora()
 
 int initCamera()
 {
+
     int ret;
 
     ret = tracker.init(0);
@@ -409,14 +455,13 @@ int initConfig()
     if(ret == FAIL)
         return FAIL;
 
-    controller.setMotorCalibrationValues(motor_informations);
+    stm_driver.setMotorCalibrationValues(motor_informations);
 
     lcd_control_data = motor_informations;
     udp_control_data = motor_informations;
 
     lcd_hmi.setInitialMotorPositions(lcd_control_data);
     udp_controller_socket.setInitialMotorPositions(udp_control_data);
-
 
     return SUCCESS;
 
@@ -433,30 +478,27 @@ void safeLog()
 
     udp_controller_socket.saveInformationData(control_data, stm_data ,sfp_data);
 
-//    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')), "\n"
-//             " - Temperature: ", (int)stm_data.sensor_data.temperature,
-//             " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
-//             " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
-//             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected",
-//             " - SFP Tx power: ", sfp_data.tx_power,
-//             " - SFP Rx power: ", sfp_data.rx_power);
-//    printAll("\n\n\n");
+    //    printAll("Environment Data: ", "\n", "Gps:  ", stm_data.gps_string.substr(0,stm_data.gps_string.find('*')), "\n"
+    //             " - Temperature: ", (int)stm_data.sensor_data.temperature,
+    //             " - Altitude: ", (int)stm_data.sensor_data.altitude, " - Pressure: ", (int)stm_data.sensor_data.pressure,
+    //             " - Compass: ", (int)stm_data.sensor_data.compass_degree, " - Wheather: ", (int)stm_data.sensor_data.wheather_condition,
+    //             " - SFP Status: ",(sfp_data.status == 1) ? "Connected" : "Disconnected",
+    //             " - SFP Tx power: ", sfp_data.tx_power,
+    //             " - SFP Rx power: ", sfp_data.rx_power);
+    //    printAll("\n\n\n");
 
-//    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
-//    printAll("\n\n\n");
+    //    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
+    //    printAll("\n\n\n");
 
-//        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
-//        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
-//        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
-//        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
-//        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
-//        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
-//        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
+    //        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+    //        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+    //        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
+    //        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
+    //        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
+    //        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
+    //        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 
-
-//    printAll("\n\n\n");
-
-
+    //    printAll("\n\n\n");
 
 }
 

@@ -40,17 +40,24 @@ SOURCES += \
         videostream.cpp \
         remotecontroller.cpp \
         socketlistener.cpp \
-    controlpanel.cpp \
     displaypanel.cpp \
     camerapanel.cpp \
     connectionpanel.cpp \
     connectionwindow.cpp \
     calibrationwindow.cpp \
-    calibrationpanel.cpp \
     positionadd.cpp \
     autocontrolwindow.cpp \
     autocontrolpanel.cpp \
-    command.cpp
+    command.cpp \
+    camerasettingswindow.cpp \
+    camerasettingspanel.cpp \
+    calibrationpanel.cpp \
+    controlwindow.cpp \
+    controlpanel.cpp \
+    process.cpp \
+    kalmanfilter.cpp \
+    autolockingpanel.cpp \
+    pidcontroller.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -61,24 +68,35 @@ HEADERS += \
         videostream.h \
         remotecontroller.h \
         socketlistener.h \
-    controlpanel.h \
     displaypanel.h \
     camerapanel.h \
     connectionpanel.h \
     connectionwindow.h \
     calibrationwindow.h \
-    calibrationpanel.h \
     positionadd.h \
     autocontrolwindow.h \
     autocontrolpanel.h \
-    command.h
+    command.h \
+    camerasettingswindow.h \
+    spidatatypes.h \
+    ethernetdatatypes.h \
+    config.h \
+    camerasettingspanel.h \
+    calibrationpanel.h \
+    controlwindow.h \
+    controlpanel.h \
+    process.h \
+    kalmanfilter.h \
+    autolockingpanel.h \
+    pidcontroller.h
 
 FORMS += \
         mainwindow.ui \
     connectionwindow.ui \
     calibrationwindow.ui \
     positionadd.ui \
-    autocontrolwindow.ui
+    autocontrolwindow.ui \
+    camerasettingswindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

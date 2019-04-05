@@ -1,6 +1,6 @@
 ﻿#include "displaypanel.h"
 #include "QMessageBox"
-#include "controlpanel.h"
+#include "controlwindow.h"
 
 DisplayPanel::DisplayPanel(MainWindow *Window) : MainWindow(Window)
 {
@@ -19,7 +19,7 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(setprogessbarvisibility(bool)), ui->progressBar, SLOT(setVisible(bool)), Qt::QueuedConnection);
     connect(this, SIGNAL(setupdatelabelvisibility(bool)), ui->update_label, SLOT(setVisible(bool)), Qt::QueuedConnection);
-    connect(this, SIGNAL(showMessageBox(QWidget *, const QString &, const QString &, MessageBoxType )), this, SLOT(showMessage(QWidget *, const QString &, const QString &, MessageBoxType )), Qt::BlockingQueuedConnection);
+    connect(this, SIGNAL(showMessageBox(QWidget*, QString, QString, MessageBoxType)), gpMainWindow, SLOT(showMessage(QWidget*,QString, QString , MessageBoxType)), Qt::BlockingQueuedConnection);
 
     connect(this, SIGNAL(refreshStatusLabel(QString)), ui->status_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshTxPowerLabel(QString)), ui->tx_power_label, SLOT(setText(QString)), Qt::QueuedConnection);
@@ -63,69 +63,77 @@ void DisplayPanel::attachWindow()
 }
 
 
-int DisplayPanel::checkFirmwareUpdateAvailable()
+
+void DisplayPanel::upgradingFirmworkCallBack(int Percentage)
 {
-    int percent;
 
-    percent = gpController->getUpdatePercentage();
+    std::cout << "percent: " << std::to_string(Percentage) << std::endl;
 
-    if(percent > 0 && percent < 100)
+    if(Percentage > 0 && Percentage < 100)
     {
+        gmUpgradingAvailable = true;
+        gpControlWindow->setPanelEnable(false);
 
-
-
-        gpControlPanel->setPanelEnable(false);
-
-        std::cout << "%" << std::to_string(percent) << " upgraded" << std::endl;
+        std::cout << "%" << std::to_string(Percentage) << " upgraded" << std::endl;
         emit setprogessbarvisibility(true);
         emit setupdatelabelvisibility(true);
 
-        emit progressUpdateFile(percent);
+        emit progressUpdateFile(Percentage);
 
-        return SUCCESS;
 
-    }else if(percent >= 100)
+    }else if(Percentage >= 100)
     {
 
-        std::cout << "Update is done Percent: " << std::to_string(percent)  << std::endl;
+        std::cout << "Update is done Percent: " << std::to_string(Percentage)  << std::endl;
+
+        emit progressUpdateFile(Percentage);
+
         emit setprogessbarvisibility(false);
         emit setupdatelabelvisibility(false);
 
-        emit progressUpdateFile(percent);
+        gpControlWindow->setPanelEnable(true);
+
+        gmUpgradingAvailable = false;
 
         emit showMessageBox(gpMainWindow, "Firmware Update Done","The FirmWare Upgrading has been finished Succesfully!",
                             MessageBoxType::information);
 
         gpController->resetUpdatePercentage();
 
-        gpControlPanel->setPanelEnable(true);
 
-
-        return FAIL;
     }
     else
     {
         emit setprogessbarvisibility(false);
         emit setupdatelabelvisibility(false);
 
-        return FAIL;
     }
 
 }
 
-int DisplayPanel::showMessage(QWidget *Parent, const QString &Title, const QString &Message, MessageBoxType Type)
+
+
+void DisplayPanel::ethernetConnectionLostCallBack()
 {
 
-    std::cout << "MessageBox showing Type : " << Type << std::endl;
-    this->setStyleSheet("QMessageBox{background-color:rgb(46, 52, 54); } QMessageBox QPushButton { background-color: rgb(46, 52, 54); color: rgb(114, 159, 207);} QMessageBox QLabel{color:rgb(114, 159, 207);}");
+    if(*gpConnectionAvailable != false)
+    {
 
-    if(Type == MessageBoxType::information)
-        QMessageBox::information(Parent, Title, Message);
-    if(Type == MessageBoxType::error)
-        QMessageBox::critical(Parent, Title, Message);
+        emit showMessageBox(gpMainWindow, "Connection Error","The Ethernet Connection has been lost! Program will be terminated.",
+                            MessageBoxType::error);
+        std::cout << "Ethernet connection has been lost" << std::endl;
 
-    return SUCCESS;
+        *gpConnectionAvailable = false;
+
+
+        exit(0);
+
+
+    }
+
 }
+
+
 
 void DisplayPanel::deployPanel()
 {
@@ -178,6 +186,8 @@ void DisplayPanel::deployPanel()
         emit setStyleSheetofStep2("color: rgb(114, 159, 207); background-color: transparent;");
 
 
+    *gpSfpConnectionAvailable = (gpSfpInfo->status == 1) ? true:false;
+
     emit refreshStatusLabel((gpSfpInfo->status == 1) ? "Connected":"Disconnected");
     emit refreshTxPowerLabel(QString::number(gpSfpInfo->tx_power));
     emit refreshRxPowerLabel(QString::number(gpSfpInfo->rx_power));
@@ -198,65 +208,48 @@ int DisplayPanel::startDisplayManager()
 
     int ret;
 
-    ret = gpController->start(*gpIpAddress, *gpControlPort);
+    ret = gpController->start(*gpIpAddress, *gpControlPort ,this);
     if(ret == FAIL)
     {
         std::cout << "Controller socket can not be opened:  "<< *gpIpAddress << std::endl;
 
         return FAIL;
     }
-    else
-    {
 
-        std::cout << "Controller Connection Succesfull " << std::endl;
-
-        ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
-        if(ret == FAIL)
-        {
-
-            std::cout << "FSO Information request has not been answered"<<std::endl;
-
-            return FAIL;
-
-        }
-        else
-        {
-
-            std::cout << "Connection Established "<<std::endl;
-
-            return SUCCESS;
-
-
-        }
-    }
+    return SUCCESS;
 }
 
 
 
-void DisplayPanel::preparePanelInfo()
+void DisplayPanel::panelInformationCallBack(const INFORMATION_DATA_FORMAT &InformationData)
 {
 
-    int ret;
-    static int timeout_counter = 0;
+    if(*gpConnectionAvailable != true)
+    {
 
+        std::cout << "connection established" << std::endl;
+        *gpConnectionAvailable = true;
 
-    ret = gpController->getFsoInformations(*gpControlInfo, *gpEnvironmentInfo, *gpSfpInfo);
+        *gpControlInfo = InformationData.control_data;
+        *gpEnvironmentInfo = InformationData.environment_data;
+        *gpSfpInfo = InformationData.sfp_data;
 
-        if(ret == SUCCESS)
-            deployPanel();
-        else
-        {
-            timeout_counter++;
-            std::cout << "Panel Data can not be received" << std::endl;
-        }
+        gpControlWindow->setServoSliderInitialValues(gpControlInfo->servo_motor1_degree, gpControlInfo->servo_motor2_degree);
 
-        if(timeout_counter >= 5)
-        {
-            *gpConnectionAvailable = false;
-            std::cout << "Ethernet connection has been lost. Check your ethernet connection and try again" << std::endl;
-        }
+        deployPanel();
 
+        emit showMessageBox(gpMainWindow, "Connection", "Connection Established", MessageBoxType::information);
 
+    }
+    else
+    {
+        *gpControlInfo = InformationData.control_data;
+        *gpEnvironmentInfo = InformationData.environment_data;
+        *gpSfpInfo = InformationData.sfp_data;
+
+        deployPanel();
+
+    }
 
 
 }
@@ -269,29 +262,19 @@ void DisplayPanel::process()
 {
 
     static int counter = 0;
-    int ret;
+    counter++;
 
-    if(*gpConnectionAvailable == true)
+    if(counter >= 20 && gmUpgradingAvailable == false)
     {
-        counter++;
+        counter = 0;
 
-        if(counter >= 20)
-        {
-            counter = 0;
 
-            ret = checkFirmwareUpdateAvailable();
+        gpController->sendInformationRequest();
 
-            if(ret != SUCCESS)
-                preparePanelInfo();
-            else {
-
-            }
-
-        }
-    }
-    else {
 
     }
+
+
 
 }
 

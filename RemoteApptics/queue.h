@@ -13,12 +13,18 @@ class Queue
 
 private:
     std::vector<T> gmQueue;
+    size_t gmMaxSize = 5000;
 
 public:
 
     Queue()
     {
 
+    }
+
+    Queue(int Size) : gmMaxSize(Size)
+    {
+        std::cout << "Queue Max: " << std::to_string(Size) << std::endl;
     }
 
     long unsigned int size()
@@ -73,12 +79,28 @@ public:
 
     void push_back(const T& Package)
     {
-        gmQueue.push_back(Package);
+        if(gmMaxSize > gmQueue.size())
+        {
+            gmQueue.push_back(Package);
+        }
+        else
+        {
+            gmQueue.erase(gmQueue.begin());
+            gmQueue.push_back(Package);
+        }
     }
 
     void push_front(const T& Package)
     {
-        gmQueue.insert(gmQueue.begin(), Package);
+        if(gmMaxSize > gmQueue.size())
+        {
+            gmQueue.insert(gmQueue.begin(), Package);
+        }
+        else
+        {
+            gmQueue.pop_back();
+            gmQueue.insert(gmQueue.begin(), Package);
+        }
     }
 
 

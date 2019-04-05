@@ -53,6 +53,7 @@ public:
     CONTROL_DATA_FORMAT getSocketControlData();
     UPDATE_FILE_FORMAT getSocketUpdateData();
     STREAM_DATA_FORMAT getStreamData();
+    CAMERA_SETTINGS_FORMAT getCameraSettings();
 
 
     volatile int gmIsRecieved = 0;
@@ -65,6 +66,9 @@ public:
     int sendData(UDP_DATA_FORMAT &UdpData);
     int sendData(INFORMATION_DATA_FORMAT &InformationData);
     int sendData(STREAM_DATA_FORMAT &StreamData);
+    int sendData(CAMERA_SETTINGS_FORMAT &CameraSettings);
+
+
     int saveInformationData(CONTROL_DATA_FORMAT &ControlData, ENVIRONMENT_DATA_FORMAT &EnvironmentData, SFP_DATA_FORMAT &SfpData);
     int setInitialMotorPositions(CONTROL_DATA_FORMAT &ControlData);
 
@@ -82,10 +86,16 @@ private:
     ENVIRONMENT_DATA_FORMAT gmEnvironmentData;
     SFP_DATA_FORMAT gmSfpData;
     INFORMATION_DATA_FORMAT gmInformationData;
+    CAMERA_SETTINGS_FORMAT gmCameraSettings;
 
     EthernetSocket gmEthernetSocket;
 
     void listenPort();
+    void putSpiDataIntoBuffer(UDP_DATA_FORMAT &UdpData);
+    void putInformationDataIntoBuffer(UDP_DATA_FORMAT& UdpData);
+    void putStreamDataIntoBuffer(UDP_DATA_FORMAT& UdpData);
+    void putFeedBackDataIntoBuffer(UDP_DATA_FORMAT& UdpData);
+    void putCameraSettingsIntoBuffer(UDP_DATA_FORMAT& UdpData);
 
 
 

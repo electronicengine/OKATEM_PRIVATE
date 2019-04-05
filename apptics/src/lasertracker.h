@@ -51,6 +51,7 @@ private:
         cv::Mat gmFrame;
         cv::Mat gmScalarFrame;
 
+        int setCameraGain();
         int drawTarget(const cv::Mat &Frame);
         int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
         int orderpoints(std::vector<cv::Point>& Points);

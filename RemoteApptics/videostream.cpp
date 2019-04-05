@@ -28,7 +28,7 @@ int VideoStream::start(const std::string &IpAddress, int Port, CameraPanel *Pane
 
         gpSocket->listen();
 
-        gpPanel = Panel;
+        gpCameraPanel = Panel;
 
     }
 
@@ -74,7 +74,7 @@ void VideoStream::socketDataCheckCall()
 
                 ret = convertPackageToMat(frame_data, frame);
                 if(ret != FAIL)
-                    gpPanel->printScreen(frame);
+                    gpCameraPanel->displayCallBack(frame);
 
                 frame_data.clear();
 

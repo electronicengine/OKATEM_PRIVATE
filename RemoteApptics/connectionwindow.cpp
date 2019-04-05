@@ -1,7 +1,7 @@
 #include "ui_connectionwindow.h"
 #include "connectionwindow.h"
 
-
+#include "QMessageBox"
 #include "connectionpanel.h"
 
 
@@ -12,7 +12,7 @@ ConnectionWindow::ConnectionWindow(ConnectionWindow *Window) : MainWindow(true)
     ui = Window->ui;
     connection_ui = Window->connection_ui;
 
-    gpControlPanel = Window->gpControlPanel;
+    gpControlWindow = Window->gpControlWindow;
     gpDisplaypanel = Window->gpDisplaypanel;
     gpCameraPanel = Window->gpCameraPanel;
 
@@ -30,6 +30,18 @@ ConnectionWindow::ConnectionWindow(ConnectionWindow *Window) : MainWindow(true)
 }
 
 
+void ConnectionWindow::rejected()
+{
+    gpConnectionWindow->hide();
+
+}
+
+void ConnectionWindow::comboBoxIndexChanged(int Index)
+{
+    gpConnectionPanel->deployPanel(Index);
+}
+
+
 
 ConnectionWindow::ConnectionWindow(MainWindow *Window) :
     MainWindow(Window), connection_ui(new Ui::ConnectionWindow)
@@ -39,12 +51,18 @@ ConnectionWindow::ConnectionWindow(MainWindow *Window) :
 
     gpConnectionPanel = new ConnectionPanel(this);
 
-
-    connect(this, SIGNAL(hideConnectionWindow()), (ConnectionWindow*)this, SLOT(ConnectionWindow::hide()));
+    connect(connection_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accepted()));
+    connect(connection_ui->buttonBox, SIGNAL(rejected()), this, SLOT(rejected()));
+    connect(connection_ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxIndexChanged(int)));
 
 
 }
 
+
+void ConnectionWindow::closed()
+{
+    gpConnectionWindow->hide();
+}
 
 
 ConnectionWindow::~ConnectionWindow()
@@ -52,4 +70,9 @@ ConnectionWindow::~ConnectionWindow()
     delete gpConnectionPanel;
     delete connection_ui;
 
+}
+
+void ConnectionWindow::accepted()
+{
+    gpConnectionPanel->startConnection();
 }

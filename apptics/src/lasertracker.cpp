@@ -117,11 +117,10 @@ void LaserTracker::streamFrame(cv::Mat Frame)
 
 int LaserTracker::init(int Camera)
 {
-    CheckList.insert(std::make_pair<std::string, bool>("LaserTracker", true));
 
     mVideoCapture = new cv::VideoCapture(Camera);
 
-    mVideoCapture->set(CV_CAP_PROP_FPS, CAPTURE_RATE);
+
     if (!mVideoCapture->isOpened())
     {
         printAll("LaserTracker init is Failed");
@@ -158,8 +157,6 @@ int LaserTracker::startTracking()
 
         //show the frame
         //cv::imshow("frame", gmFrame);
-
-        drawTarget(gmFrame);
         streamFrame(gmFrame);
         cv::waitKey(1); // needed
 
@@ -271,13 +268,11 @@ cv::Mat LaserTracker::detectRed(cv::Mat &Frame)
     //converting brg to hsv
     cv::cvtColor(Frame, frame_hsv, cv::COLOR_BGR2HSV);
 
-
-
     // Threshold the HSV image, keep only the red pixels
     cv::inRange(frame_hsv, cv::Scalar(0, 0, 254), cv::Scalar(0, 0, 255), frame_processed);
 
 //      cv::imshow("frame1", frame_hsv);
-      cv::waitKey(1000/30);
+    cv::waitKey(1000/30);
 
     cv::GaussianBlur(frame_processed, frame_processed, cv::Size(9, 9), 2, 2);
 
@@ -308,6 +303,11 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
      }
      else
          return circles;
+
+}
+
+int LaserTracker::setCameraGain()
+{
 
 }
 

@@ -1,4 +1,4 @@
-﻿#include "udpsocket.h"
+#include "udpsocket.h"
 #include "socketlistener.h"
 
 UdpSocket::UdpSocket()
@@ -18,6 +18,21 @@ UdpSocket::~UdpSocket()
 
 }
 
+bool UdpSocket::isEthernetConnected()
+{
+    bool condition;
+
+    gmMutex.lock();
+    if(gmTerminated == true)
+        condition = false;
+    else
+        condition = true;
+
+    gmMutex.unlock();
+
+    return condition;
+}
+
 
 CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 {
@@ -27,7 +42,7 @@ CONTROL_DATA_FORMAT UdpSocket::getSocketControlData()
 
     if(gmIsRecieved == 1)
     {
-        if(gmSpiControlData.header == ('C' | ('O' << 8)))
+        if(gmSpiControlData.header == SPI_TRANSFER_FORMAT::CONTROL_DATA)
         {
             Data = gmSpiControlData;
             Data.is_available = true;
@@ -149,6 +164,37 @@ STREAM_DATA_FORMAT UdpSocket::getStreamData()
     }
 }
 
+
+
+CAMERA_SETTINGS_FORMAT UdpSocket::getCameraSettings()
+{
+
+    CAMERA_SETTINGS_FORMAT camera_settigs;
+
+
+    if(gmCameraSettingsData.available == true)
+    {
+        gmMutex.lock();
+        camera_settigs = gmCameraSettingsData;
+        camera_settigs.available = true;
+        gmMutex.unlock();
+
+        gmCameraSettingsData.available = false;
+
+        return camera_settigs;
+
+    }
+    else
+    {
+        camera_settigs.available = false;
+
+        return camera_settigs;
+    }
+
+}
+
+
+
 int UdpSocket::getFeedBackCounter()
 {
     int counter;
@@ -174,7 +220,6 @@ void UdpSocket::setFeedBackCounter(int Value)
 void UdpSocket::attach(SocketListener *Observer)
 {
     listeners.push_back(Observer);
-
 }
 
 
@@ -231,13 +276,26 @@ int UdpSocket::sendData(INFORMATION_DATA_FORMAT &InformationData)
 int UdpSocket::sendData(STREAM_DATA_FORMAT &StreamData)
 {
 
-
+    UDP_DATA_FORMAT udp_data;
     std::vector<unsigned char> raw_data;
 
-    raw_data = StreamData;
+    udp_data = StreamData;
+    raw_data = udp_data;
 
     return gmEthernetSocket.transferData(raw_data);
 
+}
+
+int UdpSocket::sendData(CAMERA_SETTINGS_FORMAT CameraSettingsData)
+{
+
+    std::vector<unsigned char> raw_data;
+    UDP_DATA_FORMAT udp_data;
+
+    udp_data = CameraSettingsData;
+    raw_data = udp_data;
+
+    return gmEthernetSocket.transferData(raw_data);
 }
 
 
@@ -298,9 +356,9 @@ void UdpSocket::listenPort()
 {
 
     int ret;
-    UDP_DATA_FORMAT udp_data;
-    SPI_TRANSFER_FORMAT spi_data;
+    int timeout_counter = 0;
 
+    UDP_DATA_FORMAT udp_data;
 
     std::vector<unsigned char> raw_data(ETHERNET_TRANSFER_SIZE);
 
@@ -318,78 +376,62 @@ void UdpSocket::listenPort()
         if(ret == SUCCESS)
         {
 
-
             udp_data = raw_data;
 
-
-
-            if(raw_data[0] == 'S' && raw_data[1] == 'P')
+            switch (udp_data.header)
             {
-                spi_data = (unsigned char *)udp_data.data;
+                case UDP_DATA_FORMAT::SPI_DATA:
 
-                if((spi_data.header & 0xff) == 'U' && ((spi_data.header >> 8) & 0xff) == 'P')
-                {
+                    putSpiDataIntoBuffer(udp_data);
 
+                    break;
+                case UDP_DATA_FORMAT::INFORMATION_DATA:
 
-//                    UPDATE_FILE_FORMAT update_file;
+                    putInformationDataIntoBuffer(udp_data);
 
-//                    update_file = spi_data;
+                    break;
 
-//                    gmUpdateFileQueue.push_back(update_file);
+                case UDP_DATA_FORMAT::STREAM_DATA:
 
-                }
+                    putStreamDataIntoBuffer(udp_data);
 
-                if((spi_data.header& 0xff) == 'C' && ((spi_data.header >> 8) & 0xff) == 'O')
-                {
+                    break;
 
-//                    gmSpiControlData = spi_data;
+                case UDP_DATA_FORMAT::FEEDBACK_DATA:
 
-//                    gmIsRecieved = 1;
-                }
+                    putFeedBackDataIntoBuffer(udp_data);
 
+                    break;
 
-            } else if(raw_data[0] == 'I' && raw_data[1] == 'N')
-            {
+                case UDP_DATA_FORMAT::CAMERA_SETTING_DATA:
+                    putCameraSettingsIntoBuffer(udp_data);
 
+                    break;
 
-                if(gmInformationData.is_available == false)
-                {
-                    gmMutex.lock();
-                    gmInformationData = udp_data;
-                    gmInformationData.is_available = true;
-                    gmMutex.unlock();
-
-                }
-
-
-            }else if(raw_data[0] == 'S' && raw_data[1] == 'T')
-            {
-
-                STREAM_DATA_FORMAT stream_data;
-
-                stream_data = udp_data;
-
-                gmMutex.lock();
-                gmStreamDataQueue.push_back(stream_data);
-                gmMutex.unlock();
-
-
+                default:
+                    break;
             }
-            else if(raw_data[0] == 'F' && raw_data[1] == 'E')
-            {
-
-                gmMutex.lock();
-                gmFeedBackCounter++;
-                gmMutex.unlock();
-
-
-            }
-
 
 
             for(size_t i=0; i<listeners.size(); i++) // notify the subscribers
                 listeners[i]->socketDataCheckCall();
 
+        }
+        else
+        {
+            timeout_counter++;
+
+            if(timeout_counter >= 4)
+            {
+                gmTerminated = true;
+
+                timeout_counter = 0;
+
+                for(size_t i=0; i<listeners.size(); i++) // notify the subscribers
+                    listeners[i]->socketDataCheckCall();
+
+                break;
+            }
         }
 
         if(gmTerminate == true)
@@ -401,5 +443,96 @@ void UdpSocket::listenPort()
     gmTerminated = true;
 
     std::cout << "Udp Socket Thread terminating... " << std::endl;
+
+}
+
+void UdpSocket::putInformationDataIntoBuffer(UDP_DATA_FORMAT &UdpData)
+{
+
+    if(gmInformationData.is_available == false)
+    {
+
+        gmMutex.lock();
+        gmInformationData = UdpData;
+        gmInformationData.is_available = true;
+        gmMutex.unlock();
+
+    }
+
+}
+
+void UdpSocket::putStreamDataIntoBuffer(UDP_DATA_FORMAT &UdpData)
+{
+    STREAM_DATA_FORMAT stream_data;
+
+    stream_data = UdpData;
+
+    gmMutex.lock();
+    gmStreamDataQueue.push_back(stream_data);
+    gmMutex.unlock();
+}
+
+void UdpSocket::putFeedBackDataIntoBuffer(UDP_DATA_FORMAT &UdpData)
+{
+
+    std::cout << "update feedback  " << UdpData.header << std::endl;
+
+    gmMutex.lock();
+    gmFeedBackCounter++;
+    gmMutex.unlock();
+
+}
+
+void UdpSocket::putCameraSettingsIntoBuffer(UDP_DATA_FORMAT &UdpData)
+{
+    CAMERA_SETTINGS_FORMAT camera_settings;
+
+    camera_settings = UdpData;
+
+    gmMutex.lock();
+
+    gmCameraSettingsData = camera_settings;
+    gmCameraSettingsData.available  = true;
+
+    gmMutex.unlock();
+}
+
+void UdpSocket::putSpiDataIntoBuffer(UDP_DATA_FORMAT &UdpData)
+{
+
+    SPI_TRANSFER_FORMAT spi_data;
+
+    spi_data = (unsigned char *)UdpData.data;
+
+
+    switch (spi_data.header) {
+    case SPI_TRANSFER_FORMAT::CONTROL_DATA:
+
+        //gmSpiControlData = spi_data;
+
+        //gmIsRecieved = 1;
+
+        break;
+
+    case SPI_TRANSFER_FORMAT::ENVIRONMENT_DATA:
+
+
+        break;
+
+    case SPI_TRANSFER_FORMAT::UPDATE_FILE:
+
+        //UPDATE_FILE_FORMAT update_file;
+
+        //update_file = spi_data;
+
+        //gmUpdateFileQueue.push_back(update_file);
+
+        break;
+
+
+    default:
+        break;
+    }
+
 
 }

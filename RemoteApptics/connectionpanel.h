@@ -12,21 +12,21 @@ class ConnectionPanel : public ConnectionWindow
 
 public:
     ConnectionPanel(ConnectionWindow *Window);
-
-private:
-    void attachConnectionWindow();
-    ConnectionWindow *localConnectionWindow;
+    void deployPanel(int Index);
+    int startConnection();
 
 signals:
     void setIpAddress(const QString &);
     void setStreamPort(const QString &);
     void setControlPort(const QString &);
+    void hideConnectionWindow();
+    void hideButtonBox();
+    int showMessageBox(QWidget*, QString, QString, MessageBoxType);
 
-private slots:
-    void accepted();
-    void rejected();
-    void comboBoxIndexChanged(int);
-    void closed();
+
+private:
+    void attachConnectionWindow();
+    ConnectionWindow *localConnectionWindow;
 
 };
 

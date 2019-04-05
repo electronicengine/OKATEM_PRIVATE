@@ -24,7 +24,8 @@ void spiComOps(void const * argument)
 
     HAL_SPI_StateTypeDef status;
 
-    short int ret;
+    SPI_HEADER header;
+
     short int control_data_available = 0;
 
     mprintf("spiOps\r\n");
@@ -47,18 +48,22 @@ void spiComOps(void const * argument)
 
             if(status == HAL_SPI_STATE_READY)
             {
-                ret = checkIfControlData();
 
-                if(ret == HAL_OK)
-                {
+                header = SpiRxData->header;
+
+
+                switch (header) {
+                case CONTROL_DATA:
+
+                    recieveControlData(SpiRxData);
 
                     control_data_available = 1;
 
                     putControlDataResponse();
 
-                }
-                else
-                {
+                    break;
+
+                case ENVIRONMENT_DATA:
 
                     putEnvironmentData();
 
@@ -67,7 +72,30 @@ void spiComOps(void const * argument)
                     servo1.angle = 0;
                     servo2.angle = 0;
 
+                    break;
+
+                case UPDATE_FILE:
+
+                    putEnvironmentData();
+
+                    motor1.direction = STOP;
+                    motor2.direction = STOP;
+                    servo1.angle = 0;
+                    servo2.angle = 0;
+
+                    break;
+                default:
+
+                    putEnvironmentData();
+
+                    motor1.direction = STOP;
+                    motor2.direction = STOP;
+                    servo1.angle = 0;
+                    servo2.angle = 0;
+
+                    break;
                 }
+
 
             }
 
@@ -95,13 +123,13 @@ void spiComOps(void const * argument)
 HAL_StatusTypeDef checkIfControlData()
 {
 
+    SPI_HEADER header;
 
-    if((SpiRxData->header & 0xff) == 'C' && ((SpiRxData->header >> 8) & 0xff) == 'O')
+    header = SpiRxData->header;
+
+    if(header == CONTROL_DATA )
     {
 
-
-
-        recieveControlData(SpiRxData);
 
         return HAL_OK;
 
@@ -134,7 +162,7 @@ void putEnvironmentData()
 
     xSemaphoreTake(spiMutexHandle, (TickType_t)1000);
 
-        SpiTxData->header = (('E') | (('N') << 8 ));
+        SpiTxData->header = ENVIRONMENT_DATA;
 
         for(int i = 0; i < GPS_STRING_SIZE; i++)
            SpiTxData->data[i + index] = EnvironmentData->gps_string[i];

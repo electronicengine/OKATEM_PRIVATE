@@ -1,13 +1,13 @@
 #include "ui_positionadd.h"
+#include "positionadd.h"
 #include "autocontrolpanel.h"
 #include "ui_autocontrolwindow.h"
-#include "controlpanel.h"
+#include "controlwindow.h"
 #include "displaypanel.h"
 
 AutoControlPanel::AutoControlPanel(AutoControlWindow *Window) : AutoControlWindow(Window)
 {
 
-    gpAddingWindow = new PositionAdd(gpAutoControlWindow);
 
     attachAutoControlWindow();
 
@@ -51,7 +51,7 @@ void AutoControlPanel::execute()
 
     gmExecutionAvailable = true;
     setPanelEnable(false);
-    gpControlPanel->setPanelEnable(false);
+    gpControlWindow->setPanelEnable(false);
 
     repeat = autocontrol_ui->spinBox->text().toInt();
 
@@ -91,11 +91,11 @@ void AutoControlPanel::execute()
 
 
     setPanelEnable(true);
-    gpControlPanel->setPanelEnable(true);
+    gpControlWindow->setPanelEnable(true);
 
     gmExecutionAvailable = false;
 
-    emit gpDisplaypanel->showMessageBox(gpAutoControlWindow, "Info", "Command Execution Complited", MessageBoxType::information);
+    emit showMessageBox(gpAutoControlWindow, "Info", "Command Execution Complited", MessageBoxType::information);
 
     std::cout << "Command Execution Terminating..." << std::endl;
 
@@ -110,21 +110,8 @@ void AutoControlPanel::setPanelEnable(bool Value)
 
 
 
-void AutoControlPanel::addButtonPressed()
-{
 
-    if(gpAddingWindow->ui->x_position->text() == NULL)
-        gpAddingWindow->ui->x_position->setText(QString::number(gpEnvironmentInfo->step_motor2_step));
-
-    if(gpAddingWindow->ui->y_position->text() == NULL)
-        gpAddingWindow->ui->y_position->setText(QString::number(gpEnvironmentInfo->step_motor1_step));
-
-    gpAddingWindow->show();
-}
-
-
-
-void AutoControlPanel::deleteButtonPressed()
+void AutoControlPanel::deleteCommand()
 {
 
 
@@ -168,50 +155,9 @@ void AutoControlPanel::deleteButtonPressed()
 
 
 
-void AutoControlPanel::commandAddAccepted()
-{
-    gpAddingWindow->hide();
-
-    int command_type = gpAddingWindow->ui->stackedWidget->currentIndex();
-
-
-    switch (command_type) {
-    case position:
-
-        putPositionCommand();
-
-        break;
-
-    case direction:
-
-        putDirectionCommand();
-
-        break;
-    }
-
-
-
-}
-
-void AutoControlPanel::commandAddRejected()
-{
-    gpAddingWindow->hide();
-}
-
-void AutoControlPanel::addList(QString Str)
-{
-    autocontrol_ui->command_list->addItem(Str);
-}
-
-void AutoControlPanel::markRow(int Row)
-{
-
-    autocontrol_ui->command_list->setCurrentItem(autocontrol_ui->command_list->item(Row));
-
-}
-
 void AutoControlPanel::putPositionCommand()
 {
+
 
     gpCommand->giveCommand(gpController, &RemoteController::gotoPositions,
                            std::make_pair(gpAddingWindow->ui->x_position->text().toInt(),
@@ -221,6 +167,7 @@ void AutoControlPanel::putPositionCommand()
     emit addCommand(QString::number(gpCommand->getCurrentCommandIndex() - 1) + " - " + "X Position: "
                                           + gpAddingWindow->ui->x_position->text() + " - " + "Y Position: "
                     + gpAddingWindow->ui->y_position->text());
+
 
 }
 
@@ -242,16 +189,10 @@ void AutoControlPanel::putDirectionCommand()
 void AutoControlPanel::attachAutoControlWindow()
 {
 
-    connect(autocontrol_ui->add_button, SIGNAL(pressed()), this, SLOT(addButtonPressed()));
-    connect(autocontrol_ui->delete_button, SIGNAL(pressed()), this, SLOT(deleteButtonPressed()));
-
     connect(this, SIGNAL(addButtonSetEnable(bool)), autocontrol_ui->add_button, SLOT(setEnabled(bool)));
-    connect(this, SIGNAL(pressed()), autocontrol_ui->delete_button, SLOT(deleteButtonPressed()));
-
-    connect(gpAddingWindow->ui->buttonBox, SIGNAL(accepted()), this, SLOT(commandAddAccepted()));
-    connect(gpAddingWindow->ui->buttonBox, SIGNAL(rejected()), this, SLOT(commandAddRejected()));
 
     connect(this, SIGNAL(addCommand(QString)), this, SLOT(addList(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(markCommand(int)), this, SLOT(markRow(int)), Qt::QueuedConnection);
+    connect(this, SIGNAL(showMessageBox(QWidget*, QString, QString, MessageBoxType)), gpMainWindow, SLOT(showMessage(QWidget*,QString, QString , MessageBoxType)), Qt::BlockingQueuedConnection);
 
 }

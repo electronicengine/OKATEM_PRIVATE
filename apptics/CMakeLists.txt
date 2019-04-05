@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(INCLUDE_PATH
     ./src
+
     )
 
 include_directories(${INCLUDE_PATH}
@@ -70,7 +71,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/serialcom.cpp
     ${INCLUDE_PATH}/lorawan.cpp
     ${INCLUDE_PATH}/spicom.cpp
-    ${INCLUDE_PATH}/controller.cpp
+    ${INCLUDE_PATH}/stmdriver.cpp
     ${INCLUDE_PATH}/sfpmonitor.cpp
     ${INCLUDE_PATH}/udpsocket.cpp
     ${INCLUDE_PATH}/ethernetsocket.cpp
@@ -78,6 +79,17 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/json.cpp
     ${INCLUDE_PATH}/datatypes.h
     ${INCLUDE_PATH}/globals.cpp
+    ${INCLUDE_PATH}/cameradriver.cpp
+    ${INCLUDE_PATH}/v4l2ctrl.cpp
+    ${INCLUDE_PATH}/remotecontroller.cpp
+    ${INCLUDE_PATH}/controllerinterface.cpp
+    ${INCLUDE_PATH}/driverinterface.cpp
+    ${INCLUDE_PATH}/environmentinterface.cpp
+
+
+
+
+
 
     )
 

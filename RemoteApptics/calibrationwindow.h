@@ -20,12 +20,15 @@ public:
     CalibrationWindow(CalibrationWindow *Window);
    explicit CalibrationWindow(MainWindow *Window);
    virtual ~CalibrationWindow();
+   void setDefaultCalibrationValues();
 
-    void deployTextBoxes();
+private slots:
+    void accepted();
+    void rejected();
 
 private:
-    CalibrationPanel *gpCalibrationPanel;
     CalibrationWindow *gpCalibrationWindow;
+    CalibrationPanel *gpCalibrationPanel;
 
 protected:
    Ui::CalibrationWindow *calibration_ui;

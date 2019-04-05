@@ -27,6 +27,13 @@ public:
 
 
 
+public slots:
+    void accepted();
+    void rejected();
+    void comboBoxIndexChanged(int);
+    void closed();
+
+
 protected:
 
 
