@@ -16,12 +16,10 @@
 #define TRANSMISSION_SIZE 64
 #define TRANSMISSION_TIMEOUT 10
 
-struct Lora_Environment_Info
+struct LORA_INFO
 {
-
-    GPS_DATA gps_data;
-
-
+    SFP_DATA_FORMAT sfp_data;
+    ENVIRONMENT_DATA_FORMAT environment_data;
 };
 
 
@@ -38,8 +36,8 @@ public:
     Status sendBeacon();
 
     int init();
-    void setLoraData(const SFP_DATA_FORMAT& SfpData, const ENVIRONMENT_DATA_FORMAT& StmData);
-    void getLoraData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& StmData);
+    void setLoraData(const LORA_INFO& LoraData);
+    LORA_INFO getLoraData();
     void listen();
 
 private:

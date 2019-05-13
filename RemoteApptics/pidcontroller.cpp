@@ -20,9 +20,9 @@ double PIDController::applyPID(double Error)
 
 void PIDController::clear()
 {
-    gmP = 0;
-    gmI = 0;
-    gmD = 0;
+//    gmP = 0;
+//    gmI = 0;
+//    gmD = 0;
 
     gmLastTime = 0;
     gmErrorAvarage = 0;

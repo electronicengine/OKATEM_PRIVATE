@@ -375,6 +375,7 @@ void UdpSocket::listenPort()
 
         if(ret == SUCCESS)
         {
+            timeout_counter = 0;
 
             udp_data = raw_data;
 
@@ -421,7 +422,7 @@ void UdpSocket::listenPort()
         {
             timeout_counter++;
 
-            if(timeout_counter >= 4)
+            if(timeout_counter >= 5)
             {
                 gmTerminated = true;
 

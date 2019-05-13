@@ -62,7 +62,7 @@ float SfpMonitor::getTemperature()
     float temperature;
 
     gmMutex.lock();
-    temperature = gmSfpData.temperature;
+    temperature = gmSfpData.sfp_temperature;
     gmMutex.unlock();
 
     return temperature;
@@ -141,7 +141,7 @@ int SfpMonitor::readValues()
 //        CheckList["SfpMonitor"] = false;
         return -1;
     }
-    gmSfpData.temperature = convertNumber((uint8_t *)&gmBuffer[96], 256, true);
+    gmSfpData.sfp_temperature = convertNumber((uint8_t *)&gmBuffer[96], 256, true);
     gmSfpData.vcc = convertNumber((uint8_t *)&gmBuffer[98], 10000, false);
     gmSfpData.tx_bias = convertNumber((uint8_t *)&gmBuffer[100], 500, false);
     gmSfpData.tx_power = convertNumber((uint8_t *)&gmBuffer[102], 10000, false);
@@ -171,7 +171,7 @@ void SfpMonitor::runSfpMonitor()
 //        if(ret < 0)
 //            printAll("SfpMonitor getValues is failed");
 
-        usleep(10000);
+        usleep(100000);
 
     }
 

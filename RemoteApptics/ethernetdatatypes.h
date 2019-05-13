@@ -23,10 +23,13 @@ struct UDP_DATA_FORMAT
     enum HEADER
     {
         SPI_DATA = 0x1111,
+        INFORMATION_DATA_CALLBACK,
         INFORMATION_DATA,
         STREAM_DATA,
         FEEDBACK_DATA,
         CAMERA_SETTING_DATA,
+        LASER_SWITCH_REQUEST,
+        RF_SWITCH_REQUEST
     };
 
     uint16_t header;

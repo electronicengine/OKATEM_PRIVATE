@@ -80,8 +80,8 @@ void CameraPanel::scaleTarget(int Value)
     {
         scale_coefficent =  1 + (-(double)Value/10);
 
-        height = 720 / scale_coefficent;
-        width = 960 / scale_coefficent;
+        height = FRAME_HEIGHT / scale_coefficent;
+        width = FRAME_WIDTH / scale_coefficent;
 
         cv::resize(template_image, template_image, cv::Size(width, height)); //down scale
 
@@ -207,12 +207,6 @@ QImage  CameraPanel::cvMatToQImage( const cv::Mat &inMat )
 
 void CameraPanel::processImage(cv::Mat &Image)
 {
-    static KalmanFilter kalman_filter;
-    cv::Point noisy_center;
-    cv::Point clear_center;
-    cv::Point drawing_center;
-
-    int point_size;
 
     std::vector<cv::Point> points;
 
@@ -223,24 +217,17 @@ void CameraPanel::processImage(cv::Mat &Image)
     Process::eliminateColors(processing_img);
     points = Process::detectContoursCenter(processing_img);
 
-    point_size = points.size();
+    if(points.size() == 4)
+        Process::orderpoints(points);
 
-    noisy_center = Process::calculateCenter(points);
 
-    if(noisy_center.x > 0 && noisy_center.y > 0)
-        clear_center = kalman_filter.takeKalmanFilter(noisy_center);
-
-    if(clear_center.x > 0 && clear_center.y > 0)
-    {
-        cv::circle(Image, clear_center, 5, cv::Scalar(255,255,255), -1);
-        drawing_center = clear_center;
+    gpAutoControlWindow->setFsoPoints(Image, points);
 
 //        std::cout << "x:" << std::to_string(drawing_center.x) <<
 //                     " y:" << std::to_string(drawing_center.y) << std::endl;
-    }
 
-    gpAutoControlWindow->setFsoPoints(drawing_center, point_size);
-    gpAutoControlWindow->drawErrorVector(Image, drawing_center);
+
+
 
 
 }

@@ -20,7 +20,7 @@ int CameraDriver::init()
 }
 
 
-int CameraDriver::setCameraControls(CAMERA_SETTINGS_FORMAT &CameraSettings)
+int CameraDriver::setCameraControls(const CAMERA_SETTINGS_FORMAT &CameraSettings)
 {
 
 

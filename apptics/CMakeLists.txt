@@ -66,6 +66,7 @@ link_libraries(
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    ${INCLUDE_PATH}/mainoperation.cpp
     ${INCLUDE_PATH}/lcdhmi.cpp
     ${INCLUDE_PATH}/lasertracker.cpp
     ${INCLUDE_PATH}/serialcom.cpp
@@ -81,8 +82,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/globals.cpp
     ${INCLUDE_PATH}/cameradriver.cpp
     ${INCLUDE_PATH}/v4l2ctrl.cpp
-    ${INCLUDE_PATH}/remotecontroller.cpp
-    ${INCLUDE_PATH}/controllerinterface.cpp
+    ${INCLUDE_PATH}/remotecontrolinterface.cpp
     ${INCLUDE_PATH}/driverinterface.cpp
     ${INCLUDE_PATH}/environmentinterface.cpp
 
@@ -116,6 +116,6 @@ add_executable(${PROJECT_NAME}
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
   COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
-  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
+#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
   COMMENT "Creating directory: "
 )

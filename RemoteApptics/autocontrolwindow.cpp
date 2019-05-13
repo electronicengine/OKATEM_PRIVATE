@@ -3,6 +3,8 @@
 #include "ui_autocontrolwindow.h"
 #include "autocontrolpanel.h"
 #include "autolockingpanel.h"
+#include "process.h"
+#include "displaypanel.h"
 
 AutoControlWindow::AutoControlWindow(AutoControlWindow *Window) : MainWindow(true)
 {
@@ -23,9 +25,6 @@ AutoControlWindow::AutoControlWindow(AutoControlWindow *Window) : MainWindow(tru
     gpAutoControlWindow = Window->gpAutoControlWindow;
     gpAddingWindow = Window->gpAddingWindow;
 
-    gpMutex = Window->gpMutex;
-    gpFSOCenter = Window->gpFSOCenter;
-    gpFSOPoints = Window->gpFSOPoints;
 
     gpSfpLinkAvailable = Window->gpSfpLinkAvailable;
     gpSfpConnectionAvailable = Window->gpSfpConnectionAvailable;
@@ -42,10 +41,6 @@ AutoControlWindow::AutoControlWindow(MainWindow *Window) :
 {
 
     autocontrol_ui->setupUi(this);
-
-    gpMutex = new std::mutex;
-    gpFSOCenter = new cv::Point;
-    gpFSOPoints = new int;
 
     gpAutoControlWindow = this;
     gpAddingWindow = new PositionAdd(this);
@@ -72,6 +67,7 @@ void AutoControlWindow::markRow(int Row)
     autocontrol_ui->command_list->setCurrentItem(autocontrol_ui->command_list->item(Row));
 
 }
+
 
 
 void AutoControlWindow::deleteButtonPressed()
@@ -137,42 +133,59 @@ AutoControlWindow::~AutoControlWindow()
     delete gpAutoControlPanel;
 }
 
-void AutoControlWindow::drawErrorVector(cv::Mat &Frame, cv::Point CurrentLoc)
-{
-    cv::line(Frame, CurrentLoc, gmTarget, cv::Scalar(0,0,255));
-}
+
 
 void AutoControlWindow::startLockingOperation()
 {
     gpAutoLockingPanel->executeCommands();
 }
 
-void AutoControlWindow::setFsoPoints(const cv::Point &Center, int Points)
+void AutoControlWindow::setFsoPoints(cv::Mat &Frame, std::vector<cv::Point> &Points)
 {
-    gpMutex->lock();
-    *gpFSOCenter = Center;
-    *gpFSOPoints = Points;
-    gpMutex->unlock();
+
+    gpAutoLockingPanel->drawErrorVector(Frame, Points);
+
 }
 
 void AutoControlWindow::process()
 {
 
+    static bool sfp_enable = false;
+    static bool wifi_enable = false;
 
-    if(*gpConnectionAvailable == true && gmAutoLockingEnable == true)
+    if(*gpConnectionAvailable == true)
     {
 
-        if(*gpSfpConnectionAvailable == false)
+        if(*gpSfpConnectionAvailable == true)
+        {
+
+            if(wifi_enable == false)
+            {
+                gpController->sendLaserSwitchRequest();
+                gpDisplaypanel->switchSfp();
+                sfp_enable = false;
+                wifi_enable = true;
+            }
+        }
+        else if (*gpSfpConnectionAvailable == false)
+        {
+
+
+            if(sfp_enable == false)
+            {
+
+                gpController->sendRFSwitchRequest();
+                gpDisplaypanel->switchWifi();
+                sfp_enable = true;
+                wifi_enable = false;
+            }
+
             gpAutoLockingPanel->executeCommands();
 
-        if(*gpSfpConnectionAvailable == false &&
-                *gpSfpLinkAvailable == true)
-        {
-            std::cout << "link broken" << std::endl;
         }
 
-
     }
+
 }
 
 
@@ -208,6 +221,8 @@ void AutoControlWindow::on_comboBox_currentIndexChanged(const QString &arg1)
     }
 }
 
+
+
 void AutoControlWindow::startButtonPressed()
 {
 
@@ -219,15 +234,7 @@ void AutoControlWindow::startButtonPressed()
             gpAutoControlPanel->executeCommands();
             break;
         case AutoLockingMode:
-            gmAutoLockingEnable = true;
-
-            gpMutex->lock();
-            gmTarget = cv::Point(
-                        autocontrol_ui->position_x->text().toInt(),
-                        autocontrol_ui->position_y->text().toInt());
-            gpMutex->unlock();
-
-            gpAutoLockingPanel->executeCommands();
+            gpAutoLockingPanel->startLocking();
             break;
         case CalibrationMode:
 //            deployCalibrationPanel();
@@ -239,6 +246,8 @@ void AutoControlWindow::startButtonPressed()
 
 }
 
+
+
 void AutoControlWindow::stopButtonPressed()
 {
     std::cout << "stop button pressed" << std::endl;
@@ -248,7 +257,7 @@ void AutoControlWindow::stopButtonPressed()
             gpAutoControlPanel->stopExecution();
             break;
         case AutoLockingMode:
-//            deployAutoLockingPanel();
+            gpAutoLockingPanel->stopLocking();
             break;
         case CalibrationMode:
 //            deployCalibrationPanel();

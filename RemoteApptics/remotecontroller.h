@@ -80,6 +80,9 @@ public:
     void updateFirmware(const std::string &FileName);
 
     int resetUpdatePercentage();
+
+    int sendRFSwitchRequest();
+    int sendLaserSwitchRequest();
     int sendCameraSettingsRequest(const CAMERA_SETTINGS_FORMAT& CameraSettings);
     int sendInformationRequest();
     int gotoPositions(uint32_t XPosition, uint32_t YPosition);

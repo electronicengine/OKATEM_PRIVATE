@@ -13,7 +13,11 @@ int v4l2ctrl::openDevice(const std::string Device)
 
     gmFileDescriptor = ::open(Device.c_str(), O_RDWR);
 
-    return gmFileDescriptor;
+    if(gmFileDescriptor < 0)
+        return FAIL;
+    else
+        return SUCCESS;
+
 }
 
 int v4l2ctrl::setControl(v4l2_control Control)

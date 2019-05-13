@@ -22,9 +22,8 @@ public:
     AutoControlWindow(MainWindow *Window);
     ~AutoControlWindow();
 
-    void drawErrorVector(cv::Mat &Frame, cv::Point CurrentLoc);
     void startLockingOperation();
-    void setFsoPoints(const cv::Point &Center, int Points);
+    void setFsoPoints(cv::Mat &Frame, std::vector<cv::Point> &Points);
     void process();
 
 
@@ -45,14 +44,10 @@ protected:
     Ui::AutoControlWindow *autocontrol_ui;
     PositionAdd *gpAddingWindow;
 
-    cv::Point *gpFSOCenter;
-    int *gpFSOPoints;
 
-    std::mutex *gpMutex;
 
 private:
 
-    cv::Point gmTarget;
     AutoControlPanel *gpAutoControlPanel;
     AutoLockingPanel *gpAutoLockingPanel;
 
@@ -65,7 +60,6 @@ private:
 
     QStringList gmModeList = {"Auto Control", "Auto Locking", "Calibration"};
 
-    volatile bool gmAutoLockingEnable = false;
     void deployAutoLockingPanel();
     void deployCalibrationPanel();
 };

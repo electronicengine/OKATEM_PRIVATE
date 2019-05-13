@@ -10,16 +10,15 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/document.h>
 #include <fstream>
 #include <sys/types.h>
 #include <sys/sysinfo.h>
 #include <numeric>
 #include "globals.h"
 #include <memory>
-
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
 
 
 
@@ -28,57 +27,53 @@ class Json
 
 public:
 
+    enum FileTypes
+    {
+        RemoteMachineFileInfo,
+        LoraInfo,
+        SensorInfo,
+        MotorInfo
+    };
+
+
     Json();
-    Json(int Mode);
     ~Json();
 
     int init();
 
-    void saveEnvironmentData(ENVIRONMENT_DATA_FORMAT &StmData, SFP_DATA_FORMAT &SfpData);
-    void saveLoraData(ENVIRONMENT_DATA_FORMAT &LoraStmData, SFP_DATA_FORMAT &LoraSfpData);
+    void saveStreamInfo(const REMOTEMACHINE_INFORMATIONS& JsonData);
+    void saveBoardInfo(const JSON_SENSOR_INFORMATIONS& JsonData);
+    void saveMotorInfo(const MOTOR_INFORMATIONS &MotorInfo);
 
-    template <typename T>
-    int loadMotorPositions(T &ControlData)
-    {
-        MOTOR_INFORMATIONS info;
+    REMOTEMACHINE_INFORMATIONS loadStreamInfo();
+    JSON_SENSOR_INFORMATIONS loadSensorInfo();
+    MOTOR_INFORMATIONS loadMotorInfo();
 
-        info = ControlData;
-
-        loadMotorPositions(info);
-
-        ControlData = info;
-
-    }
-
-
-    template <typename T>
-    int saveMotorPositions(T &ControlData)
-    {
-
-    }
-
-    int loadMotorPositions(MOTOR_INFORMATIONS &ControlData);
-    void saveMotorPositions(MOTOR_INFORMATIONS &ControlData);
-
-
-    int loadStreamInfo(REMOTEMACHINE_INFORMATIONS &RemoteMachine);
 
 private:
 
-    ENVIRONMENT_DATA_FORMAT gmStmData;
-    ENVIRONMENT_DATA_FORMAT gmLoraStmData;
-
-    SFP_DATA_FORMAT gmSfpData;
-    SFP_DATA_FORMAT gmLoraSfpData;
-
-    MOTOR_INFORMATIONS gmMotorInformations;
     REMOTEMACHINE_INFORMATIONS gmRemoteMachineInformations;
+    MOTOR_INFORMATIONS gmMotorInformations;
+    JSON_SENSOR_INFORMATIONS gmJsonSensorInformations;
+
+    const std::vector<std::string> FILES{"/var/www/html/remotemachine.json",
+                                         "/var/www/html/lora.json",
+                                         "/var/www/html/sensors.json",
+                                         "/var/www/html/motors.json"};
+
+    const std::vector<std::string> FILES_BACKUP{"/var/www/html/remotemachine_backup.json",
+                                                "/var/www/html/lora_backup.json",
+                                                "/var/www/html/sensors_backup.json",
+                                                "/var/www/html/motors_backup.json"};
 
     std::mutex gmMutex;
 
-    void writeJson();
-    int writeFile(const std::string &Content);
-    std::string readFile();
+    int writeFile(const std::string &Content, const std::string &File);
+    std::string readFile(const std::string &File);
+
+    void readStreamInfo(REMOTEMACHINE_INFORMATIONS &ControlData);
+    void readSensorInfo(JSON_SENSOR_INFORMATIONS &ControlData);
+    void readMotorInfo(MOTOR_INFORMATIONS &ControlData);
 
 
     void getPhysicalSourceUsage(float &MemUsage, float &CpuUsage);

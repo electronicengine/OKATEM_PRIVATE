@@ -369,6 +369,30 @@ int RemoteController::resetUpdatePercentage()
     return SUCCESS;
 }
 
+int RemoteController::sendRFSwitchRequest()
+{
+    int ret;
+    UDP_DATA_FORMAT request;
+
+    request.header = UDP_DATA_FORMAT::RF_SWITCH_REQUEST;
+
+    ret = gpSocket->sendData(request);
+
+    return ret;
+}
+
+int RemoteController::sendLaserSwitchRequest()
+{
+    int ret;
+    UDP_DATA_FORMAT request;
+
+    request.header = UDP_DATA_FORMAT::LASER_SWITCH_REQUEST;
+
+    ret = gpSocket->sendData(request);
+
+    return ret;
+}
+
 int RemoteController::gotoPositions(uint32_t XPosition, uint32_t YPosition)
 {
 

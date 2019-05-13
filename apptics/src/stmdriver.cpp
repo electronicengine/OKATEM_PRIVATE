@@ -26,6 +26,8 @@ int StmDriver::init()
 
     if(status == Status::ok)
     {
+        resetStm();
+
         std::thread communication(&StmDriver::communicationThread, this);
         communication.detach();
 
@@ -41,8 +43,11 @@ int StmDriver::init()
 
 }
 
-void StmDriver::resetStm()
+void StmDriver::    resetStm()
 {
+
+    gmResetStm = true;
+
     system("sudo echo \"mode 74 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
     system("sudo echo \"dir 74 1\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
     system("sudo echo \"out 74 0\" > /sys/devices/platform/1000b000.pinctrl/mt_gpio");
@@ -140,7 +145,7 @@ Status StmDriver::driveMotorDown()
 
 
 
-Status StmDriver::setControlData(CONTROL_DATA_FORMAT& ControlData)
+Status StmDriver::setControlData(const CONTROL_DATA_FORMAT& ControlData)
 {
 
     gmMutex.lock();
@@ -161,7 +166,7 @@ Status StmDriver::setControlData(CONTROL_DATA_FORMAT& ControlData)
 
 
 
-Status StmDriver::setUpdateData(UPDATE_FILE_FORMAT &Data)
+Status StmDriver::setUpdateData(const UPDATE_FILE_FORMAT &Data)
 {
     gmMutex.lock();
     gmUpdateFile.push_back(Data);
@@ -177,18 +182,27 @@ Status StmDriver::setUpdateData(UPDATE_FILE_FORMAT &Data)
         processUpdateData(Data);
 
         gmUpdateAvalilable = true;
+
     }
 
 
     return Status::ok;
 }
 
-void StmDriver::setMotorCalibrationValues(MOTOR_INFORMATIONS &MotorInformations)
+void StmDriver::setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations)
 {
     gmMutex.lock();
     gmCalibratedMotorValues = MotorInformations;
+
+    gmEnvironmentData.servo_motor1_degree = gmCalibratedMotorValues.servo_motor1_degree;
+    gmEnvironmentData.servo_motor2_degree = gmCalibratedMotorValues.servo_motor2_degree;
+    gmEnvironmentData.step_motor1_step = gmCalibratedMotorValues.step_motor1_position;
+    gmEnvironmentData.step_motor2_step = gmCalibratedMotorValues.step_motor2_position;
+
     gmMutex.unlock();
 }
+
+
 
 Status StmDriver::checkValidEnvironmentData(ENVIRONMENT_DATA_FORMAT &Data)
 {
@@ -205,15 +219,15 @@ Status StmDriver::checkValidEnvironmentData(ENVIRONMENT_DATA_FORMAT &Data)
 ENVIRONMENT_DATA_FORMAT StmDriver::getStmEnvironment()
 {
 
-    ENVIRONMENT_DATA_FORMAT data;
+    static ENVIRONMENT_DATA_FORMAT environment_data;
 
     gmMutex.lock();
 
-    data = gmEnvironmentData;
+    environment_data.move(gmEnvironmentData);
 
     gmMutex.unlock();
 
-    return data;
+    return environment_data;
 }
 
 int StmDriver::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData)
@@ -245,6 +259,11 @@ int StmDriver::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData
 
         gmSpiTxData = initial_control_data;
 
+        gmEnvironmentData.servo_motor1_degree = gmCalibratedMotorValues.servo_motor1_degree;
+        gmEnvironmentData.servo_motor2_degree = gmCalibratedMotorValues.servo_motor2_degree;
+        gmEnvironmentData.step_motor1_step = gmCalibratedMotorValues.step_motor1_position;
+        gmEnvironmentData.step_motor2_step = gmCalibratedMotorValues.step_motor2_position;
+
 
         return SUCCESS;
 
@@ -261,6 +280,7 @@ void StmDriver::communicationThread()
 {
 
     SPI_TRANSFER_FORMAT spi_data;
+
 
     unsigned char *spi_transfer_data;
     int wait_time = 100000;
@@ -383,7 +403,6 @@ void StmDriver::processUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
         gmUpdateAvalilable = false;
     }
 
-
 }
 
 
@@ -394,6 +413,7 @@ void StmDriver::putEnvironmentDataIntoBuffer(const SPI_TRANSFER_FORMAT &SpiData)
     gmMutex.lock();
     gmEnvironmentData = SpiData;
     gmMutex.unlock();
+
 
     gmIsReceived = true;
     gmIsTransmitted = true;

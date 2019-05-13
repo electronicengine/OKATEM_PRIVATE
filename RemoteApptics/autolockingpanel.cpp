@@ -2,11 +2,91 @@
 #include "autolockingpanel.h"
 #include "process.h"
 #include "pidcontroller.h"
+#include "kalmanfilter.h"
 
 AutoLockingPanel::AutoLockingPanel(AutoControlWindow *Window) :
     AutoControlWindow(Window)
 {
     attachToAutoControlWindow();
+}
+
+void AutoLockingPanel::markFSOPoints(cv::Mat &Frame, const std::vector<cv::Point> &Points)
+{
+
+    if(Points.size() == FSO_POINTS)
+    {
+        const cv::Scalar colors[Points.size()] = {cv::Scalar(0, 0, 255),
+                                      cv::Scalar(0, 255, 0),
+                                      cv::Scalar(255, 0, 0),
+                                      cv::Scalar(255, 0, 255) };
+
+        for(size_t i = 0; i < Points.size(); i++)
+            cv::circle(Frame, Points[i], 5, colors[i], -1);
+    }
+
+}
+
+void AutoLockingPanel::drawErrorVector(cv::Mat &Frame, const std::vector<cv::Point> &Points)
+{
+
+    std::vector<double> error_vector;
+
+    cv::Point noisy_center;
+    cv::Point clear_center;
+
+    static KalmanFilter kalman_filter;
+
+    if(Points.size() < FSO_POINTS)
+    {
+        error_vector = calculateErrorVector(gmTarget, gmFSOCenter);
+
+        if(error_vector[2] < 20)
+        {
+            noisy_center = cv::Point(0, 0);
+            std::cout << "closer" << std::endl;
+        }
+        else
+        {
+            noisy_center = Process::calculateCenter(Points);
+        }
+
+    }
+    else
+        noisy_center = Process::calculateCenter(Points);
+
+
+
+    if(noisy_center.x > 0 && noisy_center.y > 0)
+    {
+        clear_center = kalman_filter.takeKalmanFilter(noisy_center);
+
+        if((clear_center.x > 0 && clear_center.y > 0) && (clear_center.x < 1000 && clear_center.y < 1000))
+        {
+
+            gmMutex.lock();
+
+                gmFSOCenter = clear_center;
+                gmFSOPoints = Points;
+
+            gmMutex.unlock();
+
+
+            std::cout << "x:" << std::to_string(clear_center.x) <<
+                         " y:" << std::to_string(clear_center.y) << std::endl;
+
+            cv::line(Frame, clear_center, gmTarget, cv::Scalar(0,0,255)); // drawing Error Vector
+
+            markFSOPoints(Frame, Points);
+        }
+
+    }
+
+
+    cv::circle(Frame, gmFSOCenter, 5, cv::Scalar(255,255,255), -1); // Mark Center
+
+
+
+
 }
 
 void AutoLockingPanel::attachToAutoControlWindow()
@@ -26,9 +106,11 @@ void AutoLockingPanel::executeCommands()
 
         gmAutoLockingProcessing = true;
 
-        std::thread locking_thread(&AutoLockingPanel::lockToTarget, this, cv::Point(
-                                       autocontrol_ui->position_x->text().toInt(),
-                                       autocontrol_ui->position_y->text().toInt()));
+        gmTarget = cv::Point(
+                    autocontrol_ui->position_x->text().toInt(),
+                    autocontrol_ui->position_y->text().toInt());
+
+        std::thread locking_thread(&AutoLockingPanel::lockToTarget, this, gmTarget );
         locking_thread.detach();
     }
 
@@ -40,6 +122,8 @@ void AutoLockingPanel::executeCommands()
 void AutoLockingPanel::lockToTarget(const cv::Point &Target)
 {
 
+
+    sleep(1);
 
     std::cout << "Locking is starting..." << std::endl;
     std::cout << "Target x:" << std::to_string(Target.x) <<
@@ -54,12 +138,33 @@ void AutoLockingPanel::lockToTarget(const cv::Point &Target)
 
     cv::Point current_location;
 
+    gmMutex.lock();
+    current_location = gmFSOCenter;
+    gmMutex.unlock();
+
+    error_vector = calculateErrorVector(Target, current_location);
+
+    if(error_vector[2] < 8)
+    {
+        gmAutoLockingProcessing = false;
+        std::cout << "locking is done" << std::endl;
+        return;
+    }
+
     while(1)
     {
 
-        gpMutex->lock();
-        current_location = *gpFSOCenter;
-        gpMutex->unlock();
+
+
+        if(gmAutoLockingEnable == false)
+        {
+            std::cout << "Auto Locking is terminating..." << std::endl;
+
+            break;
+        }
+        gmMutex.lock();
+        current_location = gmFSOCenter;
+        gmMutex.unlock();
 
 
         error_vector = calculateErrorVector(Target, current_location);
@@ -77,32 +182,29 @@ void AutoLockingPanel::lockToTarget(const cv::Point &Target)
 //        std::cout << "speed_y:" << std::to_string(stepmotor2_speed) <<
 //                     " error_y:" << std::to_string(error_vector[0]) << std::endl;
 
-        driveMotors(stepmotor1_speed, stepmotor2_speed);
-
         ret = checkError(error_vector[2]);
 
-        error_vector.clear();
+        if(error_vector[2] > 3)
+            driveMotors(stepmotor1_speed, stepmotor2_speed);
+        else
+            usleep(50000);
+
+
 
         if(ret == SUCCESS)
         {
 
+
             std::cout << "locking is complited!" << std::endl;
-            if(*gpSfpConnectionAvailable == true)
-            {
-                *gpSfpLinkAvailable = true;
 
-                break;
-            }
-            else
-            {
 
-                *gpSfpLinkAvailable = false;
+            *gpSfpLinkAvailable = true;
 
-                std::cout << "Sfp link is not available" << std::endl;
-
-                break;
-            }
-
+            break;
+        }
+        else
+        {
+            *gpSfpLinkAvailable = false;
 
         }
 
@@ -112,6 +214,16 @@ void AutoLockingPanel::lockToTarget(const cv::Point &Target)
 
 }
 
+void AutoLockingPanel::stopLocking()
+{
+    gmAutoLockingEnable = false;
+}
+
+void AutoLockingPanel::startLocking()
+{
+    gmAutoLockingEnable = true;
+}
+
 
 
 void AutoLockingPanel::applyPID(const std::vector<double> &ErrorVector, double &Speed1, double &Speed2)
@@ -119,15 +231,44 @@ void AutoLockingPanel::applyPID(const std::vector<double> &ErrorVector, double &
     static PIDController pid_controller_x(0.6, 0.0002, 9);
     static PIDController pid_controller_y(0.3, 0.0002, 15);
 
+
     Speed1 = pid_controller_y.applyPID(ErrorVector[1]);
     Speed2 = pid_controller_x.applyPID(ErrorVector[0]);
+
+
+    if(ErrorVector[2] < 3)
+    {
+        pid_controller_x.clear();
+        pid_controller_y.clear();
+    }
 
 }
 
 void AutoLockingPanel::searchFSO(const std::vector<double> &ErrorVector, double &Speed1, double &Speed2)
 {
-    std::cout <<"search FSO" << ErrorVector[1] << Speed1 << Speed2 << std::endl;
 
+    if(ErrorVector[2] > 10)
+    {
+        if(ErrorVector[0] > ErrorVector[1])
+        {
+            Speed2 = MAX_STEPMOTOR_SPEED;
+            Speed1 = 0;
+        }
+        else if(ErrorVector[0] > ErrorVector[1])
+        {
+            Speed2 = 0;
+            Speed1 = MAX_STEPMOTOR_SPEED - 20;
+        }
+
+    }
+    else
+    {
+        Speed1 = 0;
+        Speed2 = 0;
+    }
+
+    std::cout <<"search FSO : speed1:" << std::to_string(Speed1) <<
+             " speed2:" << std::to_string(Speed2) << std::endl;
 }
 
 
@@ -137,17 +278,34 @@ void AutoLockingPanel::searchFSO(const std::vector<double> &ErrorVector, double 
 int AutoLockingPanel::checkIfLedsInFrame()
 {
 
-    if(*gpFSOPoints > 0)
+
+    if(gmFSOPoints.size() > 0)
         return SUCCESS;
     else
         return FAIL;
 
 }
 
+bool AutoLockingPanel::checkLedPositions()
+{
+
+    if(gmFSOPoints.size() < 4)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+
+}
+
+
 int AutoLockingPanel::checkError(double Error)
 {
 
     static int timeout_counter = 0;
+
 
     if(Error < 3)
     {
@@ -228,7 +386,7 @@ std::vector<double> AutoLockingPanel::calculateErrorVector(cv::Point Target, cv:
     std::vector<double> error_vector;
 
 
-    if((Current.x > 0 || Current.x < 960) && (Current.y > 0 || Current.y < 720))
+    if((Current.x > 0 || Current.x < FRAME_WIDTH) && (Current.y > 0 || Current.y < FRAME_HEIGHT))
     {
 
         error_vector.push_back(std::abs(Target.x - Current.x)); //x companent

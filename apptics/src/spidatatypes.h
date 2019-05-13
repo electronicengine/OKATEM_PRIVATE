@@ -11,12 +11,18 @@
 #include <fstream>
 #include <memory.h>
 #include <map>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+
 
 #include "config.h"
+#define VARNAME(Variable) (#Variable)
+
 
 struct SFP_DATA_FORMAT
 {
-    float temperature;
+    float sfp_temperature;
     float vcc;
     float tx_bias;
     float tx_power;
@@ -66,7 +72,7 @@ struct SFP_DATA_FORMAT
         status |= (Data[index++] << 24);
 
 
-        temperature = (float)temp_temperature / 100000;
+        sfp_temperature = (float)temp_temperature / 100000;
         vcc = (float)temp_vcc / 100000;
         tx_bias = (float)temp_tx_bias / 100000;
         tx_power = (float)temp_tx_power / 100000;
@@ -82,7 +88,7 @@ struct SFP_DATA_FORMAT
     {
         unsigned char *data = new unsigned char[24];
         int index = 0;
-        int temp_temperature = temperature * 100000;
+        int temp_temperature = sfp_temperature * 100000;
         int temp_vcc = vcc * 100000;
         int temp_tx_bias = tx_bias * 100000;
         int temp_tx_power = tx_power * 100000;
@@ -123,6 +129,53 @@ struct SFP_DATA_FORMAT
         return data;
     }
 
+    void serializeJson(rapidjson::Writer<rapidjson::StringBuffer> &JsonWriter) const
+    {
+        JsonWriter.Key(VARNAME(status));
+        JsonWriter.String(status ? "Connected":"Disconnected");
+
+        JsonWriter.Key(VARNAME(sfp_temperature));
+        JsonWriter.Int(sfp_temperature);
+
+        JsonWriter.Key(VARNAME(vcc));
+        JsonWriter.Double(vcc);
+
+        JsonWriter.Key(VARNAME(tx_bias));
+        JsonWriter.Double(tx_bias);
+
+        JsonWriter.Key(VARNAME(tx_power));
+        JsonWriter.Double(tx_power);
+
+        JsonWriter.Key(VARNAME(rx_power));
+        JsonWriter.Double(rx_power);
+
+    }
+
+    void parseJson(const rapidjson::Value &JsonObject)
+    {
+
+        if(JsonObject.HasMember(VARNAME(status)))
+            if(JsonObject[VARNAME(status)].GetString() == "Connected")
+                status = 1;
+            else
+                status = 0;
+
+        if(JsonObject.HasMember(VARNAME(sfp_temperature)))
+            sfp_temperature = JsonObject[VARNAME(sfp_temperature)].GetInt();
+
+        if(JsonObject.HasMember(VARNAME(vcc)))
+            vcc = JsonObject[VARNAME(vcc)].GetDouble();
+
+        if(JsonObject.HasMember(VARNAME(tx_bias)))
+            tx_bias = JsonObject[VARNAME(tx_bias)].GetDouble();
+
+        if(JsonObject.HasMember(VARNAME(tx_power)))
+            tx_power = JsonObject[VARNAME(tx_power)].GetDouble();
+
+        if(JsonObject.HasMember(VARNAME(rx_power)))
+            rx_power = JsonObject[VARNAME(rx_power)].GetDouble();
+
+    }
 };
 
 
@@ -199,7 +252,45 @@ struct SENSOR_DATA
         return *this;
     }
 
+    void serializeJson(rapidjson::Writer<rapidjson::StringBuffer> &JsonWriter) const
+    {
 
+        JsonWriter.Key(VARNAME(temperature));
+        JsonWriter.Int(temperature);
+
+        JsonWriter.Key(VARNAME(compass_degree));
+        JsonWriter.Int(compass_degree);
+
+        JsonWriter.Key(VARNAME(pressure));
+        JsonWriter.Int(pressure);
+
+        JsonWriter.Key(VARNAME(altitude));
+        JsonWriter.Int(altitude);
+
+        JsonWriter.Key(VARNAME(wheather_condition));
+        JsonWriter.Int(wheather_condition);
+
+    }
+
+    void parseJson(rapidjson::Value &JsonObject)
+    {
+
+        if(JsonObject.HasMember(VARNAME(temperature)))
+            temperature = JsonObject[VARNAME(temperature)].GetInt();
+
+        if(JsonObject.HasMember(VARNAME(compass_degree)))
+            compass_degree = JsonObject[VARNAME(compass_degree)].GetInt();
+
+        if(JsonObject.HasMember(VARNAME(pressure)))
+            pressure = JsonObject[VARNAME(pressure)].GetInt();
+
+        if(JsonObject.HasMember(VARNAME(altitude)))
+            altitude = JsonObject[VARNAME(altitude)].GetInt();
+
+        if(JsonObject.HasMember(VARNAME(wheather_condition)))
+            wheather_condition = JsonObject[VARNAME(wheather_condition)].GetInt();
+
+    }
 };
 
 
@@ -295,6 +386,41 @@ struct GPS_DATA
         }
 
         return *this;
+    }
+
+    void serializeJson(rapidjson::Writer<rapidjson::StringBuffer> &JsonWriter) const
+    {
+
+        JsonWriter.Key(VARNAME(latitude));
+        JsonWriter.Double(latitude);
+
+        JsonWriter.Key(VARNAME(sfp_temp));
+        JsonWriter.String((const char *)&ns_indicator);
+
+        JsonWriter.Key(VARNAME(longnitude));
+        JsonWriter.Double(longnitude);
+
+        JsonWriter.Key(VARNAME(we_indicator));
+        JsonWriter.String((const char *)&we_indicator);
+
+
+    }
+
+    void parseJson(rapidjson::Value &JsonObject)
+    {
+
+        if(JsonObject.HasMember(VARNAME(latitude)))
+            latitude = JsonObject[VARNAME(latitude)].GetDouble();
+
+//        if(JsonObject.HasMember(VARNAME(ns_indicator)))
+//            ns_indicator = JsonObject[VARNAME(ns_indicator)].GetString();
+
+        if(JsonObject.HasMember(VARNAME(longnitude)))
+            longnitude = JsonObject[VARNAME(longnitude)].GetDouble();
+
+//        if(JsonObject.HasMember(VARNAME(we_indicator)))
+//            we_indicator = (unsigned char)JsonObject[VARNAME(we_indicator)].GetString();
+
     }
 };
 
@@ -404,50 +530,13 @@ struct ENVIRONMENT_DATA_FORMAT
 
     std::string gps_string;
 
+    uint8_t update_percentage;
+
+
     ENVIRONMENT_DATA_FORMAT()
     {
 
     }
-
-    ENVIRONMENT_DATA_FORMAT(SPI_TRANSFER_FORMAT SpiData)
-    {
-        try
-        {
-            int index = 0;
-
-            gps_string = std::string(&SpiData.data[0], &SpiData.data[GPS_STRING_SIZE - 1]);
-            gps_data = gps_string;
-            index += GPS_STRING_SIZE;
-
-            step_motor1_step = SpiData.data[index++];
-            step_motor1_step |= SpiData.data[index++] << 8;
-            step_motor1_step |= SpiData.data[index++] << 16;
-            step_motor1_step |= SpiData.data[index++] << 24;
-
-            step_motor2_step = SpiData.data[index++];
-            step_motor2_step |= SpiData.data[index++] << 8;
-            step_motor2_step |= SpiData.data[index++] << 16;
-            step_motor2_step |= SpiData.data[index++] << 24;
-
-            servo_motor1_degree = SpiData.data[index++];
-
-            servo_motor2_degree = SpiData.data[index++];
-
-            sensor_data = &SpiData.data[index];
-
-            index += SENSOR_DATA_SIZE;
-
-            step_motor_breaks = SpiData.data[index++];
-
-        }
-        catch(std::exception& ex)
-        {
-            std::cout << "SPI_TX_FORMAT exception: " << ex.what() << std::endl;
-        }
-
-
-    }
-
 
     operator SPI_TRANSFER_FORMAT()
     {
@@ -493,7 +582,7 @@ struct ENVIRONMENT_DATA_FORMAT
 
     }
 
-    ENVIRONMENT_DATA_FORMAT& operator = (SPI_TRANSFER_FORMAT& SpiData)
+    ENVIRONMENT_DATA_FORMAT& operator = (const SPI_TRANSFER_FORMAT& SpiData)
     {
 
         try
@@ -514,11 +603,17 @@ struct ENVIRONMENT_DATA_FORMAT
             step_motor2_step |= SpiData.data[index++] << 16;
             step_motor2_step |= SpiData.data[index++] << 24;
 
-            servo_motor1_degree = SpiData.data[index++];
+            if(SpiData.data[index] != 0)
+                servo_motor1_degree = SpiData.data[index++];
+            else
+                index++;
 
-            servo_motor2_degree = SpiData.data[index++];
+            if(SpiData.data[index] != 0)
+                servo_motor2_degree = SpiData.data[index++];
+            else
+                index++;
 
-            sensor_data = &SpiData.data[index];
+            sensor_data = (unsigned char *)&SpiData.data[index];
 
             index += SENSOR_DATA_SIZE;
 
@@ -531,6 +626,49 @@ struct ENVIRONMENT_DATA_FORMAT
         }
 
         return *this;
+    }
+
+    void serializeJson(rapidjson::Writer<rapidjson::StringBuffer> &JsonWriter) const
+    {
+
+
+        JsonWriter.Key(VARNAME(gps_string));
+        JsonWriter.String(gps_string.c_str());
+
+        gps_data.serializeJson(JsonWriter);
+        sensor_data.serializeJson(JsonWriter);
+
+
+    }
+
+    void parseJson(rapidjson::Value &JsonObject)
+    {
+        if(JsonObject.HasMember(VARNAME(gps_string)))
+            gps_string = JsonObject[VARNAME(gps_string)].GetString();
+
+        gps_data.parseJson(JsonObject);
+        sensor_data.parseJson(JsonObject);
+    }
+
+    void move(ENVIRONMENT_DATA_FORMAT &EnvironmentData)
+    {
+        gps_data = EnvironmentData.gps_data;
+        sensor_data = EnvironmentData.sensor_data;
+        step_motor_breaks = EnvironmentData.step_motor_breaks;
+        gps_string = EnvironmentData.gps_string;
+
+        if(EnvironmentData.servo_motor1_degree != 0xFF && EnvironmentData.servo_motor1_degree != 0)
+            servo_motor1_degree = EnvironmentData.servo_motor1_degree;
+
+        if(EnvironmentData.servo_motor2_degree != 0xFF && EnvironmentData.servo_motor2_degree != 0)
+            servo_motor2_degree = EnvironmentData.servo_motor2_degree;
+
+        if(EnvironmentData.step_motor1_step != 0xFFFF)
+            step_motor1_step = EnvironmentData.step_motor1_step;
+
+        if(EnvironmentData.step_motor2_step != 0xFFFF)
+            step_motor2_step = EnvironmentData.step_motor2_step;
+
     }
 
 };
@@ -555,7 +693,7 @@ struct UPDATE_FILE_FORMAT
         is_available = Var;
     }
 
-    operator SPI_TRANSFER_FORMAT()
+    operator SPI_TRANSFER_FORMAT() const
     {
         int checksum = 0;
 
@@ -744,7 +882,7 @@ struct CONTROL_DATA_FORMAT
     }
 
 
-    operator SPI_TRANSFER_FORMAT()
+    operator SPI_TRANSFER_FORMAT() const
     {
 
         SPI_TRANSFER_FORMAT spi_transfer_data;

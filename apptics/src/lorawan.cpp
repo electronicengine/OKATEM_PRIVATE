@@ -295,7 +295,7 @@ std::string LoraWan::prepareData()
         Data += "-" + std::to_string(gmLoraStm.sensor_data.compass_degree);
 
         Data += "-" + std::to_string(gmLoraSfp.status);
-        Data += "-" + std::to_string(gmLoraSfp.temperature);
+        Data += "-" + std::to_string(gmLoraSfp.sfp_temperature);
         Data += "-" + std::to_string(gmLoraSfp.vcc);
         Data += "-" + std::to_string(gmLoraSfp.tx_bias);
         Data += "-" + std::to_string(gmLoraSfp.tx_power);
@@ -374,13 +374,13 @@ void LoraWan::listen()
 
 
 
-void LoraWan::setLoraData(const SFP_DATA_FORMAT &SfpData, const ENVIRONMENT_DATA_FORMAT &StmData)
+void LoraWan::setLoraData(const LORA_INFO &LoraInfo)
 {
 
     gmMutex.lock();
 
-    gmLoraSfp = SfpData;
-    gmLoraStm = StmData;
+    gmLoraSfp = LoraInfo.sfp_data;
+    gmLoraStm = LoraInfo.environment_data;
 
     gmMutex.unlock();
 
@@ -388,15 +388,19 @@ void LoraWan::setLoraData(const SFP_DATA_FORMAT &SfpData, const ENVIRONMENT_DATA
 
 
 
-void LoraWan::getLoraData(SFP_DATA_FORMAT &SfpData, ENVIRONMENT_DATA_FORMAT &StmData)
+LORA_INFO LoraWan::getLoraData()
 {
+
+    LORA_INFO lora_data;
 
     gmMutex.lock();
 
-    SfpData = gmRecievedLoraSfp;
-    StmData = gmRecievedLoraStm;
+    lora_data.sfp_data = gmRecievedLoraSfp;
+    lora_data.environment_data = gmRecievedLoraStm;
 
     gmMutex.unlock();
+
+    return lora_data;
 
 }
 
@@ -447,7 +451,7 @@ void LoraWan::callBack(std::string& CommingData)
         gmRecievedLoraStm.sensor_data.compass_degree = (uint32_t) std::stoi(token[9]);
 
         gmRecievedLoraSfp.status = (int)std::stoi(token[10]);
-        gmRecievedLoraSfp.temperature = (int)std::stoi(token[11]);
+        gmRecievedLoraSfp.sfp_temperature = (int)std::stoi(token[11]);
         gmRecievedLoraSfp.vcc = (int)std::stoi(token[12]);
         gmRecievedLoraSfp.tx_bias = (int)std::stoi(token[13]);
         gmRecievedLoraSfp.tx_power = (int)std::stoi(token[14]);

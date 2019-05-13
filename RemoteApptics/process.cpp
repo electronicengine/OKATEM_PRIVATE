@@ -15,7 +15,7 @@ double Process::calculateMagnitude(const cv::Point &P)
     return magnitude;
 }
 
-cv::Point Process::calculateCenter(std::vector<cv::Point> &Points)
+cv::Point Process::calculateCenter(const std::vector<cv::Point> &Points)
 {
 
     int size = Points.size();
@@ -287,6 +287,7 @@ void Process::orderpoints(std::vector<cv::Point> &Points)
     }
 
     std::swap(Points[2], Points[3]);
+
 
 }
 

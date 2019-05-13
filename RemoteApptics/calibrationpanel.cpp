@@ -18,6 +18,7 @@ CalibrationPanel::~CalibrationPanel()
 
 void CalibrationPanel::deployPanel()
 {
+
     emit setStep1Current(QString::number(gpControlInfo->step_motor1_step));
     emit setStep1Max(QString::number(gpControlInfo->step_motor1_max_step));
 
@@ -47,10 +48,10 @@ void CalibrationPanel::attachCalibrationWindow()
     connect(this, SIGNAL(setServo2Current(QString)), calibration_ui->servo2_current_degree, SLOT(setText(QString)));
 
     connect(this, SIGNAL(setServo1Top(QString)), calibration_ui->servo1_top_degree, SLOT(setText(QString)));
-    connect(this, SIGNAL(setServo1Top(QString)), calibration_ui->servo2_top_degree, SLOT(setText(QString)));
+    connect(this, SIGNAL(setServo2Top(QString)), calibration_ui->servo2_top_degree, SLOT(setText(QString)));
 
     connect(this, SIGNAL(setServo1Bottom(QString)), calibration_ui->servo1_bottom_degree, SLOT(setText(QString)));
-    connect(this, SIGNAL(setServo1Bottom(QString)), calibration_ui->servo2_bottom_degree, SLOT(setText(QString)));
+    connect(this, SIGNAL(setServo2Bottom(QString)), calibration_ui->servo2_bottom_degree, SLOT(setText(QString)));
 
 }
 

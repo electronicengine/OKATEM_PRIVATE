@@ -14,7 +14,7 @@
 #include "globals.h"
 #include "queue.h"
 #include "udpsocket.h"
-
+#include "mainoperation.h"
 
 // Text properties which is printed on debug
 #define TEXT_FONT cv::FONT_HERSHEY_COMPLEX_SMALL
@@ -39,40 +39,40 @@ struct PERSPECTIVE_RATE
 };
 
 
-class LaserTracker
+class LaserTracker : public MainOperation
 {
-private:
-
-        std::mutex gmMutex;
-        cv::Mat detectRed(cv::Mat &Frame);
-        std::vector<cv::Vec3f> detectCircle(cv::Mat &Frame);
-        cv::VideoCapture *mVideoCapture;
-
-        cv::Mat gmFrame;
-        cv::Mat gmScalarFrame;
-
-        int setCameraGain();
-        int drawTarget(const cv::Mat &Frame);
-        int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
-        int orderpoints(std::vector<cv::Point>& Points);
-        int calculatePerspective(std::vector<cv::Point>& Points);
 
 public:
 
-        PERSPECTIVE_RATE gmPerspective;
-        UdpSocket gmUdpStreamSocket;
+    LaserTracker(MainOperation *Operation);
+    ~LaserTracker();
+    int startTracking();
+    int runTracking();
+    float getDiagonalRate();  // left/right
+    float getEdgeRate();      //upper/bottom
 
-        LaserTracker(const std::string VideoLocation);
-        LaserTracker();
-        ~LaserTracker();
-        int startTracking();
-        int runTracking(std::string StreamIp, int StreamPort);
-        float getDiagonalRate();  // left/right
-        float getEdgeRate();      //upper/bottom
+    void streamFrame(cv::Mat Frame);
 
-        void streamFrame(cv::Mat Frame);
+    int init(int Camera, const std::string &StreamIp, int StreamPort);
 
-        int init(int Camera);
+private:
+
+    PERSPECTIVE_RATE gmPerspective;
+    UdpSocket gmStreamSocket;
+
+    std::mutex gmMutex;
+    cv::Mat detectRed(cv::Mat &Frame);
+    std::vector<cv::Vec3f> detectCircle(cv::Mat &Frame);
+    cv::VideoCapture *mVideoCapture;
+
+    cv::Mat gmFrame;
+    cv::Mat gmScalarFrame;
+
+    int setCameraGain();
+    int drawTarget(const cv::Mat &Frame);
+    int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
+    int orderpoints(std::vector<cv::Point>& Points);
+    int calculatePerspective(std::vector<cv::Point>& Points);
 
 };
 

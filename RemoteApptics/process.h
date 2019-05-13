@@ -50,7 +50,7 @@ public:
     static void eliminateCloserPoints(std::vector<cv::Point> &Points, std::vector<double> &Magnitudes);
     static void eliminateUnshapedPoints(std::vector<cv::Point> &Points);
     static std::vector<cv::Point> findPointPair(std::vector<cv::Point> &Points);
-    static cv::Point calculateCenter(std::vector<cv::Point> &Points);
+    static cv::Point calculateCenter(const std::vector<cv::Point> &Points);
     static void drawTarget(const cv::Mat &Frame);
     static void drawFSOFace(const std::vector<cv::Vec3f>& Circles);
     static void orderpoints(std::vector<cv::Point>& Points);

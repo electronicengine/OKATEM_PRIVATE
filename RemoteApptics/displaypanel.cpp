@@ -14,8 +14,30 @@ DisplayPanel::~DisplayPanel()
     delete gpController;
 }
 
+void DisplayPanel::switchWifi()
+{
+
+    emit setSfpConnectionImageVisibilty(false);
+    emit setWifiConnectionImageVisibilty(true);
+    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">WIFI </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
+
+
+}
+
+void DisplayPanel::switchSfp()
+{
+    emit setSfpConnectionImageVisibilty(true);
+    emit setWifiConnectionImageVisibilty(false);
+    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">SFP </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
+
+}
+
 void DisplayPanel::attachWindow()
 {
+    connect(this, SIGNAL(setConnectionTypeLabel(QString)), ui->connection_label, SLOT(setText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(setSfpConnectionImageVisibilty(bool)), ui->connection_image_sfp, SLOT(setVisible(bool)), Qt::QueuedConnection);
+    connect(this, SIGNAL(setWifiConnectionImageVisibilty(bool)), ui->connection_image_wifi, SLOT(setVisible(bool)), Qt::QueuedConnection);
+
     connect(this, SIGNAL(progressUpdateFile(int)), ui->progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(setprogessbarvisibility(bool)), ui->progressBar, SLOT(setVisible(bool)), Qt::QueuedConnection);
     connect(this, SIGNAL(setupdatelabelvisibility(bool)), ui->update_label, SLOT(setVisible(bool)), Qt::QueuedConnection);
@@ -243,6 +265,7 @@ void DisplayPanel::panelInformationCallBack(const INFORMATION_DATA_FORMAT &Infor
     }
     else
     {
+
         *gpControlInfo = InformationData.control_data;
         *gpEnvironmentInfo = InformationData.environment_data;
         *gpSfpInfo = InformationData.sfp_data;

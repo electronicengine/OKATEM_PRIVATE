@@ -25,7 +25,7 @@ public:
     int init();
 
 
-    int setCameraControls(CAMERA_SETTINGS_FORMAT& CameraSettings);
+    int setCameraControls(const CAMERA_SETTINGS_FORMAT& CameraSettings);
 
     CAMERA_SETTINGS_FORMAT getCameraControls();
 

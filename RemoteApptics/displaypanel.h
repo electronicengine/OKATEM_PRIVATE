@@ -18,6 +18,9 @@ public:
     DisplayPanel(MainWindow *Window);
     virtual ~DisplayPanel();
 
+    void switchWifi();
+    void switchSfp();
+
     void process();
     void deployPanel();
     int startDisplayManager();
@@ -34,6 +37,9 @@ private:
 
 signals:
 
+    void setConnectionTypeLabel(QString);
+    void setSfpConnectionImageVisibilty(bool);
+    void setWifiConnectionImageVisibilty(bool);
 
     int showMessageBox(QWidget *, QString, QString, MessageBoxType);
     void progressUpdateFile(int);

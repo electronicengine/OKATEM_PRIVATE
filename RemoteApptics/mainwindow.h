@@ -95,6 +95,7 @@ protected:
 
     void setTitle(const std::string &IpAddress);
 
+
     MainWindow *gpMainWindow;
 
 

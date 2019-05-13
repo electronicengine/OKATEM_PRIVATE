@@ -100,11 +100,14 @@ MainWindow::MainWindow(QWidget *parent) :
     gpController = new RemoteController(gpControllerSocket);
     gpStream = new VideoStream(gpVideoStreamSocket);
 
-    gpAutoControlWindow = new AutoControlWindow(this);
 
     gpControlWindow = new ControlWindow(this);
     gpDisplaypanel = new DisplayPanel(this);
+
+    gpAutoControlWindow = new AutoControlWindow(this);
+
     gpCameraPanel = new CameraPanel(this);
+
 
     ui->toggle_button->setCheckable(true);
     pix.load("hyperion.jpg");
@@ -119,6 +122,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     gpControlWindow->setPanelEnable(false);
+
+    ui->connection_image_sfp->hide();
+    ui->connection_image_wifi->hide();
+
 
 }
 
@@ -167,6 +174,7 @@ int MainWindow::showMessage(QWidget *Parent, QString Title, QString Message, Mes
 }
 
 
+
 void MainWindow::worker()
 {
 
@@ -191,6 +199,8 @@ void MainWindow::worker()
 
 }
 
+
+
 void MainWindow::terminateWorker()
 {
 
@@ -199,7 +209,6 @@ void MainWindow::terminateWorker()
     while(gmWorkerTerminated == false);
 
 }
-
 
 
 
@@ -306,4 +315,5 @@ void MainWindow::on_actionCamera_Settings_triggered()
 
     gpController->sendCameraSettingsRequest(CameraSettingsRequest);
     gpCameraSettingsWindow->show();
+
 }

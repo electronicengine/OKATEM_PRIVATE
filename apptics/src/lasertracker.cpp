@@ -5,22 +5,29 @@
 #include <string>
 
 
-extern std::map<std::string, bool> CheckList;
-
-LaserTracker::LaserTracker(const std::string VideoLocation)
+LaserTracker::LaserTracker(MainOperation *Operation) : MainOperation(Operation)
 {
 
+    int ret;
+    mVideoCapture = new cv::VideoCapture(0);
+
+    ret = gmStreamSocket.init(gpRemoteMachineInfo->stream_ip, gpRemoteMachineInfo->stream_port);
+
+    if(ret == SUCCESS)
+        printAll("Stream Socket ip: ", gpRemoteMachineInfo->stream_ip, " port: ", std::to_string(gpRemoteMachineInfo->stream_port));
+    else
+        printAll("Stream Socket can not be opened");
+
+
+    if (!mVideoCapture->isOpened())
+        printAll("LaserTracker init is Failed");
+    else
+        runTracking();
 
 }
 
 
 
-LaserTracker::LaserTracker()
-{
-
-
-
-}
 
 
 
@@ -33,10 +40,8 @@ LaserTracker::~LaserTracker()
 
 
 
-int LaserTracker::runTracking(std::string StreamIp, int StreamPort)
+int LaserTracker::runTracking()
 {
-    gmUdpStreamSocket.init(StreamIp, StreamPort);
-
 
     std::thread tracking(&LaserTracker::startTracking, this);
     tracking.detach();
@@ -101,7 +106,7 @@ void LaserTracker::streamFrame(cv::Mat Frame)
             stream_data.data[k] = encoded_frame[i*(STREAM_DATA_SIZE) + k];
 
 
-        ret = gmUdpStreamSocket.sendData(stream_data);
+        ret = gmStreamSocket.sendData(stream_data);
 
         if(ret != SUCCESS)
         {
@@ -115,23 +120,9 @@ void LaserTracker::streamFrame(cv::Mat Frame)
 
 }
 
-int LaserTracker::init(int Camera)
+int LaserTracker::init(int Camera, const std::string &StreamIp, int StreamPort)
 {
 
-    mVideoCapture = new cv::VideoCapture(Camera);
-
-
-    if (!mVideoCapture->isOpened())
-    {
-        printAll("LaserTracker init is Failed");
-
-        return FAIL;
-    }
-    else
-    {
-        return SUCCESS;
-
-    }
 }
 
 
