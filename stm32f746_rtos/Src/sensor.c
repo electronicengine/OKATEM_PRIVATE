@@ -415,3 +415,16 @@ void calibrateCompass()
     mprintf("Sensor Calib:OK\r\n");
 
 }
+
+uint16_t readAccelX()
+{
+    HAL_StatusTypeDef i2c_status;
+
+
+    i2c_status = HAL_I2C_Master_Transmit(&hi2c4, 0x68, 0x43, 2, SENSOR_TIMEOUT);
+
+    if(i2c_status == HAL_OK)
+    {
+
+    }
+}

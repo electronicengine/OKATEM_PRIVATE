@@ -131,8 +131,9 @@
 #define SPI_TRANSFER_SIZE 120
 #define SPI_DATA_SIZE 116
 #define CONTROL_DATA_GARBAGE_SIZE 38
-#define GPS_STRING_SIZE 86
-
+#define GPS_STRING_SIZE 74
+#define GYROSCOPE_DATA_SIZE 12
+#define SENSOR_DATA_SIZE 17
 
 
 typedef struct
@@ -168,6 +169,20 @@ typedef struct
 typedef struct
 {
 
+    uint16_t accel_x;
+    uint16_t accel_y;
+    uint16_t accel_z;
+
+    uint16_t gyro_x;
+    uint16_t gyro_y;
+    uint16_t gyro_z;
+
+}GYROSCOPE_DATA_FORMAT;
+
+
+typedef struct
+{
+
     unsigned char gps_string[GPS_STRING_SIZE];
 
     uint32_t step_motor1_step;
@@ -177,6 +192,7 @@ typedef struct
     uint8_t servo_motor2_degree;
 
     SENSOR_DATA sensor_data;
+    GYROSCOPE_DATA_FORMAT gyroscope_data;
 
     uint8_t step_motor_breaks;
 
@@ -233,7 +249,6 @@ typedef struct
 
 
 }CONTROL_DATA_FORMAT;
-
 
 
 

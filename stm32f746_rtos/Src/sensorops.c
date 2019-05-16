@@ -9,6 +9,7 @@ void sensorOps(void const * argument)
 
   sensorInit();
 
+
   while(1)
   {
 
@@ -31,6 +32,15 @@ void sensorOps(void const * argument)
               EnvironmentData -> sensor_data.altitude = sensorValues.altitude;
               EnvironmentData -> sensor_data.wheather_condition = sensorValues.wheather_condition;
               EnvironmentData -> sensor_data.compass_degree = sensorValues.compass_degree;
+
+              EnvironmentData -> gyroscope_data.accel_x = 2;
+              EnvironmentData -> gyroscope_data.accel_y = 2;
+              EnvironmentData -> gyroscope_data.accel_z = 2;
+
+              EnvironmentData -> gyroscope_data.gyro_x = 2;
+              EnvironmentData -> gyroscope_data.gyro_y = 2;
+              EnvironmentData -> gyroscope_data.gyro_z = 2;
+
 
           xSemaphoreGive(spiMutexHandle);
 

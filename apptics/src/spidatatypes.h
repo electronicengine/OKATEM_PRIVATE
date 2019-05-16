@@ -129,6 +129,7 @@ struct SFP_DATA_FORMAT
         return data;
     }
 
+
     void serializeJson(rapidjson::Writer<rapidjson::StringBuffer> &JsonWriter) const
     {
         JsonWriter.Key(VARNAME(status));
@@ -294,6 +295,72 @@ struct SENSOR_DATA
 };
 
 
+struct GYROSCOPE_DATA_FORMAT
+{
+    uint16_t accel_x;
+    uint16_t accel_y;
+    uint16_t accel_z;
+
+    uint16_t gyro_x;
+    uint16_t gyro_y;
+    uint16_t gyro_z;
+
+    operator unsigned char*()
+    {
+        unsigned char *raw_data = new unsigned char[GYROSCOPE_DATA_SIZE];
+        int index = 0;
+
+        raw_data[index++] = accel_x & 0xff;
+        raw_data[index++] = (accel_x >> 8) & 0xff;
+
+        raw_data[index++] = accel_y & 0xff;
+        raw_data[index++] = (accel_y >> 8) & 0xff;
+
+        raw_data[index++] = accel_z & 0xff;
+        raw_data[index++] = (accel_z >> 8) & 0xff;
+
+        raw_data[index++] = gyro_x & 0xff;
+        raw_data[index++] = (gyro_x >> 8) & 0xff;
+
+        raw_data[index++] = gyro_y & 0xff;
+        raw_data[index++] = (gyro_y >> 8) & 0xff;
+
+        raw_data[index++] = gyro_z & 0xff;
+        raw_data[index++] = (gyro_z >> 8) & 0xff;
+
+
+        return raw_data;
+    }
+
+    GYROSCOPE_DATA_FORMAT& operator = (unsigned char* RawData)
+    {
+        int index = 0;
+
+        accel_x = RawData[index++];
+        accel_x |= RawData[index++] << 8;
+
+        accel_y = RawData[index++];
+        accel_y |= RawData[index++] << 8;
+
+        accel_z = RawData[index++];
+        accel_z |= RawData[index++] << 8;
+
+        gyro_x = RawData[index++];
+        gyro_x |= RawData[index++] << 8;
+
+        gyro_y = RawData[index++];
+        gyro_y |= RawData[index++] << 8;
+
+        gyro_z = RawData[index++];
+        gyro_z |= RawData[index++] << 8;
+
+        return *this;
+
+    }
+
+};
+
+
 struct GPS_DATA
 {
     double utc_time;
@@ -432,6 +499,7 @@ struct SPI_TRANSFER_FORMAT
     {
         CONTROL_DATA = 0x2222,
         ENVIRONMENT_DATA = 0x2223,
+        GYROSCOPE_DATA = 0x2224,
         UPDATE_FILE = 0x5055
     };
 
@@ -525,12 +593,10 @@ struct ENVIRONMENT_DATA_FORMAT
     uint16_t servo_motor2_degree;
 
     SENSOR_DATA sensor_data;
-
+    GYROSCOPE_DATA_FORMAT gyroscope_data;
     uint8_t step_motor_breaks;
 
     std::string gps_string;
-
-    uint8_t update_percentage;
 
 
     ENVIRONMENT_DATA_FORMAT()
@@ -543,14 +609,11 @@ struct ENVIRONMENT_DATA_FORMAT
         SPI_TRANSFER_FORMAT spi_data;
         int index = 0;
 
-        unsigned char * sensor_data_pointer;
 
         spi_data.header = SPI_TRANSFER_FORMAT::ENVIRONMENT_DATA;
 
         for(int i = 0; i<GPS_STRING_SIZE; i++)
-            spi_data.data[i + index] = gps_string.c_str()[i];
-
-        index += GPS_STRING_SIZE;
+            spi_data.data[index++] = gps_string.c_str()[i];
 
         spi_data.data[index++] = step_motor1_step & 0xff;
         spi_data.data[index++] = (step_motor1_step >> 8) & 0xff;
@@ -563,19 +626,18 @@ struct ENVIRONMENT_DATA_FORMAT
         spi_data.data[index++] = (step_motor2_step >> 24) & 0xff;
 
         spi_data.data[index++] = servo_motor1_degree & 0xff;
+        spi_data.data[index++] = servo_motor2_degree & 0xff;
 
-        spi_data.data[index++] = servo_motor2_degree && 0xff;
+        memcpy(spi_data.data + index, sensor_data, SENSOR_DATA_SIZE);
+        index += SENSOR_DATA_SIZE;
 
-        sensor_data_pointer = sensor_data;
-
-        for(int i = 0; i < SENSOR_DATA_SIZE; i++)
-            spi_data.data[index++] = sensor_data_pointer[i];
+        memcpy(spi_data.data + index, gyroscope_data, GYROSCOPE_DATA_SIZE);
+        index += GYROSCOPE_DATA_SIZE;
 
         spi_data.data[index++] = step_motor_breaks;
 
         spi_data.checksum = 0;
 
-        delete sensor_data_pointer;
 
 
         return spi_data;
@@ -614,8 +676,10 @@ struct ENVIRONMENT_DATA_FORMAT
                 index++;
 
             sensor_data = (unsigned char *)&SpiData.data[index];
-
             index += SENSOR_DATA_SIZE;
+
+            gyroscope_data = (unsigned char *)&SpiData.data[index];
+            index += GYROSCOPE_DATA_SIZE;
 
             step_motor_breaks = SpiData.data[index++];
 
@@ -1063,5 +1127,7 @@ struct CONTROL_DATA_FORMAT
     }
 
 };
+
+
 
 #endif // SPIDATATYPES_H

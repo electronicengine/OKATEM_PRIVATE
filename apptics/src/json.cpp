@@ -59,6 +59,7 @@ void Json::saveBoardInfo(const JSON_SENSOR_INFORMATIONS& JsonSensorData)
 
     JsonSensorData.serializeJSON(writer);
 
+    gmMutex.lock();
     writeFile(buffer.GetString(), FILES[FileTypes::SensorInfo]);
     writeFile(buffer.GetString(), FILES_BACKUP[FileTypes::SensorInfo]);
 
@@ -74,6 +75,7 @@ void Json::saveBoardInfo(const JSON_SENSOR_INFORMATIONS& JsonSensorData)
     gmMotorInformations.step_motor2_position = JsonSensorData.stm_environment_data.step_motor2_step;
 
     saveMotorInfo(gmMotorInformations);
+    gmMutex.unlock();
 
 }
 

@@ -1,5 +1,5 @@
 #include "environmentinterface.h"
-
+#include <thread>
 
 EnvironmentInterface::EnvironmentInterface(MainOperation *Operation) : MainOperation(Operation)
 {
@@ -25,6 +25,15 @@ void EnvironmentInterface::getJson()
 }
 
 void EnvironmentInterface::saveBoardData(const INFORMATION_DATA_FORMAT &InformationData)
+{
+
+    std::thread save(&EnvironmentInterface::saveThread, this, InformationData);
+    save.detach();
+
+
+}
+
+void EnvironmentInterface::saveThread(const INFORMATION_DATA_FORMAT &InformationData)
 {
     JSON_SENSOR_INFORMATIONS json_sensor_informations;
 

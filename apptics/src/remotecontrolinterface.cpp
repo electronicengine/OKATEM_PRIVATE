@@ -22,6 +22,8 @@ RemoteControlInterface::RemoteControlInterface(MainOperation *Operation) : MainO
 
 }
 
+
+
 void RemoteControlInterface::socketDataCallBack(UDP_DATA_FORMAT &UdpData)
 {
 
@@ -47,12 +49,12 @@ void RemoteControlInterface::socketDataCallBack(UDP_DATA_FORMAT &UdpData)
 
         case UDP_DATA_FORMAT::LASER_SWITCH_REQUEST:
 
-            processWifiSwitch();
+            processLaserSwitch();
 
             break;
         case UDP_DATA_FORMAT::RF_SWITCH_REQUEST:
 
-            processLaserSwitch();
+            processWifiSwitch();
 
             break;
 
@@ -61,6 +63,7 @@ void RemoteControlInterface::socketDataCallBack(UDP_DATA_FORMAT &UdpData)
     }
 
 }
+
 
 
 void RemoteControlInterface::processInformationDataCallBack(UDP_DATA_FORMAT &UdpData)
@@ -95,14 +98,19 @@ void RemoteControlInterface::processCameraSettingsData(UDP_DATA_FORMAT &UdpData)
 }
 
 
+
 void RemoteControlInterface::processWifiSwitch()
 {
-    std::cout << "processWifiSwitch" << std::endl;
+//    std::cout << "processWifiSwitch" << std::endl;
+//    system("../iptables_wifi.sh");
 }
+
+
 
 void RemoteControlInterface::processLaserSwitch()
 {
-    std::cout << "processLaserSwitch" << std::endl;
+//    std::cout << "processLaserSwitch" << std::endl;
+//    system("../iptables_sfp.sh");
 }
 
 
@@ -117,7 +125,6 @@ void RemoteControlInterface::processSpiData(UDP_DATA_FORMAT &UdpData)
 
     spi_data = (unsigned char *)UdpData.data;
 
-
     switch (spi_data.header)
     {
         case SPI_TRANSFER_FORMAT::CONTROL_DATA:
@@ -130,7 +137,6 @@ void RemoteControlInterface::processSpiData(UDP_DATA_FORMAT &UdpData)
 
         case SPI_TRANSFER_FORMAT::UPDATE_FILE:
 
-
             update_file = spi_data;
 
             gpDriverInterface->updateStmBoard(update_file);
@@ -140,13 +146,9 @@ void RemoteControlInterface::processSpiData(UDP_DATA_FORMAT &UdpData)
 
             break;
 
-
         default:
             break;
     }
-
 }
-
-
 
 

@@ -126,6 +126,72 @@ struct SFP_DATA_FORMAT
 };
 
 
+struct GYROSCOPE_DATA_FORMAT
+{
+    uint16_t accel_x;
+    uint16_t accel_y;
+    uint16_t accel_z;
+
+    uint16_t gyro_x;
+    uint16_t gyro_y;
+    uint16_t gyro_z;
+
+    operator unsigned char*()
+    {
+        unsigned char *raw_data = new unsigned char[GYROSCOPE_DATA_SIZE];
+        int index = 0;
+
+        raw_data[index++] = accel_x & 0xff;
+        raw_data[index++] = (accel_x >> 8) & 0xff;
+
+        raw_data[index++] = accel_y & 0xff;
+        raw_data[index++] = (accel_y >> 8) & 0xff;
+
+        raw_data[index++] = accel_z & 0xff;
+        raw_data[index++] = (accel_z >> 8) & 0xff;
+
+        raw_data[index++] = gyro_x & 0xff;
+        raw_data[index++] = (gyro_x >> 8) & 0xff;
+
+        raw_data[index++] = gyro_y & 0xff;
+        raw_data[index++] = (gyro_y >> 8) & 0xff;
+
+        raw_data[index++] = gyro_z & 0xff;
+        raw_data[index++] = (gyro_z >> 8) & 0xff;
+
+
+        return raw_data;
+    }
+
+    GYROSCOPE_DATA_FORMAT& operator = (unsigned char* RawData)
+    {
+        int index = 0;
+
+        accel_x = RawData[index++];
+        accel_x |= RawData[index++] << 8;
+
+        accel_y = RawData[index++];
+        accel_y |= RawData[index++] << 8;
+
+        accel_z = RawData[index++];
+        accel_z |= RawData[index++] << 8;
+
+        gyro_x = RawData[index++];
+        gyro_x |= RawData[index++] << 8;
+
+        gyro_y = RawData[index++];
+        gyro_y |= RawData[index++] << 8;
+
+        gyro_z = RawData[index++];
+        gyro_z |= RawData[index++] << 8;
+
+        return *this;
+
+    }
+
+};
+
+
 struct SENSOR_DATA
 {
     uint32_t temperature;
@@ -399,6 +465,7 @@ struct ENVIRONMENT_DATA_FORMAT
     uint16_t servo_motor2_degree;
 
     SENSOR_DATA sensor_data;
+    GYROSCOPE_DATA_FORMAT gyroscope_data;
 
     uint8_t step_motor_breaks;
 
@@ -434,8 +501,10 @@ struct ENVIRONMENT_DATA_FORMAT
             servo_motor2_degree = SpiData.data[index++];
 
             sensor_data = &SpiData.data[index];
-
             index += SENSOR_DATA_SIZE;
+
+            gyroscope_data = &SpiData.data[index];
+            index += GYROSCOPE_DATA_SIZE;
 
             step_motor_breaks = SpiData.data[index++];
 
@@ -454,7 +523,6 @@ struct ENVIRONMENT_DATA_FORMAT
         SPI_TRANSFER_FORMAT spi_data;
         int index = 0;
 
-        unsigned char * sensor_data_pointer;
 
         spi_data.header = SPI_TRANSFER_FORMAT::ENVIRONMENT_DATA;
 
@@ -477,16 +545,16 @@ struct ENVIRONMENT_DATA_FORMAT
 
         spi_data.data[index++] = servo_motor2_degree && 0xff;
 
-        sensor_data_pointer = sensor_data;
+        memcpy(spi_data.data + index, sensor_data, SENSOR_DATA_SIZE);
+        index += SENSOR_DATA_SIZE;
 
-        for(int i = 0; i < SENSOR_DATA_SIZE; i++)
-            spi_data.data[index++] = sensor_data_pointer[i];
+        memcpy(spi_data.data + index, gyroscope_data, GYROSCOPE_DATA_SIZE);
+        index += GYROSCOPE_DATA_SIZE;
 
         spi_data.data[index++] = step_motor_breaks;
 
         spi_data.checksum = 0;
 
-        delete sensor_data_pointer;
 
 
         return spi_data;
@@ -519,8 +587,10 @@ struct ENVIRONMENT_DATA_FORMAT
             servo_motor2_degree = SpiData.data[index++];
 
             sensor_data = &SpiData.data[index];
-
             index += SENSOR_DATA_SIZE;
+
+            gyroscope_data = &SpiData.data[index];
+            index += GYROSCOPE_DATA_SIZE;
 
             step_motor_breaks = SpiData.data[index++];
 

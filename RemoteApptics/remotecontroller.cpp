@@ -388,6 +388,7 @@ int RemoteController::sendLaserSwitchRequest()
 
     request.header = UDP_DATA_FORMAT::LASER_SWITCH_REQUEST;
 
+    std::cout << "sendLaserSwitchRequestIn!!!!!!" << std::endl;
     ret = gpSocket->sendData(request);
 
     return ret;

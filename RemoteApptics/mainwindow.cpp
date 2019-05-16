@@ -79,8 +79,6 @@ MainWindow::MainWindow(QWidget *parent) :
     gpStreamPort = new int;
     gpControlPort = new int;
 
-    *gpConnectionAvailable = false;
-
     connect(ui->actionConnection, SIGNAL(triggered(bool)), this, SLOT(actionConnectionTriggered()));
     connect(ui->actionCalibration_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionCalibration_Settings_triggered()));
     connect(ui->actionAutoControl_Settings, SIGNAL(triggered(bool)), this, SLOT(on_actionAutoControl_Settings_triggered()));

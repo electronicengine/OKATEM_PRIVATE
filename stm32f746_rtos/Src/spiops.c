@@ -1,5 +1,8 @@
 #include "spiops.h"
 #include "stdlib.h"
+#include "memory.h"
+#include "stdio.h"
+
 
 #define SECTOR6_ADDRESS 0x8080000
 
@@ -160,7 +163,7 @@ void putEnvironmentData()
 
     int index = 0;
 
-    xSemaphoreTake(spiMutexHandle, (TickType_t)1000);
+    xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
 
         SpiTxData->header = ENVIRONMENT_DATA;
 
@@ -180,32 +183,14 @@ void putEnvironmentData()
         SpiTxData->data[index++] = (EnvironmentData->step_motor2_step >> 24) & 0xff;
 
         SpiTxData->data[index++] = EnvironmentData->servo_motor1_degree & 0xff;
-
-
-
         SpiTxData->data[index++] = EnvironmentData->servo_motor2_degree & 0xff;
 
-        SpiTxData->data[index++] = EnvironmentData->sensor_data.temperature & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.temperature >> 8) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.temperature >> 16) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.temperature >> 24) & 0xff;
+        memcpy(SpiTxData->data + index, &EnvironmentData->sensor_data, SENSOR_DATA_SIZE);
+        index += SENSOR_DATA_SIZE;
 
-        SpiTxData->data[index++] = EnvironmentData->sensor_data.compass_degree & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.compass_degree >> 8) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.compass_degree >> 16) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.compass_degree >> 24) & 0xff;
+        memcpy(SpiTxData->data + index, &EnvironmentData->gyroscope_data, GYROSCOPE_DATA_SIZE);
+        index += GYROSCOPE_DATA_SIZE;
 
-        SpiTxData->data[index++] = EnvironmentData->sensor_data.pressure & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.pressure >> 8) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.pressure >> 16) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.pressure >> 24) & 0xff;
-
-        SpiTxData->data[index++] = EnvironmentData->sensor_data.altitude & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.altitude >> 8) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.altitude >> 16) & 0xff;
-        SpiTxData->data[index++] = (EnvironmentData->sensor_data.altitude >> 24) & 0xff;
-
-        SpiTxData->data[index++] = EnvironmentData->sensor_data.wheather_condition & 0xff;
         SpiTxData->data[index++] = EnvironmentData->step_motor_breaks;
 
 

@@ -9,7 +9,6 @@
 #include "json.h"
 #include "mainoperation.h"
 
-
 class DriverInterface : public MainOperation
 {
 public:

@@ -36,7 +36,7 @@ void gpsOps(void const *argument)
 
                xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
 
-               for(int i=0; i<99; i++)
+               for(int i=0; i<GPS_STRING_SIZE; i++)
                    EnvironmentData -> gps_string[i] = gpsData.gprmc_body[i];
 
                xSemaphoreGive(spiMutexHandle);

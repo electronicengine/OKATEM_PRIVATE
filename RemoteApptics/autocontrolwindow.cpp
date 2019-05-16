@@ -161,7 +161,6 @@ void AutoControlWindow::process()
 
             if(wifi_enable == false)
             {
-                gpController->sendLaserSwitchRequest();
                 gpDisplaypanel->switchSfp();
                 sfp_enable = false;
                 wifi_enable = true;
@@ -174,7 +173,6 @@ void AutoControlWindow::process()
             if(sfp_enable == false)
             {
 
-                gpController->sendRFSwitchRequest();
                 gpDisplaypanel->switchWifi();
                 sfp_enable = true;
                 wifi_enable = false;

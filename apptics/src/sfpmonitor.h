@@ -21,7 +21,10 @@
 
 #define SFP_DIAG_VALUE_OFFSET 96
 #define SFP_DIAG_VALUE_STRIDE 26
+#define SFP_CONNECTED       1
+#define SFP_DISCONNECTED    2
 
+#include "routingtable.h"
 
 
 class SfpMonitor
@@ -48,10 +51,12 @@ private:
     int gmFileDescriptor;
     char gmBuffer[256];
     std::mutex gmMutex;
+    RoutingTable gmRoutingTable;
+
 
     void runSfpMonitor();
     int readData();
-    int readValues();
+    SFP_DATA_FORMAT readValues();
 
     inline float convertNumber(uint8_t *Data, uint16_t Divisor, bool IsSigned);
 };

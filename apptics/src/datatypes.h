@@ -220,8 +220,6 @@ struct MOTOR_INFORMATIONS
 
 };
 
-
-
 struct REMOTEMACHINE_INFORMATIONS
 {
     std::string stream_ip;
@@ -266,6 +264,7 @@ struct REMOTEMACHINE_INFORMATIONS
         }
     }
 };
+
 
 
 #endif // DATATYPES_H

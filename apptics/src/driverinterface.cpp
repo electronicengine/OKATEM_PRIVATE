@@ -18,6 +18,8 @@ DriverInterface::DriverInterface(MainOperation *Operation) : MainOperation(Opera
     if(ret != SUCCESS)
         printAll("Sfp Monitor has been not initialize!");
 
+
+
     gmStmDriver.setMotorCalibrationValues(*gpMotorInformations);
 }
 

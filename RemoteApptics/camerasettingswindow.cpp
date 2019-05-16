@@ -76,6 +76,8 @@ void CameraSettingsWindow::brighnessSliderChanged(int Value)
         gpControllerSocket->sendData(camera_settings);
     }
 
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::contrastSliderChanged(int Value)
@@ -96,6 +98,9 @@ void CameraSettingsWindow::contrastSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::saturationSliderChanged(int Value)
@@ -116,6 +121,9 @@ void CameraSettingsWindow::saturationSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::hueSliderChanged(int Value)
@@ -136,6 +144,9 @@ void CameraSettingsWindow::hueSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::exposureSliderChanged(int Value)
@@ -156,6 +167,9 @@ void CameraSettingsWindow::exposureSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::autoExposureTriggered(bool Value)
@@ -175,6 +189,9 @@ void CameraSettingsWindow::autoExposureTriggered(bool Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::gainSliderChanged(int Value)
@@ -195,6 +212,9 @@ void CameraSettingsWindow::gainSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::autoGainTriggered(bool Value)
@@ -214,6 +234,8 @@ void CameraSettingsWindow::autoGainTriggered(bool Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::horizontalFlipTriggered(bool Value)
@@ -233,6 +255,9 @@ void CameraSettingsWindow::horizontalFlipTriggered(bool Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::verticalFlipTriggered(bool Value)
@@ -253,6 +278,9 @@ void CameraSettingsWindow::verticalFlipTriggered(bool Value)
         gpControllerSocket->sendData(camera_settings);
 
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::powerFrequencySliderChanged(int Value)
@@ -274,6 +302,7 @@ void CameraSettingsWindow::powerFrequencySliderChanged(int Value)
         gpControllerSocket->sendData(camera_settings);
     }
 
+    usleep(100000);
 
 }
 
@@ -295,12 +324,18 @@ void CameraSettingsWindow::sharpnessSliderChanged(int Value)
 
         gpControllerSocket->sendData(camera_settings);
     }
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::zoomSliderChanged(int Value)
 {
     std::cout << Value << std::endl;
     camera_settings_ui->zoom_value->setText(QString::number(Value));
+
+    usleep(100000);
+
 }
 
 void CameraSettingsWindow::attachtoMainWindow()

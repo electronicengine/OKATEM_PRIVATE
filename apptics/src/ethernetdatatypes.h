@@ -106,8 +106,6 @@ struct UDP_DATA_FORMAT
         return data_all;
     }
 
-
-
 };
 
 

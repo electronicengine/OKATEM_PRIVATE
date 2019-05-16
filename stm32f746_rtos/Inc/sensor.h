@@ -27,6 +27,20 @@
 
  }sensorValues;
 
+
+ struct gyroscope_values
+ {
+
+     uint16_t accel_x;
+     uint16_t accel_y;
+     uint16_t accel_z;
+
+     uint16_t gyro_x;
+     uint16_t gyro_y;
+     uint16_t gyro_z;
+
+ }gyroscopeValues;
+
  struct Calibration {
    volatile int available;
 
@@ -45,6 +59,8 @@
  uint8_t checkTemperature();
  uint8_t checkCompass();
  uint8_t checkWheather();
+
+ uint16_t readAccelX();
 
  long readPressure();
  long readAltitude();

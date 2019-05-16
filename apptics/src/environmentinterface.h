@@ -17,6 +17,7 @@ public:
     void getEnvironment();
     void getJson();
     void saveBoardData(const INFORMATION_DATA_FORMAT &InformationData);
+    void saveThread(const INFORMATION_DATA_FORMAT &InformationData);
     void saveMotorPositions(const MOTOR_INFORMATIONS &MotorInfo);
 
 private:

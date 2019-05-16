@@ -133,43 +133,60 @@ bool SfpMonitor::getSfpConnectionState()
 
 
 
-int SfpMonitor::readValues()
+SFP_DATA_FORMAT SfpMonitor::readValues()
 {
+    SFP_DATA_FORMAT sfp_data;
     // TODO: Check type of the value, default is current value
     if (!this->readData())
     {
 //        CheckList["SfpMonitor"] = false;
-        return -1;
+        printAll("can not read sfp values !!!");
     }
-    gmSfpData.sfp_temperature = convertNumber((uint8_t *)&gmBuffer[96], 256, true);
-    gmSfpData.vcc = convertNumber((uint8_t *)&gmBuffer[98], 10000, false);
-    gmSfpData.tx_bias = convertNumber((uint8_t *)&gmBuffer[100], 500, false);
-    gmSfpData.tx_power = convertNumber((uint8_t *)&gmBuffer[102], 10000, false);
-    gmSfpData.rx_power = convertNumber((uint8_t *)&gmBuffer[104], 10000, false);
 
-    if(gmSfpData.rx_power * 1000 > 2)
-        gmSfpData.status = 1;
+    sfp_data.sfp_temperature = convertNumber((uint8_t *)&gmBuffer[96], 256, true);
+    sfp_data.vcc = convertNumber((uint8_t *)&gmBuffer[98], 10000, false);
+    sfp_data.tx_bias = convertNumber((uint8_t *)&gmBuffer[100], 500, false);
+    sfp_data.tx_power = convertNumber((uint8_t *)&gmBuffer[102], 10000, false);
+    sfp_data.rx_power = convertNumber((uint8_t *)&gmBuffer[104], 10000, false);
+
+    if(sfp_data.rx_power * 1000 > 2)
+        sfp_data.status = SFP_CONNECTED;
     else
-        gmSfpData.status = 2;
+        sfp_data.status = SFP_DISCONNECTED;
 
-    return 0;
+    return sfp_data;
 }
 
 void SfpMonitor::runSfpMonitor()
 {
+    bool sfp_available = false;
+    bool wifi_available = false;
+
     int ret;
+    SFP_DATA_FORMAT sfp_data;
 
     printAll("SfpMonitor is starting...");
 
     while(1)
     {
+        sfp_data = readValues();
+
+        if(sfp_data.status == SFP_CONNECTED && sfp_available == false)
+        {
+            wifi_available = false;
+            sfp_available = true;
+            gmRoutingTable.switchSfp();
+        }
+        else if(sfp_data.status == SFP_DISCONNECTED && wifi_available == false)
+        {
+            sfp_available = false;
+            wifi_available = true;
+            gmRoutingTable.switchRF();
+        }
 
         gmMutex.lock();
-        ret = readValues();
+        gmSfpData = sfp_data;
         gmMutex.unlock();
-
-//        if(ret < 0)
-//            printAll("SfpMonitor getValues is failed");
 
         usleep(100000);
 

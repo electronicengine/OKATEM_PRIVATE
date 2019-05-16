@@ -85,6 +85,10 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/remotecontrolinterface.cpp
     ${INCLUDE_PATH}/driverinterface.cpp
     ${INCLUDE_PATH}/environmentinterface.cpp
+    ${INCLUDE_PATH}/routingtable.cpp
+
+
+
 
 
 
