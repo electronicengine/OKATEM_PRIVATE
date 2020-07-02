@@ -128,13 +128,20 @@ struct SFP_DATA_FORMAT
 
 struct GYROSCOPE_DATA_FORMAT
 {
-    uint16_t accel_x;
-    uint16_t accel_y;
-    uint16_t accel_z;
+    int16_t accel_x;
+    int16_t accel_y;
+    int16_t accel_z;
 
-    uint16_t gyro_x;
-    uint16_t gyro_y;
-    uint16_t gyro_z;
+    int16_t gyro_x;
+    int16_t gyro_y;
+    int16_t gyro_z;
+
+    int16_t mag_x;
+    int16_t mag_y;
+    int16_t mag_z;
+
+    int16_t temp;
+
 
     operator unsigned char*()
     {
@@ -159,6 +166,17 @@ struct GYROSCOPE_DATA_FORMAT
         raw_data[index++] = gyro_z & 0xff;
         raw_data[index++] = (gyro_z >> 8) & 0xff;
 
+        raw_data[index++] = mag_x & 0xff;
+        raw_data[index++] = (mag_x >> 8) & 0xff;
+
+        raw_data[index++] = mag_y & 0xff;
+        raw_data[index++] = (mag_y >> 8) & 0xff;
+
+        raw_data[index++] = mag_z & 0xff;
+        raw_data[index++] = (mag_z >> 8) & 0xff;
+
+        raw_data[index++] = temp & 0xff;
+        raw_data[index++] = (temp >> 8) & 0xff;
 
         return raw_data;
     }
@@ -184,6 +202,18 @@ struct GYROSCOPE_DATA_FORMAT
 
         gyro_z = RawData[index++];
         gyro_z |= RawData[index++] << 8;
+
+        mag_x = RawData[index++];
+        mag_x |= RawData[index++] << 8;
+
+        mag_y = RawData[index++];
+        mag_y |= RawData[index++] << 8;
+
+        mag_z = RawData[index++];
+        mag_z |= RawData[index++] << 8;
+
+        temp = RawData[index++];
+        temp |= RawData[index++] << 8;
 
         return *this;
 
@@ -506,6 +536,8 @@ struct ENVIRONMENT_DATA_FORMAT
             gyroscope_data = &SpiData.data[index];
             index += GYROSCOPE_DATA_SIZE;
 
+            std::cout << "accel x: " << std::to_string(gyroscope_data.accel_x) << std::endl;
+
             step_motor_breaks = SpiData.data[index++];
 
         }
@@ -591,6 +623,7 @@ struct ENVIRONMENT_DATA_FORMAT
 
             gyroscope_data = &SpiData.data[index];
             index += GYROSCOPE_DATA_SIZE;
+            std::cout << "accel x: " << std::to_string(gyroscope_data.accel_x) << std::endl;
 
             step_motor_breaks = SpiData.data[index++];
 

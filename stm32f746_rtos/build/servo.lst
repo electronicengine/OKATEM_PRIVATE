@@ -1,0 +1,332 @@
+ARM GAS  /tmp/ccqG6R3O.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"servo.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	__aeabi_i2d
+  18              		.global	__aeabi_dmul
+  19              		.global	__aeabi_dadd
+  20              		.global	__aeabi_d2uiz
+  21              		.section	.text.driveServo1,"ax",%progbits
+  22              		.align	1
+  23              		.global	driveServo1
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  27              		.fpu fpv4-sp-d16
+  29              	driveServo1:
+  30              	.LFB138:
+  31              		.file 1 "Src/servo.c"
+   1:Src/servo.c   **** 
+   2:Src/servo.c   **** 
+   3:Src/servo.c   **** #include "servo.h"
+   4:Src/servo.c   **** #include "main.h"
+   5:Src/servo.c   **** #include "gpio.h"
+   6:Src/servo.c   **** #include "tim.h"
+   7:Src/servo.c   **** 
+   8:Src/servo.c   **** void driveServo1(int Degree)
+   9:Src/servo.c   **** {
+  32              		.loc 1 9 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 8
+  35              		@ frame_needed = 1, uses_anonymous_args = 0
+  36 0000 90B5     		push	{r4, r7, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 12
+  39              		.cfi_offset 4, -12
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 83B0     		sub	sp, sp, #12
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 24
+  45 0004 00AF     		add	r7, sp, #0
+  46              	.LCFI2:
+  47              		.cfi_def_cfa_register 7
+  48 0006 7860     		str	r0, [r7, #4]
+  10:Src/servo.c   **** 
+ARM GAS  /tmp/ccqG6R3O.s 			page 2
+
+
+  11:Src/servo.c   ****     if(Degree != 0)
+  49              		.loc 1 11 0
+  50 0008 7B68     		ldr	r3, [r7, #4]
+  51 000a 002B     		cmp	r3, #0
+  52 000c 20D0     		beq	.L3
+  12:Src/servo.c   ****     {
+  13:Src/servo.c   ****         HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  53              		.loc 1 13 0
+  54 000e 0021     		movs	r1, #0
+  55 0010 1348     		ldr	r0, .L4+8
+  56 0012 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  14:Src/servo.c   **** 
+  15:Src/servo.c   ****         __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (Degree)*((double)(215-60)/150) + 60); // (serv
+  57              		.loc 1 15 0
+  58 0016 7868     		ldr	r0, [r7, #4]
+  59 0018 FFF7FEFF 		bl	__aeabi_i2d
+  60              	.LVL0:
+  61 001c 0EA3     		adr	r3, .L4
+  62 001e D3E90023 		ldrd	r2, [r3]
+  63 0022 FFF7FEFF 		bl	__aeabi_dmul
+  64              	.LVL1:
+  65 0026 0346     		mov	r3, r0
+  66 0028 0C46     		mov	r4, r1
+  67 002a 1846     		mov	r0, r3
+  68 002c 2146     		mov	r1, r4
+  69 002e 4FF00002 		mov	r2, #0
+  70 0032 0C4B     		ldr	r3, .L4+12
+  71 0034 FFF7FEFF 		bl	__aeabi_dadd
+  72              	.LVL2:
+  73 0038 0346     		mov	r3, r0
+  74 003a 0C46     		mov	r4, r1
+  75 003c 1946     		mov	r1, r3
+  76 003e 2246     		mov	r2, r4
+  77 0040 074B     		ldr	r3, .L4+8
+  78 0042 1C68     		ldr	r4, [r3]
+  79 0044 0846     		mov	r0, r1
+  80 0046 1146     		mov	r1, r2
+  81 0048 FFF7FEFF 		bl	__aeabi_d2uiz
+  82              	.LVL3:
+  83 004c 0346     		mov	r3, r0
+  84 004e 6363     		str	r3, [r4, #52]
+  85              	.L3:
+  16:Src/servo.c   **** 
+  17:Src/servo.c   ****     }
+  18:Src/servo.c   **** 
+  19:Src/servo.c   **** }
+  86              		.loc 1 19 0
+  87 0050 00BF     		nop
+  88 0052 0C37     		adds	r7, r7, #12
+  89              	.LCFI3:
+  90              		.cfi_def_cfa_offset 12
+  91 0054 BD46     		mov	sp, r7
+  92              	.LCFI4:
+  93              		.cfi_def_cfa_register 13
+  94              		@ sp needed
+  95 0056 90BD     		pop	{r4, r7, pc}
+  96              	.L5:
+ARM GAS  /tmp/ccqG6R3O.s 			page 3
+
+
+  97              		.align	3
+  98              	.L4:
+  99 0058 89888888 		.word	2290649225
+ 100 005c 8888F03F 		.word	1072728200
+ 101 0060 00000000 		.word	htim3
+ 102 0064 00004E40 		.word	1078853632
+ 103              		.cfi_endproc
+ 104              	.LFE138:
+ 106              		.section	.text.driveServo2,"ax",%progbits
+ 107              		.align	1
+ 108              		.global	driveServo2
+ 109              		.syntax unified
+ 110              		.thumb
+ 111              		.thumb_func
+ 112              		.fpu fpv4-sp-d16
+ 114              	driveServo2:
+ 115              	.LFB139:
+  20:Src/servo.c   **** 
+  21:Src/servo.c   **** void driveServo2(int Degree)
+  22:Src/servo.c   **** {
+ 116              		.loc 1 22 0
+ 117              		.cfi_startproc
+ 118              		@ args = 0, pretend = 0, frame = 8
+ 119              		@ frame_needed = 1, uses_anonymous_args = 0
+ 120 0000 90B5     		push	{r4, r7, lr}
+ 121              	.LCFI5:
+ 122              		.cfi_def_cfa_offset 12
+ 123              		.cfi_offset 4, -12
+ 124              		.cfi_offset 7, -8
+ 125              		.cfi_offset 14, -4
+ 126 0002 83B0     		sub	sp, sp, #12
+ 127              	.LCFI6:
+ 128              		.cfi_def_cfa_offset 24
+ 129 0004 00AF     		add	r7, sp, #0
+ 130              	.LCFI7:
+ 131              		.cfi_def_cfa_register 7
+ 132 0006 7860     		str	r0, [r7, #4]
+  23:Src/servo.c   **** 
+  24:Src/servo.c   ****     static int counter2 = 0;
+  25:Src/servo.c   ****     static int servo2_degree = 0;
+  26:Src/servo.c   **** 
+  27:Src/servo.c   **** 
+  28:Src/servo.c   ****     if(Degree != 0  /*&& servo1.angle <= servo1.top && servo1.angle >= servo1.bottom*/)
+ 133              		.loc 1 28 0
+ 134 0008 7B68     		ldr	r3, [r7, #4]
+ 135 000a 002B     		cmp	r3, #0
+ 136 000c 09D0     		beq	.L7
+  29:Src/servo.c   ****     {
+  30:Src/servo.c   ****        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+ 137              		.loc 1 30 0
+ 138 000e 0421     		movs	r1, #4
+ 139 0010 1F48     		ldr	r0, .L11+8
+ 140 0012 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  31:Src/servo.c   **** 
+  32:Src/servo.c   **** 
+  33:Src/servo.c   ****          servo2_degree = Degree;
+ 141              		.loc 1 33 0
+ARM GAS  /tmp/ccqG6R3O.s 			page 4
+
+
+ 142 0016 1F4A     		ldr	r2, .L11+12
+ 143 0018 7B68     		ldr	r3, [r7, #4]
+ 144 001a 1360     		str	r3, [r2]
+  34:Src/servo.c   **** 
+  35:Src/servo.c   **** 
+  36:Src/servo.c   **** 
+  37:Src/servo.c   ****        counter2 = 0;
+ 145              		.loc 1 37 0
+ 146 001c 1E4B     		ldr	r3, .L11+16
+ 147 001e 0022     		movs	r2, #0
+ 148 0020 1A60     		str	r2, [r3]
+ 149              	.L7:
+  38:Src/servo.c   ****     }
+  39:Src/servo.c   **** 
+  40:Src/servo.c   **** 
+  41:Src/servo.c   ****     if(counter2 <= 100)
+ 150              		.loc 1 41 0
+ 151 0022 1D4B     		ldr	r3, .L11+16
+ 152 0024 1B68     		ldr	r3, [r3]
+ 153 0026 642B     		cmp	r3, #100
+ 154 0028 24DC     		bgt	.L8
+  42:Src/servo.c   ****     {
+  43:Src/servo.c   ****       counter2 ++;
+ 155              		.loc 1 43 0
+ 156 002a 1B4B     		ldr	r3, .L11+16
+ 157 002c 1B68     		ldr	r3, [r3]
+ 158 002e 0133     		adds	r3, r3, #1
+ 159 0030 194A     		ldr	r2, .L11+16
+ 160 0032 1360     		str	r3, [r2]
+  44:Src/servo.c   ****       __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (servo2_degree)*((double)(215-60)/150) + 60) ; //
+ 161              		.loc 1 44 0
+ 162 0034 174B     		ldr	r3, .L11+12
+ 163 0036 1B68     		ldr	r3, [r3]
+ 164 0038 1846     		mov	r0, r3
+ 165 003a FFF7FEFF 		bl	__aeabi_i2d
+ 166              	.LVL4:
+ 167 003e 12A3     		adr	r3, .L11
+ 168 0040 D3E90023 		ldrd	r2, [r3]
+ 169 0044 FFF7FEFF 		bl	__aeabi_dmul
+ 170              	.LVL5:
+ 171 0048 0346     		mov	r3, r0
+ 172 004a 0C46     		mov	r4, r1
+ 173 004c 1846     		mov	r0, r3
+ 174 004e 2146     		mov	r1, r4
+ 175 0050 4FF00002 		mov	r2, #0
+ 176 0054 114B     		ldr	r3, .L11+20
+ 177 0056 FFF7FEFF 		bl	__aeabi_dadd
+ 178              	.LVL6:
+ 179 005a 0346     		mov	r3, r0
+ 180 005c 0C46     		mov	r4, r1
+ 181 005e 1946     		mov	r1, r3
+ 182 0060 2246     		mov	r2, r4
+ 183 0062 0B4B     		ldr	r3, .L11+8
+ 184 0064 1C68     		ldr	r4, [r3]
+ 185 0066 0846     		mov	r0, r1
+ 186 0068 1146     		mov	r1, r2
+ 187 006a FFF7FEFF 		bl	__aeabi_d2uiz
+ARM GAS  /tmp/ccqG6R3O.s 			page 5
+
+
+ 188              	.LVL7:
+ 189 006e 0346     		mov	r3, r0
+ 190 0070 6363     		str	r3, [r4, #52]
+  45:Src/servo.c   ****     }
+  46:Src/servo.c   ****     else
+  47:Src/servo.c   ****     {
+  48:Src/servo.c   ****        HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+  49:Src/servo.c   ****     }
+  50:Src/servo.c   **** 
+  51:Src/servo.c   **** }
+ 191              		.loc 1 51 0
+ 192 0072 03E0     		b	.L10
+ 193              	.L8:
+  48:Src/servo.c   ****     }
+ 194              		.loc 1 48 0
+ 195 0074 0421     		movs	r1, #4
+ 196 0076 0648     		ldr	r0, .L11+8
+ 197 0078 FFF7FEFF 		bl	HAL_TIM_PWM_Stop
+ 198              	.L10:
+ 199              		.loc 1 51 0
+ 200 007c 00BF     		nop
+ 201 007e 0C37     		adds	r7, r7, #12
+ 202              	.LCFI8:
+ 203              		.cfi_def_cfa_offset 12
+ 204 0080 BD46     		mov	sp, r7
+ 205              	.LCFI9:
+ 206              		.cfi_def_cfa_register 13
+ 207              		@ sp needed
+ 208 0082 90BD     		pop	{r4, r7, pc}
+ 209              	.L12:
+ 210 0084 AFF30080 		.align	3
+ 211              	.L11:
+ 212 0088 89888888 		.word	2290649225
+ 213 008c 8888F03F 		.word	1072728200
+ 214 0090 00000000 		.word	htim3
+ 215 0094 00000000 		.word	servo2_degree.9713
+ 216 0098 00000000 		.word	counter2.9712
+ 217 009c 00004E40 		.word	1078853632
+ 218              		.cfi_endproc
+ 219              	.LFE139:
+ 221              		.section	.bss.servo2_degree.9713,"aw",%nobits
+ 222              		.align	2
+ 225              	servo2_degree.9713:
+ 226 0000 00000000 		.space	4
+ 227              		.section	.bss.counter2.9712,"aw",%nobits
+ 228              		.align	2
+ 231              	counter2.9712:
+ 232 0000 00000000 		.space	4
+ 233              		.text
+ 234              	.Letext0:
+ 235              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 236              		.file 3 "Drivers/CMSIS/Include/core_cm7.h"
+ 237              		.file 4 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 238              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 239              		.file 6 "/usr/include/newlib/sys/lock.h"
+ 240              		.file 7 "/usr/include/newlib/sys/_types.h"
+ 241              		.file 8 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ARM GAS  /tmp/ccqG6R3O.s 			page 6
+
+
+ 242              		.file 9 "/usr/include/newlib/sys/reent.h"
+ 243              		.file 10 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 244              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 245              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 246              		.file 13 "Inc/tim.h"
+ARM GAS  /tmp/ccqG6R3O.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 servo.c
+     /tmp/ccqG6R3O.s:22     .text.driveServo1:0000000000000000 $t
+     /tmp/ccqG6R3O.s:29     .text.driveServo1:0000000000000000 driveServo1
+     /tmp/ccqG6R3O.s:99     .text.driveServo1:0000000000000058 $d
+     /tmp/ccqG6R3O.s:107    .text.driveServo2:0000000000000000 $t
+     /tmp/ccqG6R3O.s:114    .text.driveServo2:0000000000000000 driveServo2
+     /tmp/ccqG6R3O.s:212    .text.driveServo2:0000000000000088 $d
+     /tmp/ccqG6R3O.s:225    .bss.servo2_degree.9713:0000000000000000 servo2_degree.9713
+     /tmp/ccqG6R3O.s:231    .bss.counter2.9712:0000000000000000 counter2.9712
+     /tmp/ccqG6R3O.s:222    .bss.servo2_degree.9713:0000000000000000 $d
+     /tmp/ccqG6R3O.s:228    .bss.counter2.9712:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_dadd
+__aeabi_d2uiz
+HAL_TIM_PWM_Start
+htim3
+HAL_TIM_PWM_Stop

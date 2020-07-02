@@ -41,6 +41,8 @@ void CameraSettingsPanel::deployPanel(const CAMERA_SETTINGS_FORMAT &CameraSettin
 void CameraSettingsPanel::socketDataCheckCall()
 {
 
+    //PF11
+
     if(gpSocket->isEthernetConnected() == true)
     {
 

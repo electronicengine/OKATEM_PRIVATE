@@ -1,6 +1,8 @@
 #include "environmentinterface.h"
 #include <thread>
 
+
+
 EnvironmentInterface::EnvironmentInterface(MainOperation *Operation) : MainOperation(Operation)
 {
 
@@ -18,11 +20,14 @@ EnvironmentInterface::EnvironmentInterface(MainOperation *Operation) : MainOpera
 }
 
 
+
 void EnvironmentInterface::getJson()
 {
     *gpMotorInformations = gmJson.loadMotorInfo();
     *gpRemoteMachineInfo = gmJson.loadStreamInfo();
 }
+
+
 
 void EnvironmentInterface::saveBoardData(const INFORMATION_DATA_FORMAT &InformationData)
 {
@@ -32,6 +37,8 @@ void EnvironmentInterface::saveBoardData(const INFORMATION_DATA_FORMAT &Informat
 
 
 }
+
+
 
 void EnvironmentInterface::saveThread(const INFORMATION_DATA_FORMAT &InformationData)
 {
@@ -45,6 +52,8 @@ void EnvironmentInterface::saveThread(const INFORMATION_DATA_FORMAT &Information
 
     gmJson.saveBoardInfo(json_sensor_informations);
 }
+
+
 
 void EnvironmentInterface::saveMotorPositions(const MOTOR_INFORMATIONS &MotorInfo)
 {

@@ -122,12 +122,17 @@ typedef enum
                                       (__HANDLE__)->Lock = HAL_UNLOCKED;    \
                                     }while (0U)
 #endif /* USE_RTOS */
+//#ifndef  __weak
+  #define __weak __attribute__((weak))
+//#endif
 
-#define __weak  __attribute__((weak))
+
+
 
 
 /* Macro to get variable aligned on 4-bytes, for __ICCARM__ the directive "#pragma data_alignment=4" must be used instead */
 #if defined ( __GNUC__ ) && !defined (__CC_ARM) /* GNU Compiler */
+
   #ifndef __ALIGN_END
     #define __ALIGN_END    __attribute__ ((aligned (4)))
   #endif /* __ALIGN_END */

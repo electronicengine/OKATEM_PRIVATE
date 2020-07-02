@@ -154,7 +154,7 @@ void SerialCom::setTimeout(int TimeOut)
 
 
 
-Status SerialCom::Close()
+void SerialCom::Close()
 {
    tcflush(gmFileDescriptor, TCIFLUSH);
    close(gmFileDescriptor);

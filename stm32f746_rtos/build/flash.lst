@@ -1,0 +1,574 @@
+ARM GAS  /tmp/ccS2ALRX.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"flash.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	gpsData,416,4
+  18              		.comm	sensorValues,20,4
+  19              		.comm	gyroscopeValues,12,4
+  20              		.comm	calibration,4,4
+  21              		.comm	setting_enable,1,1
+  22              		.comm	motor1,20,4
+  23              		.comm	motor2,20,4
+  24              		.comm	servo1,16,4
+  25              		.comm	servo2,16,4
+  26              		.comm	gpsThreadHandle,4,4
+  27              		.comm	sensorThreadHandle,4,4
+  28              		.comm	spiComThreadHandle,4,4
+  29              		.comm	motorThreadHandle,4,4
+  30              		.comm	spiMutexHandle,4,4
+  31              		.comm	uartMutexHandle,4,4
+  32              		.comm	controlMutexHandle,4,4
+  33              		.comm	spiSemaphoreHandle,4,4
+  34              		.comm	uartSemaphoreHandle,4,4
+  35              		.comm	SpiCheckData,4,4
+  36              		.comm	SpiTxData,4,4
+  37              		.comm	SpiRxData,4,4
+  38              		.comm	EnvironmentData,4,4
+  39              		.comm	ControlData,4,4
+  40              		.comm	UpdateFile,4,4
+  41              		.comm	SensorCalibrationNeeded,4,4
+  42              		.comm	rx_buf,1,1
+  43              		.section	.rodata
+  44              		.align	2
+  45              	.LC0:
+  46 0000 48616C20 		.ascii	"Hal flash error\015\012\000"
+  46      666C6173 
+  46      68206572 
+  46      726F720D 
+  46      0A00
+  47              		.section	.text.reWriteFlash,"ax",%progbits
+  48              		.align	1
+  49              		.global	reWriteFlash
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  53              		.fpu fpv4-sp-d16
+ARM GAS  /tmp/ccS2ALRX.s 			page 2
+
+
+  55              	reWriteFlash:
+  56              	.LFB143:
+  57              		.file 1 "Src/flash.c"
+   1:Src/flash.c   **** 
+   2:Src/flash.c   **** 
+   3:Src/flash.c   **** /* Includes ------------------------------------------------------------------*/
+   4:Src/flash.c   **** #include "flash.h"
+   5:Src/flash.c   **** 
+   6:Src/flash.c   **** void reWriteFlash(unsigned char *Data, size_t Size, long Address)
+   7:Src/flash.c   **** {
+  58              		.loc 1 7 0
+  59              		.cfi_startproc
+  60              		@ args = 0, pretend = 0, frame = 24
+  61              		@ frame_needed = 1, uses_anonymous_args = 0
+  62 0000 90B5     		push	{r4, r7, lr}
+  63              	.LCFI0:
+  64              		.cfi_def_cfa_offset 12
+  65              		.cfi_offset 4, -12
+  66              		.cfi_offset 7, -8
+  67              		.cfi_offset 14, -4
+  68 0002 87B0     		sub	sp, sp, #28
+  69              	.LCFI1:
+  70              		.cfi_def_cfa_offset 40
+  71 0004 00AF     		add	r7, sp, #0
+  72              	.LCFI2:
+  73              		.cfi_def_cfa_register 7
+  74 0006 F860     		str	r0, [r7, #12]
+  75 0008 B960     		str	r1, [r7, #8]
+  76 000a 7A60     		str	r2, [r7, #4]
+   8:Src/flash.c   ****     HAL_StatusTypeDef status;
+   9:Src/flash.c   **** 
+  10:Src/flash.c   **** 
+  11:Src/flash.c   **** 
+  12:Src/flash.c   **** 
+  13:Src/flash.c   ****     HAL_FLASH_Unlock();
+  77              		.loc 1 13 0
+  78 000c FFF7FEFF 		bl	HAL_FLASH_Unlock
+  14:Src/flash.c   **** 
+  15:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_6, VOLTAGE_RANGE_3);
+  79              		.loc 1 15 0
+  80 0010 0221     		movs	r1, #2
+  81 0012 0620     		movs	r0, #6
+  82 0014 FFF7FEFF 		bl	FLASH_Erase_Sector
+  83              	.LBB2:
+  16:Src/flash.c   **** 
+  17:Src/flash.c   ****     for(size_t i = 0; i < Size; i++)
+  84              		.loc 1 17 0
+  85 0018 0023     		movs	r3, #0
+  86 001a 7B61     		str	r3, [r7, #20]
+  87 001c 19E0     		b	.L2
+  88              	.L4:
+  18:Src/flash.c   ****     {
+  19:Src/flash.c   ****         status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address + i , Data[i]);
+  89              		.loc 1 19 0
+  90 001e 7A68     		ldr	r2, [r7, #4]
+  91 0020 7B69     		ldr	r3, [r7, #20]
+  92 0022 D118     		adds	r1, r2, r3
+ARM GAS  /tmp/ccS2ALRX.s 			page 3
+
+
+  93 0024 FA68     		ldr	r2, [r7, #12]
+  94 0026 7B69     		ldr	r3, [r7, #20]
+  95 0028 1344     		add	r3, r3, r2
+  96 002a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  97 002c DBB2     		uxtb	r3, r3
+  98 002e 4FF00004 		mov	r4, #0
+  99 0032 1A46     		mov	r2, r3
+ 100 0034 2346     		mov	r3, r4
+ 101 0036 0020     		movs	r0, #0
+ 102 0038 FFF7FEFF 		bl	HAL_FLASH_Program
+ 103 003c 0346     		mov	r3, r0
+ 104 003e FB74     		strb	r3, [r7, #19]
+  20:Src/flash.c   **** 
+  21:Src/flash.c   ****         if(status != HAL_OK)
+ 105              		.loc 1 21 0
+ 106 0040 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 107 0042 002B     		cmp	r3, #0
+ 108 0044 02D0     		beq	.L3
+  22:Src/flash.c   ****             mprintf("Hal flash error\r\n");
+ 109              		.loc 1 22 0
+ 110 0046 0848     		ldr	r0, .L5
+ 111 0048 FFF7FEFF 		bl	mprintf
+ 112              	.L3:
+  17:Src/flash.c   ****     {
+ 113              		.loc 1 17 0 discriminator 2
+ 114 004c 7B69     		ldr	r3, [r7, #20]
+ 115 004e 0133     		adds	r3, r3, #1
+ 116 0050 7B61     		str	r3, [r7, #20]
+ 117              	.L2:
+  17:Src/flash.c   ****     {
+ 118              		.loc 1 17 0 is_stmt 0 discriminator 1
+ 119 0052 7A69     		ldr	r2, [r7, #20]
+ 120 0054 BB68     		ldr	r3, [r7, #8]
+ 121 0056 9A42     		cmp	r2, r3
+ 122 0058 E1D3     		bcc	.L4
+ 123              	.LBE2:
+  23:Src/flash.c   ****     }
+  24:Src/flash.c   **** 
+  25:Src/flash.c   ****     HAL_FLASH_Lock();
+ 124              		.loc 1 25 0 is_stmt 1
+ 125 005a FFF7FEFF 		bl	HAL_FLASH_Lock
+  26:Src/flash.c   **** 
+  27:Src/flash.c   **** }
+ 126              		.loc 1 27 0
+ 127 005e 00BF     		nop
+ 128 0060 1C37     		adds	r7, r7, #28
+ 129              	.LCFI3:
+ 130              		.cfi_def_cfa_offset 12
+ 131 0062 BD46     		mov	sp, r7
+ 132              	.LCFI4:
+ 133              		.cfi_def_cfa_register 13
+ 134              		@ sp needed
+ 135 0064 90BD     		pop	{r4, r7, pc}
+ 136              	.L6:
+ 137 0066 00BF     		.align	2
+ 138              	.L5:
+ 139 0068 00000000 		.word	.LC0
+ARM GAS  /tmp/ccS2ALRX.s 			page 4
+
+
+ 140              		.cfi_endproc
+ 141              	.LFE143:
+ 143              		.section	.text.writeFlash,"ax",%progbits
+ 144              		.align	1
+ 145              		.global	writeFlash
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.fpu fpv4-sp-d16
+ 151              	writeFlash:
+ 152              	.LFB144:
+  28:Src/flash.c   **** 
+  29:Src/flash.c   **** void writeFlash(uint8_t Data, long Address)
+  30:Src/flash.c   **** {
+ 153              		.loc 1 30 0
+ 154              		.cfi_startproc
+ 155              		@ args = 0, pretend = 0, frame = 8
+ 156              		@ frame_needed = 1, uses_anonymous_args = 0
+ 157 0000 90B5     		push	{r4, r7, lr}
+ 158              	.LCFI5:
+ 159              		.cfi_def_cfa_offset 12
+ 160              		.cfi_offset 4, -12
+ 161              		.cfi_offset 7, -8
+ 162              		.cfi_offset 14, -4
+ 163 0002 83B0     		sub	sp, sp, #12
+ 164              	.LCFI6:
+ 165              		.cfi_def_cfa_offset 24
+ 166 0004 00AF     		add	r7, sp, #0
+ 167              	.LCFI7:
+ 168              		.cfi_def_cfa_register 7
+ 169 0006 0346     		mov	r3, r0
+ 170 0008 3960     		str	r1, [r7]
+ 171 000a FB71     		strb	r3, [r7, #7]
+  31:Src/flash.c   ****     HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address , (uint8_t) Data);
+ 172              		.loc 1 31 0
+ 173 000c 3968     		ldr	r1, [r7]
+ 174 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 175 0010 4FF00004 		mov	r4, #0
+ 176 0014 1A46     		mov	r2, r3
+ 177 0016 2346     		mov	r3, r4
+ 178 0018 0020     		movs	r0, #0
+ 179 001a FFF7FEFF 		bl	HAL_FLASH_Program
+  32:Src/flash.c   **** }
+ 180              		.loc 1 32 0
+ 181 001e 00BF     		nop
+ 182 0020 0C37     		adds	r7, r7, #12
+ 183              	.LCFI8:
+ 184              		.cfi_def_cfa_offset 12
+ 185 0022 BD46     		mov	sp, r7
+ 186              	.LCFI9:
+ 187              		.cfi_def_cfa_register 13
+ 188              		@ sp needed
+ 189 0024 90BD     		pop	{r4, r7, pc}
+ 190              		.cfi_endproc
+ 191              	.LFE144:
+ 193              		.section	.text.readFlash,"ax",%progbits
+ 194              		.align	1
+ARM GAS  /tmp/ccS2ALRX.s 			page 5
+
+
+ 195              		.global	readFlash
+ 196              		.syntax unified
+ 197              		.thumb
+ 198              		.thumb_func
+ 199              		.fpu fpv4-sp-d16
+ 201              	readFlash:
+ 202              	.LFB145:
+  33:Src/flash.c   **** 
+  34:Src/flash.c   **** 
+  35:Src/flash.c   **** 
+  36:Src/flash.c   **** uint8_t *readFlash(int Address)
+  37:Src/flash.c   **** {
+ 203              		.loc 1 37 0
+ 204              		.cfi_startproc
+ 205              		@ args = 0, pretend = 0, frame = 16
+ 206              		@ frame_needed = 1, uses_anonymous_args = 0
+ 207              		@ link register save eliminated.
+ 208 0000 80B4     		push	{r7}
+ 209              	.LCFI10:
+ 210              		.cfi_def_cfa_offset 4
+ 211              		.cfi_offset 7, -4
+ 212 0002 85B0     		sub	sp, sp, #20
+ 213              	.LCFI11:
+ 214              		.cfi_def_cfa_offset 24
+ 215 0004 00AF     		add	r7, sp, #0
+ 216              	.LCFI12:
+ 217              		.cfi_def_cfa_register 7
+ 218 0006 7860     		str	r0, [r7, #4]
+  38:Src/flash.c   ****     uint8_t *flash_data;
+  39:Src/flash.c   **** 
+  40:Src/flash.c   ****     flash_data = (uint8_t *)Address;
+ 219              		.loc 1 40 0
+ 220 0008 7B68     		ldr	r3, [r7, #4]
+ 221 000a FB60     		str	r3, [r7, #12]
+  41:Src/flash.c   **** 
+  42:Src/flash.c   ****     return flash_data;
+ 222              		.loc 1 42 0
+ 223 000c FB68     		ldr	r3, [r7, #12]
+  43:Src/flash.c   **** }
+ 224              		.loc 1 43 0
+ 225 000e 1846     		mov	r0, r3
+ 226 0010 1437     		adds	r7, r7, #20
+ 227              	.LCFI13:
+ 228              		.cfi_def_cfa_offset 4
+ 229 0012 BD46     		mov	sp, r7
+ 230              	.LCFI14:
+ 231              		.cfi_def_cfa_register 13
+ 232              		@ sp needed
+ 233 0014 5DF8047B 		ldr	r7, [sp], #4
+ 234              	.LCFI15:
+ 235              		.cfi_restore 7
+ 236              		.cfi_def_cfa_offset 0
+ 237 0018 7047     		bx	lr
+ 238              		.cfi_endproc
+ 239              	.LFE145:
+ 241              		.section	.rodata
+ 242 0012 0000     		.align	2
+ARM GAS  /tmp/ccS2ALRX.s 			page 6
+
+
+ 243              	.LC1:
+ 244 0014 4D656D6F 		.ascii	"Memory Ereasing...\015\012\000"
+ 244      72792045 
+ 244      72656173 
+ 244      696E672E 
+ 244      2E2E0D0A 
+ 245 0029 000000   		.align	2
+ 246              	.LC2:
+ 247 002c 55706461 		.ascii	"UpdateFile is writing on memory\015\012\000"
+ 247      74654669 
+ 247      6C652069 
+ 247      73207772 
+ 247      6974696E 
+ 248 004e 0000     		.align	2
+ 249              	.LC3:
+ 250 0050 55706461 		.ascii	"UpdateFile has been writen on memory\015\012\000"
+ 250      74654669 
+ 250      6C652068 
+ 250      61732062 
+ 250      65656E20 
+ 251              		.section	.text.loadUpdateFile,"ax",%progbits
+ 252              		.align	1
+ 253              		.global	loadUpdateFile
+ 254              		.syntax unified
+ 255              		.thumb
+ 256              		.thumb_func
+ 257              		.fpu fpv4-sp-d16
+ 259              	loadUpdateFile:
+ 260              	.LFB146:
+  44:Src/flash.c   **** 
+  45:Src/flash.c   **** 
+  46:Src/flash.c   **** 
+  47:Src/flash.c   **** void loadUpdateFile(unsigned char *Buffer, uint32_t Size)
+  48:Src/flash.c   **** {
+ 261              		.loc 1 48 0
+ 262              		.cfi_startproc
+ 263              		@ args = 0, pretend = 0, frame = 16
+ 264              		@ frame_needed = 1, uses_anonymous_args = 0
+ 265 0000 90B5     		push	{r4, r7, lr}
+ 266              	.LCFI16:
+ 267              		.cfi_def_cfa_offset 12
+ 268              		.cfi_offset 4, -12
+ 269              		.cfi_offset 7, -8
+ 270              		.cfi_offset 14, -4
+ 271 0002 85B0     		sub	sp, sp, #20
+ 272              	.LCFI17:
+ 273              		.cfi_def_cfa_offset 32
+ 274 0004 00AF     		add	r7, sp, #0
+ 275              	.LCFI18:
+ 276              		.cfi_def_cfa_register 7
+ 277 0006 7860     		str	r0, [r7, #4]
+ 278 0008 3960     		str	r1, [r7]
+  49:Src/flash.c   ****     HAL_StatusTypeDef status;
+  50:Src/flash.c   **** 
+  51:Src/flash.c   ****     HAL_FLASH_Unlock();
+ 279              		.loc 1 51 0
+ 280 000a FFF7FEFF 		bl	HAL_FLASH_Unlock
+ARM GAS  /tmp/ccS2ALRX.s 			page 7
+
+
+  52:Src/flash.c   **** 
+  53:Src/flash.c   ****     mprintf("Memory Ereasing...\r\n");
+ 281              		.loc 1 53 0
+ 282 000e 2348     		ldr	r0, .L14
+ 283 0010 FFF7FEFF 		bl	mprintf
+  54:Src/flash.c   **** 
+  55:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
+ 284              		.loc 1 55 0
+ 285 0014 0221     		movs	r1, #2
+ 286 0016 0220     		movs	r0, #2
+ 287 0018 FFF7FEFF 		bl	FLASH_Erase_Sector
+  56:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_3, VOLTAGE_RANGE_3);
+ 288              		.loc 1 56 0
+ 289 001c 0221     		movs	r1, #2
+ 290 001e 0320     		movs	r0, #3
+ 291 0020 FFF7FEFF 		bl	FLASH_Erase_Sector
+  57:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
+ 292              		.loc 1 57 0
+ 293 0024 0221     		movs	r1, #2
+ 294 0026 0420     		movs	r0, #4
+ 295 0028 FFF7FEFF 		bl	FLASH_Erase_Sector
+  58:Src/flash.c   ****     FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
+ 296              		.loc 1 58 0
+ 297 002c 0221     		movs	r1, #2
+ 298 002e 0520     		movs	r0, #5
+ 299 0030 FFF7FEFF 		bl	FLASH_Erase_Sector
+  59:Src/flash.c   **** 
+  60:Src/flash.c   **** 
+  61:Src/flash.c   ****     HAL_Delay(50);
+ 300              		.loc 1 61 0
+ 301 0034 3220     		movs	r0, #50
+ 302 0036 FFF7FEFF 		bl	HAL_Delay
+  62:Src/flash.c   **** 
+  63:Src/flash.c   ****     mprintf("UpdateFile is writing on memory\r\n");
+ 303              		.loc 1 63 0
+ 304 003a 1948     		ldr	r0, .L14+4
+ 305 003c FFF7FEFF 		bl	mprintf
+ 306              	.LBB3:
+  64:Src/flash.c   **** 
+  65:Src/flash.c   ****     for(int i=0; i<Size; i++)
+ 307              		.loc 1 65 0
+ 308 0040 0023     		movs	r3, #0
+ 309 0042 FB60     		str	r3, [r7, #12]
+ 310 0044 1AE0     		b	.L11
+ 311              	.L13:
+  66:Src/flash.c   ****     {
+  67:Src/flash.c   ****         status = HAL_FLASH_Program(TYPEPROGRAM_BYTE, APPLICATION_ADDRESS + i , Buffer[i]);
+ 312              		.loc 1 67 0
+ 313 0046 FA68     		ldr	r2, [r7, #12]
+ 314 0048 164B     		ldr	r3, .L14+8
+ 315 004a 1344     		add	r3, r3, r2
+ 316 004c 1946     		mov	r1, r3
+ 317 004e FB68     		ldr	r3, [r7, #12]
+ 318 0050 7A68     		ldr	r2, [r7, #4]
+ 319 0052 1344     		add	r3, r3, r2
+ 320 0054 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 321 0056 DBB2     		uxtb	r3, r3
+ARM GAS  /tmp/ccS2ALRX.s 			page 8
+
+
+ 322 0058 4FF00004 		mov	r4, #0
+ 323 005c 1A46     		mov	r2, r3
+ 324 005e 2346     		mov	r3, r4
+ 325 0060 0020     		movs	r0, #0
+ 326 0062 FFF7FEFF 		bl	HAL_FLASH_Program
+ 327 0066 0346     		mov	r3, r0
+ 328 0068 FB72     		strb	r3, [r7, #11]
+  68:Src/flash.c   **** 
+  69:Src/flash.c   ****         if(status != HAL_OK)
+ 329              		.loc 1 69 0
+ 330 006a FB7A     		ldrb	r3, [r7, #11]	@ zero_extendqisi2
+ 331 006c 002B     		cmp	r3, #0
+ 332 006e 02D0     		beq	.L12
+  70:Src/flash.c   ****             mprintf("Hal flash error\r\n");
+ 333              		.loc 1 70 0
+ 334 0070 0D48     		ldr	r0, .L14+12
+ 335 0072 FFF7FEFF 		bl	mprintf
+ 336              	.L12:
+  65:Src/flash.c   ****     {
+ 337              		.loc 1 65 0 discriminator 2
+ 338 0076 FB68     		ldr	r3, [r7, #12]
+ 339 0078 0133     		adds	r3, r3, #1
+ 340 007a FB60     		str	r3, [r7, #12]
+ 341              	.L11:
+  65:Src/flash.c   ****     {
+ 342              		.loc 1 65 0 is_stmt 0 discriminator 1
+ 343 007c FB68     		ldr	r3, [r7, #12]
+ 344 007e 3A68     		ldr	r2, [r7]
+ 345 0080 9A42     		cmp	r2, r3
+ 346 0082 E0D8     		bhi	.L13
+ 347              	.LBE3:
+  71:Src/flash.c   **** 
+  72:Src/flash.c   ****     }
+  73:Src/flash.c   **** 
+  74:Src/flash.c   ****     HAL_FLASH_Lock();
+ 348              		.loc 1 74 0 is_stmt 1
+ 349 0084 FFF7FEFF 		bl	HAL_FLASH_Lock
+  75:Src/flash.c   **** 
+  76:Src/flash.c   **** 
+  77:Src/flash.c   ****     mprintf("UpdateFile has been writen on memory\r\n");
+ 350              		.loc 1 77 0
+ 351 0088 0848     		ldr	r0, .L14+16
+ 352 008a FFF7FEFF 		bl	mprintf
+  78:Src/flash.c   **** 
+  79:Src/flash.c   **** 
+  80:Src/flash.c   ****     HAL_Delay(100);
+ 353              		.loc 1 80 0
+ 354 008e 6420     		movs	r0, #100
+ 355 0090 FFF7FEFF 		bl	HAL_Delay
+  81:Src/flash.c   **** 
+  82:Src/flash.c   **** }
+ 356              		.loc 1 82 0
+ 357 0094 00BF     		nop
+ 358 0096 1437     		adds	r7, r7, #20
+ 359              	.LCFI19:
+ 360              		.cfi_def_cfa_offset 12
+ 361 0098 BD46     		mov	sp, r7
+ARM GAS  /tmp/ccS2ALRX.s 			page 9
+
+
+ 362              	.LCFI20:
+ 363              		.cfi_def_cfa_register 13
+ 364              		@ sp needed
+ 365 009a 90BD     		pop	{r4, r7, pc}
+ 366              	.L15:
+ 367              		.align	2
+ 368              	.L14:
+ 369 009c 14000000 		.word	.LC1
+ 370 00a0 2C000000 		.word	.LC2
+ 371 00a4 00000108 		.word	134283264
+ 372 00a8 00000000 		.word	.LC0
+ 373 00ac 50000000 		.word	.LC3
+ 374              		.cfi_endproc
+ 375              	.LFE146:
+ 377              		.text
+ 378              	.Letext0:
+ 379              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 380              		.file 3 "Inc/main.h"
+ 381              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 382              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 383              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 384              		.file 7 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 385              		.file 8 "/usr/include/newlib/sys/lock.h"
+ 386              		.file 9 "/usr/include/newlib/sys/_types.h"
+ 387              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 388              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 389              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 390              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 391              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 392              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 393              		.file 16 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 394              		.file 17 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 395              		.file 18 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 396              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 397              		.file 20 "Inc/gps.h"
+ 398              		.file 21 "Inc/sensor.h"
+ 399              		.file 22 "Inc/motor.h"
+ 400              		.file 23 "Inc/usart.h"
+ 401              		.file 24 "Inc/spi.h"
+ 402              		.file 25 "Inc/tim.h"
+ 403              		.file 26 "Inc/freertos.h"
+ARM GAS  /tmp/ccS2ALRX.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 flash.c
+                            *COM*:00000000000001a0 gpsData
+                            *COM*:0000000000000014 sensorValues
+                            *COM*:000000000000000c gyroscopeValues
+                            *COM*:0000000000000004 calibration
+                            *COM*:0000000000000001 setting_enable
+                            *COM*:0000000000000014 motor1
+                            *COM*:0000000000000014 motor2
+                            *COM*:0000000000000010 servo1
+                            *COM*:0000000000000010 servo2
+                            *COM*:0000000000000004 gpsThreadHandle
+                            *COM*:0000000000000004 sensorThreadHandle
+                            *COM*:0000000000000004 spiComThreadHandle
+                            *COM*:0000000000000004 motorThreadHandle
+                            *COM*:0000000000000004 spiMutexHandle
+                            *COM*:0000000000000004 uartMutexHandle
+                            *COM*:0000000000000004 controlMutexHandle
+                            *COM*:0000000000000004 spiSemaphoreHandle
+                            *COM*:0000000000000004 uartSemaphoreHandle
+                            *COM*:0000000000000004 SpiCheckData
+                            *COM*:0000000000000004 SpiTxData
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 EnvironmentData
+                            *COM*:0000000000000004 ControlData
+                            *COM*:0000000000000004 UpdateFile
+                            *COM*:0000000000000004 SensorCalibrationNeeded
+                            *COM*:0000000000000001 rx_buf
+     /tmp/ccS2ALRX.s:44     .rodata:0000000000000000 $d
+     /tmp/ccS2ALRX.s:48     .text.reWriteFlash:0000000000000000 $t
+     /tmp/ccS2ALRX.s:55     .text.reWriteFlash:0000000000000000 reWriteFlash
+     /tmp/ccS2ALRX.s:139    .text.reWriteFlash:0000000000000068 $d
+     /tmp/ccS2ALRX.s:144    .text.writeFlash:0000000000000000 $t
+     /tmp/ccS2ALRX.s:151    .text.writeFlash:0000000000000000 writeFlash
+     /tmp/ccS2ALRX.s:194    .text.readFlash:0000000000000000 $t
+     /tmp/ccS2ALRX.s:201    .text.readFlash:0000000000000000 readFlash
+     /tmp/ccS2ALRX.s:252    .text.loadUpdateFile:0000000000000000 $t
+     /tmp/ccS2ALRX.s:259    .text.loadUpdateFile:0000000000000000 loadUpdateFile
+     /tmp/ccS2ALRX.s:369    .text.loadUpdateFile:000000000000009c $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Unlock
+FLASH_Erase_Sector
+HAL_FLASH_Program
+mprintf
+HAL_FLASH_Lock
+HAL_Delay

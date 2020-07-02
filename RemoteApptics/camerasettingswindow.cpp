@@ -47,6 +47,8 @@ CameraSettingsWindow::~CameraSettingsWindow()
     delete camera_settings_ui;
 }
 
+
+
 void CameraSettingsWindow::cameraSettingsAccepted()
 {
     std::cout << "gpCameraSettingsWindow hiding" << std::endl;

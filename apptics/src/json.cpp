@@ -235,7 +235,7 @@ void Json::readMotorInfo(MOTOR_INFORMATIONS &MotorInfo)
 
 
 
-int Json::writeFile(const std::string &Content, const std::string &File)
+void Json::writeFile(const std::string &Content, const std::string &File)
 {
 
     std::ofstream myfile;

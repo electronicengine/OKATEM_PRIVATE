@@ -110,7 +110,7 @@ private:
     volatile short int gmSetTime = 0;
 
     void setTimeout(int TimeOut);
-    Status Close();
+    void Close();
 
 //    virtual ~SerialCom();
 

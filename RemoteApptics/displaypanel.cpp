@@ -19,7 +19,7 @@ void DisplayPanel::switchWifi()
 
     emit setSfpConnectionImageVisibilty(false);
     emit setWifiConnectionImageVisibilty(true);
-    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">WIFI </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
+    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">RF </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
 
 
 }
@@ -28,7 +28,7 @@ void DisplayPanel::switchSfp()
 {
     emit setSfpConnectionImageVisibilty(true);
     emit setWifiConnectionImageVisibilty(false);
-    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">SFP </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
+    emit setConnectionTypeLabel("<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">FSO </span></p><p align=\"center\"><span style=\" font-weight:600;\">CONNECTED</span></p></body></html>");
 
 }
 
@@ -46,6 +46,10 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(refreshStatusLabel(QString)), ui->status_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshTxPowerLabel(QString)), ui->tx_power_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshRxPowerLabel(QString)), ui->rx_power_label, SLOT(setText(QString)), Qt::QueuedConnection);
+
+    connect(this, SIGNAL(refreshAccelXLabel(QString)), ui->accel_x_label, SLOT(setText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(refreshAccelYLabel(QString)), ui->accel_y_label, SLOT(setText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(refreshAccelZLabel(QString)), ui->accel_z_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshTemperatureLabel(QString)), ui->temperature_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshPressureLabel(QString)), ui->pressure_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshAltitudeLabel(QString)), ui->altitude_label, SLOT(setText(QString)), Qt::QueuedConnection);
@@ -55,13 +59,18 @@ void DisplayPanel::attachWindow()
     connect(this, SIGNAL(setStyleSheetofStep1(QString)), ui->step1_pos_label, SLOT(setStyleSheet(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(refreshStep2PosLabel(QString)), ui->step2_pos_label, SLOT(setText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(setStyleSheetofStep2(QString)), ui->step2_pos_label, SLOT(setStyleSheet(QString)), Qt::QueuedConnection);
-
     connect(this, SIGNAL(statusLabelClose()), ui->status_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(statusLabelShow()), ui->status_label, SLOT(show()), Qt::QueuedConnection);
     connect(this, SIGNAL(txPowerLabelClose()), ui->tx_power_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(txPowerLabelShow()), ui->tx_power_label, SLOT(show()), Qt::QueuedConnection);
     connect(this, SIGNAL(rxPowerLabelClose()), ui->rx_power_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(rxPowerLabelShow()), ui->rx_power_label, SLOT(show()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelXLabelClose()), ui->accel_x_label, SLOT(close()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelXLabelShow()), ui->accel_x_label, SLOT(show()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelYLabelClose()), ui->accel_y_label, SLOT(close()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelYLabelShow()), ui->accel_y_label, SLOT(show()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelZLabelClose()), ui->accel_z_label, SLOT(close()), Qt::QueuedConnection);
+    connect(this, SIGNAL(accelZLabelShow()), ui->accel_z_label, SLOT(show()), Qt::QueuedConnection);
     connect(this, SIGNAL(temperatureLabelClose()), ui->temperature_label, SLOT(close()), Qt::QueuedConnection);
     connect(this, SIGNAL(temperatureLabelShow()), ui->temperature_label, SLOT(show()), Qt::QueuedConnection);
     connect(this, SIGNAL(pressureLabelClose()), ui->pressure_label, SLOT(close()), Qt::QueuedConnection);
@@ -178,6 +187,9 @@ void DisplayPanel::deployPanel()
         emit nmeaLabelClose();
         emit step1PosLabelClose();
         emit step2PosLabelClose();
+        emit accelXLabelClose();
+        emit accelYLabelClose();
+        emit accelZLabelClose();
 
         usleep(1000);
 
@@ -191,7 +203,9 @@ void DisplayPanel::deployPanel()
         emit nmeaLabelShow();
         emit step1PosLabelShow();
         emit step2PosLabelShow();
-
+        emit accelXLabelShow();
+        emit accelYLabelShow();
+        emit accelZLabelShow();
         usleep(1000);
 
     }
@@ -220,7 +234,9 @@ void DisplayPanel::deployPanel()
     emit refreshNMEALabel(QString(gpEnvironmentInfo->gps_string.c_str()));
     emit refreshStep1PosLabel(QString::number(gpEnvironmentInfo->step_motor1_step));
     emit refreshStep2PosLabel(QString::number(gpEnvironmentInfo->step_motor2_step));
-
+    emit refreshAccelXLabel(QString::number(gpEnvironmentInfo->gyroscope_data.accel_x));
+    emit refreshAccelYLabel(QString::number(gpEnvironmentInfo->gyroscope_data.accel_y));
+    emit refreshAccelZLabel(QString::number(gpEnvironmentInfo->gyroscope_data.accel_z));
 
 
 }

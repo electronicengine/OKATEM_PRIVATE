@@ -13,16 +13,16 @@ AutoLockingPanel::AutoLockingPanel(AutoControlWindow *Window) :
 void AutoLockingPanel::markFSOPoints(cv::Mat &Frame, const std::vector<cv::Point> &Points)
 {
 
-    if(Points.size() == FSO_POINTS)
-    {
+//    if(Points.size() == FSO_POINTS)
+//    {
         const cv::Scalar colors[Points.size()] = {cv::Scalar(0, 0, 255),
                                       cv::Scalar(0, 255, 0),
                                       cv::Scalar(255, 0, 0),
-                                      cv::Scalar(255, 0, 255) };
+                                      /*cv::Scalar(255, 0, 255) */};
 
         for(size_t i = 0; i < Points.size(); i++)
             cv::circle(Frame, Points[i], 5, colors[i], -1);
-    }
+//    }
 
 }
 
@@ -36,32 +36,30 @@ void AutoLockingPanel::drawErrorVector(cv::Mat &Frame, const std::vector<cv::Poi
 
     static KalmanFilter kalman_filter;
 
-    if(Points.size() < FSO_POINTS)
-    {
-        error_vector = calculateErrorVector(gmTarget, gmFSOCenter);
+//    if(Points.size() < FSO_POINTS)
+//    {
+//        error_vector = calculateErrorVector(gmTarget, gmFSOCenter);
 
-        if(error_vector[2] < 20)
-        {
-            noisy_center = cv::Point(0, 0);
-            std::cout << "closer" << std::endl;
-        }
-        else
-        {
-            noisy_center = Process::calculateCenter(Points);
-        }
+//        if(error_vector[2] < 20)
+//        {
+//            noisy_center = cv::Point(0, 0);
+//            std::cout << "closer" << std::endl;
+//        }
+//        else
+//        {
+//            noisy_center = Process::calculateCenter(Points);
+//        }
 
-    }
-    else
+//    }
+//    else
         noisy_center = Process::calculateCenter(Points);
-
-
 
     if(noisy_center.x > 0 && noisy_center.y > 0)
     {
         clear_center = kalman_filter.takeKalmanFilter(noisy_center);
 
-        if((clear_center.x > 0 && clear_center.y > 0) && (clear_center.x < 1000 && clear_center.y < 1000))
-        {
+//        if((clear_center.x > 0 && clear_center.y > 0) && (clear_center.x < 1000 && clear_center.y < 1000))
+//        {
 
             gmMutex.lock();
 
@@ -74,20 +72,19 @@ void AutoLockingPanel::drawErrorVector(cv::Mat &Frame, const std::vector<cv::Poi
             std::cout << "x:" << std::to_string(clear_center.x) <<
                          " y:" << std::to_string(clear_center.y) << std::endl;
 
-            cv::line(Frame, clear_center, gmTarget, cv::Scalar(0,0,255)); // drawing Error Vector
+//            cv::line(Frame, clear_center, gmTarget, cv::Scalar(0,0,255)); // drawing Error Vector
 
-            markFSOPoints(Frame, Points);
-        }
+//            markFSOPoints(Frame, Points);
+//        }
 
     }
 
 
     cv::circle(Frame, gmFSOCenter, 5, cv::Scalar(255,255,255), -1); // Mark Center
 
-
-
-
 }
+
+
 
 void AutoLockingPanel::attachToAutoControlWindow()
 {
@@ -183,6 +180,9 @@ void AutoLockingPanel::lockToTarget(const cv::Point &Target)
 //                     " error_y:" << std::to_string(error_vector[0]) << std::endl;
 
         ret = checkError(error_vector[2]);
+
+        stepmotor1_speed = 0;
+        stepmotor2_speed = 0;
 
         if(error_vector[2] > 3)
             driveMotors(stepmotor1_speed, stepmotor2_speed);

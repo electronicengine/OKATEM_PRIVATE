@@ -40,6 +40,7 @@ link_directories(
     /usr/arm-linux-gnueabihf/lib
     )
 
+#find_package( OpenCV REQUIRED )
 link_libraries(
 
 
@@ -97,6 +98,7 @@ add_executable(${PROJECT_NAME}
 
     )
 
+
 #target_link_libraries( ${PROJECT_NAME}
 #    pthread
 #    opencv_calib3d
@@ -118,8 +120,8 @@ add_executable(${PROJECT_NAME}
 #    opencv_videostab
 #    )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
-#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
-  COMMENT "Creating directory: "
-)
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.61:/home/pi
+##  COMMAND sudo sshpass -p "hyperion" scp -r ../build-apptics-Desktop-Debug pi@10.100.93.62:/home/pi
+#  COMMENT "Creating directory: "
+#)

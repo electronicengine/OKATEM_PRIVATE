@@ -30,9 +30,9 @@ GridLayout{backgroundColor: transparent;}
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>10</y>
+      <y>9</y>
       <width>960</width>
-      <height>720</height>
+      <height>711</height>
      </rect>
     </property>
     <property name="mouseTracking">
@@ -298,26 +298,32 @@ border-image: url(:/images/toggle_button_on.png);
    <widget class="QWidget" name="gridLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>660</x>
       <y>790</y>
-      <width>301</width>
-      <height>181</height>
+      <width>271</width>
+      <height>204</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="sensor_layout">
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_12">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_26">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="styleSheet">
         <string notr="true">color: rgb(114, 159, 207);
 background-color: transparent;
 </string>
        </property>
        <property name="text">
-        <string>Compass:</string>
+        <string>Accel X</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="4" column="1">
       <widget class="QLabel" name="pressure_label">
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -341,7 +347,53 @@ background-color: transparent;
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="6" column="2">
+      <widget class="QLabel" name="label_24">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Deg</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="3">
+      <widget class="QLabel" name="nmea_label">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Pressure:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
       <widget class="QLabel" name="label_22">
        <property name="styleSheet">
         <string notr="true">color: rgb(114, 159, 207);
@@ -353,39 +405,8 @@ background-color: transparent;
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="3">
-      <widget class="QLabel" name="label_17">
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);</string>
-       </property>
-       <property name="text">
-        <string>NMEA Output:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);
-background-color: transparent;
-</string>
-       </property>
-       <property name="text">
-        <string>Altitude:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_21">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_29">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -398,12 +419,36 @@ background-color: transparent;
 </string>
        </property>
        <property name="text">
-        <string>C</string>
+        <string>Accel Y</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="compass_label">
+     <item row="2" column="1">
+      <widget class="QLabel" name="accel_z_label">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="accel_y_label">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -427,59 +472,7 @@ background-color: transparent;
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QLabel" name="label_23">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);
-background-color: transparent;
-</string>
-       </property>
-       <property name="text">
-        <string>m</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);
-background-color: transparent;
-</string>
-       </property>
-       <property name="text">
-        <string>Temperature:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="3">
-      <widget class="QLabel" name="nmea_label">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="label_24">
+      <widget class="QLabel" name="label_31">
        <property name="styleSheet">
         <string notr="true">color: rgb(114, 159, 207);
 background-color: transparent;
@@ -491,7 +484,7 @@ background-color: transparent;
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="temperature_label">
+      <widget class="QLabel" name="accel_x_label">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -514,7 +507,19 @@ background-color: transparent;
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="5" column="2">
+      <widget class="QLabel" name="label_23">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>m</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
       <widget class="QLabel" name="altitude_label">
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -538,15 +543,153 @@ background-color: transparent;
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_10">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_30">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="styleSheet">
         <string notr="true">color: rgb(114, 159, 207);
 background-color: transparent;
 </string>
        </property>
        <property name="text">
-        <string>Pressure:</string>
+        <string>Accel Z</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_28">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Deg</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="temperature_label">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Temperature:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="compass_label">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_27">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Deg</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Altitude:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Compass:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="label_21">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>C</string>
        </property>
       </widget>
      </item>
@@ -749,7 +892,7 @@ border-image: url(:/images/up_pressed.png);
    <widget class="QSlider" name="step1_speed_slider">
     <property name="geometry">
      <rect>
-      <x>500</x>
+      <x>470</x>
       <y>760</y>
       <width>131</width>
       <height>16</height>
@@ -774,7 +917,7 @@ border-image: url(:/images/up_pressed.png);
    <widget class="QLabel" name="step2_speed_label">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>300</x>
       <y>740</y>
       <width>151</width>
       <height>19</height>
@@ -1124,6 +1267,17 @@ background-color: transparent;</string>
        </property>
       </widget>
      </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_15">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(114, 159, 207);
+background-color: transparent;</string>
+       </property>
+       <property name="text">
+        <string>dbm</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="1">
       <widget class="QLabel" name="rx_power_label">
        <property name="autoFillBackground">
@@ -1144,17 +1298,6 @@ background-color: transparent;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="label_15">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(114, 159, 207);
-background-color: transparent;</string>
-       </property>
-       <property name="text">
-        <string>dbm</string>
        </property>
       </widget>
      </item>
@@ -1198,7 +1341,7 @@ background-color: transparent;</string>
    <widget class="QSlider" name="step2_speed_slider">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>310</x>
       <y>760</y>
       <width>131</width>
       <height>16</height>
@@ -1223,7 +1366,7 @@ background-color: transparent;</string>
    <widget class="QLabel" name="step1_speed_label">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>460</x>
       <y>740</y>
       <width>151</width>
       <height>19</height>

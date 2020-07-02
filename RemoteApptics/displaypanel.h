@@ -56,6 +56,16 @@ signals:
     void refreshRxPowerLabel(const QString &Text);
     void temperatureLabelClose();
     void temperatureLabelShow();
+
+    void refreshAccelXLabel(const QString &Text);
+    void accelXLabelClose();
+    void accelXLabelShow();
+    void refreshAccelYLabel(const QString &Text);
+    void accelYLabelClose();
+    void accelYLabelShow();
+    void refreshAccelZLabel(const QString &Text);
+    void accelZLabelClose();
+    void accelZLabelShow();
     void refreshTemperatureLabel(const QString &Text);
     void pressureLabelClose();
     void pressureLabelShow();

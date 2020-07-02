@@ -29,7 +29,6 @@ void DriverInterface::driveStmBoard(const CONTROL_DATA_FORMAT &ControlData)
     MOTOR_INFORMATIONS motor_informations;
 
     gmControlData = ControlData;
-
     motor_informations = ControlData;
 
     if(checkIfUdpCalibrationValues(ControlData) != SUCCESS)
@@ -97,6 +96,8 @@ CAMERA_SETTINGS_FORMAT DriverInterface::setCameraOptions(const CAMERA_SETTINGS_F
 
         return camera_settings;
     }
+    else
+        return camera_settings;
 
 }
 

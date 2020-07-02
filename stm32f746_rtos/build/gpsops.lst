@@ -1,0 +1,382 @@
+ARM GAS  /tmp/cctALQO2.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"gpsops.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	gpsData,416,4
+  18              		.comm	sensorValues,20,4
+  19              		.comm	gyroscopeValues,12,4
+  20              		.comm	calibration,4,4
+  21              		.comm	setting_enable,1,1
+  22              		.comm	motor1,20,4
+  23              		.comm	motor2,20,4
+  24              		.comm	servo1,16,4
+  25              		.comm	servo2,16,4
+  26              		.comm	gpsThreadHandle,4,4
+  27              		.comm	sensorThreadHandle,4,4
+  28              		.comm	spiComThreadHandle,4,4
+  29              		.comm	motorThreadHandle,4,4
+  30              		.comm	spiMutexHandle,4,4
+  31              		.comm	uartMutexHandle,4,4
+  32              		.comm	controlMutexHandle,4,4
+  33              		.comm	spiSemaphoreHandle,4,4
+  34              		.comm	uartSemaphoreHandle,4,4
+  35              		.comm	SpiCheckData,4,4
+  36              		.comm	SpiTxData,4,4
+  37              		.comm	SpiRxData,4,4
+  38              		.comm	EnvironmentData,4,4
+  39              		.comm	ControlData,4,4
+  40              		.comm	UpdateFile,4,4
+  41              		.comm	SensorCalibrationNeeded,4,4
+  42              		.comm	rx_buf,1,1
+  43              		.section	.text.UART4_IRQHandler,"ax",%progbits
+  44              		.align	1
+  45              		.global	UART4_IRQHandler
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  49              		.fpu fpv4-sp-d16
+  51              	UART4_IRQHandler:
+  52              	.LFB143:
+  53              		.file 1 "Src/gpsops.c"
+   1:Src/gpsops.c  **** #include "gpsops.h"
+   2:Src/gpsops.c  **** #include "stdlib.h"
+   3:Src/gpsops.c  **** 
+   4:Src/gpsops.c  **** 
+   5:Src/gpsops.c  **** void UART4_IRQHandler(void)
+ARM GAS  /tmp/cctALQO2.s 			page 2
+
+
+   6:Src/gpsops.c  **** {
+  54              		.loc 1 6 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 1, uses_anonymous_args = 0
+  58 0000 80B5     		push	{r7, lr}
+  59              	.LCFI0:
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 7, -8
+  62              		.cfi_offset 14, -4
+  63 0002 00AF     		add	r7, sp, #0
+  64              	.LCFI1:
+  65              		.cfi_def_cfa_register 7
+   7:Src/gpsops.c  **** 
+   8:Src/gpsops.c  **** 
+   9:Src/gpsops.c  ****     HAL_UART_IRQHandler(&huart4);
+  66              		.loc 1 9 0
+  67 0004 0548     		ldr	r0, .L2
+  68 0006 FFF7FEFF 		bl	HAL_UART_IRQHandler
+  10:Src/gpsops.c  **** 
+  11:Src/gpsops.c  ****     xSemaphoreGiveFromISR(uartSemaphoreHandle, NULL);
+  69              		.loc 1 11 0
+  70 000a 054B     		ldr	r3, .L2+4
+  71 000c 1B68     		ldr	r3, [r3]
+  72 000e 0021     		movs	r1, #0
+  73 0010 1846     		mov	r0, r3
+  74 0012 FFF7FEFF 		bl	xQueueGiveFromISR
+  12:Src/gpsops.c  **** 
+  13:Src/gpsops.c  **** }
+  75              		.loc 1 13 0
+  76 0016 00BF     		nop
+  77 0018 80BD     		pop	{r7, pc}
+  78              	.L3:
+  79 001a 00BF     		.align	2
+  80              	.L2:
+  81 001c 00000000 		.word	huart4
+  82 0020 00000000 		.word	uartSemaphoreHandle
+  83              		.cfi_endproc
+  84              	.LFE143:
+  86              		.section	.rodata
+  87              		.align	2
+  88              	.LC0:
+  89 0000 6770734F 		.ascii	"gpsOps\015\012\000"
+  89      70730D0A 
+  89      00
+  90 0009 000000   		.align	2
+  91              	.LC1:
+  92 000c 6770734F 		.ascii	"gpsOps Crash \015\012\000"
+  92      70732043 
+  92      72617368 
+  92      200D0A00 
+  93              		.section	.text.gpsOps,"ax",%progbits
+  94              		.align	1
+  95              		.global	gpsOps
+  96              		.syntax unified
+  97              		.thumb
+  98              		.thumb_func
+ARM GAS  /tmp/cctALQO2.s 			page 3
+
+
+  99              		.fpu fpv4-sp-d16
+ 101              	gpsOps:
+ 102              	.LFB144:
+  14:Src/gpsops.c  **** 
+  15:Src/gpsops.c  **** 
+  16:Src/gpsops.c  **** 
+  17:Src/gpsops.c  **** void gpsOps(void const *argument)
+  18:Src/gpsops.c  **** {
+ 103              		.loc 1 18 0
+ 104              		.cfi_startproc
+ 105              		@ args = 0, pretend = 0, frame = 16
+ 106              		@ frame_needed = 1, uses_anonymous_args = 0
+ 107 0000 80B5     		push	{r7, lr}
+ 108              	.LCFI2:
+ 109              		.cfi_def_cfa_offset 8
+ 110              		.cfi_offset 7, -8
+ 111              		.cfi_offset 14, -4
+ 112 0002 84B0     		sub	sp, sp, #16
+ 113              	.LCFI3:
+ 114              		.cfi_def_cfa_offset 24
+ 115 0004 00AF     		add	r7, sp, #0
+ 116              	.LCFI4:
+ 117              		.cfi_def_cfa_register 7
+ 118 0006 7860     		str	r0, [r7, #4]
+  19:Src/gpsops.c  **** 
+  20:Src/gpsops.c  ****     mprintf("gpsOps\r\n");
+ 119              		.loc 1 20 0
+ 120 0008 2748     		ldr	r0, .L11
+ 121 000a FFF7FEFF 		bl	mprintf
+  21:Src/gpsops.c  **** 
+  22:Src/gpsops.c  ****     unsigned char rx_data;
+  23:Src/gpsops.c  **** 
+  24:Src/gpsops.c  ****     gpsInit();
+ 122              		.loc 1 24 0
+ 123 000e FFF7FEFF 		bl	gpsInit
+ 124              	.L10:
+  25:Src/gpsops.c  **** 
+  26:Src/gpsops.c  **** 
+  27:Src/gpsops.c  ****   while(1)
+  28:Src/gpsops.c  ****   {
+  29:Src/gpsops.c  **** 
+  30:Src/gpsops.c  ****       if( xSemaphoreTake(uartSemaphoreHandle, 1000) == pdPASS)
+ 125              		.loc 1 30 0
+ 126 0012 264B     		ldr	r3, .L11+4
+ 127 0014 1868     		ldr	r0, [r3]
+ 128 0016 0023     		movs	r3, #0
+ 129 0018 4FF47A72 		mov	r2, #1000
+ 130 001c 0021     		movs	r1, #0
+ 131 001e FFF7FEFF 		bl	xQueueGenericReceive
+ 132 0022 0346     		mov	r3, r0
+ 133 0024 012B     		cmp	r3, #1
+ 134 0026 3AD1     		bne	.L5
+  31:Src/gpsops.c  ****       {
+  32:Src/gpsops.c  **** 
+  33:Src/gpsops.c  **** 
+  34:Src/gpsops.c  ****         if(checkGpsData() == GPS_READY)
+ 135              		.loc 1 34 0
+ARM GAS  /tmp/cctALQO2.s 			page 4
+
+
+ 136 0028 FFF7FEFF 		bl	checkGpsData
+ 137 002c 0346     		mov	r3, r0
+ 138 002e 012B     		cmp	r3, #1
+ 139 0030 2BD1     		bne	.L6
+  35:Src/gpsops.c  ****         {
+  36:Src/gpsops.c  **** 
+  37:Src/gpsops.c  ****                xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+ 140              		.loc 1 37 0
+ 141 0032 1F4B     		ldr	r3, .L11+8
+ 142 0034 1868     		ldr	r0, [r3]
+ 143 0036 0023     		movs	r3, #0
+ 144 0038 4FF0FF32 		mov	r2, #-1
+ 145 003c 0021     		movs	r1, #0
+ 146 003e FFF7FEFF 		bl	xQueueGenericReceive
+ 147              	.LBB2:
+  38:Src/gpsops.c  **** 
+  39:Src/gpsops.c  ****                for(int i=0; i<GPS_STRING_SIZE; i++)
+ 148              		.loc 1 39 0
+ 149 0042 0023     		movs	r3, #0
+ 150 0044 FB60     		str	r3, [r7, #12]
+ 151 0046 0FE0     		b	.L7
+ 152              	.L8:
+  40:Src/gpsops.c  ****                    EnvironmentData -> gps_string[i] = gpsData.gprmc_body[i];
+ 153              		.loc 1 40 0 discriminator 3
+ 154 0048 1A4B     		ldr	r3, .L11+12
+ 155 004a 1A68     		ldr	r2, [r3]
+ 156 004c 1A49     		ldr	r1, .L11+16
+ 157 004e FB68     		ldr	r3, [r7, #12]
+ 158 0050 0B44     		add	r3, r3, r1
+ 159 0052 03F59C73 		add	r3, r3, #312
+ 160 0056 1B78     		ldrb	r3, [r3]
+ 161 0058 D9B2     		uxtb	r1, r3
+ 162 005a FB68     		ldr	r3, [r7, #12]
+ 163 005c 1344     		add	r3, r3, r2
+ 164 005e 0A46     		mov	r2, r1
+ 165 0060 1A70     		strb	r2, [r3]
+  39:Src/gpsops.c  ****                    EnvironmentData -> gps_string[i] = gpsData.gprmc_body[i];
+ 166              		.loc 1 39 0 discriminator 3
+ 167 0062 FB68     		ldr	r3, [r7, #12]
+ 168 0064 0133     		adds	r3, r3, #1
+ 169 0066 FB60     		str	r3, [r7, #12]
+ 170              	.L7:
+  39:Src/gpsops.c  ****                    EnvironmentData -> gps_string[i] = gpsData.gprmc_body[i];
+ 171              		.loc 1 39 0 is_stmt 0 discriminator 1
+ 172 0068 FB68     		ldr	r3, [r7, #12]
+ 173 006a 492B     		cmp	r3, #73
+ 174 006c ECDD     		ble	.L8
+ 175              	.LBE2:
+  41:Src/gpsops.c  **** 
+  42:Src/gpsops.c  ****                xSemaphoreGive(spiMutexHandle);
+ 176              		.loc 1 42 0 is_stmt 1
+ 177 006e 104B     		ldr	r3, .L11+8
+ 178 0070 1868     		ldr	r0, [r3]
+ 179 0072 0023     		movs	r3, #0
+ 180 0074 0022     		movs	r2, #0
+ 181 0076 0021     		movs	r1, #0
+ 182 0078 FFF7FEFF 		bl	xQueueGenericSend
+ARM GAS  /tmp/cctALQO2.s 			page 5
+
+
+  43:Src/gpsops.c  **** 
+  44:Src/gpsops.c  **** 
+  45:Src/gpsops.c  **** 
+  46:Src/gpsops.c  ****            HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+ 183              		.loc 1 46 0
+ 184 007c 4FF48051 		mov	r1, #4096
+ 185 0080 0E48     		ldr	r0, .L11+20
+ 186 0082 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  47:Src/gpsops.c  **** 
+  48:Src/gpsops.c  ****            enableGps();
+ 187              		.loc 1 48 0
+ 188 0086 FFF7FEFF 		bl	enableGps
+ 189              	.L6:
+  49:Src/gpsops.c  **** 
+  50:Src/gpsops.c  ****         }
+  51:Src/gpsops.c  **** 
+  52:Src/gpsops.c  **** 
+  53:Src/gpsops.c  ****           receiveGpsData();
+ 190              		.loc 1 53 0
+ 191 008a FFF7FEFF 		bl	receiveGpsData
+  54:Src/gpsops.c  **** 
+  55:Src/gpsops.c  ****           HAL_UART_Receive_IT(&huart4, (uint8_t *)&rx_data, 1);
+ 192              		.loc 1 55 0
+ 193 008e 07F10B03 		add	r3, r7, #11
+ 194 0092 0122     		movs	r2, #1
+ 195 0094 1946     		mov	r1, r3
+ 196 0096 0A48     		ldr	r0, .L11+24
+ 197 0098 FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 198 009c B9E7     		b	.L10
+ 199              	.L5:
+  56:Src/gpsops.c  **** 
+  57:Src/gpsops.c  **** 
+  58:Src/gpsops.c  ****       }
+  59:Src/gpsops.c  ****       else
+  60:Src/gpsops.c  ****       {
+  61:Src/gpsops.c  **** 
+  62:Src/gpsops.c  ****           mprintf("gpsOps Crash \r\n");
+ 200              		.loc 1 62 0
+ 201 009e 0948     		ldr	r0, .L11+28
+ 202 00a0 FFF7FEFF 		bl	mprintf
+  30:Src/gpsops.c  ****       {
+ 203              		.loc 1 30 0
+ 204 00a4 B5E7     		b	.L10
+ 205              	.L12:
+ 206 00a6 00BF     		.align	2
+ 207              	.L11:
+ 208 00a8 00000000 		.word	.LC0
+ 209 00ac 00000000 		.word	uartSemaphoreHandle
+ 210 00b0 00000000 		.word	spiMutexHandle
+ 211 00b4 00000000 		.word	EnvironmentData
+ 212 00b8 00000000 		.word	gpsData
+ 213 00bc 00040240 		.word	1073873920
+ 214 00c0 00000000 		.word	huart4
+ 215 00c4 0C000000 		.word	.LC1
+ 216              		.cfi_endproc
+ 217              	.LFE144:
+ 219              		.text
+ARM GAS  /tmp/cctALQO2.s 			page 6
+
+
+ 220              	.Letext0:
+ 221              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 222              		.file 3 "Inc/main.h"
+ 223              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 224              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 225              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 226              		.file 7 "/usr/include/newlib/sys/lock.h"
+ 227              		.file 8 "/usr/include/newlib/sys/_types.h"
+ 228              		.file 9 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 229              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 230              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 231              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 232              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 233              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 234              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 235              		.file 16 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
+ 236              		.file 17 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 237              		.file 18 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 238              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 239              		.file 20 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 240              		.file 21 "Inc/gps.h"
+ 241              		.file 22 "Inc/sensor.h"
+ 242              		.file 23 "Inc/motor.h"
+ 243              		.file 24 "Inc/usart.h"
+ 244              		.file 25 "Inc/spi.h"
+ 245              		.file 26 "Inc/tim.h"
+ 246              		.file 27 "Inc/freertos.h"
+ARM GAS  /tmp/cctALQO2.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 gpsops.c
+                            *COM*:00000000000001a0 gpsData
+                            *COM*:0000000000000014 sensorValues
+                            *COM*:000000000000000c gyroscopeValues
+                            *COM*:0000000000000004 calibration
+                            *COM*:0000000000000001 setting_enable
+                            *COM*:0000000000000014 motor1
+                            *COM*:0000000000000014 motor2
+                            *COM*:0000000000000010 servo1
+                            *COM*:0000000000000010 servo2
+                            *COM*:0000000000000004 gpsThreadHandle
+                            *COM*:0000000000000004 sensorThreadHandle
+                            *COM*:0000000000000004 spiComThreadHandle
+                            *COM*:0000000000000004 motorThreadHandle
+                            *COM*:0000000000000004 spiMutexHandle
+                            *COM*:0000000000000004 uartMutexHandle
+                            *COM*:0000000000000004 controlMutexHandle
+                            *COM*:0000000000000004 spiSemaphoreHandle
+                            *COM*:0000000000000004 uartSemaphoreHandle
+                            *COM*:0000000000000004 SpiCheckData
+                            *COM*:0000000000000004 SpiTxData
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 EnvironmentData
+                            *COM*:0000000000000004 ControlData
+                            *COM*:0000000000000004 UpdateFile
+                            *COM*:0000000000000004 SensorCalibrationNeeded
+                            *COM*:0000000000000001 rx_buf
+     /tmp/cctALQO2.s:44     .text.UART4_IRQHandler:0000000000000000 $t
+     /tmp/cctALQO2.s:51     .text.UART4_IRQHandler:0000000000000000 UART4_IRQHandler
+     /tmp/cctALQO2.s:81     .text.UART4_IRQHandler:000000000000001c $d
+     /tmp/cctALQO2.s:87     .rodata:0000000000000000 $d
+     /tmp/cctALQO2.s:94     .text.gpsOps:0000000000000000 $t
+     /tmp/cctALQO2.s:101    .text.gpsOps:0000000000000000 gpsOps
+     /tmp/cctALQO2.s:208    .text.gpsOps:00000000000000a8 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_IRQHandler
+xQueueGiveFromISR
+huart4
+mprintf
+gpsInit
+xQueueGenericReceive
+checkGpsData
+xQueueGenericSend
+HAL_GPIO_TogglePin
+enableGps
+receiveGpsData
+HAL_UART_Receive_IT

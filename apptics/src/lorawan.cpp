@@ -101,7 +101,7 @@ int LoraWan::sendCommand(std::string Command)
 
 
 
-Status LoraWan::sendBeacon()
+void LoraWan::sendBeacon()
 {
 
     std::string Data = prepareData();

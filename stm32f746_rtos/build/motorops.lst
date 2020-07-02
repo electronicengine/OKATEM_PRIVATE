@@ -1,0 +1,1778 @@
+ARM GAS  /tmp/ccSo6eb5.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"motorops.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	gpsData,416,4
+  18              		.comm	sensorValues,20,4
+  19              		.comm	gyroscopeValues,12,4
+  20              		.comm	calibration,4,4
+  21              		.comm	setting_enable,1,1
+  22              		.comm	motor1,20,4
+  23              		.comm	motor2,20,4
+  24              		.comm	servo1,16,4
+  25              		.comm	servo2,16,4
+  26              		.comm	gpsThreadHandle,4,4
+  27              		.comm	sensorThreadHandle,4,4
+  28              		.comm	spiComThreadHandle,4,4
+  29              		.comm	motorThreadHandle,4,4
+  30              		.comm	spiMutexHandle,4,4
+  31              		.comm	uartMutexHandle,4,4
+  32              		.comm	controlMutexHandle,4,4
+  33              		.comm	spiSemaphoreHandle,4,4
+  34              		.comm	uartSemaphoreHandle,4,4
+  35              		.comm	SpiCheckData,4,4
+  36              		.comm	SpiTxData,4,4
+  37              		.comm	SpiRxData,4,4
+  38              		.comm	EnvironmentData,4,4
+  39              		.comm	ControlData,4,4
+  40              		.comm	UpdateFile,4,4
+  41              		.comm	SensorCalibrationNeeded,4,4
+  42              		.comm	rx_buf,1,1
+  43              		.global	step1_desired_step
+  44              		.section	.bss.step1_desired_step,"aw",%nobits
+  45              		.align	2
+  48              	step1_desired_step:
+  49 0000 00000000 		.space	4
+  50              		.global	step2_desired_step
+  51              		.section	.bss.step2_desired_step,"aw",%nobits
+  52              		.align	2
+  55              	step2_desired_step:
+  56 0000 00000000 		.space	4
+  57              		.section	.rodata
+  58              		.align	2
+  59              	.LC0:
+  60 0000 6D6F746F 		.ascii	"motorOps\015\012\000"
+  60      724F7073 
+ARM GAS  /tmp/ccSo6eb5.s 			page 2
+
+
+  60      0D0A00
+  61              		.section	.text.motorOps,"ax",%progbits
+  62              		.align	1
+  63              		.global	motorOps
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+  67              		.fpu fpv4-sp-d16
+  69              	motorOps:
+  70              	.LFB143:
+  71              		.file 1 "Src/motorops.c"
+   1:Src/motorops.c **** #include "motorops.h"
+   2:Src/motorops.c **** #include "main.h"
+   3:Src/motorops.c **** #include "motor.h"
+   4:Src/motorops.c **** #include "tim.h"
+   5:Src/motorops.c **** #include "flash.h"
+   6:Src/motorops.c **** 
+   7:Src/motorops.c **** 
+   8:Src/motorops.c **** volatile uint32_t step1_desired_step = 0;
+   9:Src/motorops.c **** volatile uint32_t step2_desired_step = 0;
+  10:Src/motorops.c **** 
+  11:Src/motorops.c **** void motorOps(void const * argument)
+  12:Src/motorops.c **** {
+  72              		.loc 1 12 0
+  73              		.cfi_startproc
+  74              		@ args = 0, pretend = 0, frame = 8
+  75              		@ frame_needed = 1, uses_anonymous_args = 0
+  76 0000 80B5     		push	{r7, lr}
+  77              	.LCFI0:
+  78              		.cfi_def_cfa_offset 8
+  79              		.cfi_offset 7, -8
+  80              		.cfi_offset 14, -4
+  81 0002 82B0     		sub	sp, sp, #8
+  82              	.LCFI1:
+  83              		.cfi_def_cfa_offset 16
+  84 0004 00AF     		add	r7, sp, #0
+  85              	.LCFI2:
+  86              		.cfi_def_cfa_register 7
+  87 0006 7860     		str	r0, [r7, #4]
+  13:Src/motorops.c **** 
+  14:Src/motorops.c ****     //  (1/(108.000.000/(psc+1))*period) -> timer width
+  15:Src/motorops.c **** 
+  16:Src/motorops.c ****     mprintf("motorOps\r\n");
+  88              		.loc 1 16 0
+  89 0008 0548     		ldr	r0, .L3
+  90 000a FFF7FEFF 		bl	mprintf
+  17:Src/motorops.c **** 
+  18:Src/motorops.c ****     getInitialPositions();
+  91              		.loc 1 18 0
+  92 000e FFF7FEFF 		bl	getInitialPositions
+  93              	.L2:
+  19:Src/motorops.c **** 
+  20:Src/motorops.c ****     while(1)
+  21:Src/motorops.c ****     {
+  22:Src/motorops.c **** 
+  23:Src/motorops.c ****         operate();
+  94              		.loc 1 23 0 discriminator 1
+ARM GAS  /tmp/ccSo6eb5.s 			page 3
+
+
+  95 0012 FFF7FEFF 		bl	operate
+  24:Src/motorops.c **** 
+  25:Src/motorops.c ****         osDelay(1);
+  96              		.loc 1 25 0 discriminator 1
+  97 0016 0120     		movs	r0, #1
+  98 0018 FFF7FEFF 		bl	osDelay
+  23:Src/motorops.c **** 
+  99              		.loc 1 23 0 discriminator 1
+ 100 001c F9E7     		b	.L2
+ 101              	.L4:
+ 102 001e 00BF     		.align	2
+ 103              	.L3:
+ 104 0020 00000000 		.word	.LC0
+ 105              		.cfi_endproc
+ 106              	.LFE143:
+ 108              		.section	.text.operate,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	operate
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 114              		.fpu fpv4-sp-d16
+ 116              	operate:
+ 117              	.LFB144:
+  26:Src/motorops.c **** 
+  27:Src/motorops.c ****     }
+  28:Src/motorops.c **** 
+  29:Src/motorops.c **** }
+  30:Src/motorops.c **** 
+  31:Src/motorops.c **** 
+  32:Src/motorops.c **** 
+  33:Src/motorops.c **** void operate()
+  34:Src/motorops.c **** {
+ 118              		.loc 1 34 0
+ 119              		.cfi_startproc
+ 120              		@ args = 0, pretend = 0, frame = 8
+ 121              		@ frame_needed = 1, uses_anonymous_args = 0
+ 122 0000 80B5     		push	{r7, lr}
+ 123              	.LCFI3:
+ 124              		.cfi_def_cfa_offset 8
+ 125              		.cfi_offset 7, -8
+ 126              		.cfi_offset 14, -4
+ 127 0002 82B0     		sub	sp, sp, #8
+ 128              	.LCFI4:
+ 129              		.cfi_def_cfa_offset 16
+ 130 0004 00AF     		add	r7, sp, #0
+ 131              	.LCFI5:
+ 132              		.cfi_def_cfa_register 7
+  35:Src/motorops.c **** 
+  36:Src/motorops.c ****     DriveCommand command;
+  37:Src/motorops.c **** 
+  38:Src/motorops.c ****     command = checkIfDriveCommand();
+ 133              		.loc 1 38 0
+ 134 0006 FFF7FEFF 		bl	checkIfDriveCommand
+ 135 000a 0346     		mov	r3, r0
+ 136 000c FB71     		strb	r3, [r7, #7]
+  39:Src/motorops.c **** 
+ARM GAS  /tmp/ccSo6eb5.s 			page 4
+
+
+  40:Src/motorops.c ****     if( command == Position)
+ 137              		.loc 1 40 0
+ 138 000e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 139 0010 012B     		cmp	r3, #1
+ 140 0012 04D1     		bne	.L6
+  41:Src/motorops.c ****     {
+  42:Src/motorops.c ****         driveStep1WithPosition();
+ 141              		.loc 1 42 0
+ 142 0014 FFF7FEFF 		bl	driveStep1WithPosition
+  43:Src/motorops.c ****         driveStep2WithPosition();
+ 143              		.loc 1 43 0
+ 144 0018 FFF7FEFF 		bl	driveStep2WithPosition
+ 145 001c 03E0     		b	.L7
+ 146              	.L6:
+  44:Src/motorops.c ****     }
+  45:Src/motorops.c ****     else
+  46:Src/motorops.c ****     {
+  47:Src/motorops.c ****         driveStep1WithDirection();
+ 147              		.loc 1 47 0
+ 148 001e FFF7FEFF 		bl	driveStep1WithDirection
+  48:Src/motorops.c ****         driveStep2WithDirection();
+ 149              		.loc 1 48 0
+ 150 0022 FFF7FEFF 		bl	driveStep2WithDirection
+ 151              	.L7:
+  49:Src/motorops.c ****     }
+  50:Src/motorops.c **** 
+  51:Src/motorops.c ****     driveServoMotor1();
+ 152              		.loc 1 51 0
+ 153 0026 FFF7FEFF 		bl	driveServoMotor1
+  52:Src/motorops.c ****     driveServoMotor2();
+ 154              		.loc 1 52 0
+ 155 002a FFF7FEFF 		bl	driveServoMotor2
+  53:Src/motorops.c **** 
+  54:Src/motorops.c ****     putMotorInformationstoEnvironmentData();
+ 156              		.loc 1 54 0
+ 157 002e FFF7FEFF 		bl	putMotorInformationstoEnvironmentData
+  55:Src/motorops.c **** 
+  56:Src/motorops.c **** }
+ 158              		.loc 1 56 0
+ 159 0032 00BF     		nop
+ 160 0034 0837     		adds	r7, r7, #8
+ 161              	.LCFI6:
+ 162              		.cfi_def_cfa_offset 8
+ 163 0036 BD46     		mov	sp, r7
+ 164              	.LCFI7:
+ 165              		.cfi_def_cfa_register 13
+ 166              		@ sp needed
+ 167 0038 80BD     		pop	{r7, pc}
+ 168              		.cfi_endproc
+ 169              	.LFE144:
+ 171              		.section	.text.getInitialPositions,"ax",%progbits
+ 172              		.align	1
+ 173              		.global	getInitialPositions
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 177              		.fpu fpv4-sp-d16
+ARM GAS  /tmp/ccSo6eb5.s 			page 5
+
+
+ 179              	getInitialPositions:
+ 180              	.LFB145:
+  57:Src/motorops.c **** 
+  58:Src/motorops.c **** 
+  59:Src/motorops.c **** 
+  60:Src/motorops.c **** 
+  61:Src/motorops.c **** 
+  62:Src/motorops.c **** 
+  63:Src/motorops.c **** 
+  64:Src/motorops.c **** void getInitialPositions()
+  65:Src/motorops.c **** {
+ 181              		.loc 1 65 0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 1, uses_anonymous_args = 0
+ 185 0000 80B5     		push	{r7, lr}
+ 186              	.LCFI8:
+ 187              		.cfi_def_cfa_offset 8
+ 188              		.cfi_offset 7, -8
+ 189              		.cfi_offset 14, -4
+ 190 0002 00AF     		add	r7, sp, #0
+ 191              	.LCFI9:
+ 192              		.cfi_def_cfa_register 7
+ 193              	.L11:
+  66:Src/motorops.c **** 
+  67:Src/motorops.c ****     while(1)
+  68:Src/motorops.c ****     {
+  69:Src/motorops.c **** 
+  70:Src/motorops.c ****         if(setting_enable == 0xff)
+ 194              		.loc 1 70 0
+ 195 0004 184B     		ldr	r3, .L14
+ 196 0006 1B78     		ldrb	r3, [r3]
+ 197 0008 DBB2     		uxtb	r3, r3
+ 198 000a FF2B     		cmp	r3, #255
+ 199 000c 26D0     		beq	.L13
+  71:Src/motorops.c ****         {
+  72:Src/motorops.c ****             break;
+  73:Src/motorops.c ****         }
+  74:Src/motorops.c ****         else
+  75:Src/motorops.c ****         {
+  76:Src/motorops.c ****             xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+ 200              		.loc 1 76 0
+ 201 000e 174B     		ldr	r3, .L14+4
+ 202 0010 1868     		ldr	r0, [r3]
+ 203 0012 0023     		movs	r3, #0
+ 204 0014 4FF0FF32 		mov	r2, #-1
+ 205 0018 0021     		movs	r1, #0
+ 206 001a FFF7FEFF 		bl	xQueueGenericReceive
+  77:Src/motorops.c **** 
+  78:Src/motorops.c ****                 EnvironmentData->step_motor1_step = 0xffffffff;
+ 207              		.loc 1 78 0
+ 208 001e 144B     		ldr	r3, .L14+8
+ 209 0020 1B68     		ldr	r3, [r3]
+ 210 0022 4FF0FF32 		mov	r2, #-1
+ 211 0026 DA64     		str	r2, [r3, #76]
+  79:Src/motorops.c ****                 EnvironmentData->step_motor2_step = 0xffffffff;
+ 212              		.loc 1 79 0
+ARM GAS  /tmp/ccSo6eb5.s 			page 6
+
+
+ 213 0028 114B     		ldr	r3, .L14+8
+ 214 002a 1B68     		ldr	r3, [r3]
+ 215 002c 4FF0FF32 		mov	r2, #-1
+ 216 0030 1A65     		str	r2, [r3, #80]
+  80:Src/motorops.c ****                 EnvironmentData->servo_motor1_degree = 0xff;
+ 217              		.loc 1 80 0
+ 218 0032 0F4B     		ldr	r3, .L14+8
+ 219 0034 1B68     		ldr	r3, [r3]
+ 220 0036 FF22     		movs	r2, #255
+ 221 0038 83F85420 		strb	r2, [r3, #84]
+  81:Src/motorops.c ****                 EnvironmentData->servo_motor2_degree = 0xff;
+ 222              		.loc 1 81 0
+ 223 003c 0C4B     		ldr	r3, .L14+8
+ 224 003e 1B68     		ldr	r3, [r3]
+ 225 0040 FF22     		movs	r2, #255
+ 226 0042 83F85520 		strb	r2, [r3, #85]
+  82:Src/motorops.c **** 
+  83:Src/motorops.c ****             xSemaphoreGive(spiMutexHandle);
+ 227              		.loc 1 83 0
+ 228 0046 094B     		ldr	r3, .L14+4
+ 229 0048 1868     		ldr	r0, [r3]
+ 230 004a 0023     		movs	r3, #0
+ 231 004c 0022     		movs	r2, #0
+ 232 004e 0021     		movs	r1, #0
+ 233 0050 FFF7FEFF 		bl	xQueueGenericSend
+  84:Src/motorops.c ****         }
+  85:Src/motorops.c **** 
+  86:Src/motorops.c ****         osDelay(3);
+ 234              		.loc 1 86 0
+ 235 0054 0320     		movs	r0, #3
+ 236 0056 FFF7FEFF 		bl	osDelay
+  70:Src/motorops.c ****         {
+ 237              		.loc 1 70 0
+ 238 005a D3E7     		b	.L11
+ 239              	.L13:
+  72:Src/motorops.c ****         }
+ 240              		.loc 1 72 0
+ 241 005c 00BF     		nop
+  87:Src/motorops.c **** 
+  88:Src/motorops.c ****     }
+  89:Src/motorops.c **** 
+  90:Src/motorops.c ****     osDelay(250);
+ 242              		.loc 1 90 0
+ 243 005e FA20     		movs	r0, #250
+ 244 0060 FFF7FEFF 		bl	osDelay
+  91:Src/motorops.c **** 
+  92:Src/motorops.c **** }
+ 245              		.loc 1 92 0
+ 246 0064 00BF     		nop
+ 247 0066 80BD     		pop	{r7, pc}
+ 248              	.L15:
+ 249              		.align	2
+ 250              	.L14:
+ 251 0068 00000000 		.word	setting_enable
+ 252 006c 00000000 		.word	spiMutexHandle
+ 253 0070 00000000 		.word	EnvironmentData
+ 254              		.cfi_endproc
+ARM GAS  /tmp/ccSo6eb5.s 			page 7
+
+
+ 255              	.LFE145:
+ 257              		.section	.text.putMotorInformationstoEnvironmentData,"ax",%progbits
+ 258              		.align	1
+ 259              		.global	putMotorInformationstoEnvironmentData
+ 260              		.syntax unified
+ 261              		.thumb
+ 262              		.thumb_func
+ 263              		.fpu fpv4-sp-d16
+ 265              	putMotorInformationstoEnvironmentData:
+ 266              	.LFB146:
+  93:Src/motorops.c **** 
+  94:Src/motorops.c **** 
+  95:Src/motorops.c **** 
+  96:Src/motorops.c **** void putMotorInformationstoEnvironmentData()
+  97:Src/motorops.c **** {
+ 267              		.loc 1 97 0
+ 268              		.cfi_startproc
+ 269              		@ args = 0, pretend = 0, frame = 8
+ 270              		@ frame_needed = 1, uses_anonymous_args = 0
+ 271 0000 80B5     		push	{r7, lr}
+ 272              	.LCFI10:
+ 273              		.cfi_def_cfa_offset 8
+ 274              		.cfi_offset 7, -8
+ 275              		.cfi_offset 14, -4
+ 276 0002 82B0     		sub	sp, sp, #8
+ 277              	.LCFI11:
+ 278              		.cfi_def_cfa_offset 16
+ 279 0004 00AF     		add	r7, sp, #0
+ 280              	.LCFI12:
+ 281              		.cfi_def_cfa_register 7
+  98:Src/motorops.c **** 
+  99:Src/motorops.c ****     static int counter = 0;
+ 100:Src/motorops.c **** 
+ 101:Src/motorops.c ****     counter++;
+ 282              		.loc 1 101 0
+ 283 0006 2A4B     		ldr	r3, .L23
+ 284 0008 1B68     		ldr	r3, [r3]
+ 285 000a 0133     		adds	r3, r3, #1
+ 286 000c 284A     		ldr	r2, .L23
+ 287 000e 1360     		str	r3, [r2]
+ 102:Src/motorops.c **** 
+ 103:Src/motorops.c ****     if(counter >= RESPONSE_TIME)
+ 288              		.loc 1 103 0
+ 289 0010 274B     		ldr	r3, .L23
+ 290 0012 1B68     		ldr	r3, [r3]
+ 291 0014 092B     		cmp	r3, #9
+ 292 0016 47DD     		ble	.L22
+ 293              	.LBB2:
+ 104:Src/motorops.c ****     {
+ 105:Src/motorops.c **** 
+ 106:Src/motorops.c ****         counter = 0;
+ 294              		.loc 1 106 0
+ 295 0018 254B     		ldr	r3, .L23
+ 296 001a 0022     		movs	r2, #0
+ 297 001c 1A60     		str	r2, [r3]
+ 107:Src/motorops.c ****         uint8_t step_motor_breaks = 0;
+ 298              		.loc 1 107 0
+ARM GAS  /tmp/ccSo6eb5.s 			page 8
+
+
+ 299 001e 0023     		movs	r3, #0
+ 300 0020 FB71     		strb	r3, [r7, #7]
+ 108:Src/motorops.c **** 
+ 109:Src/motorops.c ****         if(HAL_GPIO_ReadPin(STEP1_BREAK_GPIO_Port, STEP1_BREAK_Pin) == GPIO_PIN_SET)
+ 301              		.loc 1 109 0
+ 302 0022 4FF40041 		mov	r1, #32768
+ 303 0026 2348     		ldr	r0, .L23+4
+ 304 0028 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 305 002c 0346     		mov	r3, r0
+ 306 002e 012B     		cmp	r3, #1
+ 307 0030 02D1     		bne	.L18
+ 110:Src/motorops.c ****             step_motor_breaks =  1;
+ 308              		.loc 1 110 0
+ 309 0032 0123     		movs	r3, #1
+ 310 0034 FB71     		strb	r3, [r7, #7]
+ 311 0036 01E0     		b	.L19
+ 312              	.L18:
+ 111:Src/motorops.c ****         else
+ 112:Src/motorops.c ****             step_motor_breaks =  0;
+ 313              		.loc 1 112 0
+ 314 0038 0023     		movs	r3, #0
+ 315 003a FB71     		strb	r3, [r7, #7]
+ 316              	.L19:
+ 113:Src/motorops.c **** 
+ 114:Src/motorops.c **** 
+ 115:Src/motorops.c ****         if(HAL_GPIO_ReadPin(STEP2_BREAK_GPIO_Port, STEP2_BREAK_Pin) == GPIO_PIN_SET)
+ 317              		.loc 1 115 0
+ 318 003c 0221     		movs	r1, #2
+ 319 003e 1E48     		ldr	r0, .L23+8
+ 320 0040 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 321 0044 0346     		mov	r3, r0
+ 322 0046 012B     		cmp	r3, #1
+ 323 0048 02D1     		bne	.L21
+ 116:Src/motorops.c ****             step_motor_breaks += 240;
+ 324              		.loc 1 116 0
+ 325 004a FB79     		ldrb	r3, [r7, #7]
+ 326 004c 103B     		subs	r3, r3, #16
+ 327 004e FB71     		strb	r3, [r7, #7]
+ 328              	.L21:
+ 117:Src/motorops.c ****         else
+ 118:Src/motorops.c ****             step_motor_breaks += 0;
+ 119:Src/motorops.c **** 
+ 120:Src/motorops.c ****         xSemaphoreTake(spiMutexHandle, portMAX_DELAY);
+ 329              		.loc 1 120 0
+ 330 0050 1A4B     		ldr	r3, .L23+12
+ 331 0052 1868     		ldr	r0, [r3]
+ 332 0054 0023     		movs	r3, #0
+ 333 0056 4FF0FF32 		mov	r2, #-1
+ 334 005a 0021     		movs	r1, #0
+ 335 005c FFF7FEFF 		bl	xQueueGenericReceive
+ 121:Src/motorops.c **** 
+ 122:Src/motorops.c ****             EnvironmentData->step_motor1_step = motor1.step_number;
+ 336              		.loc 1 122 0
+ 337 0060 174B     		ldr	r3, .L23+16
+ 338 0062 1B68     		ldr	r3, [r3]
+ 339 0064 174A     		ldr	r2, .L23+20
+ 340 0066 9268     		ldr	r2, [r2, #8]
+ARM GAS  /tmp/ccSo6eb5.s 			page 9
+
+
+ 341 0068 DA64     		str	r2, [r3, #76]
+ 123:Src/motorops.c ****             EnvironmentData->step_motor2_step = motor2.step_number;
+ 342              		.loc 1 123 0
+ 343 006a 154B     		ldr	r3, .L23+16
+ 344 006c 1B68     		ldr	r3, [r3]
+ 345 006e 164A     		ldr	r2, .L23+24
+ 346 0070 9268     		ldr	r2, [r2, #8]
+ 347 0072 1A65     		str	r2, [r3, #80]
+ 124:Src/motorops.c ****             EnvironmentData->servo_motor1_degree = servo1.angle;
+ 348              		.loc 1 124 0
+ 349 0074 154B     		ldr	r3, .L23+28
+ 350 0076 1A68     		ldr	r2, [r3]
+ 351 0078 114B     		ldr	r3, .L23+16
+ 352 007a 1B68     		ldr	r3, [r3]
+ 353 007c D2B2     		uxtb	r2, r2
+ 354 007e 83F85420 		strb	r2, [r3, #84]
+ 125:Src/motorops.c ****             EnvironmentData->servo_motor2_degree = servo2.angle;
+ 355              		.loc 1 125 0
+ 356 0082 134B     		ldr	r3, .L23+32
+ 357 0084 1A68     		ldr	r2, [r3]
+ 358 0086 0E4B     		ldr	r3, .L23+16
+ 359 0088 1B68     		ldr	r3, [r3]
+ 360 008a D2B2     		uxtb	r2, r2
+ 361 008c 83F85520 		strb	r2, [r3, #85]
+ 126:Src/motorops.c ****             EnvironmentData->step_motor_breaks = step_motor_breaks;
+ 362              		.loc 1 126 0
+ 363 0090 0B4B     		ldr	r3, .L23+16
+ 364 0092 1B68     		ldr	r3, [r3]
+ 365 0094 FA79     		ldrb	r2, [r7, #7]
+ 366 0096 83F87820 		strb	r2, [r3, #120]
+ 127:Src/motorops.c **** 
+ 128:Src/motorops.c ****         xSemaphoreGive(spiMutexHandle);
+ 367              		.loc 1 128 0
+ 368 009a 084B     		ldr	r3, .L23+12
+ 369 009c 1868     		ldr	r0, [r3]
+ 370 009e 0023     		movs	r3, #0
+ 371 00a0 0022     		movs	r2, #0
+ 372 00a2 0021     		movs	r1, #0
+ 373 00a4 FFF7FEFF 		bl	xQueueGenericSend
+ 374              	.L22:
+ 375              	.LBE2:
+ 129:Src/motorops.c **** 
+ 130:Src/motorops.c ****     }
+ 131:Src/motorops.c **** 
+ 132:Src/motorops.c **** 
+ 133:Src/motorops.c **** }
+ 376              		.loc 1 133 0
+ 377 00a8 00BF     		nop
+ 378 00aa 0837     		adds	r7, r7, #8
+ 379              	.LCFI13:
+ 380              		.cfi_def_cfa_offset 8
+ 381 00ac BD46     		mov	sp, r7
+ 382              	.LCFI14:
+ 383              		.cfi_def_cfa_register 13
+ 384              		@ sp needed
+ 385 00ae 80BD     		pop	{r7, pc}
+ 386              	.L24:
+ARM GAS  /tmp/ccSo6eb5.s 			page 10
+
+
+ 387              		.align	2
+ 388              	.L23:
+ 389 00b0 00000000 		.word	counter.11010
+ 390 00b4 00100240 		.word	1073876992
+ 391 00b8 00080240 		.word	1073874944
+ 392 00bc 00000000 		.word	spiMutexHandle
+ 393 00c0 00000000 		.word	EnvironmentData
+ 394 00c4 00000000 		.word	motor1
+ 395 00c8 00000000 		.word	motor2
+ 396 00cc 00000000 		.word	servo1
+ 397 00d0 00000000 		.word	servo2
+ 398              		.cfi_endproc
+ 399              	.LFE146:
+ 401              		.section	.text.driveStep1WithDirection,"ax",%progbits
+ 402              		.align	1
+ 403              		.global	driveStep1WithDirection
+ 404              		.syntax unified
+ 405              		.thumb
+ 406              		.thumb_func
+ 407              		.fpu fpv4-sp-d16
+ 409              	driveStep1WithDirection:
+ 410              	.LFB147:
+ 134:Src/motorops.c **** 
+ 135:Src/motorops.c **** 
+ 136:Src/motorops.c **** 
+ 137:Src/motorops.c **** void driveStep1WithDirection()
+ 138:Src/motorops.c **** {
+ 411              		.loc 1 138 0
+ 412              		.cfi_startproc
+ 413              		@ args = 0, pretend = 0, frame = 0
+ 414              		@ frame_needed = 1, uses_anonymous_args = 0
+ 415 0000 80B5     		push	{r7, lr}
+ 416              	.LCFI15:
+ 417              		.cfi_def_cfa_offset 8
+ 418              		.cfi_offset 7, -8
+ 419              		.cfi_offset 14, -4
+ 420 0002 00AF     		add	r7, sp, #0
+ 421              	.LCFI16:
+ 422              		.cfi_def_cfa_register 7
+ 139:Src/motorops.c ****     static int speed_counter1 = 0;
+ 140:Src/motorops.c **** 
+ 141:Src/motorops.c **** 
+ 142:Src/motorops.c ****     speed_counter1++;
+ 423              		.loc 1 142 0
+ 424 0004 214B     		ldr	r3, .L35
+ 425 0006 1B68     		ldr	r3, [r3]
+ 426 0008 0133     		adds	r3, r3, #1
+ 427 000a 204A     		ldr	r2, .L35
+ 428 000c 1360     		str	r3, [r2]
+ 143:Src/motorops.c **** 
+ 144:Src/motorops.c ****     if(speed_counter1 >= motor1.speed + MIN_SPEED_TRESHOLD)
+ 429              		.loc 1 144 0
+ 430 000e 204B     		ldr	r3, .L35+4
+ 431 0010 5B68     		ldr	r3, [r3, #4]
+ 432 0012 DA1C     		adds	r2, r3, #3
+ 433 0014 1D4B     		ldr	r3, .L35
+ 434 0016 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/ccSo6eb5.s 			page 11
+
+
+ 435 0018 9A42     		cmp	r2, r3
+ 436 001a 35DC     		bgt	.L34
+ 145:Src/motorops.c ****     {
+ 146:Src/motorops.c **** 
+ 147:Src/motorops.c ****         speed_counter1 = 0;
+ 437              		.loc 1 147 0
+ 438 001c 1B4B     		ldr	r3, .L35
+ 439 001e 0022     		movs	r2, #0
+ 440 0020 1A60     		str	r2, [r3]
+ 148:Src/motorops.c **** 
+ 149:Src/motorops.c ****         if(motor1.direction == FORWARD)
+ 441              		.loc 1 149 0
+ 442 0022 1B4B     		ldr	r3, .L35+4
+ 443 0024 1B68     		ldr	r3, [r3]
+ 444 0026 012B     		cmp	r3, #1
+ 445 0028 12D1     		bne	.L27
+ 150:Src/motorops.c ****         {
+ 151:Src/motorops.c **** 
+ 152:Src/motorops.c ****             if(motor1.step_number < motor1.max_step_number)
+ 446              		.loc 1 152 0
+ 447 002a 194B     		ldr	r3, .L35+4
+ 448 002c 9A68     		ldr	r2, [r3, #8]
+ 449 002e 184B     		ldr	r3, .L35+4
+ 450 0030 DB68     		ldr	r3, [r3, #12]
+ 451 0032 9A42     		cmp	r2, r3
+ 452 0034 08D2     		bcs	.L28
+ 153:Src/motorops.c ****             {
+ 154:Src/motorops.c ****                 motor1Drive(FORWARD);
+ 453              		.loc 1 154 0
+ 454 0036 0120     		movs	r0, #1
+ 455 0038 FFF7FEFF 		bl	motor1Drive
+ 155:Src/motorops.c **** 
+ 156:Src/motorops.c ****                 motor1.step_number++;
+ 456              		.loc 1 156 0
+ 457 003c 144B     		ldr	r3, .L35+4
+ 458 003e 9B68     		ldr	r3, [r3, #8]
+ 459 0040 0133     		adds	r3, r3, #1
+ 460 0042 134A     		ldr	r2, .L35+4
+ 461 0044 9360     		str	r3, [r2, #8]
+ 157:Src/motorops.c **** 
+ 158:Src/motorops.c ****             }
+ 159:Src/motorops.c ****             else
+ 160:Src/motorops.c ****             {
+ 161:Src/motorops.c ****                 motor1Drive(STOP);
+ 162:Src/motorops.c ****             }
+ 163:Src/motorops.c **** 
+ 164:Src/motorops.c ****         }
+ 165:Src/motorops.c ****         else if(motor1.direction == BACKWARD)
+ 166:Src/motorops.c ****         {
+ 167:Src/motorops.c **** 
+ 168:Src/motorops.c ****             if(motor1.step_number > 0)
+ 169:Src/motorops.c ****             {
+ 170:Src/motorops.c ****                 motor1Drive(BACKWARD);
+ 171:Src/motorops.c **** 
+ 172:Src/motorops.c ****                 if(motor1.step_number != 0)
+ 173:Src/motorops.c ****                     motor1.step_number--;
+ 174:Src/motorops.c **** 
+ARM GAS  /tmp/ccSo6eb5.s 			page 12
+
+
+ 175:Src/motorops.c ****             }
+ 176:Src/motorops.c ****             else
+ 177:Src/motorops.c ****             {
+ 178:Src/motorops.c ****                 motor1Drive(STOP);
+ 179:Src/motorops.c ****             }
+ 180:Src/motorops.c **** 
+ 181:Src/motorops.c ****         }
+ 182:Src/motorops.c ****         else
+ 183:Src/motorops.c ****         {
+ 184:Src/motorops.c ****             motor1Drive(STOP);
+ 185:Src/motorops.c ****         }
+ 186:Src/motorops.c ****     }
+ 187:Src/motorops.c **** 
+ 188:Src/motorops.c **** }
+ 462              		.loc 1 188 0
+ 463 0046 1FE0     		b	.L34
+ 464              	.L28:
+ 161:Src/motorops.c ****             }
+ 465              		.loc 1 161 0
+ 466 0048 0020     		movs	r0, #0
+ 467 004a FFF7FEFF 		bl	motor1Drive
+ 468              		.loc 1 188 0
+ 469 004e 1BE0     		b	.L34
+ 470              	.L27:
+ 165:Src/motorops.c ****         {
+ 471              		.loc 1 165 0
+ 472 0050 0F4B     		ldr	r3, .L35+4
+ 473 0052 1B68     		ldr	r3, [r3]
+ 474 0054 022B     		cmp	r3, #2
+ 475 0056 14D1     		bne	.L30
+ 168:Src/motorops.c ****             {
+ 476              		.loc 1 168 0
+ 477 0058 0D4B     		ldr	r3, .L35+4
+ 478 005a 9B68     		ldr	r3, [r3, #8]
+ 479 005c 002B     		cmp	r3, #0
+ 480 005e 0CD0     		beq	.L31
+ 170:Src/motorops.c **** 
+ 481              		.loc 1 170 0
+ 482 0060 0220     		movs	r0, #2
+ 483 0062 FFF7FEFF 		bl	motor1Drive
+ 172:Src/motorops.c ****                     motor1.step_number--;
+ 484              		.loc 1 172 0
+ 485 0066 0A4B     		ldr	r3, .L35+4
+ 486 0068 9B68     		ldr	r3, [r3, #8]
+ 487 006a 002B     		cmp	r3, #0
+ 488 006c 0CD0     		beq	.L34
+ 173:Src/motorops.c **** 
+ 489              		.loc 1 173 0
+ 490 006e 084B     		ldr	r3, .L35+4
+ 491 0070 9B68     		ldr	r3, [r3, #8]
+ 492 0072 013B     		subs	r3, r3, #1
+ 493 0074 064A     		ldr	r2, .L35+4
+ 494 0076 9360     		str	r3, [r2, #8]
+ 495              		.loc 1 188 0
+ 496 0078 06E0     		b	.L34
+ 497              	.L31:
+ 178:Src/motorops.c ****             }
+ARM GAS  /tmp/ccSo6eb5.s 			page 13
+
+
+ 498              		.loc 1 178 0
+ 499 007a 0020     		movs	r0, #0
+ 500 007c FFF7FEFF 		bl	motor1Drive
+ 501              		.loc 1 188 0
+ 502 0080 02E0     		b	.L34
+ 503              	.L30:
+ 184:Src/motorops.c ****         }
+ 504              		.loc 1 184 0
+ 505 0082 0020     		movs	r0, #0
+ 506 0084 FFF7FEFF 		bl	motor1Drive
+ 507              	.L34:
+ 508              		.loc 1 188 0
+ 509 0088 00BF     		nop
+ 510 008a 80BD     		pop	{r7, pc}
+ 511              	.L36:
+ 512              		.align	2
+ 513              	.L35:
+ 514 008c 00000000 		.word	speed_counter1.11014
+ 515 0090 00000000 		.word	motor1
+ 516              		.cfi_endproc
+ 517              	.LFE147:
+ 519              		.section	.text.driveStep2WithDirection,"ax",%progbits
+ 520              		.align	1
+ 521              		.global	driveStep2WithDirection
+ 522              		.syntax unified
+ 523              		.thumb
+ 524              		.thumb_func
+ 525              		.fpu fpv4-sp-d16
+ 527              	driveStep2WithDirection:
+ 528              	.LFB148:
+ 189:Src/motorops.c **** 
+ 190:Src/motorops.c **** void driveStep2WithDirection()
+ 191:Src/motorops.c **** {
+ 529              		.loc 1 191 0
+ 530              		.cfi_startproc
+ 531              		@ args = 0, pretend = 0, frame = 0
+ 532              		@ frame_needed = 1, uses_anonymous_args = 0
+ 533 0000 80B5     		push	{r7, lr}
+ 534              	.LCFI17:
+ 535              		.cfi_def_cfa_offset 8
+ 536              		.cfi_offset 7, -8
+ 537              		.cfi_offset 14, -4
+ 538 0002 00AF     		add	r7, sp, #0
+ 539              	.LCFI18:
+ 540              		.cfi_def_cfa_register 7
+ 192:Src/motorops.c **** 
+ 193:Src/motorops.c ****     static int speed_counter2 = 0;
+ 194:Src/motorops.c **** 
+ 195:Src/motorops.c ****     speed_counter2++;
+ 541              		.loc 1 195 0
+ 542 0004 214B     		ldr	r3, .L47
+ 543 0006 1B68     		ldr	r3, [r3]
+ 544 0008 0133     		adds	r3, r3, #1
+ 545 000a 204A     		ldr	r2, .L47
+ 546 000c 1360     		str	r3, [r2]
+ 196:Src/motorops.c **** 
+ 197:Src/motorops.c ****     if(speed_counter2 >= motor2.speed + MIN_SPEED_TRESHOLD)
+ARM GAS  /tmp/ccSo6eb5.s 			page 14
+
+
+ 547              		.loc 1 197 0
+ 548 000e 204B     		ldr	r3, .L47+4
+ 549 0010 5B68     		ldr	r3, [r3, #4]
+ 550 0012 DA1C     		adds	r2, r3, #3
+ 551 0014 1D4B     		ldr	r3, .L47
+ 552 0016 1B68     		ldr	r3, [r3]
+ 553 0018 9A42     		cmp	r2, r3
+ 554 001a 35DC     		bgt	.L46
+ 198:Src/motorops.c ****     {
+ 199:Src/motorops.c **** 
+ 200:Src/motorops.c ****         speed_counter2 = 0;
+ 555              		.loc 1 200 0
+ 556 001c 1B4B     		ldr	r3, .L47
+ 557 001e 0022     		movs	r2, #0
+ 558 0020 1A60     		str	r2, [r3]
+ 201:Src/motorops.c **** 
+ 202:Src/motorops.c **** 
+ 203:Src/motorops.c ****         if(motor2.direction == FORWARD )
+ 559              		.loc 1 203 0
+ 560 0022 1B4B     		ldr	r3, .L47+4
+ 561 0024 1B68     		ldr	r3, [r3]
+ 562 0026 012B     		cmp	r3, #1
+ 563 0028 14D1     		bne	.L39
+ 204:Src/motorops.c ****         {
+ 205:Src/motorops.c **** 
+ 206:Src/motorops.c ****             if(motor2.step_number != 0)
+ 564              		.loc 1 206 0
+ 565 002a 194B     		ldr	r3, .L47+4
+ 566 002c 9B68     		ldr	r3, [r3, #8]
+ 567 002e 002B     		cmp	r3, #0
+ 568 0030 0CD0     		beq	.L40
+ 207:Src/motorops.c ****             {
+ 208:Src/motorops.c ****                 motor2Drive(FORWARD);
+ 569              		.loc 1 208 0
+ 570 0032 0120     		movs	r0, #1
+ 571 0034 FFF7FEFF 		bl	motor2Drive
+ 209:Src/motorops.c **** 
+ 210:Src/motorops.c ****                 if(motor2.step_number != 0)
+ 572              		.loc 1 210 0
+ 573 0038 154B     		ldr	r3, .L47+4
+ 574 003a 9B68     		ldr	r3, [r3, #8]
+ 575 003c 002B     		cmp	r3, #0
+ 576 003e 23D0     		beq	.L46
+ 211:Src/motorops.c ****                     motor2.step_number--;
+ 577              		.loc 1 211 0
+ 578 0040 134B     		ldr	r3, .L47+4
+ 579 0042 9B68     		ldr	r3, [r3, #8]
+ 580 0044 013B     		subs	r3, r3, #1
+ 581 0046 124A     		ldr	r2, .L47+4
+ 582 0048 9360     		str	r3, [r2, #8]
+ 212:Src/motorops.c **** 
+ 213:Src/motorops.c ****             }
+ 214:Src/motorops.c ****             else
+ 215:Src/motorops.c ****             {
+ 216:Src/motorops.c ****                 motor2Drive(STOP);
+ 217:Src/motorops.c ****             }
+ 218:Src/motorops.c **** 
+ARM GAS  /tmp/ccSo6eb5.s 			page 15
+
+
+ 219:Src/motorops.c ****         }
+ 220:Src/motorops.c ****         else if(motor2.direction == BACKWARD)
+ 221:Src/motorops.c ****         {
+ 222:Src/motorops.c **** 
+ 223:Src/motorops.c ****             if(motor2.step_number < motor2.max_step_number)
+ 224:Src/motorops.c ****             {
+ 225:Src/motorops.c ****                 motor2Drive(BACKWARD);
+ 226:Src/motorops.c **** 
+ 227:Src/motorops.c ****                     motor2.step_number++;
+ 228:Src/motorops.c **** 
+ 229:Src/motorops.c ****             }
+ 230:Src/motorops.c ****             else
+ 231:Src/motorops.c ****             {
+ 232:Src/motorops.c ****                 motor2Drive(STOP);
+ 233:Src/motorops.c ****             }
+ 234:Src/motorops.c ****         }
+ 235:Src/motorops.c ****         else
+ 236:Src/motorops.c ****         {
+ 237:Src/motorops.c ****             motor2Drive(STOP);
+ 238:Src/motorops.c ****         }
+ 239:Src/motorops.c ****     }
+ 240:Src/motorops.c **** 
+ 241:Src/motorops.c **** }
+ 583              		.loc 1 241 0
+ 584 004a 1DE0     		b	.L46
+ 585              	.L40:
+ 216:Src/motorops.c ****             }
+ 586              		.loc 1 216 0
+ 587 004c 0020     		movs	r0, #0
+ 588 004e FFF7FEFF 		bl	motor2Drive
+ 589              		.loc 1 241 0
+ 590 0052 19E0     		b	.L46
+ 591              	.L39:
+ 220:Src/motorops.c ****         {
+ 592              		.loc 1 220 0
+ 593 0054 0E4B     		ldr	r3, .L47+4
+ 594 0056 1B68     		ldr	r3, [r3]
+ 595 0058 022B     		cmp	r3, #2
+ 596 005a 12D1     		bne	.L43
+ 223:Src/motorops.c ****             {
+ 597              		.loc 1 223 0
+ 598 005c 0C4B     		ldr	r3, .L47+4
+ 599 005e 9A68     		ldr	r2, [r3, #8]
+ 600 0060 0B4B     		ldr	r3, .L47+4
+ 601 0062 DB68     		ldr	r3, [r3, #12]
+ 602 0064 9A42     		cmp	r2, r3
+ 603 0066 08D2     		bcs	.L44
+ 225:Src/motorops.c **** 
+ 604              		.loc 1 225 0
+ 605 0068 0220     		movs	r0, #2
+ 606 006a FFF7FEFF 		bl	motor2Drive
+ 227:Src/motorops.c **** 
+ 607              		.loc 1 227 0
+ 608 006e 084B     		ldr	r3, .L47+4
+ 609 0070 9B68     		ldr	r3, [r3, #8]
+ 610 0072 0133     		adds	r3, r3, #1
+ 611 0074 064A     		ldr	r2, .L47+4
+ARM GAS  /tmp/ccSo6eb5.s 			page 16
+
+
+ 612 0076 9360     		str	r3, [r2, #8]
+ 613              		.loc 1 241 0
+ 614 0078 06E0     		b	.L46
+ 615              	.L44:
+ 232:Src/motorops.c ****             }
+ 616              		.loc 1 232 0
+ 617 007a 0020     		movs	r0, #0
+ 618 007c FFF7FEFF 		bl	motor2Drive
+ 619              		.loc 1 241 0
+ 620 0080 02E0     		b	.L46
+ 621              	.L43:
+ 237:Src/motorops.c ****         }
+ 622              		.loc 1 237 0
+ 623 0082 0020     		movs	r0, #0
+ 624 0084 FFF7FEFF 		bl	motor2Drive
+ 625              	.L46:
+ 626              		.loc 1 241 0
+ 627 0088 00BF     		nop
+ 628 008a 80BD     		pop	{r7, pc}
+ 629              	.L48:
+ 630              		.align	2
+ 631              	.L47:
+ 632 008c 00000000 		.word	speed_counter2.11017
+ 633 0090 00000000 		.word	motor2
+ 634              		.cfi_endproc
+ 635              	.LFE148:
+ 637              		.section	.text.driveStep1WithPosition,"ax",%progbits
+ 638              		.align	1
+ 639              		.global	driveStep1WithPosition
+ 640              		.syntax unified
+ 641              		.thumb
+ 642              		.thumb_func
+ 643              		.fpu fpv4-sp-d16
+ 645              	driveStep1WithPosition:
+ 646              	.LFB149:
+ 242:Src/motorops.c **** 
+ 243:Src/motorops.c **** void driveStep1WithPosition()
+ 244:Src/motorops.c **** {
+ 647              		.loc 1 244 0
+ 648              		.cfi_startproc
+ 649              		@ args = 0, pretend = 0, frame = 0
+ 650              		@ frame_needed = 1, uses_anonymous_args = 0
+ 651 0000 80B5     		push	{r7, lr}
+ 652              	.LCFI19:
+ 653              		.cfi_def_cfa_offset 8
+ 654              		.cfi_offset 7, -8
+ 655              		.cfi_offset 14, -4
+ 656 0002 00AF     		add	r7, sp, #0
+ 657              	.LCFI20:
+ 658              		.cfi_def_cfa_register 7
+ 245:Src/motorops.c **** 
+ 246:Src/motorops.c ****     static int speed_counter1 = 0;
+ 247:Src/motorops.c **** 
+ 248:Src/motorops.c **** 
+ 249:Src/motorops.c ****     speed_counter1++;
+ 659              		.loc 1 249 0
+ 660 0004 1F4B     		ldr	r3, .L56
+ARM GAS  /tmp/ccSo6eb5.s 			page 17
+
+
+ 661 0006 1B68     		ldr	r3, [r3]
+ 662 0008 0133     		adds	r3, r3, #1
+ 663 000a 1E4A     		ldr	r2, .L56
+ 664 000c 1360     		str	r3, [r2]
+ 250:Src/motorops.c **** 
+ 251:Src/motorops.c ****     if(speed_counter1 >= motor1.speed + MIN_SPEED_TRESHOLD)
+ 665              		.loc 1 251 0
+ 666 000e 1E4B     		ldr	r3, .L56+4
+ 667 0010 5B68     		ldr	r3, [r3, #4]
+ 668 0012 DA1C     		adds	r2, r3, #3
+ 669 0014 1B4B     		ldr	r3, .L56
+ 670 0016 1B68     		ldr	r3, [r3]
+ 671 0018 9A42     		cmp	r2, r3
+ 672 001a 30DC     		bgt	.L55
+ 252:Src/motorops.c ****     {
+ 253:Src/motorops.c **** 
+ 254:Src/motorops.c ****         speed_counter1 = 0;
+ 673              		.loc 1 254 0
+ 674 001c 194B     		ldr	r3, .L56
+ 675 001e 0022     		movs	r2, #0
+ 676 0020 1A60     		str	r2, [r3]
+ 255:Src/motorops.c **** 
+ 256:Src/motorops.c ****         if(motor1.step_number < step1_desired_step)
+ 677              		.loc 1 256 0
+ 678 0022 194B     		ldr	r3, .L56+4
+ 679 0024 9A68     		ldr	r2, [r3, #8]
+ 680 0026 194B     		ldr	r3, .L56+8
+ 681 0028 1B68     		ldr	r3, [r3]
+ 682 002a 9A42     		cmp	r2, r3
+ 683 002c 0ED2     		bcs	.L51
+ 257:Src/motorops.c ****         {
+ 258:Src/motorops.c ****             if(motor1.max_step_number > motor1.step_number)
+ 684              		.loc 1 258 0
+ 685 002e 164B     		ldr	r3, .L56+4
+ 686 0030 DA68     		ldr	r2, [r3, #12]
+ 687 0032 154B     		ldr	r3, .L56+4
+ 688 0034 9B68     		ldr	r3, [r3, #8]
+ 689 0036 9A42     		cmp	r2, r3
+ 690 0038 21D9     		bls	.L55
+ 259:Src/motorops.c ****             {
+ 260:Src/motorops.c ****                 motor1Drive(FORWARD);
+ 691              		.loc 1 260 0
+ 692 003a 0120     		movs	r0, #1
+ 693 003c FFF7FEFF 		bl	motor1Drive
+ 261:Src/motorops.c **** 
+ 262:Src/motorops.c ****                 motor1.step_number++;
+ 694              		.loc 1 262 0
+ 695 0040 114B     		ldr	r3, .L56+4
+ 696 0042 9B68     		ldr	r3, [r3, #8]
+ 697 0044 0133     		adds	r3, r3, #1
+ 698 0046 104A     		ldr	r2, .L56+4
+ 699 0048 9360     		str	r3, [r2, #8]
+ 263:Src/motorops.c ****             }
+ 264:Src/motorops.c ****         }
+ 265:Src/motorops.c ****         else if(motor1.step_number > step1_desired_step)
+ 266:Src/motorops.c ****         {
+ 267:Src/motorops.c **** 
+ARM GAS  /tmp/ccSo6eb5.s 			page 18
+
+
+ 268:Src/motorops.c ****             if(motor1.step_number > 0)
+ 269:Src/motorops.c ****             {
+ 270:Src/motorops.c ****                 motor1Drive(BACKWARD);
+ 271:Src/motorops.c **** 
+ 272:Src/motorops.c ****                 motor1.step_number--;
+ 273:Src/motorops.c ****             }
+ 274:Src/motorops.c ****         }
+ 275:Src/motorops.c ****         else
+ 276:Src/motorops.c ****         {
+ 277:Src/motorops.c ****             step1_desired_step = 0;
+ 278:Src/motorops.c ****             motor1Drive(STOP);
+ 279:Src/motorops.c ****         }
+ 280:Src/motorops.c **** 
+ 281:Src/motorops.c ****     }
+ 282:Src/motorops.c **** 
+ 283:Src/motorops.c **** 
+ 284:Src/motorops.c **** }
+ 700              		.loc 1 284 0
+ 701 004a 18E0     		b	.L55
+ 702              	.L51:
+ 265:Src/motorops.c ****         {
+ 703              		.loc 1 265 0
+ 704 004c 0E4B     		ldr	r3, .L56+4
+ 705 004e 9A68     		ldr	r2, [r3, #8]
+ 706 0050 0E4B     		ldr	r3, .L56+8
+ 707 0052 1B68     		ldr	r3, [r3]
+ 708 0054 9A42     		cmp	r2, r3
+ 709 0056 0CD9     		bls	.L53
+ 268:Src/motorops.c ****             {
+ 710              		.loc 1 268 0
+ 711 0058 0B4B     		ldr	r3, .L56+4
+ 712 005a 9B68     		ldr	r3, [r3, #8]
+ 713 005c 002B     		cmp	r3, #0
+ 714 005e 0ED0     		beq	.L55
+ 270:Src/motorops.c **** 
+ 715              		.loc 1 270 0
+ 716 0060 0220     		movs	r0, #2
+ 717 0062 FFF7FEFF 		bl	motor1Drive
+ 272:Src/motorops.c ****             }
+ 718              		.loc 1 272 0
+ 719 0066 084B     		ldr	r3, .L56+4
+ 720 0068 9B68     		ldr	r3, [r3, #8]
+ 721 006a 013B     		subs	r3, r3, #1
+ 722 006c 064A     		ldr	r2, .L56+4
+ 723 006e 9360     		str	r3, [r2, #8]
+ 724              		.loc 1 284 0
+ 725 0070 05E0     		b	.L55
+ 726              	.L53:
+ 277:Src/motorops.c ****             motor1Drive(STOP);
+ 727              		.loc 1 277 0
+ 728 0072 064B     		ldr	r3, .L56+8
+ 729 0074 0022     		movs	r2, #0
+ 730 0076 1A60     		str	r2, [r3]
+ 278:Src/motorops.c ****         }
+ 731              		.loc 1 278 0
+ 732 0078 0020     		movs	r0, #0
+ 733 007a FFF7FEFF 		bl	motor1Drive
+ARM GAS  /tmp/ccSo6eb5.s 			page 19
+
+
+ 734              	.L55:
+ 735              		.loc 1 284 0
+ 736 007e 00BF     		nop
+ 737 0080 80BD     		pop	{r7, pc}
+ 738              	.L57:
+ 739 0082 00BF     		.align	2
+ 740              	.L56:
+ 741 0084 00000000 		.word	speed_counter1.11020
+ 742 0088 00000000 		.word	motor1
+ 743 008c 00000000 		.word	step1_desired_step
+ 744              		.cfi_endproc
+ 745              	.LFE149:
+ 747              		.section	.text.driveStep2WithPosition,"ax",%progbits
+ 748              		.align	1
+ 749              		.global	driveStep2WithPosition
+ 750              		.syntax unified
+ 751              		.thumb
+ 752              		.thumb_func
+ 753              		.fpu fpv4-sp-d16
+ 755              	driveStep2WithPosition:
+ 756              	.LFB150:
+ 285:Src/motorops.c **** 
+ 286:Src/motorops.c **** void driveStep2WithPosition()
+ 287:Src/motorops.c **** {
+ 757              		.loc 1 287 0
+ 758              		.cfi_startproc
+ 759              		@ args = 0, pretend = 0, frame = 0
+ 760              		@ frame_needed = 1, uses_anonymous_args = 0
+ 761 0000 80B5     		push	{r7, lr}
+ 762              	.LCFI21:
+ 763              		.cfi_def_cfa_offset 8
+ 764              		.cfi_offset 7, -8
+ 765              		.cfi_offset 14, -4
+ 766 0002 00AF     		add	r7, sp, #0
+ 767              	.LCFI22:
+ 768              		.cfi_def_cfa_register 7
+ 288:Src/motorops.c **** 
+ 289:Src/motorops.c ****     static int speed_counter2 = 0;
+ 290:Src/motorops.c **** 
+ 291:Src/motorops.c ****     speed_counter2++;
+ 769              		.loc 1 291 0
+ 770 0004 1F4B     		ldr	r3, .L65
+ 771 0006 1B68     		ldr	r3, [r3]
+ 772 0008 0133     		adds	r3, r3, #1
+ 773 000a 1E4A     		ldr	r2, .L65
+ 774 000c 1360     		str	r3, [r2]
+ 292:Src/motorops.c **** 
+ 293:Src/motorops.c ****     if(speed_counter2 >= motor2.speed + MIN_SPEED_TRESHOLD)
+ 775              		.loc 1 293 0
+ 776 000e 1E4B     		ldr	r3, .L65+4
+ 777 0010 5B68     		ldr	r3, [r3, #4]
+ 778 0012 DA1C     		adds	r2, r3, #3
+ 779 0014 1B4B     		ldr	r3, .L65
+ 780 0016 1B68     		ldr	r3, [r3]
+ 781 0018 9A42     		cmp	r2, r3
+ 782 001a 30DC     		bgt	.L64
+ 294:Src/motorops.c ****     {
+ARM GAS  /tmp/ccSo6eb5.s 			page 20
+
+
+ 295:Src/motorops.c **** 
+ 296:Src/motorops.c ****         speed_counter2 = 0;
+ 783              		.loc 1 296 0
+ 784 001c 194B     		ldr	r3, .L65
+ 785 001e 0022     		movs	r2, #0
+ 786 0020 1A60     		str	r2, [r3]
+ 297:Src/motorops.c **** 
+ 298:Src/motorops.c ****         if(motor2.step_number < step2_desired_step)
+ 787              		.loc 1 298 0
+ 788 0022 194B     		ldr	r3, .L65+4
+ 789 0024 9A68     		ldr	r2, [r3, #8]
+ 790 0026 194B     		ldr	r3, .L65+8
+ 791 0028 1B68     		ldr	r3, [r3]
+ 792 002a 9A42     		cmp	r2, r3
+ 793 002c 0ED2     		bcs	.L60
+ 299:Src/motorops.c ****         {
+ 300:Src/motorops.c ****             if(motor2.max_step_number > motor2.step_number)
+ 794              		.loc 1 300 0
+ 795 002e 164B     		ldr	r3, .L65+4
+ 796 0030 DA68     		ldr	r2, [r3, #12]
+ 797 0032 154B     		ldr	r3, .L65+4
+ 798 0034 9B68     		ldr	r3, [r3, #8]
+ 799 0036 9A42     		cmp	r2, r3
+ 800 0038 21D9     		bls	.L64
+ 301:Src/motorops.c ****             {
+ 302:Src/motorops.c ****                 motor2Drive(FORWARD);
+ 801              		.loc 1 302 0
+ 802 003a 0120     		movs	r0, #1
+ 803 003c FFF7FEFF 		bl	motor2Drive
+ 303:Src/motorops.c **** 
+ 304:Src/motorops.c ****                 motor2.step_number++;
+ 804              		.loc 1 304 0
+ 805 0040 114B     		ldr	r3, .L65+4
+ 806 0042 9B68     		ldr	r3, [r3, #8]
+ 807 0044 0133     		adds	r3, r3, #1
+ 808 0046 104A     		ldr	r2, .L65+4
+ 809 0048 9360     		str	r3, [r2, #8]
+ 305:Src/motorops.c ****             }
+ 306:Src/motorops.c ****         }
+ 307:Src/motorops.c ****         else if(motor2.step_number > step2_desired_step)
+ 308:Src/motorops.c ****         {
+ 309:Src/motorops.c **** 
+ 310:Src/motorops.c ****             if(motor2.step_number > 0)
+ 311:Src/motorops.c ****             {
+ 312:Src/motorops.c ****                 motor2Drive(BACKWARD);
+ 313:Src/motorops.c **** 
+ 314:Src/motorops.c ****                 motor2.step_number--;
+ 315:Src/motorops.c ****             }
+ 316:Src/motorops.c ****         }
+ 317:Src/motorops.c ****         else
+ 318:Src/motorops.c ****         {
+ 319:Src/motorops.c ****             step2_desired_step = 0;
+ 320:Src/motorops.c ****             motor2Drive(STOP);
+ 321:Src/motorops.c ****         }
+ 322:Src/motorops.c ****     }
+ 323:Src/motorops.c **** 
+ 324:Src/motorops.c **** }
+ARM GAS  /tmp/ccSo6eb5.s 			page 21
+
+
+ 810              		.loc 1 324 0
+ 811 004a 18E0     		b	.L64
+ 812              	.L60:
+ 307:Src/motorops.c ****         {
+ 813              		.loc 1 307 0
+ 814 004c 0E4B     		ldr	r3, .L65+4
+ 815 004e 9A68     		ldr	r2, [r3, #8]
+ 816 0050 0E4B     		ldr	r3, .L65+8
+ 817 0052 1B68     		ldr	r3, [r3]
+ 818 0054 9A42     		cmp	r2, r3
+ 819 0056 0CD9     		bls	.L62
+ 310:Src/motorops.c ****             {
+ 820              		.loc 1 310 0
+ 821 0058 0B4B     		ldr	r3, .L65+4
+ 822 005a 9B68     		ldr	r3, [r3, #8]
+ 823 005c 002B     		cmp	r3, #0
+ 824 005e 0ED0     		beq	.L64
+ 312:Src/motorops.c **** 
+ 825              		.loc 1 312 0
+ 826 0060 0220     		movs	r0, #2
+ 827 0062 FFF7FEFF 		bl	motor2Drive
+ 314:Src/motorops.c ****             }
+ 828              		.loc 1 314 0
+ 829 0066 084B     		ldr	r3, .L65+4
+ 830 0068 9B68     		ldr	r3, [r3, #8]
+ 831 006a 013B     		subs	r3, r3, #1
+ 832 006c 064A     		ldr	r2, .L65+4
+ 833 006e 9360     		str	r3, [r2, #8]
+ 834              		.loc 1 324 0
+ 835 0070 05E0     		b	.L64
+ 836              	.L62:
+ 319:Src/motorops.c ****             motor2Drive(STOP);
+ 837              		.loc 1 319 0
+ 838 0072 064B     		ldr	r3, .L65+8
+ 839 0074 0022     		movs	r2, #0
+ 840 0076 1A60     		str	r2, [r3]
+ 320:Src/motorops.c ****         }
+ 841              		.loc 1 320 0
+ 842 0078 0020     		movs	r0, #0
+ 843 007a FFF7FEFF 		bl	motor2Drive
+ 844              	.L64:
+ 845              		.loc 1 324 0
+ 846 007e 00BF     		nop
+ 847 0080 80BD     		pop	{r7, pc}
+ 848              	.L66:
+ 849 0082 00BF     		.align	2
+ 850              	.L65:
+ 851 0084 00000000 		.word	speed_counter2.11023
+ 852 0088 00000000 		.word	motor2
+ 853 008c 00000000 		.word	step2_desired_step
+ 854              		.cfi_endproc
+ 855              	.LFE150:
+ 857              		.section	.text.driveServoMotor1,"ax",%progbits
+ 858              		.align	1
+ 859              		.global	driveServoMotor1
+ 860              		.syntax unified
+ 861              		.thumb
+ARM GAS  /tmp/ccSo6eb5.s 			page 22
+
+
+ 862              		.thumb_func
+ 863              		.fpu fpv4-sp-d16
+ 865              	driveServoMotor1:
+ 866              	.LFB151:
+ 325:Src/motorops.c **** 
+ 326:Src/motorops.c **** void driveServoMotor1()
+ 327:Src/motorops.c **** {
+ 867              		.loc 1 327 0
+ 868              		.cfi_startproc
+ 869              		@ args = 0, pretend = 0, frame = 0
+ 870              		@ frame_needed = 1, uses_anonymous_args = 0
+ 871 0000 80B5     		push	{r7, lr}
+ 872              	.LCFI23:
+ 873              		.cfi_def_cfa_offset 8
+ 874              		.cfi_offset 7, -8
+ 875              		.cfi_offset 14, -4
+ 876 0002 00AF     		add	r7, sp, #0
+ 877              	.LCFI24:
+ 878              		.cfi_def_cfa_register 7
+ 328:Src/motorops.c **** 
+ 329:Src/motorops.c ****     static int counter1 = 0;
+ 330:Src/motorops.c ****     static int servo1_degree = 0;
+ 331:Src/motorops.c **** 
+ 332:Src/motorops.c ****     //start pwm signal generation
+ 333:Src/motorops.c ****     if(servo1.angle != 0)
+ 879              		.loc 1 333 0
+ 880 0004 1A4B     		ldr	r3, .L72
+ 881 0006 1B68     		ldr	r3, [r3]
+ 882 0008 002B     		cmp	r3, #0
+ 883 000a 0AD0     		beq	.L68
+ 334:Src/motorops.c ****     {
+ 335:Src/motorops.c ****         HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+ 884              		.loc 1 335 0
+ 885 000c 0021     		movs	r1, #0
+ 886 000e 1948     		ldr	r0, .L72+4
+ 887 0010 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 336:Src/motorops.c ****         servo1_degree = servo1.angle;
+ 888              		.loc 1 336 0
+ 889 0014 164B     		ldr	r3, .L72
+ 890 0016 1B68     		ldr	r3, [r3]
+ 891 0018 174A     		ldr	r2, .L72+8
+ 892 001a 1360     		str	r3, [r2]
+ 337:Src/motorops.c ****         counter1 = 0;
+ 893              		.loc 1 337 0
+ 894 001c 174B     		ldr	r3, .L72+12
+ 895 001e 0022     		movs	r2, #0
+ 896 0020 1A60     		str	r2, [r3]
+ 897              	.L68:
+ 338:Src/motorops.c ****     }
+ 339:Src/motorops.c **** 
+ 340:Src/motorops.c ****     //keep giving pwm signal generation
+ 341:Src/motorops.c ****     if(counter1 <= SERVO_DRIVE_TIMEOUT)
+ 898              		.loc 1 341 0
+ 899 0022 164B     		ldr	r3, .L72+12
+ 900 0024 1B68     		ldr	r3, [r3]
+ 901 0026 B3F5FA7F 		cmp	r3, #500
+ 902 002a 1ADC     		bgt	.L69
+ARM GAS  /tmp/ccSo6eb5.s 			page 23
+
+
+ 342:Src/motorops.c ****     {
+ 343:Src/motorops.c ****         // (int)((double)(servo1_degree)*((double)(200-100)/150) + 100));and for own servo
+ 344:Src/motorops.c **** 
+ 345:Src/motorops.c ****         counter1++;
+ 903              		.loc 1 345 0
+ 904 002c 134B     		ldr	r3, .L72+12
+ 905 002e 1B68     		ldr	r3, [r3]
+ 906 0030 0133     		adds	r3, r3, #1
+ 907 0032 124A     		ldr	r2, .L72+12
+ 908 0034 1360     		str	r3, [r2]
+ 346:Src/motorops.c ****         __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1,
+ 909              		.loc 1 346 0
+ 910 0036 104B     		ldr	r3, .L72+8
+ 911 0038 1B68     		ldr	r3, [r3]
+ 912 003a 07EE903A 		vmov	s15, r3	@ int
+ 913 003e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 914 0042 9FED0F7A 		vldr.32	s14, .L72+16
+ 915 0046 67EE877A 		vmul.f32	s15, s15, s14
+ 916 004a 9FED0E7A 		vldr.32	s14, .L72+20
+ 917 004e 77EE877A 		vadd.f32	s15, s15, s14
+ 918 0052 084B     		ldr	r3, .L72+4
+ 919 0054 1B68     		ldr	r3, [r3]
+ 920 0056 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 921 005a 17EE902A 		vmov	r2, s15	@ int
+ 922 005e 5A63     		str	r2, [r3, #52]
+ 347:Src/motorops.c ****                            ((servo1_degree)*SERVO_PWM_COEFFICIENT) +
+ 348:Src/motorops.c ****                              SERVO_MIN_PWM_DUTY) ;
+ 349:Src/motorops.c ****     }
+ 350:Src/motorops.c ****     else
+ 351:Src/motorops.c ****     {
+ 352:Src/motorops.c ****         HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+ 353:Src/motorops.c ****     }
+ 354:Src/motorops.c **** 
+ 355:Src/motorops.c **** }
+ 923              		.loc 1 355 0
+ 924 0060 03E0     		b	.L71
+ 925              	.L69:
+ 352:Src/motorops.c ****     }
+ 926              		.loc 1 352 0
+ 927 0062 0021     		movs	r1, #0
+ 928 0064 0348     		ldr	r0, .L72+4
+ 929 0066 FFF7FEFF 		bl	HAL_TIM_PWM_Stop
+ 930              	.L71:
+ 931              		.loc 1 355 0
+ 932 006a 00BF     		nop
+ 933 006c 80BD     		pop	{r7, pc}
+ 934              	.L73:
+ 935 006e 00BF     		.align	2
+ 936              	.L72:
+ 937 0070 00000000 		.word	servo1
+ 938 0074 00000000 		.word	htim3
+ 939 0078 00000000 		.word	servo1_degree.11027
+ 940 007c 00000000 		.word	counter1.11026
+ 941 0080 5839843F 		.word	1065630040
+ 942 0084 00007042 		.word	1114636288
+ 943              		.cfi_endproc
+ 944              	.LFE151:
+ARM GAS  /tmp/ccSo6eb5.s 			page 24
+
+
+ 946              		.section	.text.driveServoMotor2,"ax",%progbits
+ 947              		.align	1
+ 948              		.global	driveServoMotor2
+ 949              		.syntax unified
+ 950              		.thumb
+ 951              		.thumb_func
+ 952              		.fpu fpv4-sp-d16
+ 954              	driveServoMotor2:
+ 955              	.LFB152:
+ 356:Src/motorops.c **** 
+ 357:Src/motorops.c **** void driveServoMotor2()
+ 358:Src/motorops.c **** {
+ 956              		.loc 1 358 0
+ 957              		.cfi_startproc
+ 958              		@ args = 0, pretend = 0, frame = 0
+ 959              		@ frame_needed = 1, uses_anonymous_args = 0
+ 960 0000 80B5     		push	{r7, lr}
+ 961              	.LCFI25:
+ 962              		.cfi_def_cfa_offset 8
+ 963              		.cfi_offset 7, -8
+ 964              		.cfi_offset 14, -4
+ 965 0002 00AF     		add	r7, sp, #0
+ 966              	.LCFI26:
+ 967              		.cfi_def_cfa_register 7
+ 359:Src/motorops.c ****     static int counter2 = 0;
+ 360:Src/motorops.c ****     static int servo2_degree = 0;
+ 361:Src/motorops.c **** 
+ 362:Src/motorops.c ****     if(servo2.angle != 0)
+ 968              		.loc 1 362 0
+ 969 0004 1A4B     		ldr	r3, .L79
+ 970 0006 1B68     		ldr	r3, [r3]
+ 971 0008 002B     		cmp	r3, #0
+ 972 000a 0AD0     		beq	.L75
+ 363:Src/motorops.c ****     {
+ 364:Src/motorops.c ****         HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+ 973              		.loc 1 364 0
+ 974 000c 0421     		movs	r1, #4
+ 975 000e 1948     		ldr	r0, .L79+4
+ 976 0010 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 365:Src/motorops.c **** 
+ 366:Src/motorops.c ****         servo2_degree = servo2.angle;
+ 977              		.loc 1 366 0
+ 978 0014 164B     		ldr	r3, .L79
+ 979 0016 1B68     		ldr	r3, [r3]
+ 980 0018 174A     		ldr	r2, .L79+8
+ 981 001a 1360     		str	r3, [r2]
+ 367:Src/motorops.c **** 
+ 368:Src/motorops.c ****         counter2 = 0;
+ 982              		.loc 1 368 0
+ 983 001c 174B     		ldr	r3, .L79+12
+ 984 001e 0022     		movs	r2, #0
+ 985 0020 1A60     		str	r2, [r3]
+ 986              	.L75:
+ 369:Src/motorops.c ****     }
+ 370:Src/motorops.c **** 
+ 371:Src/motorops.c ****     if(counter2 <= SERVO_DRIVE_TIMEOUT)
+ 987              		.loc 1 371 0
+ARM GAS  /tmp/ccSo6eb5.s 			page 25
+
+
+ 988 0022 164B     		ldr	r3, .L79+12
+ 989 0024 1B68     		ldr	r3, [r3]
+ 990 0026 B3F5FA7F 		cmp	r3, #500
+ 991 002a 1ADC     		bgt	.L76
+ 372:Src/motorops.c ****     {
+ 373:Src/motorops.c ****         // (servo1_degree)*((double)(215-60)/150) + 60) and for own servo
+ 374:Src/motorops.c ****         counter2 ++;
+ 992              		.loc 1 374 0
+ 993 002c 134B     		ldr	r3, .L79+12
+ 994 002e 1B68     		ldr	r3, [r3]
+ 995 0030 0133     		adds	r3, r3, #1
+ 996 0032 124A     		ldr	r2, .L79+12
+ 997 0034 1360     		str	r3, [r2]
+ 375:Src/motorops.c ****         __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2,
+ 998              		.loc 1 375 0
+ 999 0036 104B     		ldr	r3, .L79+8
+ 1000 0038 1B68     		ldr	r3, [r3]
+ 1001 003a 07EE903A 		vmov	s15, r3	@ int
+ 1002 003e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 1003 0042 9FED0F7A 		vldr.32	s14, .L79+16
+ 1004 0046 67EE877A 		vmul.f32	s15, s15, s14
+ 1005 004a 9FED0E7A 		vldr.32	s14, .L79+20
+ 1006 004e 77EE877A 		vadd.f32	s15, s15, s14
+ 1007 0052 084B     		ldr	r3, .L79+4
+ 1008 0054 1B68     		ldr	r3, [r3]
+ 1009 0056 FCEEE77A 		vcvt.u32.f32	s15, s15
+ 1010 005a 17EE902A 		vmov	r2, s15	@ int
+ 1011 005e 9A63     		str	r2, [r3, #56]
+ 376:Src/motorops.c ****                              ((servo2_degree)*SERVO_PWM_COEFFICIENT) +
+ 377:Src/motorops.c ****                              SERVO_MIN_PWM_DUTY);
+ 378:Src/motorops.c ****     }
+ 379:Src/motorops.c ****     else
+ 380:Src/motorops.c ****     {
+ 381:Src/motorops.c ****         HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+ 382:Src/motorops.c ****     }
+ 383:Src/motorops.c **** 
+ 384:Src/motorops.c **** }
+ 1012              		.loc 1 384 0
+ 1013 0060 03E0     		b	.L78
+ 1014              	.L76:
+ 381:Src/motorops.c ****     }
+ 1015              		.loc 1 381 0
+ 1016 0062 0421     		movs	r1, #4
+ 1017 0064 0348     		ldr	r0, .L79+4
+ 1018 0066 FFF7FEFF 		bl	HAL_TIM_PWM_Stop
+ 1019              	.L78:
+ 1020              		.loc 1 384 0
+ 1021 006a 00BF     		nop
+ 1022 006c 80BD     		pop	{r7, pc}
+ 1023              	.L80:
+ 1024 006e 00BF     		.align	2
+ 1025              	.L79:
+ 1026 0070 00000000 		.word	servo2
+ 1027 0074 00000000 		.word	htim3
+ 1028 0078 00000000 		.word	servo2_degree.11031
+ 1029 007c 00000000 		.word	counter2.11030
+ 1030 0080 5839843F 		.word	1065630040
+ARM GAS  /tmp/ccSo6eb5.s 			page 26
+
+
+ 1031 0084 00007042 		.word	1114636288
+ 1032              		.cfi_endproc
+ 1033              	.LFE152:
+ 1035              		.section	.text.checkIfDriveCommand,"ax",%progbits
+ 1036              		.align	1
+ 1037              		.global	checkIfDriveCommand
+ 1038              		.syntax unified
+ 1039              		.thumb
+ 1040              		.thumb_func
+ 1041              		.fpu fpv4-sp-d16
+ 1043              	checkIfDriveCommand:
+ 1044              	.LFB153:
+ 385:Src/motorops.c **** 
+ 386:Src/motorops.c **** DriveCommand checkIfDriveCommand()
+ 387:Src/motorops.c **** {
+ 1045              		.loc 1 387 0
+ 1046              		.cfi_startproc
+ 1047              		@ args = 0, pretend = 0, frame = 0
+ 1048              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1049              		@ link register save eliminated.
+ 1050 0000 80B4     		push	{r7}
+ 1051              	.LCFI27:
+ 1052              		.cfi_def_cfa_offset 4
+ 1053              		.cfi_offset 7, -4
+ 1054 0002 00AF     		add	r7, sp, #0
+ 1055              	.LCFI28:
+ 1056              		.cfi_def_cfa_register 7
+ 388:Src/motorops.c ****     if(motor1.desired_step != 0)
+ 1057              		.loc 1 388 0
+ 1058 0004 0F4B     		ldr	r3, .L87
+ 1059 0006 1B69     		ldr	r3, [r3, #16]
+ 1060 0008 002B     		cmp	r3, #0
+ 1061 000a 03D0     		beq	.L82
+ 389:Src/motorops.c ****         step1_desired_step = motor1.desired_step;
+ 1062              		.loc 1 389 0
+ 1063 000c 0D4B     		ldr	r3, .L87
+ 1064 000e 1B69     		ldr	r3, [r3, #16]
+ 1065 0010 0D4A     		ldr	r2, .L87+4
+ 1066 0012 1360     		str	r3, [r2]
+ 1067              	.L82:
+ 390:Src/motorops.c **** 
+ 391:Src/motorops.c ****     if(motor2.desired_step != 0)
+ 1068              		.loc 1 391 0
+ 1069 0014 0D4B     		ldr	r3, .L87+8
+ 1070 0016 1B69     		ldr	r3, [r3, #16]
+ 1071 0018 002B     		cmp	r3, #0
+ 1072 001a 03D0     		beq	.L83
+ 392:Src/motorops.c ****         step2_desired_step = motor2.desired_step;
+ 1073              		.loc 1 392 0
+ 1074 001c 0B4B     		ldr	r3, .L87+8
+ 1075 001e 1B69     		ldr	r3, [r3, #16]
+ 1076 0020 0B4A     		ldr	r2, .L87+12
+ 1077 0022 1360     		str	r3, [r2]
+ 1078              	.L83:
+ 393:Src/motorops.c **** 
+ 394:Src/motorops.c ****     if(step1_desired_step != 0 || step2_desired_step != 0)
+ 1079              		.loc 1 394 0
+ARM GAS  /tmp/ccSo6eb5.s 			page 27
+
+
+ 1080 0024 084B     		ldr	r3, .L87+4
+ 1081 0026 1B68     		ldr	r3, [r3]
+ 1082 0028 002B     		cmp	r3, #0
+ 1083 002a 03D1     		bne	.L84
+ 1084              		.loc 1 394 0 is_stmt 0 discriminator 1
+ 1085 002c 084B     		ldr	r3, .L87+12
+ 1086 002e 1B68     		ldr	r3, [r3]
+ 1087 0030 002B     		cmp	r3, #0
+ 1088 0032 01D0     		beq	.L85
+ 1089              	.L84:
+ 395:Src/motorops.c ****     {
+ 396:Src/motorops.c ****         return Position;
+ 1090              		.loc 1 396 0 is_stmt 1
+ 1091 0034 0123     		movs	r3, #1
+ 1092 0036 00E0     		b	.L86
+ 1093              	.L85:
+ 397:Src/motorops.c ****     }
+ 398:Src/motorops.c ****     else
+ 399:Src/motorops.c ****     {
+ 400:Src/motorops.c ****         return Direction;
+ 1094              		.loc 1 400 0
+ 1095 0038 0023     		movs	r3, #0
+ 1096              	.L86:
+ 401:Src/motorops.c ****     }
+ 402:Src/motorops.c **** }
+ 1097              		.loc 1 402 0
+ 1098 003a 1846     		mov	r0, r3
+ 1099 003c BD46     		mov	sp, r7
+ 1100              	.LCFI29:
+ 1101              		.cfi_def_cfa_register 13
+ 1102              		@ sp needed
+ 1103 003e 5DF8047B 		ldr	r7, [sp], #4
+ 1104              	.LCFI30:
+ 1105              		.cfi_restore 7
+ 1106              		.cfi_def_cfa_offset 0
+ 1107 0042 7047     		bx	lr
+ 1108              	.L88:
+ 1109              		.align	2
+ 1110              	.L87:
+ 1111 0044 00000000 		.word	motor1
+ 1112 0048 00000000 		.word	step1_desired_step
+ 1113 004c 00000000 		.word	motor2
+ 1114 0050 00000000 		.word	step2_desired_step
+ 1115              		.cfi_endproc
+ 1116              	.LFE153:
+ 1118              		.section	.bss.counter.11010,"aw",%nobits
+ 1119              		.align	2
+ 1122              	counter.11010:
+ 1123 0000 00000000 		.space	4
+ 1124              		.section	.bss.speed_counter1.11014,"aw",%nobits
+ 1125              		.align	2
+ 1128              	speed_counter1.11014:
+ 1129 0000 00000000 		.space	4
+ 1130              		.section	.bss.speed_counter2.11017,"aw",%nobits
+ 1131              		.align	2
+ 1134              	speed_counter2.11017:
+ 1135 0000 00000000 		.space	4
+ARM GAS  /tmp/ccSo6eb5.s 			page 28
+
+
+ 1136              		.section	.bss.speed_counter1.11020,"aw",%nobits
+ 1137              		.align	2
+ 1140              	speed_counter1.11020:
+ 1141 0000 00000000 		.space	4
+ 1142              		.section	.bss.speed_counter2.11023,"aw",%nobits
+ 1143              		.align	2
+ 1146              	speed_counter2.11023:
+ 1147 0000 00000000 		.space	4
+ 1148              		.section	.bss.servo1_degree.11027,"aw",%nobits
+ 1149              		.align	2
+ 1152              	servo1_degree.11027:
+ 1153 0000 00000000 		.space	4
+ 1154              		.section	.bss.counter1.11026,"aw",%nobits
+ 1155              		.align	2
+ 1158              	counter1.11026:
+ 1159 0000 00000000 		.space	4
+ 1160              		.section	.bss.servo2_degree.11031,"aw",%nobits
+ 1161              		.align	2
+ 1164              	servo2_degree.11031:
+ 1165 0000 00000000 		.space	4
+ 1166              		.section	.bss.counter2.11030,"aw",%nobits
+ 1167              		.align	2
+ 1170              	counter2.11030:
+ 1171 0000 00000000 		.space	4
+ 1172              		.text
+ 1173              	.Letext0:
+ 1174              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 1175              		.file 3 "Inc/main.h"
+ 1176              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 1177              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1178              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 1179              		.file 7 "/usr/include/newlib/sys/lock.h"
+ 1180              		.file 8 "/usr/include/newlib/sys/_types.h"
+ 1181              		.file 9 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 1182              		.file 10 "/usr/include/newlib/sys/reent.h"
+ 1183              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1184              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h"
+ 1185              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 1186              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 1187              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 1188              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 1189              		.file 17 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
+ 1190              		.file 18 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 1191              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 1192              		.file 20 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 1193              		.file 21 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 1194              		.file 22 "Inc/gps.h"
+ 1195              		.file 23 "Inc/sensor.h"
+ 1196              		.file 24 "Inc/motor.h"
+ 1197              		.file 25 "Inc/usart.h"
+ 1198              		.file 26 "Inc/spi.h"
+ 1199              		.file 27 "Inc/tim.h"
+ 1200              		.file 28 "Inc/freertos.h"
+ 1201              		.file 29 "Inc/motorops.h"
+ARM GAS  /tmp/ccSo6eb5.s 			page 29
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 motorops.c
+                            *COM*:00000000000001a0 gpsData
+                            *COM*:0000000000000014 sensorValues
+                            *COM*:000000000000000c gyroscopeValues
+                            *COM*:0000000000000004 calibration
+                            *COM*:0000000000000001 setting_enable
+                            *COM*:0000000000000014 motor1
+                            *COM*:0000000000000014 motor2
+                            *COM*:0000000000000010 servo1
+                            *COM*:0000000000000010 servo2
+                            *COM*:0000000000000004 gpsThreadHandle
+                            *COM*:0000000000000004 sensorThreadHandle
+                            *COM*:0000000000000004 spiComThreadHandle
+                            *COM*:0000000000000004 motorThreadHandle
+                            *COM*:0000000000000004 spiMutexHandle
+                            *COM*:0000000000000004 uartMutexHandle
+                            *COM*:0000000000000004 controlMutexHandle
+                            *COM*:0000000000000004 spiSemaphoreHandle
+                            *COM*:0000000000000004 uartSemaphoreHandle
+                            *COM*:0000000000000004 SpiCheckData
+                            *COM*:0000000000000004 SpiTxData
+                            *COM*:0000000000000004 SpiRxData
+                            *COM*:0000000000000004 EnvironmentData
+                            *COM*:0000000000000004 ControlData
+                            *COM*:0000000000000004 UpdateFile
+                            *COM*:0000000000000004 SensorCalibrationNeeded
+                            *COM*:0000000000000001 rx_buf
+     /tmp/ccSo6eb5.s:48     .bss.step1_desired_step:0000000000000000 step1_desired_step
+     /tmp/ccSo6eb5.s:45     .bss.step1_desired_step:0000000000000000 $d
+     /tmp/ccSo6eb5.s:55     .bss.step2_desired_step:0000000000000000 step2_desired_step
+     /tmp/ccSo6eb5.s:52     .bss.step2_desired_step:0000000000000000 $d
+     /tmp/ccSo6eb5.s:58     .rodata:0000000000000000 $d
+     /tmp/ccSo6eb5.s:62     .text.motorOps:0000000000000000 $t
+     /tmp/ccSo6eb5.s:69     .text.motorOps:0000000000000000 motorOps
+     /tmp/ccSo6eb5.s:179    .text.getInitialPositions:0000000000000000 getInitialPositions
+     /tmp/ccSo6eb5.s:116    .text.operate:0000000000000000 operate
+     /tmp/ccSo6eb5.s:104    .text.motorOps:0000000000000020 $d
+     /tmp/ccSo6eb5.s:109    .text.operate:0000000000000000 $t
+     /tmp/ccSo6eb5.s:1043   .text.checkIfDriveCommand:0000000000000000 checkIfDriveCommand
+     /tmp/ccSo6eb5.s:645    .text.driveStep1WithPosition:0000000000000000 driveStep1WithPosition
+     /tmp/ccSo6eb5.s:755    .text.driveStep2WithPosition:0000000000000000 driveStep2WithPosition
+     /tmp/ccSo6eb5.s:409    .text.driveStep1WithDirection:0000000000000000 driveStep1WithDirection
+     /tmp/ccSo6eb5.s:527    .text.driveStep2WithDirection:0000000000000000 driveStep2WithDirection
+     /tmp/ccSo6eb5.s:865    .text.driveServoMotor1:0000000000000000 driveServoMotor1
+     /tmp/ccSo6eb5.s:954    .text.driveServoMotor2:0000000000000000 driveServoMotor2
+     /tmp/ccSo6eb5.s:265    .text.putMotorInformationstoEnvironmentData:0000000000000000 putMotorInformationstoEnvironmentData
+     /tmp/ccSo6eb5.s:172    .text.getInitialPositions:0000000000000000 $t
+     /tmp/ccSo6eb5.s:251    .text.getInitialPositions:0000000000000068 $d
+     /tmp/ccSo6eb5.s:258    .text.putMotorInformationstoEnvironmentData:0000000000000000 $t
+     /tmp/ccSo6eb5.s:389    .text.putMotorInformationstoEnvironmentData:00000000000000b0 $d
+     /tmp/ccSo6eb5.s:1122   .bss.counter.11010:0000000000000000 counter.11010
+     /tmp/ccSo6eb5.s:402    .text.driveStep1WithDirection:0000000000000000 $t
+     /tmp/ccSo6eb5.s:514    .text.driveStep1WithDirection:000000000000008c $d
+     /tmp/ccSo6eb5.s:1128   .bss.speed_counter1.11014:0000000000000000 speed_counter1.11014
+     /tmp/ccSo6eb5.s:520    .text.driveStep2WithDirection:0000000000000000 $t
+     /tmp/ccSo6eb5.s:632    .text.driveStep2WithDirection:000000000000008c $d
+ARM GAS  /tmp/ccSo6eb5.s 			page 30
+
+
+     /tmp/ccSo6eb5.s:1134   .bss.speed_counter2.11017:0000000000000000 speed_counter2.11017
+     /tmp/ccSo6eb5.s:638    .text.driveStep1WithPosition:0000000000000000 $t
+     /tmp/ccSo6eb5.s:741    .text.driveStep1WithPosition:0000000000000084 $d
+     /tmp/ccSo6eb5.s:1140   .bss.speed_counter1.11020:0000000000000000 speed_counter1.11020
+     /tmp/ccSo6eb5.s:748    .text.driveStep2WithPosition:0000000000000000 $t
+     /tmp/ccSo6eb5.s:851    .text.driveStep2WithPosition:0000000000000084 $d
+     /tmp/ccSo6eb5.s:1146   .bss.speed_counter2.11023:0000000000000000 speed_counter2.11023
+     /tmp/ccSo6eb5.s:858    .text.driveServoMotor1:0000000000000000 $t
+     /tmp/ccSo6eb5.s:937    .text.driveServoMotor1:0000000000000070 $d
+     /tmp/ccSo6eb5.s:1152   .bss.servo1_degree.11027:0000000000000000 servo1_degree.11027
+     /tmp/ccSo6eb5.s:1158   .bss.counter1.11026:0000000000000000 counter1.11026
+     /tmp/ccSo6eb5.s:947    .text.driveServoMotor2:0000000000000000 $t
+     /tmp/ccSo6eb5.s:1026   .text.driveServoMotor2:0000000000000070 $d
+     /tmp/ccSo6eb5.s:1164   .bss.servo2_degree.11031:0000000000000000 servo2_degree.11031
+     /tmp/ccSo6eb5.s:1170   .bss.counter2.11030:0000000000000000 counter2.11030
+     /tmp/ccSo6eb5.s:1036   .text.checkIfDriveCommand:0000000000000000 $t
+     /tmp/ccSo6eb5.s:1111   .text.checkIfDriveCommand:0000000000000044 $d
+     /tmp/ccSo6eb5.s:1119   .bss.counter.11010:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1125   .bss.speed_counter1.11014:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1131   .bss.speed_counter2.11017:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1137   .bss.speed_counter1.11020:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1143   .bss.speed_counter2.11023:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1149   .bss.servo1_degree.11027:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1155   .bss.counter1.11026:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1161   .bss.servo2_degree.11031:0000000000000000 $d
+     /tmp/ccSo6eb5.s:1167   .bss.counter2.11030:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+mprintf
+osDelay
+xQueueGenericReceive
+xQueueGenericSend
+HAL_GPIO_ReadPin
+motor1Drive
+motor2Drive
+HAL_TIM_PWM_Start
+HAL_TIM_PWM_Stop
+htim3

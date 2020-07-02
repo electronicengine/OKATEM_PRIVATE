@@ -84,9 +84,15 @@ int v4l2ctrl::isControl(int ControlType, v4l2_queryctrl *Queryctrl)
     int err = 0;
     Queryctrl->id = ControlType;
     if ((err = ioctl(gmFileDescriptor, VIDIOC_QUERYCTRL, Queryctrl)) < 0)
+    {
         printf("ioctl querycontrol error %d \n", errno);
+        return FAIL;
+    }
     else if (Queryctrl->flags & V4L2_CTRL_FLAG_DISABLED)
+    {
         printf("control %s disabled \n", (char*) Queryctrl->name);
+        return FAIL;
+    }
     else if (Queryctrl->flags & V4L2_CTRL_TYPE_BOOLEAN)
         return 1;
     else if (Queryctrl->type & V4L2_CTRL_TYPE_INTEGER)

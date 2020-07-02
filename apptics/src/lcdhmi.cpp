@@ -37,7 +37,7 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
 
 }
 
-Status LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
+void LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
 {
 
     gmMutex.lock();
@@ -507,7 +507,7 @@ void LcdHMI::autoMode()
 
 
 
-Status LcdHMI::sendEnvironmentInfo()
+void LcdHMI::sendEnvironmentInfo()
 {
 
     std::string wheather;

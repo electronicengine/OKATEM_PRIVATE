@@ -19,6 +19,7 @@ cv::Point Process::calculateCenter(const std::vector<cv::Point> &Points)
 {
 
     int size = Points.size();
+
     int x = 0, y = 0;
 
     if(size < 2)

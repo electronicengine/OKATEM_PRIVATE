@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cch0cVe3.s 			page 1
+ARM GAS  /tmp/cczzlw37.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -19,48 +19,49 @@ ARM GAS  /tmp/cch0cVe3.s 			page 1
   16              		.cfi_sections	.debug_frame
   17              		.comm	gpsData,416,4
   18              		.comm	sensorValues,20,4
-  19              		.comm	calibration,4,4
-  20              		.comm	setting_enable,1,1
-  21              		.comm	motor1,20,4
-  22              		.comm	motor2,20,4
-  23              		.comm	servo1,16,4
-  24              		.comm	servo2,16,4
-  25              		.comm	gpsThreadHandle,4,4
-  26              		.comm	sensorThreadHandle,4,4
-  27              		.comm	spiComThreadHandle,4,4
-  28              		.comm	motorThreadHandle,4,4
-  29              		.comm	spiMutexHandle,4,4
-  30              		.comm	uartMutexHandle,4,4
-  31              		.comm	controlMutexHandle,4,4
-  32              		.comm	spiSemaphoreHandle,4,4
-  33              		.comm	uartSemaphoreHandle,4,4
-  34              		.comm	SpiCheckData,4,4
-  35              		.comm	SpiTxData,4,4
-  36              		.comm	SpiRxData,4,4
-  37              		.comm	EnvironmentData,4,4
-  38              		.comm	ControlData,4,4
-  39              		.comm	UpdateFile,4,4
-  40              		.comm	SensorCalibrationNeeded,4,4
-  41              		.comm	rx_buf,1,1
-  42              		.section	.text.vprint,"ax",%progbits
-  43              		.align	1
-  44              		.global	vprint
-  45              		.syntax unified
-  46              		.thumb
-  47              		.thumb_func
-  48              		.fpu fpv4-sp-d16
-  50              	vprint:
-  51              	.LFB143:
-  52              		.file 1 "Src/freertos.c"
+  19              		.comm	gyroscopeValues,12,4
+  20              		.comm	calibration,4,4
+  21              		.comm	setting_enable,1,1
+  22              		.comm	motor1,20,4
+  23              		.comm	motor2,20,4
+  24              		.comm	servo1,16,4
+  25              		.comm	servo2,16,4
+  26              		.comm	gpsThreadHandle,4,4
+  27              		.comm	sensorThreadHandle,4,4
+  28              		.comm	spiComThreadHandle,4,4
+  29              		.comm	motorThreadHandle,4,4
+  30              		.comm	spiMutexHandle,4,4
+  31              		.comm	uartMutexHandle,4,4
+  32              		.comm	controlMutexHandle,4,4
+  33              		.comm	spiSemaphoreHandle,4,4
+  34              		.comm	uartSemaphoreHandle,4,4
+  35              		.comm	SpiCheckData,4,4
+  36              		.comm	SpiTxData,4,4
+  37              		.comm	SpiRxData,4,4
+  38              		.comm	EnvironmentData,4,4
+  39              		.comm	ControlData,4,4
+  40              		.comm	UpdateFile,4,4
+  41              		.comm	SensorCalibrationNeeded,4,4
+  42              		.comm	rx_buf,1,1
+  43              		.section	.text.vprint,"ax",%progbits
+  44              		.align	1
+  45              		.global	vprint
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  49              		.fpu fpv4-sp-d16
+  51              	vprint:
+  52              	.LFB143:
+  53              		.file 1 "Src/freertos.c"
    1:Src/freertos.c **** /**
    2:Src/freertos.c ****   ******************************************************************************
    3:Src/freertos.c ****   * File Name          : freertos.c
    4:Src/freertos.c ****   * Description        : Code for freertos applications
    5:Src/freertos.c ****   ******************************************************************************
+ARM GAS  /tmp/cczzlw37.s 			page 2
+
+
    6:Src/freertos.c ****   * This notice applies to any and all portions of this file
-ARM GAS  /tmp/cch0cVe3.s 			page 2
-
-
    7:Src/freertos.c ****   * that are not between comment pairs USER CODE BEGIN and
    8:Src/freertos.c ****   * USER CODE END. Other portions of this file, whether 
    9:Src/freertos.c ****   * inserted by the user or by software development tools
@@ -117,558 +118,559 @@ ARM GAS  /tmp/cch0cVe3.s 			page 1
   60:Src/freertos.c **** 
   61:Src/freertos.c **** void vprint(const char *fmt, va_list argp)
   62:Src/freertos.c **** {
-  53              		.loc 1 62 0
-ARM GAS  /tmp/cch0cVe3.s 			page 3
+ARM GAS  /tmp/cczzlw37.s 			page 3
 
 
-  54              		.cfi_startproc
-  55              		@ args = 0, pretend = 0, frame = 160
-  56              		@ frame_needed = 1, uses_anonymous_args = 0
-  57 0000 80B5     		push	{r7, lr}
-  58              	.LCFI0:
-  59              		.cfi_def_cfa_offset 8
-  60              		.cfi_offset 7, -8
-  61              		.cfi_offset 14, -4
-  62 0002 A8B0     		sub	sp, sp, #160
-  63              	.LCFI1:
-  64              		.cfi_def_cfa_offset 168
-  65 0004 00AF     		add	r7, sp, #0
-  66              	.LCFI2:
-  67              		.cfi_def_cfa_register 7
-  68 0006 7860     		str	r0, [r7, #4]
-  69 0008 3960     		str	r1, [r7]
+  54              		.loc 1 62 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 160
+  57              		@ frame_needed = 1, uses_anonymous_args = 0
+  58 0000 80B5     		push	{r7, lr}
+  59              	.LCFI0:
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 7, -8
+  62              		.cfi_offset 14, -4
+  63 0002 A8B0     		sub	sp, sp, #160
+  64              	.LCFI1:
+  65              		.cfi_def_cfa_offset 168
+  66 0004 00AF     		add	r7, sp, #0
+  67              	.LCFI2:
+  68              		.cfi_def_cfa_register 7
+  69 0006 7860     		str	r0, [r7, #4]
+  70 0008 3960     		str	r1, [r7]
   63:Src/freertos.c ****     char string[150];
   64:Src/freertos.c **** 
   65:Src/freertos.c ****     if(0 < vsprintf(string,fmt,argp)) // build string
-  70              		.loc 1 65 0
-  71 000a 07F10803 		add	r3, r7, #8
-  72 000e 3A68     		ldr	r2, [r7]
-  73 0010 7968     		ldr	r1, [r7, #4]
-  74 0012 1846     		mov	r0, r3
-  75 0014 FFF7FEFF 		bl	vsprintf
-  76 0018 0346     		mov	r3, r0
-  77 001a 002B     		cmp	r3, #0
-  78 001c 0DDD     		ble	.L3
+  71              		.loc 1 65 0
+  72 000a 07F10803 		add	r3, r7, #8
+  73 000e 3A68     		ldr	r2, [r7]
+  74 0010 7968     		ldr	r1, [r7, #4]
+  75 0012 1846     		mov	r0, r3
+  76 0014 FFF7FEFF 		bl	vsprintf
+  77 0018 0346     		mov	r3, r0
+  78 001a 002B     		cmp	r3, #0
+  79 001c 0DDD     		ble	.L3
   66:Src/freertos.c ****        HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via 
-  79              		.loc 1 66 0
-  80 001e 07F10803 		add	r3, r7, #8
-  81 0022 1846     		mov	r0, r3
-  82 0024 FFF7FEFF 		bl	strlen
-  83 0028 0346     		mov	r3, r0
-  84 002a 9AB2     		uxth	r2, r3
-  85 002c 07F10801 		add	r1, r7, #8
-  86 0030 6FF07F43 		mvn	r3, #-16777216
-  87 0034 0348     		ldr	r0, .L4
-  88 0036 FFF7FEFF 		bl	HAL_UART_Transmit
-  89              	.L3:
+  80              		.loc 1 66 0
+  81 001e 07F10803 		add	r3, r7, #8
+  82 0022 1846     		mov	r0, r3
+  83 0024 FFF7FEFF 		bl	strlen
+  84 0028 0346     		mov	r3, r0
+  85 002a 9AB2     		uxth	r2, r3
+  86 002c 07F10801 		add	r1, r7, #8
+  87 0030 6FF07F43 		mvn	r3, #-16777216
+  88 0034 0348     		ldr	r0, .L4
+  89 0036 FFF7FEFF 		bl	HAL_UART_Transmit
+  90              	.L3:
   67:Src/freertos.c **** 
   68:Src/freertos.c **** }
-  90              		.loc 1 68 0
-  91 003a 00BF     		nop
-  92 003c A037     		adds	r7, r7, #160
-  93              	.LCFI3:
-  94              		.cfi_def_cfa_offset 8
-  95 003e BD46     		mov	sp, r7
-  96              	.LCFI4:
-  97              		.cfi_def_cfa_register 13
-  98              		@ sp needed
-  99 0040 80BD     		pop	{r7, pc}
- 100              	.L5:
- 101 0042 00BF     		.align	2
- 102              	.L4:
- 103 0044 00000000 		.word	huart1
- 104              		.cfi_endproc
-ARM GAS  /tmp/cch0cVe3.s 			page 4
+  91              		.loc 1 68 0
+  92 003a 00BF     		nop
+  93 003c A037     		adds	r7, r7, #160
+  94              	.LCFI3:
+  95              		.cfi_def_cfa_offset 8
+  96 003e BD46     		mov	sp, r7
+  97              	.LCFI4:
+  98              		.cfi_def_cfa_register 13
+  99              		@ sp needed
+ 100 0040 80BD     		pop	{r7, pc}
+ 101              	.L5:
+ 102 0042 00BF     		.align	2
+ 103              	.L4:
+ 104 0044 00000000 		.word	huart1
+ARM GAS  /tmp/cczzlw37.s 			page 4
 
 
- 105              	.LFE143:
- 107              		.section	.text.mprintf,"ax",%progbits
- 108              		.align	1
- 109              		.global	mprintf
- 110              		.syntax unified
- 111              		.thumb
- 112              		.thumb_func
- 113              		.fpu fpv4-sp-d16
- 115              	mprintf:
- 116              	.LFB144:
+ 105              		.cfi_endproc
+ 106              	.LFE143:
+ 108              		.section	.text.mprintf,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	mprintf
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 114              		.fpu fpv4-sp-d16
+ 116              	mprintf:
+ 117              	.LFB144:
   69:Src/freertos.c **** 
   70:Src/freertos.c **** 
   71:Src/freertos.c **** 
   72:Src/freertos.c **** void mprintf(const char *fmt, ...) // custom printf() function
   73:Src/freertos.c **** {
- 117              		.loc 1 73 0
- 118              		.cfi_startproc
- 119              		@ args = 4, pretend = 16, frame = 8
- 120              		@ frame_needed = 1, uses_anonymous_args = 1
- 121 0000 0FB4     		push	{r0, r1, r2, r3}
- 122              	.LCFI5:
- 123              		.cfi_def_cfa_offset 16
- 124              		.cfi_offset 0, -16
- 125              		.cfi_offset 1, -12
- 126              		.cfi_offset 2, -8
- 127              		.cfi_offset 3, -4
- 128 0002 80B5     		push	{r7, lr}
- 129              	.LCFI6:
- 130              		.cfi_def_cfa_offset 24
- 131              		.cfi_offset 7, -24
- 132              		.cfi_offset 14, -20
- 133 0004 82B0     		sub	sp, sp, #8
- 134              	.LCFI7:
- 135              		.cfi_def_cfa_offset 32
- 136 0006 00AF     		add	r7, sp, #0
- 137              	.LCFI8:
- 138              		.cfi_def_cfa_register 7
+ 118              		.loc 1 73 0
+ 119              		.cfi_startproc
+ 120              		@ args = 4, pretend = 16, frame = 8
+ 121              		@ frame_needed = 1, uses_anonymous_args = 1
+ 122 0000 0FB4     		push	{r0, r1, r2, r3}
+ 123              	.LCFI5:
+ 124              		.cfi_def_cfa_offset 16
+ 125              		.cfi_offset 0, -16
+ 126              		.cfi_offset 1, -12
+ 127              		.cfi_offset 2, -8
+ 128              		.cfi_offset 3, -4
+ 129 0002 80B5     		push	{r7, lr}
+ 130              	.LCFI6:
+ 131              		.cfi_def_cfa_offset 24
+ 132              		.cfi_offset 7, -24
+ 133              		.cfi_offset 14, -20
+ 134 0004 82B0     		sub	sp, sp, #8
+ 135              	.LCFI7:
+ 136              		.cfi_def_cfa_offset 32
+ 137 0006 00AF     		add	r7, sp, #0
+ 138              	.LCFI8:
+ 139              		.cfi_def_cfa_register 7
   74:Src/freertos.c **** 
   75:Src/freertos.c ****     xSemaphoreTake(uartMutexHandle, 100);
- 139              		.loc 1 75 0
- 140 0008 0D4B     		ldr	r3, .L7
- 141 000a 1868     		ldr	r0, [r3]
- 142 000c 0023     		movs	r3, #0
- 143 000e 6422     		movs	r2, #100
- 144 0010 0021     		movs	r1, #0
- 145 0012 FFF7FEFF 		bl	xQueueGenericReceive
+ 140              		.loc 1 75 0
+ 141 0008 0D4B     		ldr	r3, .L7
+ 142 000a 1868     		ldr	r0, [r3]
+ 143 000c 0023     		movs	r3, #0
+ 144 000e 6422     		movs	r2, #100
+ 145 0010 0021     		movs	r1, #0
+ 146 0012 FFF7FEFF 		bl	xQueueGenericReceive
   76:Src/freertos.c ****     va_list argp;
   77:Src/freertos.c ****     va_start(argp, fmt);
- 146              		.loc 1 77 0
- 147 0016 07F11403 		add	r3, r7, #20
- 148 001a 7B60     		str	r3, [r7, #4]
+ 147              		.loc 1 77 0
+ 148 0016 07F11403 		add	r3, r7, #20
+ 149 001a 7B60     		str	r3, [r7, #4]
   78:Src/freertos.c ****     vprint(fmt, argp);
- 149              		.loc 1 78 0
- 150 001c 7968     		ldr	r1, [r7, #4]
- 151 001e 3869     		ldr	r0, [r7, #16]
- 152 0020 FFF7FEFF 		bl	vprint
+ 150              		.loc 1 78 0
+ 151 001c 7968     		ldr	r1, [r7, #4]
+ 152 001e 3869     		ldr	r0, [r7, #16]
+ 153 0020 FFF7FEFF 		bl	vprint
+ARM GAS  /tmp/cczzlw37.s 			page 5
+
+
   79:Src/freertos.c ****     va_end(argp);
-ARM GAS  /tmp/cch0cVe3.s 			page 5
-
-
   80:Src/freertos.c ****     xSemaphoreGive(uartMutexHandle);
- 153              		.loc 1 80 0
- 154 0024 064B     		ldr	r3, .L7
- 155 0026 1868     		ldr	r0, [r3]
- 156 0028 0023     		movs	r3, #0
- 157 002a 0022     		movs	r2, #0
- 158 002c 0021     		movs	r1, #0
- 159 002e FFF7FEFF 		bl	xQueueGenericSend
+ 154              		.loc 1 80 0
+ 155 0024 064B     		ldr	r3, .L7
+ 156 0026 1868     		ldr	r0, [r3]
+ 157 0028 0023     		movs	r3, #0
+ 158 002a 0022     		movs	r2, #0
+ 159 002c 0021     		movs	r1, #0
+ 160 002e FFF7FEFF 		bl	xQueueGenericSend
   81:Src/freertos.c **** 
   82:Src/freertos.c **** }
- 160              		.loc 1 82 0
- 161 0032 00BF     		nop
- 162 0034 0837     		adds	r7, r7, #8
- 163              	.LCFI9:
- 164              		.cfi_def_cfa_offset 24
- 165 0036 BD46     		mov	sp, r7
- 166              	.LCFI10:
- 167              		.cfi_def_cfa_register 13
- 168              		@ sp needed
- 169 0038 BDE88040 		pop	{r7, lr}
- 170              	.LCFI11:
- 171              		.cfi_restore 14
- 172              		.cfi_restore 7
- 173              		.cfi_def_cfa_offset 16
- 174 003c 04B0     		add	sp, sp, #16
- 175              	.LCFI12:
- 176              		.cfi_restore 3
- 177              		.cfi_restore 2
- 178              		.cfi_restore 1
- 179              		.cfi_restore 0
- 180              		.cfi_def_cfa_offset 0
- 181 003e 7047     		bx	lr
- 182              	.L8:
- 183              		.align	2
- 184              	.L7:
- 185 0040 00000000 		.word	uartMutexHandle
- 186              		.cfi_endproc
- 187              	.LFE144:
- 189              		.section	.rodata
- 190              		.align	2
- 191              	.LC0:
- 192 0000 67707354 		.ascii	"gpsThread\000"
- 192      68726561 
- 192      6400
- 193 000a 0000     		.align	2
- 194              	.LC8:
- 195 000c 00000000 		.word	.LC0
- 196 0010 00000000 		.word	gpsOps
- 197 0014 0000     		.short	0
- 198 0016 0000     		.space	2
- 199 0018 00000000 		.word	0
- 200 001c 00040000 		.word	1024
- 201              		.align	2
- 202              	.LC2:
- 203 0020 73656E73 		.ascii	"sensorThread\000"
- 203      6F725468 
- 203      72656164 
-ARM GAS  /tmp/cch0cVe3.s 			page 6
+ 161              		.loc 1 82 0
+ 162 0032 00BF     		nop
+ 163 0034 0837     		adds	r7, r7, #8
+ 164              	.LCFI9:
+ 165              		.cfi_def_cfa_offset 24
+ 166 0036 BD46     		mov	sp, r7
+ 167              	.LCFI10:
+ 168              		.cfi_def_cfa_register 13
+ 169              		@ sp needed
+ 170 0038 BDE88040 		pop	{r7, lr}
+ 171              	.LCFI11:
+ 172              		.cfi_restore 14
+ 173              		.cfi_restore 7
+ 174              		.cfi_def_cfa_offset 16
+ 175 003c 04B0     		add	sp, sp, #16
+ 176              	.LCFI12:
+ 177              		.cfi_restore 3
+ 178              		.cfi_restore 2
+ 179              		.cfi_restore 1
+ 180              		.cfi_restore 0
+ 181              		.cfi_def_cfa_offset 0
+ 182 003e 7047     		bx	lr
+ 183              	.L8:
+ 184              		.align	2
+ 185              	.L7:
+ 186 0040 00000000 		.word	uartMutexHandle
+ 187              		.cfi_endproc
+ 188              	.LFE144:
+ 190              		.section	.rodata
+ 191              		.align	2
+ 192              	.LC0:
+ 193 0000 67707354 		.ascii	"gpsThread\000"
+ 193      68726561 
+ 193      6400
+ 194 000a 0000     		.align	2
+ 195              	.LC8:
+ 196 000c 00000000 		.word	.LC0
+ 197 0010 00000000 		.word	gpsOps
+ 198 0014 0000     		.short	0
+ 199 0016 0000     		.space	2
+ 200 0018 00000000 		.word	0
+ 201 001c 00040000 		.word	1024
+ 202              		.align	2
+ 203              	.LC2:
+ 204 0020 73656E73 		.ascii	"sensorThread\000"
+ 204      6F725468 
+ARM GAS  /tmp/cczzlw37.s 			page 6
 
 
- 203      00
- 204 002d 000000   		.align	2
- 205              	.LC9:
- 206 0030 20000000 		.word	.LC2
- 207 0034 00000000 		.word	sensorOps
- 208 0038 FFFF     		.short	-1
- 209 003a 0000     		.space	2
- 210 003c 00000000 		.word	0
- 211 0040 00020000 		.word	512
- 212              		.align	2
- 213              	.LC4:
- 214 0044 73706943 		.ascii	"spiComThread\000"
- 214      6F6D5468 
- 214      72656164 
- 214      00
- 215 0051 000000   		.align	2
- 216              	.LC10:
- 217 0054 44000000 		.word	.LC4
- 218 0058 00000000 		.word	spiComOps
- 219 005c 0000     		.short	0
- 220 005e 0000     		.space	2
- 221 0060 00000000 		.word	0
- 222 0064 00040000 		.word	1024
- 223              		.align	2
- 224              	.LC6:
- 225 0068 6D6F746F 		.ascii	"motorThread\000"
- 225      72546872 
- 225      65616400 
- 226              		.align	2
- 227              	.LC11:
- 228 0074 68000000 		.word	.LC6
- 229 0078 00000000 		.word	motorOps
- 230 007c 0100     		.short	1
- 231 007e 0000     		.space	2
- 232 0080 00000000 		.word	0
- 233 0084 00020000 		.word	512
- 234              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
- 235              		.align	1
- 236              		.global	MX_FREERTOS_Init
- 237              		.syntax unified
- 238              		.thumb
- 239              		.thumb_func
- 240              		.fpu fpv4-sp-d16
- 242              	MX_FREERTOS_Init:
- 243              	.LFB145:
+ 204      72656164 
+ 204      00
+ 205 002d 000000   		.align	2
+ 206              	.LC9:
+ 207 0030 20000000 		.word	.LC2
+ 208 0034 00000000 		.word	sensorOps
+ 209 0038 FFFF     		.short	-1
+ 210 003a 0000     		.space	2
+ 211 003c 00000000 		.word	0
+ 212 0040 00020000 		.word	512
+ 213              		.align	2
+ 214              	.LC4:
+ 215 0044 73706943 		.ascii	"spiComThread\000"
+ 215      6F6D5468 
+ 215      72656164 
+ 215      00
+ 216 0051 000000   		.align	2
+ 217              	.LC10:
+ 218 0054 44000000 		.word	.LC4
+ 219 0058 00000000 		.word	spiComOps
+ 220 005c 0000     		.short	0
+ 221 005e 0000     		.space	2
+ 222 0060 00000000 		.word	0
+ 223 0064 00040000 		.word	1024
+ 224              		.align	2
+ 225              	.LC6:
+ 226 0068 6D6F746F 		.ascii	"motorThread\000"
+ 226      72546872 
+ 226      65616400 
+ 227              		.align	2
+ 228              	.LC11:
+ 229 0074 68000000 		.word	.LC6
+ 230 0078 00000000 		.word	motorOps
+ 231 007c 0100     		.short	1
+ 232 007e 0000     		.space	2
+ 233 0080 00000000 		.word	0
+ 234 0084 00020000 		.word	512
+ 235              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 236              		.align	1
+ 237              		.global	MX_FREERTOS_Init
+ 238              		.syntax unified
+ 239              		.thumb
+ 240              		.thumb_func
+ 241              		.fpu fpv4-sp-d16
+ 243              	MX_FREERTOS_Init:
+ 244              	.LFB145:
   83:Src/freertos.c **** 
   84:Src/freertos.c **** 
   85:Src/freertos.c **** 
   86:Src/freertos.c **** void MX_FREERTOS_Init(void)
   87:Src/freertos.c **** {
- 244              		.loc 1 87 0
- 245              		.cfi_startproc
- 246              		@ args = 0, pretend = 0, frame = 104
- 247              		@ frame_needed = 1, uses_anonymous_args = 0
- 248 0000 B0B5     		push	{r4, r5, r7, lr}
- 249              	.LCFI13:
- 250              		.cfi_def_cfa_offset 16
-ARM GAS  /tmp/cch0cVe3.s 			page 7
+ 245              		.loc 1 87 0
+ 246              		.cfi_startproc
+ 247              		@ args = 0, pretend = 0, frame = 104
+ 248              		@ frame_needed = 1, uses_anonymous_args = 0
+ 249 0000 B0B5     		push	{r4, r5, r7, lr}
+ 250              	.LCFI13:
+ARM GAS  /tmp/cczzlw37.s 			page 7
 
 
- 251              		.cfi_offset 4, -16
- 252              		.cfi_offset 5, -12
- 253              		.cfi_offset 7, -8
- 254              		.cfi_offset 14, -4
- 255 0002 9AB0     		sub	sp, sp, #104
- 256              	.LCFI14:
- 257              		.cfi_def_cfa_offset 120
- 258 0004 00AF     		add	r7, sp, #0
- 259              	.LCFI15:
- 260              		.cfi_def_cfa_register 7
+ 251              		.cfi_def_cfa_offset 16
+ 252              		.cfi_offset 4, -16
+ 253              		.cfi_offset 5, -12
+ 254              		.cfi_offset 7, -8
+ 255              		.cfi_offset 14, -4
+ 256 0002 9AB0     		sub	sp, sp, #104
+ 257              	.LCFI14:
+ 258              		.cfi_def_cfa_offset 120
+ 259 0004 00AF     		add	r7, sp, #0
+ 260              	.LCFI15:
+ 261              		.cfi_def_cfa_register 7
   88:Src/freertos.c **** 
   89:Src/freertos.c **** 
   90:Src/freertos.c ****   osMutexDef(spiMutex);
- 261              		.loc 1 90 0
- 262 0006 0023     		movs	r3, #0
- 263 0008 7B66     		str	r3, [r7, #100]
+ 262              		.loc 1 90 0
+ 263 0006 0023     		movs	r3, #0
+ 264 0008 7B66     		str	r3, [r7, #100]
   91:Src/freertos.c ****   spiMutexHandle = osMutexCreate(osMutex(spiMutex));
- 264              		.loc 1 91 0
- 265 000a 07F16403 		add	r3, r7, #100
- 266 000e 1846     		mov	r0, r3
- 267 0010 FFF7FEFF 		bl	osMutexCreate
- 268 0014 0246     		mov	r2, r0
- 269 0016 514B     		ldr	r3, .L10
- 270 0018 1A60     		str	r2, [r3]
+ 265              		.loc 1 91 0
+ 266 000a 07F16403 		add	r3, r7, #100
+ 267 000e 1846     		mov	r0, r3
+ 268 0010 FFF7FEFF 		bl	osMutexCreate
+ 269 0014 0246     		mov	r2, r0
+ 270 0016 514B     		ldr	r3, .L10
+ 271 0018 1A60     		str	r2, [r3]
   92:Src/freertos.c **** 
   93:Src/freertos.c ****   osMutexDef(uartMutex);
- 271              		.loc 1 93 0
- 272 001a 0023     		movs	r3, #0
- 273 001c 3B66     		str	r3, [r7, #96]
+ 272              		.loc 1 93 0
+ 273 001a 0023     		movs	r3, #0
+ 274 001c 3B66     		str	r3, [r7, #96]
   94:Src/freertos.c ****   uartMutexHandle = osMutexCreate(osMutex(uartMutex));
- 274              		.loc 1 94 0
- 275 001e 07F16003 		add	r3, r7, #96
- 276 0022 1846     		mov	r0, r3
- 277 0024 FFF7FEFF 		bl	osMutexCreate
- 278 0028 0246     		mov	r2, r0
- 279 002a 4D4B     		ldr	r3, .L10+4
- 280 002c 1A60     		str	r2, [r3]
+ 275              		.loc 1 94 0
+ 276 001e 07F16003 		add	r3, r7, #96
+ 277 0022 1846     		mov	r0, r3
+ 278 0024 FFF7FEFF 		bl	osMutexCreate
+ 279 0028 0246     		mov	r2, r0
+ 280 002a 4D4B     		ldr	r3, .L10+4
+ 281 002c 1A60     		str	r2, [r3]
   95:Src/freertos.c **** 
   96:Src/freertos.c ****   osMutexDef(controlMutex);
- 281              		.loc 1 96 0
- 282 002e 0023     		movs	r3, #0
- 283 0030 FB65     		str	r3, [r7, #92]
+ 282              		.loc 1 96 0
+ 283 002e 0023     		movs	r3, #0
+ 284 0030 FB65     		str	r3, [r7, #92]
   97:Src/freertos.c ****   controlMutexHandle = osMutexCreate(osMutex(controlMutex));
- 284              		.loc 1 97 0
- 285 0032 07F15C03 		add	r3, r7, #92
- 286 0036 1846     		mov	r0, r3
- 287 0038 FFF7FEFF 		bl	osMutexCreate
- 288 003c 0246     		mov	r2, r0
- 289 003e 494B     		ldr	r3, .L10+8
- 290 0040 1A60     		str	r2, [r3]
+ 285              		.loc 1 97 0
+ 286 0032 07F15C03 		add	r3, r7, #92
+ 287 0036 1846     		mov	r0, r3
+ 288 0038 FFF7FEFF 		bl	osMutexCreate
+ 289 003c 0246     		mov	r2, r0
+ 290 003e 494B     		ldr	r3, .L10+8
+ 291 0040 1A60     		str	r2, [r3]
   98:Src/freertos.c **** 
   99:Src/freertos.c ****   osSemaphoreDef(uartSemaphore);
- 291              		.loc 1 99 0
- 292 0042 0023     		movs	r3, #0
- 293 0044 BB65     		str	r3, [r7, #88]
+ 292              		.loc 1 99 0
+ 293 0042 0023     		movs	r3, #0
+ 294 0044 BB65     		str	r3, [r7, #88]
  100:Src/freertos.c ****   uartSemaphoreHandle = osSemaphoreCreate(osSemaphore(uartSemaphore), 1);
- 294              		.loc 1 100 0
-ARM GAS  /tmp/cch0cVe3.s 			page 8
+ARM GAS  /tmp/cczzlw37.s 			page 8
 
 
- 295 0046 07F15803 		add	r3, r7, #88
- 296 004a 0121     		movs	r1, #1
- 297 004c 1846     		mov	r0, r3
- 298 004e FFF7FEFF 		bl	osSemaphoreCreate
- 299 0052 0246     		mov	r2, r0
- 300 0054 444B     		ldr	r3, .L10+12
- 301 0056 1A60     		str	r2, [r3]
+ 295              		.loc 1 100 0
+ 296 0046 07F15803 		add	r3, r7, #88
+ 297 004a 0121     		movs	r1, #1
+ 298 004c 1846     		mov	r0, r3
+ 299 004e FFF7FEFF 		bl	osSemaphoreCreate
+ 300 0052 0246     		mov	r2, r0
+ 301 0054 444B     		ldr	r3, .L10+12
+ 302 0056 1A60     		str	r2, [r3]
  101:Src/freertos.c **** 
  102:Src/freertos.c ****   /* definition and creation of spiSemaphore */
  103:Src/freertos.c ****   osSemaphoreDef(spiSemaphore);
- 302              		.loc 1 103 0
- 303 0058 0023     		movs	r3, #0
- 304 005a 7B65     		str	r3, [r7, #84]
+ 303              		.loc 1 103 0
+ 304 0058 0023     		movs	r3, #0
+ 305 005a 7B65     		str	r3, [r7, #84]
  104:Src/freertos.c ****   spiSemaphoreHandle = osSemaphoreCreate(osSemaphore(spiSemaphore), 1);
- 305              		.loc 1 104 0
- 306 005c 07F15403 		add	r3, r7, #84
- 307 0060 0121     		movs	r1, #1
- 308 0062 1846     		mov	r0, r3
- 309 0064 FFF7FEFF 		bl	osSemaphoreCreate
- 310 0068 0246     		mov	r2, r0
- 311 006a 404B     		ldr	r3, .L10+16
- 312 006c 1A60     		str	r2, [r3]
+ 306              		.loc 1 104 0
+ 307 005c 07F15403 		add	r3, r7, #84
+ 308 0060 0121     		movs	r1, #1
+ 309 0062 1846     		mov	r0, r3
+ 310 0064 FFF7FEFF 		bl	osSemaphoreCreate
+ 311 0068 0246     		mov	r2, r0
+ 312 006a 404B     		ldr	r3, .L10+16
+ 313 006c 1A60     		str	r2, [r3]
  105:Src/freertos.c **** 
  106:Src/freertos.c ****   /* definition and creation of gpsThread */
  107:Src/freertos.c ****   osThreadDef(gpsThread, gpsOps, osPriorityNormal, 0, 1024);
- 313              		.loc 1 107 0
- 314 006e 404B     		ldr	r3, .L10+20
- 315 0070 07F14004 		add	r4, r7, #64
- 316 0074 1D46     		mov	r5, r3
- 317 0076 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 318 0078 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 319 007a 2B68     		ldr	r3, [r5]
- 320 007c 2360     		str	r3, [r4]
+ 314              		.loc 1 107 0
+ 315 006e 404B     		ldr	r3, .L10+20
+ 316 0070 07F14004 		add	r4, r7, #64
+ 317 0074 1D46     		mov	r5, r3
+ 318 0076 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 319 0078 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 320 007a 2B68     		ldr	r3, [r5]
+ 321 007c 2360     		str	r3, [r4]
  108:Src/freertos.c ****   gpsThreadHandle = osThreadCreate(osThread(gpsThread), NULL);
- 321              		.loc 1 108 0
- 322 007e 07F14003 		add	r3, r7, #64
- 323 0082 0021     		movs	r1, #0
- 324 0084 1846     		mov	r0, r3
- 325 0086 FFF7FEFF 		bl	osThreadCreate
- 326 008a 0246     		mov	r2, r0
- 327 008c 394B     		ldr	r3, .L10+24
- 328 008e 1A60     		str	r2, [r3]
+ 322              		.loc 1 108 0
+ 323 007e 07F14003 		add	r3, r7, #64
+ 324 0082 0021     		movs	r1, #0
+ 325 0084 1846     		mov	r0, r3
+ 326 0086 FFF7FEFF 		bl	osThreadCreate
+ 327 008a 0246     		mov	r2, r0
+ 328 008c 394B     		ldr	r3, .L10+24
+ 329 008e 1A60     		str	r2, [r3]
  109:Src/freertos.c **** 
  110:Src/freertos.c ****   /* definition and creation of sensorThread */
  111:Src/freertos.c ****   osThreadDef(sensorThread, sensorOps, osPriorityBelowNormal, 0, 512);
- 329              		.loc 1 111 0
- 330 0090 394B     		ldr	r3, .L10+28
- 331 0092 07F12C04 		add	r4, r7, #44
- 332 0096 1D46     		mov	r5, r3
- 333 0098 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 334 009a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 335 009c 2B68     		ldr	r3, [r5]
- 336 009e 2360     		str	r3, [r4]
+ 330              		.loc 1 111 0
+ 331 0090 394B     		ldr	r3, .L10+28
+ 332 0092 07F12C04 		add	r4, r7, #44
+ 333 0096 1D46     		mov	r5, r3
+ 334 0098 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 335 009a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 336 009c 2B68     		ldr	r3, [r5]
+ 337 009e 2360     		str	r3, [r4]
  112:Src/freertos.c ****   sensorThreadHandle = osThreadCreate(osThread(sensorThread), NULL);
- 337              		.loc 1 112 0
- 338 00a0 07F12C03 		add	r3, r7, #44
- 339 00a4 0021     		movs	r1, #0
-ARM GAS  /tmp/cch0cVe3.s 			page 9
+ 338              		.loc 1 112 0
+ 339 00a0 07F12C03 		add	r3, r7, #44
+ARM GAS  /tmp/cczzlw37.s 			page 9
 
 
- 340 00a6 1846     		mov	r0, r3
- 341 00a8 FFF7FEFF 		bl	osThreadCreate
- 342 00ac 0246     		mov	r2, r0
- 343 00ae 334B     		ldr	r3, .L10+32
- 344 00b0 1A60     		str	r2, [r3]
+ 340 00a4 0021     		movs	r1, #0
+ 341 00a6 1846     		mov	r0, r3
+ 342 00a8 FFF7FEFF 		bl	osThreadCreate
+ 343 00ac 0246     		mov	r2, r0
+ 344 00ae 334B     		ldr	r3, .L10+32
+ 345 00b0 1A60     		str	r2, [r3]
  113:Src/freertos.c **** 
  114:Src/freertos.c ****   /* definition and creation of spiComThread */
  115:Src/freertos.c ****   osThreadDef(spiComThread, spiComOps, osPriorityNormal, 0, 1024);
- 345              		.loc 1 115 0
- 346 00b2 334B     		ldr	r3, .L10+36
- 347 00b4 07F11804 		add	r4, r7, #24
- 348 00b8 1D46     		mov	r5, r3
- 349 00ba 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 350 00bc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 351 00be 2B68     		ldr	r3, [r5]
- 352 00c0 2360     		str	r3, [r4]
+ 346              		.loc 1 115 0
+ 347 00b2 334B     		ldr	r3, .L10+36
+ 348 00b4 07F11804 		add	r4, r7, #24
+ 349 00b8 1D46     		mov	r5, r3
+ 350 00ba 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 351 00bc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 352 00be 2B68     		ldr	r3, [r5]
+ 353 00c0 2360     		str	r3, [r4]
  116:Src/freertos.c ****   spiComThreadHandle = osThreadCreate(osThread(spiComThread), NULL);
- 353              		.loc 1 116 0
- 354 00c2 07F11803 		add	r3, r7, #24
- 355 00c6 0021     		movs	r1, #0
- 356 00c8 1846     		mov	r0, r3
- 357 00ca FFF7FEFF 		bl	osThreadCreate
- 358 00ce 0246     		mov	r2, r0
- 359 00d0 2C4B     		ldr	r3, .L10+40
- 360 00d2 1A60     		str	r2, [r3]
+ 354              		.loc 1 116 0
+ 355 00c2 07F11803 		add	r3, r7, #24
+ 356 00c6 0021     		movs	r1, #0
+ 357 00c8 1846     		mov	r0, r3
+ 358 00ca FFF7FEFF 		bl	osThreadCreate
+ 359 00ce 0246     		mov	r2, r0
+ 360 00d0 2C4B     		ldr	r3, .L10+40
+ 361 00d2 1A60     		str	r2, [r3]
  117:Src/freertos.c **** 
  118:Src/freertos.c ****   osThreadDef(motorThread, motorOps, osPriorityAboveNormal, 0, 512);
- 361              		.loc 1 118 0
- 362 00d4 2C4B     		ldr	r3, .L10+44
- 363 00d6 3C1D     		adds	r4, r7, #4
- 364 00d8 1D46     		mov	r5, r3
- 365 00da 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
- 366 00dc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
- 367 00de 2B68     		ldr	r3, [r5]
- 368 00e0 2360     		str	r3, [r4]
+ 362              		.loc 1 118 0
+ 363 00d4 2C4B     		ldr	r3, .L10+44
+ 364 00d6 3C1D     		adds	r4, r7, #4
+ 365 00d8 1D46     		mov	r5, r3
+ 366 00da 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 367 00dc 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 368 00de 2B68     		ldr	r3, [r5]
+ 369 00e0 2360     		str	r3, [r4]
  119:Src/freertos.c ****   motorThreadHandle = osThreadCreate(osThread(motorThread), NULL);
- 369              		.loc 1 119 0
- 370 00e2 3B1D     		adds	r3, r7, #4
- 371 00e4 0021     		movs	r1, #0
- 372 00e6 1846     		mov	r0, r3
- 373 00e8 FFF7FEFF 		bl	osThreadCreate
- 374 00ec 0246     		mov	r2, r0
- 375 00ee 274B     		ldr	r3, .L10+48
- 376 00f0 1A60     		str	r2, [r3]
+ 370              		.loc 1 119 0
+ 371 00e2 3B1D     		adds	r3, r7, #4
+ 372 00e4 0021     		movs	r1, #0
+ 373 00e6 1846     		mov	r0, r3
+ 374 00e8 FFF7FEFF 		bl	osThreadCreate
+ 375 00ec 0246     		mov	r2, r0
+ 376 00ee 274B     		ldr	r3, .L10+48
+ 377 00f0 1A60     		str	r2, [r3]
  120:Src/freertos.c **** 
  121:Src/freertos.c **** 
  122:Src/freertos.c ****   EnvironmentData = malloc(sizeof(ENVIRONMENT_DATA_FORMAT));
- 377              		.loc 1 122 0
- 378 00f2 7C20     		movs	r0, #124
- 379 00f4 FFF7FEFF 		bl	malloc
- 380 00f8 0346     		mov	r3, r0
- 381 00fa 1A46     		mov	r2, r3
- 382 00fc 244B     		ldr	r3, .L10+52
- 383 00fe 1A60     		str	r2, [r3]
+ 378              		.loc 1 122 0
+ 379 00f2 7C20     		movs	r0, #124
+ 380 00f4 FFF7FEFF 		bl	malloc
+ 381 00f8 0346     		mov	r3, r0
+ 382 00fa 1A46     		mov	r2, r3
+ 383 00fc 244B     		ldr	r3, .L10+52
+ 384 00fe 1A60     		str	r2, [r3]
  123:Src/freertos.c ****   ControlData = malloc(sizeof(CONTROL_DATA_FORMAT));
- 384              		.loc 1 123 0
- 385 0100 7820     		movs	r0, #120
-ARM GAS  /tmp/cch0cVe3.s 			page 10
+ 385              		.loc 1 123 0
+ARM GAS  /tmp/cczzlw37.s 			page 10
 
 
- 386 0102 FFF7FEFF 		bl	malloc
- 387 0106 0346     		mov	r3, r0
- 388 0108 1A46     		mov	r2, r3
- 389 010a 224B     		ldr	r3, .L10+56
- 390 010c 1A60     		str	r2, [r3]
+ 386 0100 7820     		movs	r0, #120
+ 387 0102 FFF7FEFF 		bl	malloc
+ 388 0106 0346     		mov	r3, r0
+ 389 0108 1A46     		mov	r2, r3
+ 390 010a 224B     		ldr	r3, .L10+56
+ 391 010c 1A60     		str	r2, [r3]
  124:Src/freertos.c ****   UpdateFile = malloc(sizeof(UPDATE_FILE_FORMAT));
- 391              		.loc 1 124 0
- 392 010e 7420     		movs	r0, #116
- 393 0110 FFF7FEFF 		bl	malloc
- 394 0114 0346     		mov	r3, r0
- 395 0116 1A46     		mov	r2, r3
- 396 0118 1F4B     		ldr	r3, .L10+60
- 397 011a 1A60     		str	r2, [r3]
+ 392              		.loc 1 124 0
+ 393 010e 7420     		movs	r0, #116
+ 394 0110 FFF7FEFF 		bl	malloc
+ 395 0114 0346     		mov	r3, r0
+ 396 0116 1A46     		mov	r2, r3
+ 397 0118 1F4B     		ldr	r3, .L10+60
+ 398 011a 1A60     		str	r2, [r3]
  125:Src/freertos.c **** 
  126:Src/freertos.c ****   SpiRxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
- 398              		.loc 1 126 0
- 399 011c 7820     		movs	r0, #120
- 400 011e FFF7FEFF 		bl	malloc
- 401 0122 0346     		mov	r3, r0
- 402 0124 1A46     		mov	r2, r3
- 403 0126 1D4B     		ldr	r3, .L10+64
- 404 0128 1A60     		str	r2, [r3]
+ 399              		.loc 1 126 0
+ 400 011c 7820     		movs	r0, #120
+ 401 011e FFF7FEFF 		bl	malloc
+ 402 0122 0346     		mov	r3, r0
+ 403 0124 1A46     		mov	r2, r3
+ 404 0126 1D4B     		ldr	r3, .L10+64
+ 405 0128 1A60     		str	r2, [r3]
  127:Src/freertos.c **** 
  128:Src/freertos.c ****   SpiTxData = malloc(sizeof(SPI_TRANSFER_FORMAT));
- 405              		.loc 1 128 0
- 406 012a 7820     		movs	r0, #120
- 407 012c FFF7FEFF 		bl	malloc
- 408 0130 0346     		mov	r3, r0
- 409 0132 1A46     		mov	r2, r3
- 410 0134 1A4B     		ldr	r3, .L10+68
- 411 0136 1A60     		str	r2, [r3]
+ 406              		.loc 1 128 0
+ 407 012a 7820     		movs	r0, #120
+ 408 012c FFF7FEFF 		bl	malloc
+ 409 0130 0346     		mov	r3, r0
+ 410 0132 1A46     		mov	r2, r3
+ 411 0134 1A4B     		ldr	r3, .L10+68
+ 412 0136 1A60     		str	r2, [r3]
  129:Src/freertos.c ****   SpiCheckData = malloc(sizeof(SPI_TRANSFER_FORMAT));
- 412              		.loc 1 129 0
- 413 0138 7820     		movs	r0, #120
- 414 013a FFF7FEFF 		bl	malloc
- 415 013e 0346     		mov	r3, r0
- 416 0140 1A46     		mov	r2, r3
- 417 0142 184B     		ldr	r3, .L10+72
- 418 0144 1A60     		str	r2, [r3]
+ 413              		.loc 1 129 0
+ 414 0138 7820     		movs	r0, #120
+ 415 013a FFF7FEFF 		bl	malloc
+ 416 013e 0346     		mov	r3, r0
+ 417 0140 1A46     		mov	r2, r3
+ 418 0142 184B     		ldr	r3, .L10+72
+ 419 0144 1A60     		str	r2, [r3]
  130:Src/freertos.c **** 
  131:Src/freertos.c ****   SensorCalibrationNeeded = malloc(sizeof(int));
- 419              		.loc 1 131 0
- 420 0146 0420     		movs	r0, #4
- 421 0148 FFF7FEFF 		bl	malloc
- 422 014c 0346     		mov	r3, r0
- 423 014e 1A46     		mov	r2, r3
- 424 0150 154B     		ldr	r3, .L10+76
- 425 0152 1A60     		str	r2, [r3]
+ 420              		.loc 1 131 0
+ 421 0146 0420     		movs	r0, #4
+ 422 0148 FFF7FEFF 		bl	malloc
+ 423 014c 0346     		mov	r3, r0
+ 424 014e 1A46     		mov	r2, r3
+ 425 0150 154B     		ldr	r3, .L10+76
+ 426 0152 1A60     		str	r2, [r3]
  132:Src/freertos.c **** 
  133:Src/freertos.c **** }
- 426              		.loc 1 133 0
- 427 0154 00BF     		nop
- 428 0156 6837     		adds	r7, r7, #104
- 429              	.LCFI16:
- 430              		.cfi_def_cfa_offset 16
- 431 0158 BD46     		mov	sp, r7
- 432              	.LCFI17:
-ARM GAS  /tmp/cch0cVe3.s 			page 11
+ 427              		.loc 1 133 0
+ 428 0154 00BF     		nop
+ 429 0156 6837     		adds	r7, r7, #104
+ 430              	.LCFI16:
+ 431              		.cfi_def_cfa_offset 16
+ 432 0158 BD46     		mov	sp, r7
+ARM GAS  /tmp/cczzlw37.s 			page 11
 
 
- 433              		.cfi_def_cfa_register 13
- 434              		@ sp needed
- 435 015a B0BD     		pop	{r4, r5, r7, pc}
- 436              	.L11:
- 437              		.align	2
- 438              	.L10:
- 439 015c 00000000 		.word	spiMutexHandle
- 440 0160 00000000 		.word	uartMutexHandle
- 441 0164 00000000 		.word	controlMutexHandle
- 442 0168 00000000 		.word	uartSemaphoreHandle
- 443 016c 00000000 		.word	spiSemaphoreHandle
- 444 0170 0C000000 		.word	.LC8
- 445 0174 00000000 		.word	gpsThreadHandle
- 446 0178 30000000 		.word	.LC9
- 447 017c 00000000 		.word	sensorThreadHandle
- 448 0180 54000000 		.word	.LC10
- 449 0184 00000000 		.word	spiComThreadHandle
- 450 0188 74000000 		.word	.LC11
- 451 018c 00000000 		.word	motorThreadHandle
- 452 0190 00000000 		.word	EnvironmentData
- 453 0194 00000000 		.word	ControlData
- 454 0198 00000000 		.word	UpdateFile
- 455 019c 00000000 		.word	SpiRxData
- 456 01a0 00000000 		.word	SpiTxData
- 457 01a4 00000000 		.word	SpiCheckData
- 458 01a8 00000000 		.word	SensorCalibrationNeeded
- 459              		.cfi_endproc
- 460              	.LFE145:
- 462              		.text
- 463              	.Letext0:
- 464              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
- 465              		.file 3 "Inc/main.h"
- 466              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
- 467              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
- 468              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
- 469              		.file 7 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h"
- 470              		.file 8 "/usr/include/newlib/sys/lock.h"
- 471              		.file 9 "/usr/include/newlib/sys/_types.h"
- 472              		.file 10 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
- 473              		.file 11 "/usr/include/newlib/sys/reent.h"
- 474              		.file 12 "<built-in>"
- 475              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
- 476              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
- 477              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
- 478              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
- 479              		.file 17 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
- 480              		.file 18 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
- 481              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
- 482              		.file 20 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
- 483              		.file 21 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
- 484              		.file 22 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
- 485              		.file 23 "Inc/gps.h"
- 486              		.file 24 "Inc/sensor.h"
- 487              		.file 25 "Inc/motor.h"
- 488              		.file 26 "Inc/usart.h"
- 489              		.file 27 "Inc/spi.h"
- 490              		.file 28 "Inc/tim.h"
-ARM GAS  /tmp/cch0cVe3.s 			page 12
+ 433              	.LCFI17:
+ 434              		.cfi_def_cfa_register 13
+ 435              		@ sp needed
+ 436 015a B0BD     		pop	{r4, r5, r7, pc}
+ 437              	.L11:
+ 438              		.align	2
+ 439              	.L10:
+ 440 015c 00000000 		.word	spiMutexHandle
+ 441 0160 00000000 		.word	uartMutexHandle
+ 442 0164 00000000 		.word	controlMutexHandle
+ 443 0168 00000000 		.word	uartSemaphoreHandle
+ 444 016c 00000000 		.word	spiSemaphoreHandle
+ 445 0170 0C000000 		.word	.LC8
+ 446 0174 00000000 		.word	gpsThreadHandle
+ 447 0178 30000000 		.word	.LC9
+ 448 017c 00000000 		.word	sensorThreadHandle
+ 449 0180 54000000 		.word	.LC10
+ 450 0184 00000000 		.word	spiComThreadHandle
+ 451 0188 74000000 		.word	.LC11
+ 452 018c 00000000 		.word	motorThreadHandle
+ 453 0190 00000000 		.word	EnvironmentData
+ 454 0194 00000000 		.word	ControlData
+ 455 0198 00000000 		.word	UpdateFile
+ 456 019c 00000000 		.word	SpiRxData
+ 457 01a0 00000000 		.word	SpiTxData
+ 458 01a4 00000000 		.word	SpiCheckData
+ 459 01a8 00000000 		.word	SensorCalibrationNeeded
+ 460              		.cfi_endproc
+ 461              	.LFE145:
+ 463              		.text
+ 464              	.Letext0:
+ 465              		.file 2 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint-gcc.h"
+ 466              		.file 3 "Inc/main.h"
+ 467              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 468              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 469              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h"
+ 470              		.file 7 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h"
+ 471              		.file 8 "/usr/include/newlib/sys/lock.h"
+ 472              		.file 9 "/usr/include/newlib/sys/_types.h"
+ 473              		.file 10 "/usr/lib/gcc/arm-none-eabi/7.3.1/include/stddef.h"
+ 474              		.file 11 "/usr/include/newlib/sys/reent.h"
+ 475              		.file 12 "<built-in>"
+ 476              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 477              		.file 14 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 478              		.file 15 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h"
+ 479              		.file 16 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h"
+ 480              		.file 17 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 481              		.file 18 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h"
+ 482              		.file 19 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 483              		.file 20 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 484              		.file 21 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 485              		.file 22 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h"
+ 486              		.file 23 "Inc/gps.h"
+ 487              		.file 24 "Inc/sensor.h"
+ 488              		.file 25 "Inc/motor.h"
+ 489              		.file 26 "Inc/usart.h"
+ 490              		.file 27 "Inc/spi.h"
+ARM GAS  /tmp/cczzlw37.s 			page 12
 
 
- 491              		.file 29 "Inc/freertos.h"
-ARM GAS  /tmp/cch0cVe3.s 			page 13
+ 491              		.file 28 "Inc/tim.h"
+ 492              		.file 29 "Inc/freertos.h"
+ARM GAS  /tmp/cczzlw37.s 			page 13
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 freertos.c
                             *COM*:00000000000001a0 gpsData
                             *COM*:0000000000000014 sensorValues
+                            *COM*:000000000000000c gyroscopeValues
                             *COM*:0000000000000004 calibration
                             *COM*:0000000000000001 setting_enable
                             *COM*:0000000000000014 motor1
@@ -692,16 +694,16 @@ DEFINED SYMBOLS
                             *COM*:0000000000000004 UpdateFile
                             *COM*:0000000000000004 SensorCalibrationNeeded
                             *COM*:0000000000000001 rx_buf
-     /tmp/cch0cVe3.s:43     .text.vprint:0000000000000000 $t
-     /tmp/cch0cVe3.s:50     .text.vprint:0000000000000000 vprint
-     /tmp/cch0cVe3.s:103    .text.vprint:0000000000000044 $d
-     /tmp/cch0cVe3.s:108    .text.mprintf:0000000000000000 $t
-     /tmp/cch0cVe3.s:115    .text.mprintf:0000000000000000 mprintf
-     /tmp/cch0cVe3.s:185    .text.mprintf:0000000000000040 $d
-     /tmp/cch0cVe3.s:190    .rodata:0000000000000000 $d
-     /tmp/cch0cVe3.s:235    .text.MX_FREERTOS_Init:0000000000000000 $t
-     /tmp/cch0cVe3.s:242    .text.MX_FREERTOS_Init:0000000000000000 MX_FREERTOS_Init
-     /tmp/cch0cVe3.s:439    .text.MX_FREERTOS_Init:000000000000015c $d
+     /tmp/cczzlw37.s:44     .text.vprint:0000000000000000 $t
+     /tmp/cczzlw37.s:51     .text.vprint:0000000000000000 vprint
+     /tmp/cczzlw37.s:104    .text.vprint:0000000000000044 $d
+     /tmp/cczzlw37.s:109    .text.mprintf:0000000000000000 $t
+     /tmp/cczzlw37.s:116    .text.mprintf:0000000000000000 mprintf
+     /tmp/cczzlw37.s:186    .text.mprintf:0000000000000040 $d
+     /tmp/cczzlw37.s:191    .rodata:0000000000000000 $d
+     /tmp/cczzlw37.s:236    .text.MX_FREERTOS_Init:0000000000000000 $t
+     /tmp/cczzlw37.s:243    .text.MX_FREERTOS_Init:0000000000000000 MX_FREERTOS_Init
+     /tmp/cczzlw37.s:440    .text.MX_FREERTOS_Init:000000000000015c $d
 
 UNDEFINED SYMBOLS
 vsprintf
