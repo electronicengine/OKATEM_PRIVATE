@@ -91,7 +91,7 @@ int v4l2ctrl::isControl(int ControlType, v4l2_queryctrl *Queryctrl)
     else if (Queryctrl->flags & V4L2_CTRL_FLAG_DISABLED)
     {
         printf("control %s disabled \n", (char*) Queryctrl->name);
-        return FAIL;
+        return 2;
     }
     else if (Queryctrl->flags & V4L2_CTRL_TYPE_BOOLEAN)
         return 1;

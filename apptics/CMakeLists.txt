@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_HOME_DIRECTORY /root/Workspace/qt-workspace/OKATEM_PRIVATE/apptics)
+
 set(INCLUDE_PATH
     ./src
 
@@ -40,7 +42,6 @@ link_directories(
     /usr/arm-linux-gnueabihf/lib
     )
 
-#find_package( OpenCV REQUIRED )
 link_libraries(
 
 
@@ -89,15 +90,7 @@ add_executable(${PROJECT_NAME}
     ${INCLUDE_PATH}/routingtable.cpp
 
 
-
-
-
-
-
-
-
-    )
-
+)
 
 #target_link_libraries( ${PROJECT_NAME}
 #    pthread

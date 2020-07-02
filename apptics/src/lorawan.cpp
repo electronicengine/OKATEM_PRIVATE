@@ -101,7 +101,7 @@ int LoraWan::sendCommand(std::string Command)
 
 
 
-void LoraWan::sendBeacon()
+Status LoraWan::sendBeacon()
 {
 
     std::string Data = prepareData();
@@ -168,6 +168,8 @@ void LoraWan::sendBeacon()
         usleep(500000);
 
     }
+
+    return Status::ok;
 }
 
 

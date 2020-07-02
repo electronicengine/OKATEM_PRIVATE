@@ -4,6 +4,8 @@
 #include "remotecontrolinterface.h"
 #include "lasertracker.h"
 
+
+
 MainOperation::MainOperation()
 {
 
@@ -18,6 +20,8 @@ MainOperation::MainOperation()
 
 }
 
+
+
 MainOperation::MainOperation(MainOperation *Operation)
 {
 
@@ -30,9 +34,6 @@ MainOperation::MainOperation(MainOperation *Operation)
     gpTracker = Operation->gpTracker;
 
 }
-
-
-
 
 
 
@@ -57,15 +58,16 @@ int MainOperation::exec()
         //    printAll("Tracker Diagonal Rate: ", tracker.getDiagonalRate(), " - ", "Tracker Edge Rate: ", tracker.getEdgeRate());
         //    printAll("\n\n\n");
 
-                printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
-                " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
-                " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
-                " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
-                " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
-                " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
-                " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
+        //        printAll("Lora  Data: ", "\n", "Gps:  ", lora_stm_data.gps_string.substr(0,lora_stm_data.gps_string.find('*')),
+        //        " - Temperature: ", (int)lora_stm_data.sensor_data.temperature,
+        //        " - Altitude: ", (int)lora_stm_data.sensor_data.altitude,
+        //        " - Pressure: ", (int)lora_stm_data.sensor_data.pressure,
+        //        " - Compass: ", (int)lora_stm_data.sensor_data.compass_degree,
+        //        " - Wheather: ", (int)lora_stm_data.sensor_data.wheather_condition,
+        //        " - Sfp status: ", (lora_sfp_data.status == 1) ? "Connected" : "Disconnected");
 
-            printAll("\n\n\n");
+        //    printAll("\n\n\n");
+
 
         sleep(1);
     }

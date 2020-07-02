@@ -37,12 +37,14 @@ CONTROL_DATA_FORMAT LcdHMI::getHCMControlData()
 
 }
 
-void LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
+Status LcdHMI::setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData)
 {
 
     gmMutex.lock();
     gmMotorInformation = SavedData;
     gmMutex.unlock();
+
+    return Status::ok;
 }
 
 
@@ -507,7 +509,7 @@ void LcdHMI::autoMode()
 
 
 
-void LcdHMI::sendEnvironmentInfo()
+Status LcdHMI::sendEnvironmentInfo()
 {
 
     std::string wheather;
@@ -538,6 +540,8 @@ void LcdHMI::sendEnvironmentInfo()
     gmSerial->writeData("alti.txt=\"Alttude: ", gmStmEnvironmentData.sensor_data.altitude," m\";");
     usleep(100);
     gmSerial->writeData("wheat.txt=\"Wheather: ", wheather," \";");
+
+    return Status::ok;
 
 }
 

@@ -1,8 +1,6 @@
 #include "environmentinterface.h"
 #include <thread>
 
-
-
 EnvironmentInterface::EnvironmentInterface(MainOperation *Operation) : MainOperation(Operation)
 {
 

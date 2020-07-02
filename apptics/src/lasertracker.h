@@ -53,7 +53,7 @@ public:
 
     void streamFrame(cv::Mat Frame);
 
-    void init(int Camera, const std::string &StreamIp, int StreamPort);
+    int init(int Camera, const std::string &StreamIp, int StreamPort);
 
 private:
 
@@ -68,9 +68,9 @@ private:
     cv::Mat gmFrame;
     cv::Mat gmScalarFrame;
 
-    void setCameraGain();
+    int setCameraGain();
     int drawTarget(const cv::Mat &Frame);
-    void drawFSOFace(const std::vector<cv::Vec3f>& Circles);
+    int drawFSOFace(const std::vector<cv::Vec3f>& Circles);
     int orderpoints(std::vector<cv::Point>& Points);
     int calculatePerspective(std::vector<cv::Point>& Points);
 

@@ -110,7 +110,7 @@ void RemoteControlInterface::processWifiSwitch()
 void RemoteControlInterface::processLaserSwitch()
 {
 //    std::cout << "processLaserSwitch" << std::endl;
-//    system("../iptables_sfp.sh");
+//    system("../iptables_sfp.sh"); 
 }
 
 

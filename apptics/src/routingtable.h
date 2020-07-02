@@ -39,6 +39,8 @@ class RoutingTable
 {
 public:
     RoutingTable();
+    ~RoutingTable();
+    int init();
 
     void switchSfp();
     void switchRF();
@@ -50,7 +52,11 @@ private:
     bool addRoute(const std::string &Destination, const std::string &GateWay, const std::string &GenMask);
     bool delRoute(const std::string &Destination, const std::string &GateWay, const std::string &GenMask);
 
+
+    sockaddr_in *gpAddress;
+    rtentry gmRoute;
     HOST gmHost;
+    int gmFileDescriptor;
 
 
 };

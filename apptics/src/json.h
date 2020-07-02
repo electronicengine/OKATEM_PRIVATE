@@ -68,7 +68,7 @@ private:
 
     std::mutex gmMutex;
 
-    void writeFile(const std::string &Content, const std::string &File);
+    int writeFile(const std::string &Content, const std::string &File);
     std::string readFile(const std::string &File);
 
     void readStreamInfo(REMOTEMACHINE_INFORMATIONS &ControlData);

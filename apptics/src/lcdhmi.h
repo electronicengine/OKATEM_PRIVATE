@@ -53,7 +53,7 @@ public:
     ~LcdHMI();
 
     CONTROL_DATA_FORMAT getHCMControlData();
-    void setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData);
+    Status setInitialMotorPositions(CONTROL_DATA_FORMAT &SavedData);
     Status setHCMData(SFP_DATA_FORMAT& SfpData, ENVIRONMENT_DATA_FORMAT& EnvironmentData);
 
 
@@ -84,7 +84,7 @@ private:
 
     void listenHMI();
     void autoMode();
-    void sendEnvironmentInfo();
+    Status sendEnvironmentInfo();
 
 
 };

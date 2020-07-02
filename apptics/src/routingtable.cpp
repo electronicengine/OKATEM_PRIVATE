@@ -4,27 +4,49 @@
 
 RoutingTable::RoutingTable()
 {
-    printAll("Settings IP Tables Rules...");
-    system("../iptables.sh");
-    findHost();
 
+}
+
+RoutingTable::~RoutingTable()
+{
+    close(gmFileDescriptor);
 }
 
 void RoutingTable::switchSfp()
 {
+    bool ret;
 
     switch (gmHost)
     {
         case Romeo:
 
-            delRoute(JULIET_HOST, ROMEO_WIFI_GATEWAY, GENMASK);
-            addRoute(JULIET_HOST, ROMEO_SFP_GATEWAY, GENMASK);
+            ret = delRoute(JULIET_HOST, ROMEO_WIFI_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("delroute has been faıled ");
+
+            ret = addRoute(JULIET_HOST, ROMEO_SFP_GATEWAY, GENMASK);
+            if(ret = false)
+                printAll("addroute has been failed !!");
+
+
+
+            std::cout << "Laser Host: " << ROMEO_SFP_GATEWAY
+                      << " - " << GENMASK << std::endl;
 
             break;
         case Juliet:
 
-//            delRoute(ROMEO_HOST, JULIET_WIFI_GATEWAY, GENMASK);
-//            addRoute(ROMEO_HOST, JULIET_SFP_GATEWAY, GENMASK);
+
+            ret = delRoute(ROMEO_HOST, JULIET_WIFI_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("delroute has been failed !!");
+
+            ret = addRoute(ROMEO_HOST, JULIET_SFP_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("addroute has been faıled ");
+
+            std::cout << "Laser Host: " << JULIET_SFP_GATEWAY
+                      << " - " << GENMASK << std::endl;
 
             break;
 
@@ -35,24 +57,63 @@ void RoutingTable::switchSfp()
 
 void RoutingTable::switchRF()
 {
+    bool ret;
+
     switch (gmHost)
     {
         case Romeo:
 
-            delRoute(JULIET_HOST, ROMEO_SFP_GATEWAY, GENMASK);
-            addRoute(JULIET_HOST, ROMEO_WIFI_GATEWAY, GENMASK);
+            ret = delRoute(JULIET_HOST, ROMEO_SFP_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("delroute has been failed !!");
+
+            ret = addRoute(JULIET_HOST, ROMEO_WIFI_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("addroute has been failed !!");
+
+
+            std::cout << "RF Host: " << ROMEO_WIFI_GATEWAY
+                      << " - " << GENMASK << std::endl;
 
             break;
         case Juliet:
 
-//            delRoute(ROMEO_HOST, JULIET_SFP_GATEWAY, GENMASK);
-//            addRoute(ROMEO_HOST, JULIET_WIFI_GATEWAY, GENMASK);
+            ret = delRoute(ROMEO_HOST, JULIET_SFP_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("delroute has been faıled ");
+
+            ret = addRoute(ROMEO_HOST, JULIET_WIFI_GATEWAY, GENMASK);
+            if(ret == false)
+                printAll("addroute has been failed !!");
+
+            std::cout << "RF Host: " << JULIET_WIFI_GATEWAY
+                      << " - " << GENMASK << std::endl;
 
             break;
 
     }
 
     printAll ("switchRF!!!");
+
+}
+
+int RoutingTable::init()
+{
+    printAll("Settings IP Tables Rules...");
+    system(IPTABLE_RULES);
+    findHost();
+
+    gmFileDescriptor = socket( PF_INET, SOCK_DGRAM, IPPROTO_IP );
+
+    if(gmFileDescriptor < 0)
+    {
+        printAll("Routing Table Driver File couldn't open!!!");
+        return FAIL;
+    }
+    else
+    {
+        return SUCCESS;
+    }
 
 }
 
@@ -78,80 +139,51 @@ void RoutingTable::findHost()
 
 bool RoutingTable::delRoute(const std::string &Destination, const std::string &GateWay, const std::string &GenMask)
 {
-   int fd = socket( PF_INET, SOCK_DGRAM, IPPROTO_IP );
 
-   struct rtentry route;
-   memset( &route, 0, sizeof( route ) );
+   gpAddress = (sockaddr_in *) &gmRoute.rt_gateway;
+   gpAddress->sin_family = AF_INET;
+   gpAddress->sin_addr.s_addr = inet_addr(GateWay.c_str());
 
-   struct sockaddr_in *addr = (struct sockaddr_in *)&route.rt_gateway;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(GateWay.c_str());
+   gpAddress = (sockaddr_in *) &gmRoute.rt_dst;
+   gpAddress->sin_family = AF_INET;
+   gpAddress->sin_addr.s_addr = inet_addr(Destination.c_str());
 
-   addr = (struct sockaddr_in*) &route.rt_dst;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(Destination.c_str());
+   gpAddress = (sockaddr_in *) &gmRoute.rt_genmask;
+   gpAddress->sin_family = AF_INET;
+   gpAddress->sin_addr.s_addr = inet_addr(GenMask.c_str());
 
-   addr = (struct sockaddr_in*) &route.rt_genmask;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(GenMask.c_str());
+   gmRoute.rt_flags =  RTF_UP | RTF_GATEWAY ;
+   gmRoute.rt_metric = 0;
 
-   route.rt_flags = RTF_UP | RTF_GATEWAY;
-   route.rt_metric = 0;
-
-   // this time we are deleting the route:
-   int ret = ioctl( fd, SIOCDELRT, &route );
-   if ( ret )
-   {
-      close( fd );
+   if (ioctl(gmFileDescriptor, SIOCDELRT, &gmRoute) < 0)
       return false;
-   }
+   else
+      return true;
 
-   close( fd );
-   return true;
 }
 
 
 bool RoutingTable::addRoute(const std::string &Destination, const std::string &GateWay, const std::string &GenMask)
 {
-   // create the control socket.
-   int fd = socket( PF_INET, SOCK_DGRAM, IPPROTO_IP );
 
-   struct rtentry route;
-   memset( &route, 0, sizeof( route ) );
+    gpAddress = (sockaddr_in *) &gmRoute.rt_gateway;
+    gpAddress->sin_family = AF_INET;
+    gpAddress->sin_addr.s_addr = inet_addr(GateWay.c_str());
 
-   // set the gateway to 0.
-   struct sockaddr_in *addr = (struct sockaddr_in *)&route.rt_gateway;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(GateWay.c_str());
+    gpAddress = (sockaddr_in *) &gmRoute.rt_dst;
+    gpAddress->sin_family = AF_INET;
+    gpAddress->sin_addr.s_addr = inet_addr(Destination.c_str());
 
-   // set the host we are rejecting.
-   addr = (struct sockaddr_in*) &route.rt_dst;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(Destination.c_str());
+    gpAddress = (sockaddr_in *) &gmRoute.rt_genmask;
+    gpAddress->sin_family = AF_INET;
+    gpAddress->sin_addr.s_addr = inet_addr(GenMask.c_str());
 
-   // you could use a less restrictive mask to block a range of IPs.
-   // To block and entire C block you would use 255.255.255.0, or 0x00FFFFFFF
-   addr = (struct sockaddr_in*) &route.rt_genmask;
-   addr->sin_family = AF_INET;
-   addr->sin_addr.s_addr = inet_addr(GenMask.c_str());
+    gmRoute.rt_flags =  RTF_UP | RTF_GATEWAY ;
+    gmRoute.rt_metric = 0;
 
-   // These flags mean: this route is created "up", or active
-   // The blocked entity is a "host" as opposed to a "gateway"
-   // The packets should be rejected. On BSD there is a flag RTF_BLACKHOLE
-   // that causes packets to be dropped silently. We would use that if Linux
-   // had it. RTF_REJECT will cause the network interface to signal that the
-   // packets are being actively rejected.
-   route.rt_flags = RTF_UP | RTF_GATEWAY;
-   route.rt_metric = 0;
-
-   // this is where the magic happens..
-   if ( ioctl( fd, SIOCADDRT, &route ) )
-   {
-      close( fd );
+   if (ioctl( gmFileDescriptor, SIOCADDRT, &gmRoute ) < 0)
       return false;
-   }
+   else
+       return true;
 
-   // remember to close the socket lest you leak handles.
-   close( fd );
-   return true;
 }

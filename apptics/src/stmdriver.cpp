@@ -16,6 +16,8 @@ StmDriver::~StmDriver()
 
 }
 
+
+
 int StmDriver::init()
 {
 
@@ -39,11 +41,11 @@ int StmDriver::init()
         return FAIL;
     }
 
-
-
 }
 
-void StmDriver::    resetStm()
+
+
+void StmDriver::resetStm()
 {
 
     gmResetStm = true;
@@ -74,13 +76,7 @@ Status StmDriver::isReady()
     {
         return Status::error;
     }
-
 }
-
-
-
-
-
 
 
 
@@ -189,6 +185,8 @@ Status StmDriver::setUpdateData(const UPDATE_FILE_FORMAT &Data)
     return Status::ok;
 }
 
+
+
 void StmDriver::setMotorCalibrationValues(const MOTOR_INFORMATIONS &MotorInformations)
 {
     gmMutex.lock();
@@ -229,6 +227,8 @@ ENVIRONMENT_DATA_FORMAT StmDriver::getStmEnvironment()
 
     return environment_data;
 }
+
+
 
 int StmDriver::checkInitilizationNeeded(ENVIRONMENT_DATA_FORMAT &EnvironmentData)
 {
@@ -307,37 +307,36 @@ void StmDriver::communicationThread()
            spi_data = spi_transfer_data;
 
 
-           switch (spi_data.header) {
-           case SPI_TRANSFER_FORMAT::CONTROL_DATA:
+           switch (spi_data.header)
+           {
+               case SPI_TRANSFER_FORMAT::CONTROL_DATA:
 
-               printAll("comming data is control_data");
+                   printAll("comming data is control_data");
 
-               gmMutex.lock();
-               gmSpiTxData.clear();
-               gmMutex.unlock();
-               break;
+                   gmMutex.lock();
+                   gmSpiTxData.clear();
+                   gmMutex.unlock();
+                   break;
 
-           case SPI_TRANSFER_FORMAT::ENVIRONMENT_DATA:
+               case SPI_TRANSFER_FORMAT::ENVIRONMENT_DATA:
 
-               putEnvironmentDataIntoBuffer(spi_data);
+                   putEnvironmentDataIntoBuffer(spi_data);
 
-               gmMutex.lock();
-               gmSpiTxData.clear();
-               gmMutex.unlock();
+                   gmMutex.lock();
+                   gmSpiTxData.clear();
+                   gmMutex.unlock();
 
-               break;
+                   break;
 
-           case SPI_TRANSFER_FORMAT::UPDATE_FILE:
+               case SPI_TRANSFER_FORMAT::UPDATE_FILE:
 
-               processUpdateData(spi_data);
+                   processUpdateData(spi_data);
 
-               break;
+                   break;
 
-           default:
-               break;
+               default:
+                   break;
            }
-
-
 
         }
         else
@@ -351,7 +350,6 @@ void StmDriver::communicationThread()
         delete spi_transfer_data;
 
         usleep(wait_time);
-
 
     }
 
@@ -402,7 +400,6 @@ void StmDriver::processUpdateData(const SPI_TRANSFER_FORMAT& SpiData)
 
         gmUpdateAvalilable = false;
     }
-
 }
 
 
@@ -412,8 +409,16 @@ void StmDriver::putEnvironmentDataIntoBuffer(const SPI_TRANSFER_FORMAT &SpiData)
 
     gmMutex.lock();
     gmEnvironmentData = SpiData;
+//    std::cout << "accel_y: " << std::to_string(gmEnvironmentData.gyroscope_data.accel_y) << std::endl;
+///    std::cout << "accel_z: " << std::to_string(gmEnvironmentData.gyroscope_data.accel_z) << std::endl;
     gmMutex.unlock();
 
+
+//    std::cout << "accel_y: " << std::to_string(gmEnvironmentData.gyroscope_data.accel_y) << std::endl;
+//    std::cout << "accel_z: " << std::to_string(gmEnvironmentData.gyroscope_data.accel_z) << std::endl;
+//    std::cout << "gyro_x: " << std::to_string(gmEnvironmentData.gyroscope_data.gyro_x) << std::endl;
+//    std::cout << "gyro_y: " << std::to_string(gmEnvironmentData.gyroscope_data.gyro_y) << std::endl;
+//    std::cout << "gyro_z: " << std::to_string(gmEnvironmentData.gyroscope_data.gyro_z) << std::endl;
 
     gmIsReceived = true;
     gmIsTransmitted = true;

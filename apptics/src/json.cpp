@@ -5,7 +5,6 @@
 
 Json::Json()
 {
-
 }
 
 
@@ -235,16 +234,18 @@ void Json::readMotorInfo(MOTOR_INFORMATIONS &MotorInfo)
 
 
 
-void Json::writeFile(const std::string &Content, const std::string &File)
+int Json::writeFile(const std::string &Content, const std::string &File)
 {
 
     std::ofstream myfile;
-    myfile.open (File);
+    myfile.open(File);
     myfile << Content;
     myfile.close();
 
-
+    return SUCCESS;
 }
+
+
 
 std::string Json::readFile(const std::string &File)
 {
@@ -252,7 +253,7 @@ std::string Json::readFile(const std::string &File)
     std::string content;
     std::ifstream myfile;
 
-    myfile.open (File);
+    myfile.open(File);
 
     myfile >> content;
 

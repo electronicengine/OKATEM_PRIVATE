@@ -33,7 +33,7 @@ public:
     LoraWan(std::string Power, std::string Freqency);
 
     Status scanArea();
-    void sendBeacon();
+    Status sendBeacon();
 
     int init();
     void setLoraData(const LORA_INFO& LoraData);

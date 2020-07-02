@@ -120,9 +120,9 @@ void LaserTracker::streamFrame(cv::Mat Frame)
 
 }
 
-void LaserTracker::init(int Camera, const std::string &StreamIp, int StreamPort)
+int LaserTracker::init(int Camera, const std::string &StreamIp, int StreamPort)
 {
-
+    return SUCCESS;
 }
 
 
@@ -297,11 +297,9 @@ std::vector<cv::Vec3f> LaserTracker::detectCircle(cv::Mat &Frame)
 
 }
 
-
-
-void LaserTracker::setCameraGain()
+int LaserTracker::setCameraGain()
 {
-
+    return SUCCESS;
 }
 
 
@@ -326,7 +324,7 @@ int LaserTracker::drawTarget(const cv::Mat &Frame)
 
 
 
-void LaserTracker::drawFSOFace(const std::vector<cv::Vec3f>& Circles)
+int LaserTracker::drawFSOFace(const std::vector<cv::Vec3f>& Circles)
 {
 
     std::vector<cv::Point> points;
@@ -375,6 +373,7 @@ void LaserTracker::drawFSOFace(const std::vector<cv::Vec3f>& Circles)
         gmMutex.unlock();
     }
 
+    return SUCCESS;
 }
 
 

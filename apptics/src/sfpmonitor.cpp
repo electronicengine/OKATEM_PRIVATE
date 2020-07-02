@@ -18,6 +18,7 @@ SfpMonitor::~SfpMonitor()
 
 int SfpMonitor::init()
 {
+    int ret;
     char filename[20];
     snprintf(filename, 19, "/dev/i2c-%d", ADAPTER_NUMBER);
     gmFileDescriptor = open(filename, O_RDWR);
@@ -33,6 +34,13 @@ int SfpMonitor::init()
         // TODO: Handle this
         printAll("I2C address could not write");
         return FAIL;
+    }
+
+    ret = gmRoutingTable.init();
+    if(ret != SUCCESS)
+    {
+       printAll("Routeing Tables couldn't init!!");
+       return FAIL;
     }
 
 
